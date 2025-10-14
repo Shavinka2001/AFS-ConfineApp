@@ -9,8 +9,10 @@ import Register from './components/auth/Register';
 import Unauthorized from './components/Unauthorized';
 import AdminDashboard from './components/dashboards/admin/AdminDashboard';
 import AdminWorkOrders from './components/dashboards/admin/AdminWorkOrders';
+import AdminSettings from './components/dashboards/admin/AdminSettings';
 import UserManagement from './components/dashboards/admin/UserManagement';
 import ManagerDashboard from './components/dashboards/manager/ManagerDashboard';
+import ManagerSettings from './components/dashboards/manager/ManagerSettings';
 import ManagerUserManagement from './components/dashboards/manager/ManagerUserManagement';
 import ManagerWorkOrders from './components/dashboards/manager/ManagerWorkOrders';
 import TechnicianDashboard from './components/dashboards/technician/TechnicianDashboard';
@@ -111,6 +113,17 @@ function App() {
             />
             
             <Route
+              path="/admin/settings"
+              element={
+                <ProtectedRoute allowedRoles={['admin']}>
+                  <Layout>
+                    <AdminSettings />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+            
+            <Route
               path="/locations"
               element={
                 <ProtectedRoute allowedRoles={['admin', 'manager']}>
@@ -149,6 +162,28 @@ function App() {
                 <ProtectedRoute allowedRoles={['manager']}>
                   <Layout>
                     <ManagerWorkOrders />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/manager/settings"
+              element={
+                <ProtectedRoute allowedRoles={['manager']}>
+                  <Layout>
+                    <ManagerSettings />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/manager/settings"
+              element={
+                <ProtectedRoute allowedRoles={['manager']}>
+                  <Layout>
+                    <ManagerSettings />
                   </Layout>
                 </ProtectedRoute>
               }

@@ -118,4 +118,38 @@ export const userAPI = {
   toggleUserStatus: (id) => api.put(`/users/${id}/toggle-status`),
 };
 
+// Admin settings API functions
+export const adminAPI = {
+  // System configuration
+  getSystemConfig: () => api.get('/admin/system-config'),
+  updateSystemConfig: (config) => api.put('/admin/system-config', config),
+  
+  // Access control
+  getAccessControl: () => api.get('/admin/access-control'),
+  updateAccessControl: (settings) => api.put('/admin/access-control', settings),
+  
+  // Security settings
+  getSecuritySettings: () => api.get('/admin/security-settings'),
+  updateSecuritySettings: (settings) => api.put('/admin/security-settings', settings),
+  
+  // System status
+  getSystemStatus: () => api.get('/admin/system-status'),
+  performSystemAction: (action) => api.post('/admin/system-action', { action }),
+  
+  // System monitoring
+  getSystemMetrics: () => api.get('/admin/system-metrics'),
+  getAuditLogs: (params) => api.get('/admin/audit-logs', { params }),
+  
+  // Backup and restore
+  createBackup: () => api.post('/admin/backup'),
+  getBackups: () => api.get('/admin/backups'),
+  restoreBackup: (backupId) => api.post(`/admin/restore/${backupId}`),
+  
+  // User management for admin
+  getUsersWithDetails: (params) => api.get('/admin/users', { params }),
+  suspendUser: (userId) => api.put(`/admin/users/${userId}/suspend`),
+  activateUser: (userId) => api.put(`/admin/users/${userId}/activate`),
+  resetUserPassword: (userId) => api.post(`/admin/users/${userId}/reset-password`),
+};
+
 export default api;

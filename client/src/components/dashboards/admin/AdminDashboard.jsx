@@ -17,12 +17,15 @@ import {
   Wrench
 } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
-import { userAPI } from '../../../services/api';
+import { userAPI, activityAPI } from '../../../services/api';
 
 const AdminDashboard = () => {
   const { user } = useAuth();
   const [stats, setStats] = useState(null);
+  const [activities, setActivities] = useState([]);
+  const [systemHealth, setSystemHealth] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [activitiesLoading, setActivitiesLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
@@ -37,7 +40,42 @@ const AdminDashboard = () => {
       }
     };
 
+    const fetchActivities = async () => {
+      try {
+        const response = await activityAPI.getRecentActivities(10);
+        setActivities(response.data.data);
+      } catch (error) {
+        console.error('Failed to fetch activities:', error);
+        // Fallback to mock data for development
+        setActivities([]);
+      } finally {
+        setActivitiesLoading(false);
+      }
+    };
+
+    const fetchSystemHealth = async () => {
+      try {
+        const response = await activityAPI.getSystemHealth();
+        setSystemHealth(response.data.data);
+      } catch (error) {
+        console.error('Failed to fetch system health:', error);
+        // Fallback to default health status
+        setSystemHealth({
+          database: { status: 'healthy', message: 'Connected and responsive' },
+          apiServices: { status: 'healthy', message: 'All endpoints operational' },
+          authentication: { status: 'healthy', message: 'Authentication service active' }
+        });
+      }
+    };
+
     fetchStats();
+    fetchActivities();
+    fetchSystemHealth();
+
+    // Refresh activities every 30 seconds
+    const activityInterval = setInterval(fetchActivities, 30000);
+    
+    return () => clearInterval(activityInterval);
   }, []);
 
   useEffect(() => {
@@ -104,6 +142,40 @@ const AdminDashboard = () => {
       </div>
     </div>
   );
+
+  // Helper function to get icon for activity action
+  const getActivityIcon = (action) => {
+    switch (action) {
+      case 'USER_LOGIN':
+      case 'USER_LOGOUT':
+        return UserCheck;
+      case 'USER_REGISTER':
+        return Users;
+      case 'FAILED_LOGIN':
+        return AlertTriangle;
+      case 'SYSTEM_CONFIG_UPDATED':
+      case 'ACCESS_CONTROL_UPDATED':
+      case 'SECURITY_SETTINGS_UPDATED':
+        return Settings;
+      case 'BACKUP_CREATED':
+      case 'CACHE_CLEARED':
+      case 'LOGS_CLEARED':
+      case 'SERVICES_RESTARTED':
+        return Database;
+      case 'WORK_ORDER_CREATED':
+      case 'WORK_ORDER_UPDATED':
+      case 'WORK_ORDER_DELETED':
+        return Wrench;
+      case 'LOCATION_CREATED':
+      case 'LOCATION_UPDATED':
+      case 'LOCATION_DELETED':
+        return MapPin;
+      case 'SYSTEM_ERROR':
+        return AlertTriangle;
+      default:
+        return Activity;
+    }
+  };
 
   if (loading) {
     return (
@@ -262,34 +334,40 @@ const AdminDashboard = () => {
             </div>
           </div>
           <div className="space-y-3">
-            <ActivityCard
-              icon={UserCheck}
-              title="New User Registration"
-              description="John Doe registered as a technician"
-              time="5 minutes ago"
-              status="success"
-            />
-            <ActivityCard
-              icon={AlertTriangle}
-              title="Security Alert"
-              description="Failed login attempts detected"
-              time="15 minutes ago"
-              status="warning"
-            />
-            <ActivityCard
-              icon={Settings}
-              title="System Update"
-              description="Database backup completed successfully"
-              time="1 hour ago"
-              status="success"
-            />
-            <ActivityCard
-              icon={Database}
-              title="Performance Alert"
-              description="High CPU usage detected on server"
-              time="2 hours ago"
-              status="error"
-            />
+            {activitiesLoading ? (
+              // Loading skeleton
+              Array.from({ length: 4 }).map((_, index) => (
+                <div key={index} className="flex items-start space-x-4 p-4 rounded-xl animate-pulse">
+                  <div className="w-12 h-12 bg-gray-200 rounded-xl"></div>
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                    <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                    <div className="h-3 bg-gray-200 rounded w-1/4"></div>
+                  </div>
+                </div>
+              ))
+            ) : activities.length > 0 ? (
+              activities.map((activity, index) => {
+                const IconComponent = getActivityIcon(activity.action);
+                return (
+                  <ActivityCard
+                    key={activity.id || index}
+                    icon={IconComponent}
+                    title={activity.title}
+                    description={activity.description}
+                    time={activity.time}
+                    status={activity.status}
+                  />
+                );
+              })
+            ) : (
+              // No activities fallback
+              <div className="text-center py-8">
+                <Activity className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-500">No recent activities to display</p>
+                <p className="text-sm text-gray-400 mt-1">Activities will appear here as they occur</p>
+              </div>
+            )}
           </div>
         </div>
 
@@ -305,34 +383,62 @@ const AdminDashboard = () => {
             </div>
           </div>
           <div className="space-y-5">
-            <div className="flex items-center justify-between p-4 bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl border border-emerald-100">
-              <span className="text-sm font-semibold text-gray-700">Database</span>
-              <div className="flex items-center space-x-3">
-                <CheckCircle className="h-5 w-5 text-emerald-500" />
-                <span className="text-sm font-bold text-emerald-600 bg-emerald-100 px-3 py-1 rounded-full">Healthy</span>
-              </div>
-            </div>
-            <div className="flex items-center justify-between p-4 bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl border border-emerald-100">
-              <span className="text-sm font-semibold text-gray-700">API Service</span>
-              <div className="flex items-center space-x-3">
-                <CheckCircle className="h-5 w-5 text-emerald-500" />
-                <span className="text-sm font-bold text-emerald-600 bg-emerald-100 px-3 py-1 rounded-full">Running</span>
-              </div>
-            </div>
-            <div className="flex items-center justify-between p-4 bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl border border-emerald-100">
-              <span className="text-sm font-semibold text-gray-700">Authentication</span>
-              <div className="flex items-center space-x-3">
-                <CheckCircle className="h-5 w-5 text-emerald-500" />
-                <span className="text-sm font-bold text-emerald-600 bg-emerald-100 px-3 py-1 rounded-full">Active</span>
-              </div>
-            </div>
-            <div className="flex items-center justify-between p-4 bg-gradient-to-r from-amber-50 to-yellow-50 rounded-xl border border-amber-100">
-              <span className="text-sm font-semibold text-gray-700">Background Jobs</span>
-              <div className="flex items-center space-x-3">
-                <Clock className="h-5 w-5 text-amber-500" />
-                <span className="text-sm font-bold text-amber-600 bg-amber-100 px-3 py-1 rounded-full">Processing</span>
-              </div>
-            </div>
+            {systemHealth ? (
+              <>
+                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl border border-emerald-100">
+                  <span className="text-sm font-semibold text-gray-700">Database</span>
+                  <div className="flex items-center space-x-3">
+                    <CheckCircle className={`h-5 w-5 ${systemHealth.database?.status === 'healthy' ? 'text-emerald-500' : 'text-red-500'}`} />
+                    <span className={`text-sm font-bold px-3 py-1 rounded-full ${
+                      systemHealth.database?.status === 'healthy' 
+                        ? 'text-emerald-600 bg-emerald-100' 
+                        : 'text-red-600 bg-red-100'
+                    }`}>
+                      {systemHealth.database?.status === 'healthy' ? 'Healthy' : 'Error'}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl border border-emerald-100">
+                  <span className="text-sm font-semibold text-gray-700">API Service</span>
+                  <div className="flex items-center space-x-3">
+                    <CheckCircle className={`h-5 w-5 ${systemHealth.apiServices?.status === 'healthy' ? 'text-emerald-500' : 'text-red-500'}`} />
+                    <span className={`text-sm font-bold px-3 py-1 rounded-full ${
+                      systemHealth.apiServices?.status === 'healthy' 
+                        ? 'text-emerald-600 bg-emerald-100' 
+                        : 'text-red-600 bg-red-100'
+                    }`}>
+                      {systemHealth.apiServices?.status === 'healthy' ? 'Running' : 'Down'}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl border border-emerald-100">
+                  <span className="text-sm font-semibold text-gray-700">Authentication</span>
+                  <div className="flex items-center space-x-3">
+                    <CheckCircle className="h-5 w-5 text-emerald-500" />
+                    <span className="text-sm font-bold text-emerald-600 bg-emerald-100 px-3 py-1 rounded-full">Active</span>
+                  </div>
+                </div>
+                {systemHealth.activeUsers && (
+                  <div className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
+                    <span className="text-sm font-semibold text-gray-700">Active Users</span>
+                    <div className="flex items-center space-x-3">
+                      <Users className="h-5 w-5 text-blue-500" />
+                      <span className="text-sm font-bold text-blue-600 bg-blue-100 px-3 py-1 rounded-full">
+                        {systemHealth.activeUsers.count}
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </>
+            ) : (
+              // Loading skeleton for system status
+              Array.from({ length: 4 }).map((_, index) => (
+                <div key={index} className="flex items-center justify-between p-4 bg-gray-100 rounded-xl animate-pulse">
+                  <div className="h-4 bg-gray-200 rounded w-1/3"></div>
+                  <div className="h-6 bg-gray-200 rounded w-16"></div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </div>

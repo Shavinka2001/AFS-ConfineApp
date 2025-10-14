@@ -3,6 +3,7 @@ import SystemConfig from '../models/SystemConfig.js';
 import AccessControl from '../models/AccessControl.js';
 import SecuritySettings from '../models/SecuritySettings.js';
 import { protect, authorize } from '../middleware/auth.js';
+import { logActivity } from '../controllers/activityController.js';
 
 const router = express.Router();
 
@@ -111,6 +112,16 @@ router.put('/system-config', protect, authorize('admin'), async (req, res) => {
 
     await config.save();
 
+    // Log system configuration update
+    await logActivity(
+      req,
+      'SYSTEM_CONFIG_UPDATED',
+      `System configuration updated by ${req.user.firstName} ${req.user.lastName}`,
+      { configFields: Object.keys(req.body) },
+      'medium',
+      'success'
+    );
+
     res.json({
       success: true,
       message: 'System configuration updated successfully',
@@ -210,6 +221,16 @@ router.put('/access-control', protect, authorize('admin'), async (req, res) => {
     accessControl.updatedBy = req.user.id;
 
     await accessControl.save();
+
+    // Log access control update
+    await logActivity(
+      req,
+      'ACCESS_CONTROL_UPDATED',
+      `Access control settings updated by ${req.user.firstName} ${req.user.lastName}`,
+      { updatedSettings: Object.keys(req.body) },
+      'high',
+      'success'
+    );
 
     res.json({
       success: true,
@@ -311,6 +332,16 @@ router.put('/security-settings', protect, authorize('admin'), async (req, res) =
 
     await securitySettings.save();
 
+    // Log security settings update
+    await logActivity(
+      req,
+      'SECURITY_SETTINGS_UPDATED',
+      `Security settings updated by ${req.user.firstName} ${req.user.lastName}`,
+      { updatedSettings: Object.keys(req.body) },
+      'high',
+      'success'
+    );
+
     res.json({
       success: true,
       message: 'Security settings updated successfully',
@@ -391,6 +422,16 @@ router.post('/system-action', protect, authorize('admin'), async (req, res) => {
 
     // Log the action
     console.log(`Admin ${req.user.email} performed system action: ${action}`);
+
+    // Log system action
+    await logActivity(
+      req,
+      action.toUpperCase().replace('-', '_'),
+      `System action performed: ${action.replace('-', ' ')} by ${req.user.firstName} ${req.user.lastName}`,
+      { action },
+      'medium',
+      'success'
+    );
 
     // Here you would implement the actual system actions
     // For now, we'll simulate success

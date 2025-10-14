@@ -1,5 +1,6 @@
 import User from '../models/User.js';
 import { generateToken } from '../middleware/auth.js';
+import { logActivity } from './activityController.js';
 
 export const register = async (req, res) => {
   try {
@@ -36,6 +37,22 @@ export const register = async (req, res) => {
       department,
       createdBy: req.user?._id
     });
+
+    // Log registration activity
+    const mockReq = {
+      user: { id: user._id, email: user.email, firstName: user.firstName, lastName: user.lastName },
+      ip: req.ip,
+      get: req.get.bind(req)
+    };
+    
+    await logActivity(
+      mockReq,
+      'USER_REGISTER',
+      `New user registered: ${firstName} ${lastName} (${email})`,
+      { userId: user._id, role: user.role },
+      'medium',
+      'success'
+    );
 
     const token = generateToken(user._id, user.role);
 
@@ -92,6 +109,22 @@ export const login = async (req, res) => {
     const isPasswordValid = await user.comparePassword(password);
 
     if (!isPasswordValid) {
+      // Log failed login attempt
+      const mockReq = {
+        user: { id: user._id, email: user.email, firstName: user.firstName, lastName: user.lastName },
+        ip: req.ip,
+        get: req.get.bind(req)
+      };
+      
+      await logActivity(
+        mockReq,
+        'FAILED_LOGIN',
+        `Failed login attempt for ${email}`,
+        { userId: user._id, email },
+        'high',
+        'warning'
+      );
+
       return res.status(401).json({
         success: false,
         message: 'Invalid email or password'
@@ -101,6 +134,22 @@ export const login = async (req, res) => {
     // Update last login
     user.lastLogin = new Date();
     await user.save();
+
+    // Log successful login
+    const mockReq = {
+      user: { id: user._id, email: user.email, firstName: user.firstName, lastName: user.lastName },
+      ip: req.ip,
+      get: req.get.bind(req)
+    };
+    
+    await logActivity(
+      mockReq,
+      'USER_LOGIN',
+      `User logged in: ${user.firstName} ${user.lastName}`,
+      { userId: user._id, role: user.role },
+      'low',
+      'success'
+    );
 
     const token = generateToken(user._id, user.role);
 

@@ -152,4 +152,11 @@ export const adminAPI = {
   resetUserPassword: (userId) => api.post(`/admin/users/${userId}/reset-password`),
 };
 
+// Activity API endpoints
+export const activityAPI = {
+  getRecentActivities: (limit = 10) => api.get(`/activity/recent?limit=${limit}`),
+  getActivityStats: (days = 30) => api.get(`/activity/stats?days=${days}`),
+  getSystemHealth: () => api.get('/activity/system-health')
+};
+
 export default api;

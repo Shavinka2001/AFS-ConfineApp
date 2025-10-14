@@ -7,6 +7,8 @@ import connectDB from './config/database.js';
 import authRoutes from './routes/auth.js';
 import userRoutes from './routes/users.js';
 import adminRoutes from './routes/admin.js';
+import activityRoutes from './routes/activity.js';
+import { seedActivities } from './scripts/seedActivities.js';
 
 // Load environment variables
 dotenv.config();
@@ -50,6 +52,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/activity', activityRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
@@ -94,7 +97,26 @@ app.use((error, req, res, next) => {
 
 const PORT = process.env.PORT || 3001;
 
-app.listen(PORT, () => {
-  console.log(`🚀 Auth service running on port ${PORT}`);
-  console.log(`📊 Environment: ${process.env.NODE_ENV}`);
-});
+// Start server with database connection
+const startServer = async () => {
+  try {
+    await connectDB();
+    
+    // Seed sample activities for development
+    if (process.env.NODE_ENV === 'development') {
+      setTimeout(async () => {
+        await seedActivities();
+      }, 2000); // Wait 2 seconds after server start
+    }
+    
+    app.listen(PORT, () => {
+      console.log(`🚀 Auth service running on port ${PORT}`);
+      console.log(`📊 Environment: ${process.env.NODE_ENV}`);
+    });
+  } catch (error) {
+    console.error('Failed to start server:', error);
+    process.exit(1);
+  }
+};
+
+startServer();

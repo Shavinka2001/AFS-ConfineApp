@@ -1,0 +1,87 @@
+version: '3.8'
+
+services:
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: confine-client
+    ports:
+      - "80:80"
+    depends_on:
+      - auth-service
+      - workorder-service
+      - location-service
+    networks:
+      - confine-network
+
+  auth-service:
+    build:
+      context: ./services/auth
+      dockerfile: Dockerfile
+    container_name: confine-auth-service
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./services/auth:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=production
+      - MONGODB_URI=mongodb+srv://shavinka:12345@cluster0.tmj36kj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+      - PORT=3001
+      - JWT_SECRET=your_super_secret_jwt_key_here_change_in_production
+      - JWT_EXPIRE=7d
+      - CLIENT_URL=http://localhost
+    networks:
+      - confine-network
+
+  location-service:
+    build:
+      context: ./services/locationManagement
+      dockerfile: Dockerfile
+    container_name: confine-location-service
+    ports:
+      - "5004:5004"
+    volumes:
+      - ./services/locationManagement:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=production
+      - MONGODB_URI=mongodb+srv://shavinka:12345@cluster0.tmj36kj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+      - PORT=5004
+      - FRONTEND_URL=http://localhost
+      - AUTH_SERVICE_URL=http://auth-service:3001
+      - WORK_ORDER_SERVICE_URL=http://workorder-service:3012
+    depends_on:
+      - auth-service
+    networks:
+      - confine-network
+
+  workorder-service:
+    build:
+      context: ./services/workOrderManagement
+      dockerfile: Dockerfile
+    container_name: confine-workorder-service
+    ports:
+      - "3012:3012"
+    volumes:
+      - ./services/workOrderManagement:/app
+      - /app/node_modules
+      - workorder-uploads:/app/uploads
+    environment:
+      - NODE_ENV=production
+      - MONGODB_URI=mongodb+srv://shavinka:12345@cluster0.tmj36kj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+      - PORT=3012
+      - JWT_SECRET=your_super_secret_jwt_key_here_change_in_production
+      - JWT_EXPIRES_IN=7d
+      - CLIENT_URL=http://localhost
+      - UPLOAD_PATH=./uploads
+    networks:
+      - confine-network
+
+networks:
+  confine-network:
+    driver: bridge
+
+volumes:
+  workorder-uploads:

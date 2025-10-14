@@ -170,11 +170,28 @@ export const updateUser = async (req, res) => {
     const { firstName, lastName, email, role, isActive, password } = req.body;
     const { id } = req.params;
 
-    // Only admin can change roles - managers can update other fields
-    if (role && req.user.role !== 'admin') {
+    // Get current user data to check for role changes
+    const currentUser = await User.findById(id);
+    if (!currentUser) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    // Admin and Manager can change roles - check if role is actually changing
+    if (role && role !== currentUser.role && !['admin', 'manager'].includes(req.user.role)) {
       return res.status(403).json({
         success: false,
-        message: 'Only administrators can change user roles'
+        message: 'Only administrators and managers can change user roles'
+      });
+    }
+
+    // Managers cannot assign admin role
+    if (req.user.role === 'manager' && role === 'admin') {
+      return res.status(403).json({
+        success: false,
+        message: 'Managers cannot assign administrator role'
       });
     }
 
@@ -308,11 +325,19 @@ export const changeUserRole = async (req, res) => {
     const { id } = req.params;
     const { role } = req.body;
 
-    // Only admin can change roles
-    if (req.user.role !== 'admin') {
+    // Admin and Manager can change roles
+    if (!['admin', 'manager'].includes(req.user.role)) {
       return res.status(403).json({
         success: false,
-        message: 'Only administrators can change user roles'
+        message: 'Only administrators and managers can change user roles'
+      });
+    }
+
+    // Managers cannot assign admin role
+    if (req.user.role === 'manager' && role === 'admin') {
+      return res.status(403).json({
+        success: false,
+        message: 'Managers cannot assign administrator role'
       });
     }
 
@@ -356,11 +381,11 @@ export const toggleUserStatus = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Only admin can toggle user status
-    if (req.user.role !== 'admin') {
+    // Admin and Manager can toggle user status
+    if (!['admin', 'manager'].includes(req.user.role)) {
       return res.status(403).json({
         success: false,
-        message: 'Only administrators can change user status'
+        message: 'Only administrators and managers can change user status'
       });
     }
 

@@ -24,8 +24,10 @@ router.post('/', authorize('admin', 'manager'), createUser);
 router.put('/:id', authorize('admin', 'manager'), updateUser);
 router.delete('/:id', authorize('admin', 'manager'), deleteUser);
 
-// Admin only routes - Only admins can change roles and toggle status
-router.put('/:id/role', authorize('admin'), changeUserRole);
-router.put('/:id/toggle-status', authorize('admin'), toggleUserStatus);
+// Admin and Manager routes - Both can change roles
+router.put('/:id/role', authorize('admin', 'manager'), changeUserRole);
+
+// Admin and Manager routes - Both can toggle user status
+router.put('/:id/toggle-status', authorize('admin', 'manager'), toggleUserStatus);
 
 export default router;

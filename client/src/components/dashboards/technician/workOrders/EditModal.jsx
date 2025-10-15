@@ -31,6 +31,8 @@ const EditModal = ({
 }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeSection, setActiveSection] = useState('basic');
+  const [uploadingImages, setUploadingImages] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState({});
 
   if (!showEditModal || !editingForm) return null;
 
@@ -57,10 +59,118 @@ const EditModal = ({
     }));
   };
 
+  // Image upload functionality
+  const handleFileSelect = async (event) => {
+    const files = Array.from(event.target.files);
+    if (files.length === 0) return;
+
+    setUploadingImages(true);
+    console.log('Starting upload of', files.length, 'files');
+
+    try {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        if (file.type.startsWith('image/')) {
+          setUploadProgress(prev => ({
+            ...prev,
+            [file.name]: { status: 'uploading', progress: 0 }
+          }));
+          
+          await handleImageUpload(file);
+          
+          setUploadProgress(prev => ({
+            ...prev,
+            [file.name]: { status: 'completed', progress: 100 }
+          }));
+        }
+      }
+    } catch (error) {
+      console.error('Error during file upload:', error);
+    } finally {
+      setUploadingImages(false);
+      setUploadProgress({});
+      // Reset file input
+      event.target.value = '';
+    }
+  };
+
+  const handleImageUpload = async (file) => {
+    try {
+      const token = localStorage.getItem('token');
+      
+      if (!token) {
+        throw new Error('Authentication required. Please log in again.');
+      }
+
+      console.log('Uploading image:', file.name, 'for work order:', editingForm._id || editingForm.id);
+      
+      const formData = new FormData();
+      formData.append('image', file);
+      formData.append('orderId', editingForm._id || editingForm.id || `temp-${Date.now()}`);
+      
+      const response = await fetch('http://localhost:3012/api/upload-image', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formData
+      });
+      
+      const responseText = await response.text();
+      console.log('Upload response status:', response.status);
+      console.log('Upload response text:', responseText);
+      
+      if (!response.ok) {
+        let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+        try {
+          const errorData = JSON.parse(responseText);
+          errorMessage = errorData.message || errorMessage;
+        } catch (parseError) {
+          console.error('Could not parse error response as JSON:', parseError);
+        }
+        throw new Error(errorMessage);
+      }
+      
+      const result = JSON.parse(responseText);
+      console.log('Upload successful:', result);
+      
+      // Add the new image URL to the editing form
+      const currentImages = editingForm.imageUrls || [];
+      const updatedImages = [...currentImages, result.imageUrl];
+      
+      console.log('Updating imageUrls from', currentImages.length, 'to', updatedImages.length);
+      
+      setEditingForm(prev => ({
+        ...prev,
+        imageUrls: updatedImages
+      }));
+      
+      return result;
+      
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      alert(`Failed to upload image ${file.name}: ${error.message}`);
+      throw error;
+    }
+  };
+
+  const removeImage = (index) => {
+    const currentImages = editingForm.imageUrls || [];
+    const updatedImages = currentImages.filter((_, i) => i !== index);
+    
+    console.log('Removing image at index', index, 'from', currentImages.length, 'images');
+    
+    setEditingForm(prev => ({
+      ...prev,
+      imageUrls: updatedImages
+    }));
+  };
+
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
-      await handleUpdateForm();
+      // Ensure we pass the updated form data
+      await handleUpdateForm(editingForm);
     } catch (error) {
       console.error('Error updating form:', error);
     } finally {
@@ -849,46 +959,137 @@ const EditModal = ({
 
                 {/* Add New Images */}
                 <div>
-                  <label className="block text-sm font-bold text-gray-800 mb-4">Add New Images</label>
+                  <label className="block text-sm font-bold text-gray-800 mb-4">
+                    Add New Images
+                    {uploadingImages && (
+                      <span className="ml-2 text-blue-600 text-xs">
+                        (Uploading...)
+                      </span>
+                    )}
+                  </label>
+                  
                   <div className="border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center hover:border-[#232249] transition-all duration-300">
                     <Camera className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-600 mb-4">Drag and drop images here, or click to select</p>
+                    <p className="text-gray-600 mb-4">
+                      {uploadingImages ? 'Uploading images to server...' : 'Drag and drop images here, or click to select'}
+                    </p>
+                    
                     <input
                       type="file"
                       multiple
                       accept="image/*"
-                      onChange={(e) => {
-                        const files = Array.from(e.target.files);
-                        console.log('Selected files:', files.length);
-                        
-                        files.forEach(file => {
-                          const reader = new FileReader();
-                          reader.onload = (event) => {
-                            console.log('File loaded:', file.name);
-                            const currentImages = editingForm.imageUrls || [];
-                            const newImages = [...currentImages, event.target.result];
-                            console.log('Updated images array:', newImages.length);
-                            
-                            // Update imageUrls field
-                            setEditingForm(prev => ({
-                              ...prev, 
-                              imageUrls: newImages
-                            }));
-                          };
-                          reader.readAsDataURL(file);
-                        });
-                      }}
+                      onChange={handleFileSelect}
                       className="hidden"
                       id="image-upload"
+                      disabled={uploadingImages}
                     />
+                    
                     <label
                       htmlFor="image-upload"
-                      className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#232249] to-[#232249]/90 text-white rounded-xl hover:shadow-lg transition-all duration-300 cursor-pointer transform hover:-translate-y-0.5"
+                      className={`inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#232249] to-[#232249]/90 text-white rounded-xl hover:shadow-lg transition-all duration-300 cursor-pointer transform hover:-translate-y-0.5 ${
+                        uploadingImages ? 'opacity-50 cursor-not-allowed' : ''
+                      }`}
                     >
-                      <Upload className="h-4 w-4" />
-                      Select Images
+                      {uploadingImages ? (
+                        <>
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                          Uploading...
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="h-4 w-4" />
+                          Select Images
+                        </>
+                      )}
                     </label>
                   </div>
+                  
+                  {/* Upload Progress */}
+                  {Object.keys(uploadProgress).length > 0 && (
+                    <div className="mt-4 space-y-2">
+                      {Object.entries(uploadProgress).map(([fileName, progress]) => (
+                        <div key={fileName} className="bg-gray-50 rounded-lg p-3">
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-gray-700 truncate">{fileName}</span>
+                            <span className="text-blue-600">{progress.status}</span>
+                          </div>
+                          <div className="mt-1 w-full bg-gray-200 rounded-full h-2">
+                            <div 
+                              className={`h-2 rounded-full transition-all duration-300 ${
+                                progress.status === 'completed' ? 'bg-green-500' : 'bg-blue-500'
+                              }`}
+                              style={{ width: `${progress.progress}%` }}
+                            ></div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Current Images Display */}
+                {editingForm.imageUrls && editingForm.imageUrls.length > 0 && (
+                  <div>
+                    <label className="block text-sm font-bold text-gray-800 mb-4">
+                      Current Images ({editingForm.imageUrls.length})
+                    </label>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      {editingForm.imageUrls.map((imageUrl, index) => (
+                        <div key={`image-${index}`} className="relative group">
+                          <div className="aspect-square rounded-xl overflow-hidden bg-gray-100 shadow-lg border border-gray-200">
+                            <img
+                              src={imageUrl}
+                              alt={`Work order image ${index + 1}`}
+                              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                              onError={(e) => {
+                                console.log(`Failed to load image ${index + 1}:`, imageUrl);
+                                e.target.style.display = 'none';
+                                e.target.nextSibling.style.display = 'flex';
+                              }}
+                            />
+                            <div className="w-full h-full bg-gray-200 hidden items-center justify-center text-gray-500 text-sm">
+                              Image not available
+                            </div>
+                          </div>
+                          
+                          <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 rounded-xl transition-all flex items-center justify-center opacity-0 group-hover:opacity-100">
+                            <div className="flex space-x-2">
+                              <button
+                                onClick={() => window.open(imageUrl, '_blank')}
+                                className="bg-white rounded-full p-2 shadow-lg hover:shadow-xl transition-all"
+                                title="View Image"
+                              >
+                                <Eye className="h-4 w-4 text-gray-700" />
+                              </button>
+                              <button
+                                onClick={() => removeImage(index)}
+                                className="bg-red-500 rounded-full p-2 shadow-lg hover:shadow-xl transition-all"
+                                title="Remove Image"
+                              >
+                                <Trash2 className="h-4 w-4 text-white" />
+                              </button>
+                            </div>
+                          </div>
+                          
+                          <div className="absolute bottom-2 left-2 bg-black bg-opacity-60 text-white text-xs px-2 py-1 rounded-lg">
+                            {index + 1}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Upload Guidelines */}
+                <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                  <h5 className="font-medium text-blue-800 mb-2">Image Upload Guidelines:</h5>
+                  <ul className="text-sm text-blue-700 space-y-1">
+                    <li>• Images are uploaded to secure cloud storage</li>
+                    <li>• Supported formats: JPG, PNG, GIF, WebP</li>
+                    <li>• Maximum file size: 10MB per image</li>
+                    <li>• You can upload multiple images at once</li>
+                    <li>• Images are automatically saved with the work order</li>
+                  </ul>
                 </div>
 
                 {/* Debug Information (remove in production) */}

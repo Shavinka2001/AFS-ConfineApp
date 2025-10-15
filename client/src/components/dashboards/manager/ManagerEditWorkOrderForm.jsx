@@ -36,6 +36,8 @@ const ManagerEditWorkOrderForm = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeSection, setActiveSection] = useState('basic');
   const [submitError, setSubmitError] = useState('');
+  const [uploadingImages, setUploadingImages] = useState(false);
+  const [selectedFiles, setSelectedFiles] = useState([]);
 
   if (!showEditModal || !editingOrder) return null;
 
@@ -60,6 +62,81 @@ const ManagerEditWorkOrderForm = ({
       ...editingOrder,
       [field]: value === 'yes'
     });
+  };
+
+  // Image upload functionality
+  const handleFileSelect = (event) => {
+    const files = Array.from(event.target.files);
+    setSelectedFiles(files);
+    
+    // Upload each file
+    files.forEach(file => {
+      if (file.type.startsWith('image/')) {
+        handleImageUpload(file);
+      }
+    });
+    
+    // Reset file input
+    event.target.value = '';
+  };
+
+  const handleImageUpload = async (file) => {
+    setUploadingImages(true);
+    
+    try {
+      const token = localStorage.getItem('token');
+      
+      const formData = new FormData();
+      formData.append('image', file);
+      formData.append('orderId', editingOrder._id || editingOrder.id);
+      
+      const response = await fetch('http://localhost:3012/api/upload-image', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formData
+      });
+      
+      const responseText = await response.text();
+      
+      if (!response.ok) {
+        let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+        try {
+          const errorData = JSON.parse(responseText);
+          errorMessage = errorData.message || errorMessage;
+        } catch (parseError) {
+          console.error('Could not parse error response as JSON:', parseError);
+        }
+        throw new Error(errorMessage);
+      }
+      
+      const result = JSON.parse(responseText);
+      
+      // Add the new image URL to the editing order
+      const currentImages = editingOrder.imageUrls || editingOrder.images || [];
+      setEditingOrder(prev => ({
+        ...prev,
+        imageUrls: [...currentImages, result.imageUrl],
+        images: [...currentImages, result.imageUrl]  // Support both field names
+      }));
+      
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      alert(`Failed to upload image: ${error.message}`);
+    } finally {
+      setUploadingImages(false);
+    }
+  };
+
+  const removeImage = (index) => {
+    const currentImages = editingOrder.imageUrls || editingOrder.images || [];
+    const updatedImages = currentImages.filter((_, i) => i !== index);
+    setEditingOrder(prev => ({
+      ...prev,
+      imageUrls: updatedImages,
+      images: updatedImages  // Support both field names
+    }));
   };
 
   const handleSubmit = async () => {
@@ -907,11 +984,7 @@ const ManagerEditWorkOrderForm = ({
                           />
                           <button 
                             type="button"
-                            onClick={() => {
-                              const images = [...(editingOrder.images || editingOrder.imageUrls || [])];
-                              images.splice(index, 1);
-                              handleInputChange(editingOrder.images ? 'images' : 'imageUrls', images);
-                            }}
+                            onClick={() => removeImage(index)}
                             className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full hover:bg-red-600 transition-colors"
                           >
                             <Trash2 className="h-4 w-4" />
@@ -919,23 +992,51 @@ const ManagerEditWorkOrderForm = ({
                         </div>
                       ))}
 
-                      <div className="border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center p-4 h-32">
-                        <div className="text-center">
-                          <Plus className="h-8 w-8 text-gray-400 mx-auto mb-1" />
-                          <span className="text-sm text-gray-500">Add Image</span>
-                        </div>
+                      {/* Upload Button */}
+                      <div className="border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center p-4 h-32 hover:border-blue-400 hover:bg-blue-50 transition-colors cursor-pointer">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          multiple
+                          onChange={handleFileSelect}
+                          className="hidden"
+                          id="manager-image-upload"
+                          disabled={uploadingImages}
+                        />
+                        <label 
+                          htmlFor="manager-image-upload"
+                          className={`text-center cursor-pointer ${uploadingImages ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        >
+                          {uploadingImages ? (
+                            <div className="text-center">
+                              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-1"></div>
+                              <span className="text-sm text-blue-600">Uploading...</span>
+                            </div>
+                          ) : (
+                            <div className="text-center">
+                              <Plus className="h-8 w-8 text-gray-400 mx-auto mb-1" />
+                              <span className="text-sm text-gray-500">Add Image</span>
+                            </div>
+                          )}
+                        </label>
                       </div>
                     </div>
                   </div>
 
-                  {/* File Upload Note */}
-                  <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200 text-yellow-800">
+                  {/* Upload Instructions */}
+                  <div className="bg-blue-50 p-4 rounded-lg border border-blue-200 text-blue-800">
                     <div className="flex">
                       <Info className="h-5 w-5 mr-2 flex-shrink-0" />
-                      <p className="text-sm">
-                        Note: Image upload functionality is not available in the edit modal. 
-                        To add new images, please use the upload button in the main work order view.
-                      </p>
+                      <div className="text-sm">
+                        <p className="font-medium mb-1">Image Upload Guidelines:</p>
+                        <ul className="list-disc list-inside space-y-1">
+                          <li>Click "Add Image" to upload new photos</li>
+                          <li>Supported formats: JPG, PNG, GIF, WebP</li>
+                          <li>Maximum file size: 10MB per image</li>
+                          <li>You can upload multiple images at once</li>
+                          <li>Click the trash icon to remove images</li>
+                        </ul>
+                      </div>
                     </div>
                   </div>
                 </div>

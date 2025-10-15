@@ -300,24 +300,55 @@ const TechnicianWorkOrders = () => {
     setEditingForm(null);
   };
 
-  const handleUpdateForm = () => {
-    if (editingForm) {
-      const updatedForms = inspectionForms.map(form => 
-        form.id === editingForm.id 
-          ? { ...editingForm, lastModified: new Date().toISOString() }
-          : form
-      );
-      
-      setInspectionForms(updatedForms);
-      
-      // Save to localStorage
-      try {
-        localStorage.setItem('inspectionForms', JSON.stringify(updatedForms));
-      } catch (err) {
-        console.error('Failed to save to localStorage:', err);
+  const handleUpdateForm = async (updatedFormData) => {
+    if (!updatedFormData) {
+      console.error('No form data provided for update');
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('Authentication required');
       }
+
+      console.log('Updating work order:', updatedFormData);
+
+      // Call the API to update the work order in MongoDB (correct parameter order)
+      const response = await workOrderAPI.updateWorkOrder(token, updatedFormData.id, updatedFormData);
       
-      closeEditModal();
+      if (response.success) {
+        console.log('Work order updated successfully:', response.data);
+        
+        // Update local state with the updated data from server
+        const updatedForms = inspectionForms.map(form => 
+          form.id === updatedFormData.id 
+            ? { ...response.data, lastModified: new Date().toISOString() }
+            : form
+        );
+        
+        setInspectionForms(updatedForms);
+        setFilteredForms(updatedForms.filter(form => {
+          const matchesSearch = !searchTerm || 
+            form.spaceName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            form.building?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            form.location?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            form.technician?.toLowerCase().includes(searchTerm.toLowerCase());
+          
+          const matchesStatus = !statusFilter || form.status === statusFilter;
+          const matchesPriority = !priorityFilter || form.priority === priorityFilter;
+          
+          return matchesSearch && matchesStatus && matchesPriority;
+        }));
+        
+        closeEditModal();
+      } else {
+        throw new Error(response.message || 'Failed to update work order');
+      }
+    } catch (error) {
+      console.error('Error updating work order:', error);
+      setError(error.message || 'Failed to update work order');
+      // Don't close the modal on error so user can retry
     }
   };
 

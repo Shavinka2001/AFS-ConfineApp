@@ -23,10 +23,15 @@ import {
   Plus,
   Wrench,
   Activity,
-  BarChart3
+  BarChart3,
+  Upload
 } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
 import ManagerWorkOrdersTable from './ManagerWorkOrdersTable';
+import CSVImportModal from '../../ui/CSVImportModal';
+import workOrderAPI from '../../../services/workOrderAPI';
+import errorHandler from '../../../utils/errorHandler';
+import { Toaster } from 'react-hot-toast';
 
 // Consolidated PDF Generator - Groups similar confined spaces into single reports
 const consolidateEntriesLocal = (entries) => {
@@ -168,19 +173,6 @@ const consolidateGroupLocal = (group) => {
   return consolidated;
 };
 
-// Import API service
-import workOrderAPI, { 
-  WORK_ORDER_STATUSES, 
-  WORK_ORDER_PRIORITIES,
-  getStatusColor,
-  getPriorityColor,
-  formatDate,
-  formatDateTime,
-  formatWorkOrderId
-} from '../../../services/workOrderAPI';
-import { errorHandler, debounce } from '../../../utils/errorHandler';
-import { Toaster } from 'react-hot-toast';
-
 const ManagerWorkOrders = () => {
   const { user } = useAuth();
   
@@ -199,6 +191,10 @@ const ManagerWorkOrders = () => {
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [downloadingPdf, setDownloadingPdf] = useState(null);
+  
+  // State for CSV import
+  const [showImportModal, setShowImportModal] = useState(false);
+  const [importing, setImporting] = useState(false);
 
   // State for pagination and advanced filters
   const [currentPage, setCurrentPage] = useState(1);
@@ -486,7 +482,8 @@ const ManagerWorkOrders = () => {
       'Work Order ID',
       'Space Name',
       'Building',
-      'Location',
+      'Location Description',
+      'Confined Space Description',
       'Technician',
       'Priority',
       'Status',
@@ -494,13 +491,24 @@ const ManagerWorkOrders = () => {
       'Created Date',
       'Confined Space',
       'Permit Required',
+      'Entry Requirements',
       'Atmospheric Hazard',
+      'Atmospheric Hazard Description',
       'Engulfment Hazard',
+      'Engulfment Hazard Description',
       'Configuration Hazard',
+      'Configuration Hazard Description',
       'Other Hazards',
+      'Other Hazards Description',
       'PPE Required',
+      'PPE List',
+      'Forced Air Ventilation Sufficient',
       'Air Monitor Required',
       'Warning Sign Posted',
+      'Number of Entry Points',
+      'Other People Working Near Space',
+      'Can Others See Into Space',
+      'Contractors Enter Space',
       'Images',
       'Notes'
     ].join(',');
@@ -510,6 +518,7 @@ const ManagerWorkOrders = () => {
       `"${order.spaceName || ''}"`,
       `"${order.building || ''}"`,
       `"${order.locationDescription || ''}"`,
+      `"${order.confinedSpaceDescription || ''}"`,
       `"${order.technician || ''}"`,
       `"${order.priority || ''}"`,
       `"${order.status || ''}"`,
@@ -517,13 +526,24 @@ const ManagerWorkOrders = () => {
       `"${order.createdAt ? formatDate(order.createdAt) : ''}"`,
       `"${order.isConfinedSpace ? 'Yes' : 'No'}"`,
       `"${order.permitRequired ? 'Yes' : 'No'}"`,
+      `"${order.entryRequirements || ''}"`,
       `"${order.atmosphericHazard ? 'Yes' : 'No'}"`,
+      `"${order.atmosphericHazardDescription || ''}"`,
       `"${order.engulfmentHazard ? 'Yes' : 'No'}"`,
+      `"${order.engulfmentHazardDescription || ''}"`,
       `"${order.configurationHazard ? 'Yes' : 'No'}"`,
+      `"${order.configurationHazardDescription || ''}"`,
       `"${order.otherRecognizedHazards ? 'Yes' : 'No'}"`,
+      `"${order.otherHazardsDescription || ''}"`,
       `"${order.ppeRequired ? 'Yes' : 'No'}"`,
+      `"${order.ppeList || ''}"`,
+      `"${order.forcedAirVentilationSufficient ? 'Yes' : 'No'}"`,
       `"${order.dedicatedAirMonitor ? 'Yes' : 'No'}"`,
       `"${order.warningSignPosted ? 'Yes' : 'No'}"`,
+      `"${order.numberOfEntryPoints || ''}"`,
+      `"${order.otherPeopleWorkingNearSpace ? 'Yes' : 'No'}"`,
+      `"${order.canOthersSeeIntoSpace ? 'Yes' : 'No'}"`,
+      `"${order.contractorsEnterSpace ? 'Yes' : 'No'}"`,
       `"${(order.imageUrls && order.imageUrls.length > 0) ? order.imageUrls.join('; ') : ''}"`,
       `"${(order.notes || '').replace(/"/g, '""')}"`
     ].join(','));
@@ -649,6 +669,49 @@ const ManagerWorkOrders = () => {
       errorHandler.handleError(error, `Failed to perform bulk ${action}`);
     } finally {
       setBulkActionLoading(false);
+    }
+  };
+
+  // Handle Bulk Import
+  const handleBulkImport = async (csvData) => {
+    setImporting(true);
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('Authentication required');
+      }
+
+      console.log(`Importing ${csvData.length} work orders from CSV`);
+      console.log('CSV Data preview:', csvData.slice(0, 2)); // Log first 2 rows for debugging
+      
+      const result = await workOrderAPI.bulkImportOrders(token, csvData);
+      
+      if (result.success) {
+        console.log('Bulk import successful:', result);
+        
+        // Clear any existing errors
+        setError(null);
+        
+        // Refresh the data to show newly imported orders
+        console.log('Refreshing data after successful import...');
+        await fetchWorkOrders();
+        await fetchStats();
+        
+        // Show success message
+        if (result.data?.results) {
+          const { successful, failed, total } = result.data.results;
+          console.log(`Import completed: ${successful}/${total} successful, ${failed} failed`);
+        }
+        
+        return result;
+      } else {
+        throw new Error(result.message || 'Import failed');
+      }
+    } catch (error) {
+      console.error('Error in bulk import:', error);
+      throw error;
+    } finally {
+      setImporting(false);
     }
   };
 
@@ -904,6 +967,13 @@ const ManagerWorkOrders = () => {
               <span className="font-semibold text-[#232249]">{filteredOrders.length}</span>
             </div>
             <div className="flex items-center gap-3">
+              <button
+                onClick={() => setShowImportModal(true)}
+                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-purple-700 hover:bg-purple-50 rounded-lg transition-colors"
+              >
+                <Upload className="w-4 h-4" />
+                Import CSV
+              </button>
               <button
                 onClick={handleExportToCSV}
                 className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-[#232249] hover:bg-gray-50 rounded-lg transition-colors"
@@ -1181,6 +1251,14 @@ const ManagerWorkOrders = () => {
             </div>
           </div>
         )}
+
+        {/* CSV Import Modal */}
+        <CSVImportModal
+          isOpen={showImportModal}
+          onClose={() => setShowImportModal(false)}
+          onImport={handleBulkImport}
+          isLoading={importing}
+        />
       </div>
     </div>
   );

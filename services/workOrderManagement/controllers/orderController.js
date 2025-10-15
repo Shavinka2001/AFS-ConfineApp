@@ -2,6 +2,32 @@ const Order = require('../models/Order');
 const { validationResult } = require('express-validator');
 const moment = require('moment');
 
+// Helper functions for CSV parsing
+function validatePriority(priority) {
+  const validPriorities = ['low', 'medium', 'high', 'critical'];
+  return validPriorities.includes(priority?.toLowerCase()) ? priority.toLowerCase() : null;
+}
+
+function validateStatus(status) {
+  const validStatuses = ['draft', 'pending', 'approved', 'in-progress', 'completed', 'cancelled', 'on-hold'];
+  return validStatuses.includes(status?.toLowerCase()) ? status.toLowerCase() : null;
+}
+
+function parseDate(dateString) {
+  if (!dateString) return null;
+  
+  const date = new Date(dateString);
+  return isNaN(date.getTime()) ? null : date;
+}
+
+function parseBoolean(value) {
+  if (typeof value === 'boolean') return value;
+  if (typeof value === 'string') {
+    return ['yes', 'true', '1', 'y'].includes(value.toLowerCase());
+  }
+  return false;
+}
+
 class OrderController {
   // Get all orders for a user with filtering and pagination
   async getOrders(req, res) {
@@ -781,6 +807,160 @@ class OrderController {
       res.status(500).json({
         success: false,
         message: 'Failed to delete all work orders',
+        error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      });
+    }
+  }
+
+  // Bulk import orders from CSV data
+  async bulkImportOrders(req, res) {
+    try {
+      const { csvData } = req.body;
+      const userId = req.user.id;
+      const userRole = req.user.role;
+
+      // Check permissions
+      if (!['admin', 'manager'].includes(userRole)) {
+        return res.status(403).json({
+          success: false,
+          message: 'Only admins and managers can bulk import work orders'
+        });
+      }
+
+      if (!csvData || !Array.isArray(csvData) || csvData.length === 0) {
+        return res.status(400).json({
+          success: false,
+          message: 'No CSV data provided'
+        });
+      }
+
+      console.log(`User ${userId} (${userRole}) importing ${csvData.length} work orders`);
+      console.log('Sample CSV data:', csvData[0]); // Log first row for debugging
+
+      const results = {
+        total: csvData.length,
+        successful: 0,
+        failed: 0,
+        errors: []
+      };
+
+      const successfulOrders = [];
+
+      // Process each row
+      for (let i = 0; i < csvData.length; i++) {
+        try {
+          const row = csvData[i];
+          console.log(`Processing row ${i + 1}:`, row);
+          
+          // Validate that required fields are not empty
+          if (!row.spaceName || row.spaceName.trim() === '') {
+            throw new Error(`Row ${i + 1}: Space Name is required and cannot be empty`);
+          }
+          if (!row.building || row.building.trim() === '') {
+            throw new Error(`Row ${i + 1}: Building is required and cannot be empty`);
+          }
+          if (!row.technician || row.technician.trim() === '') {
+            throw new Error(`Row ${i + 1}: Technician is required and cannot be empty`);
+          }
+          
+          // Map CSV fields to order object
+          const orderData = {
+            userId: userId,
+            createdBy: userId,
+            workOrderId: row.workOrderId || undefined, // Let the system generate if empty
+            spaceName: row.spaceName || '',
+            building: row.building || '',
+            locationDescription: row.locationDescription || '',
+            confinedSpaceDescription: row.confinedSpaceDescription || '',
+            technician: row.technician || '',
+            priority: validatePriority(row.priority) || 'medium',
+            status: validateStatus(row.status) || 'draft',
+            surveyDate: parseDate(row.surveyDate) || new Date(),
+            
+            // Space Classification
+            isConfinedSpace: parseBoolean(row.isConfinedSpace),
+            permitRequired: parseBoolean(row.permitRequired),
+            entryRequirements: row.entryRequirements || '',
+            
+            // Hazard Assessment
+            atmosphericHazard: parseBoolean(row.atmosphericHazard),
+            atmosphericHazardDescription: row.atmosphericHazardDescription || '',
+            engulfmentHazard: parseBoolean(row.engulfmentHazard),
+            engulfmentHazardDescription: row.engulfmentHazardDescription || '',
+            configurationHazard: parseBoolean(row.configurationHazard),
+            configurationHazardDescription: row.configurationHazardDescription || '',
+            otherRecognizedHazards: parseBoolean(row.otherRecognizedHazards),
+            otherHazardsDescription: row.otherHazardsDescription || '',
+            
+            // Safety Requirements
+            ppeRequired: parseBoolean(row.ppeRequired),
+            ppeList: row.ppeList || '',
+            forcedAirVentilationSufficient: parseBoolean(row.forcedAirVentilationSufficient),
+            dedicatedAirMonitor: parseBoolean(row.dedicatedAirMonitor),
+            warningSignPosted: parseBoolean(row.warningSignPosted),
+            
+            // Entry Points and Access
+            numberOfEntryPoints: row.numberOfEntryPoints ? Math.min(parseInt(row.numberOfEntryPoints) || 0, 20) : undefined,
+            
+            // Personnel and Access
+            otherPeopleWorkingNearSpace: parseBoolean(row.otherPeopleWorkingNearSpace),
+            canOthersSeeIntoSpace: parseBoolean(row.canOthersSeeIntoSpace),
+            contractorsEnterSpace: parseBoolean(row.contractorsEnterSpace),
+            
+            // Additional Information
+            notes: row.notes || '',
+            
+            // Parse images if provided
+            imageUrls: row.images ? row.images.split(';').map(url => url.trim()).filter(url => url) : []
+          };
+
+          console.log(`Mapped order data for row ${i + 1}:`, orderData);
+
+          // Validate required fields
+          if (!orderData.spaceName || !orderData.building || !orderData.technician) {
+            throw new Error(`Row ${i + 1}: Missing required fields (spaceName, building, or technician)`);
+          }
+
+          // Create the order
+          const order = new Order(orderData);
+          const savedOrder = await order.save();
+          console.log(`Successfully saved order ${i + 1}:`, savedOrder.workOrderId);
+          
+          successfulOrders.push(savedOrder);
+          results.successful++;
+
+        } catch (error) {
+          results.failed++;
+          results.errors.push({
+            row: i + 1,
+            error: error.message
+          });
+          console.error(`Error importing row ${i + 1}:`, error.message);
+        }
+      }
+
+      console.log(`Bulk import completed: ${results.successful} successful, ${results.failed} failed`);
+
+      res.status(200).json({
+        success: true,
+        message: `Bulk import completed: ${results.successful} orders imported successfully, ${results.failed} failed`,
+        data: {
+          results,
+          importedOrders: successfulOrders.map(order => ({
+            id: order._id,
+            workOrderId: order.workOrderId,
+            spaceName: order.spaceName,
+            building: order.building,
+            status: order.status
+          }))
+        }
+      });
+
+    } catch (error) {
+      console.error('Error in bulk import:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to import work orders',
         error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
       });
     }

@@ -144,6 +144,12 @@ router.post('/bulk/status',
   asyncHandler(orderController.bulkUpdateStatus)
 );
 
+// POST /api/orders/bulk/import - Bulk import from CSV
+router.post('/bulk/import',
+  authMiddleware.requireRole('admin', 'manager'),
+  asyncHandler(orderController.bulkImportOrders)
+);
+
 // DELETE /api/orders/:id - Delete order
 router.delete('/:id', 
   orderIdValidation,

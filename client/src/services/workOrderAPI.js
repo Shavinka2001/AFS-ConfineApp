@@ -277,6 +277,17 @@ class WorkOrderAPI {
     return this.handleResponse(response);
   }
 
+  // Bulk import work orders from CSV data
+  async bulkImportOrders(token, csvData) {
+    const response = await fetch(`${this.baseURL}/orders/bulk/import`, {
+      method: 'POST',
+      headers: this.getAuthHeaders(token),
+      body: JSON.stringify({ csvData })
+    });
+
+    return this.handleResponse(response);
+  }
+
   // Upload work order documents/images
   async uploadFiles(token, workOrderId, files) {
     const formData = new FormData();

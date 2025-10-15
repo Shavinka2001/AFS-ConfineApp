@@ -54,7 +54,12 @@ export const register = async (req, res) => {
       'success'
     );
 
-    const token = generateToken(user._id, user.role);
+    const token = generateToken(user._id, user.role, {
+      email: user.email || '',
+      firstName: user.firstName || '',
+      lastName: user.lastName || '',
+      role: user.role || 'user'
+    });
 
     res.status(201).json({
       success: true,
@@ -151,7 +156,12 @@ export const login = async (req, res) => {
       'success'
     );
 
-    const token = generateToken(user._id, user.role);
+    const token = generateToken(user._id, user.role, {
+      email: user.email || '',
+      firstName: user.firstName || '',
+      lastName: user.lastName || '',
+      role: user.role || 'user'
+    });
 
     res.json({
       success: true,

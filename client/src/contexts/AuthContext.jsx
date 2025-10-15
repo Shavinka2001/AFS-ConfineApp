@@ -129,6 +129,17 @@ export const AuthProvider = ({ children }) => {
       
       const { user, token } = response.data.data;
 
+      // Log token payload for debugging
+      try {
+        const tokenParts = token.split('.');
+        if (tokenParts.length === 3) {
+          const payload = JSON.parse(atob(tokenParts[1]));
+          console.log('Login: Token payload received:', payload);
+        }
+      } catch (e) {
+        console.warn('Could not decode token for debugging:', e);
+      }
+
       // Store new auth data
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(user));

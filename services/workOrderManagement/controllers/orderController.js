@@ -717,6 +717,74 @@ class OrderController {
       });
     }
   }
+
+  // Delete all orders (Admin/Manager only)
+  async deleteAllOrders(req, res) {
+    try {
+      const { confirmPhrase } = req.body;
+      const userRole = req.user.role;
+      
+      // Security check: Only admin and manager can delete all orders
+      if (!['admin', 'manager'].includes(userRole)) {
+        return res.status(403).json({
+          success: false,
+          message: 'Access denied. Only administrators and managers can delete all work orders.'
+        });
+      }
+
+      // Verify confirmation phrase
+      const requiredPhrase = 'DELETE ALL WORK ORDERS';
+      if (!confirmPhrase || confirmPhrase.trim().toUpperCase() !== requiredPhrase) {
+        return res.status(400).json({
+          success: false,
+          message: `Confirmation phrase required. Please type "${requiredPhrase}" exactly to confirm.`
+        });
+      }
+
+      console.log(`${userRole} ${req.user.firstName} ${req.user.lastName} is attempting to delete all work orders`);
+
+      // Get count before deletion for logging
+      const countBeforeDeletion = await Order.countDocuments({});
+      
+      if (countBeforeDeletion === 0) {
+        return res.json({
+          success: true,
+          message: 'No work orders to delete.',
+          data: {
+            deletedCount: 0,
+            totalBefore: 0
+          }
+        });
+      }
+
+      // Perform the deletion
+      const deleteResult = await Order.deleteMany({});
+      
+      console.log(`Successfully deleted ${deleteResult.deletedCount} work orders by ${userRole} ${req.user.firstName} ${req.user.lastName}`);
+      
+      res.json({
+        success: true,
+        message: `Successfully deleted all ${deleteResult.deletedCount} work orders.`,
+        data: {
+          deletedCount: deleteResult.deletedCount,
+          totalBefore: countBeforeDeletion,
+          deletedBy: {
+            role: userRole,
+            name: `${req.user.firstName} ${req.user.lastName}`,
+            email: req.user.email
+          },
+          deletedAt: new Date().toISOString()
+        }
+      });
+    } catch (error) {
+      console.error('Error deleting all orders:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to delete all work orders',
+        error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      });
+    }
+  }
 }
 
 module.exports = new OrderController();

@@ -171,12 +171,15 @@ const ManagerWorkOrdersTable = ({
   onStatusUpdate,
   onDownloadPDF,
   onUpdateOrder,
-  onDeleteOrder
+  onDeleteOrder,
+  onDeleteAllOrders
 }) => {
   const [expandedRows, setExpandedRows] = useState(new Set());
   const [actionMenuOpen, setActionMenuOpen] = useState(null);
   const [editingOrder, setEditingOrder] = useState(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
+  const [deleteAllConfirm, setDeleteAllConfirm] = useState(false);
+  const [deleteAllPhrase, setDeleteAllPhrase] = useState('');
   const [notification, setNotification] = useState(null);
 
   // Auto-hide notification after 6 seconds
@@ -338,6 +341,51 @@ const ManagerWorkOrdersTable = ({
     }
   };
 
+  // Handle Delete All Orders
+  const handleDeleteAllOrders = () => {
+    if (workOrders.length === 0) {
+      setNotification({
+        type: 'error',
+        title: 'No Work Orders to Delete',
+        message: 'There are no work orders available to delete.'
+      });
+      return;
+    }
+    setDeleteAllConfirm(true);
+  };
+
+  const confirmDeleteAll = async () => {
+    const requiredPhrase = 'DELETE ALL WORK ORDERS';
+    
+    if (deleteAllPhrase.trim().toUpperCase() !== requiredPhrase) {
+      setNotification({
+        type: 'error',
+        title: 'Invalid Confirmation',
+        message: `Please type "${requiredPhrase}" exactly to confirm deletion.`
+      });
+      return;
+    }
+
+    try {
+      if (onDeleteAllOrders) {
+        await onDeleteAllOrders(deleteAllPhrase.trim());
+        setDeleteAllConfirm(false);
+        setDeleteAllPhrase('');
+        setNotification({
+          type: 'success',
+          title: 'All Work Orders Deleted',
+          message: `Successfully deleted all ${workOrders.length} work orders.`
+        });
+      }
+    } catch (error) {
+      setNotification({
+        type: 'error',
+        title: 'Delete Failed',
+        message: `Failed to delete all work orders: ${error.message}`
+      });
+    }
+  };
+
   // Normalize data structure to ensure consistent property names
   const normalizedWorkOrders = React.useMemo(() => {
     if (!workOrders || !Array.isArray(workOrders) || workOrders.length === 0) {
@@ -414,6 +462,31 @@ const ManagerWorkOrdersTable = ({
                   Manage and oversee confined space work orders
                 </p>
               </div>
+            </div>
+            
+            {/* Action Buttons */}
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => {
+                  // Handle consolidated PDF download functionality
+                  console.log('Download consolidated PDF for manager');
+                }}
+                className="flex items-center gap-2 px-4 py-2 bg-white/10 text-white rounded-xl hover:bg-white/20 transition-all duration-200 border border-white/20 hover:border-white/40"
+                title="Download Consolidated PDF"
+              >
+                <Download className="w-4 h-4" />
+                <span className="text-sm font-medium">PDF Report</span>
+              </button>
+              
+              <button
+                onClick={handleDeleteAllOrders}
+                className="flex items-center gap-2 px-4 py-2 bg-red-600/80 text-white rounded-xl hover:bg-red-700 transition-all duration-200 border border-red-500/20 hover:border-red-400"
+                title="Delete All Work Orders"
+                disabled={workOrders.length === 0}
+              >
+                <Trash2 className="w-4 h-4" />
+                <span className="text-sm font-medium">Delete All</span>
+              </button>
             </div>
           </div>
         </div>
@@ -680,6 +753,74 @@ const ManagerWorkOrdersTable = ({
                 className="flex-1 px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors"
               >
                 Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete All Confirmation Modal */}
+      {deleteAllConfirm && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="bg-red-100 rounded-full p-4">
+                <AlertTriangle className="w-8 h-8 text-red-600" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-red-800">Delete All Work Orders</h3>
+                <p className="text-sm text-red-600">This action cannot be undone!</p>
+              </div>
+            </div>
+            
+            <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
+              <div className="flex items-start gap-3">
+                <XCircle className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
+                <div className="text-sm text-red-800">
+                  <p className="font-medium mb-2">⚠️ WARNING: This will permanently delete ALL {workOrders.length} work orders!</p>
+                  <ul className="space-y-1 text-xs">
+                    <li>• All assessment data will be lost</li>
+                    <li>• All technician reports will be removed</li>
+                    <li>• All uploaded images and documents will be deleted</li>
+                    <li>• This action affects the entire database</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div className="mb-6">
+              <label className="block text-sm font-bold text-gray-900 mb-2">
+                Type "DELETE ALL WORK ORDERS" to confirm:
+              </label>
+              <input
+                type="text"
+                value={deleteAllPhrase}
+                onChange={(e) => setDeleteAllPhrase(e.target.value)}
+                placeholder="Type the confirmation phrase exactly..."
+                className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
+                autoFocus
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                Case sensitive. Must match exactly.
+              </p>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setDeleteAllConfirm(false);
+                  setDeleteAllPhrase('');
+                }}
+                className="flex-1 px-4 py-3 text-sm font-medium text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDeleteAll}
+                disabled={deleteAllPhrase.trim().toUpperCase() !== 'DELETE ALL WORK ORDERS'}
+                className="flex-1 px-4 py-3 text-sm font-medium text-white bg-red-600 rounded-xl hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+              >
+                DELETE ALL ({workOrders.length})
               </button>
             </div>
           </div>

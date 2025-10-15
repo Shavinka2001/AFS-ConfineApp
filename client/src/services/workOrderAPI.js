@@ -188,6 +188,55 @@ class WorkOrderAPI {
     return this.handleResponse(response);
   }
 
+  // Test authentication endpoint
+  async testAuth(token) {
+    try {
+      const response = await fetch(`${this.baseURL}/orders/test-auth`, {
+        method: 'GET',
+        headers: this.getAuthHeaders(token)
+      });
+
+      return this.handleResponse(response);
+    } catch (error) {
+      console.error('Auth test failed:', error);
+      return { success: false, error: error.message };
+    }
+  }
+
+  // Delete all work orders (Admin/Manager only)
+  async deleteAllWorkOrders(token, confirmPhrase = '') {
+    console.log('deleteAllWorkOrders called with token length:', token?.length);
+    console.log('Confirm phrase:', confirmPhrase);
+    
+    // Decode and log token info for debugging
+    try {
+      const tokenParts = token.split('.');
+      if (tokenParts.length === 3) {
+        const payload = JSON.parse(atob(tokenParts[1]));
+        console.log('Token payload:', payload);
+        console.log('Token payload role:', payload.role);
+        console.log('Token payload role type:', typeof payload.role);
+      }
+    } catch (e) {
+      console.warn('Could not decode token for debugging:', e);
+    }
+    
+    console.log('Making DELETE request to:', `${this.baseURL}/orders/bulk/delete-all`);
+    console.log('Request headers:', this.getAuthHeaders(token));
+    console.log('Request body:', { confirmPhrase });
+    
+    const response = await fetch(`${this.baseURL}/orders/bulk/delete-all`, {
+      method: 'DELETE',
+      headers: this.getAuthHeaders(token),
+      body: JSON.stringify({ confirmPhrase })
+    });
+    
+    console.log('Response status:', response.status);
+    console.log('Response ok:', response.ok);
+
+    return this.handleResponse(response);
+  }
+
   // Get user statistics
   async getUserStats(token) {
     try {

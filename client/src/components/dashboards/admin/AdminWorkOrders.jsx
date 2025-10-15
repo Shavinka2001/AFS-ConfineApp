@@ -759,6 +759,70 @@ const AdminWorkOrders = () => {
     }
   };
 
+  // Handle Delete All Orders
+  const handleDeleteAllOrders = async (confirmPhrase) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('Authentication required');
+      }
+
+      // Debug token info
+      try {
+        const tokenParts = token.split('.');
+        if (tokenParts.length === 3) {
+          const payload = JSON.parse(atob(tokenParts[1]));
+          console.log('DeleteAll: Using token with payload:', payload);
+          console.log('User role from token:', payload.role);
+          console.log('User role from context:', user?.role);
+          console.log('Required roles: admin, manager');
+        }
+      } catch (e) {
+        console.warn('Could not decode token for debugging:', e);
+      }
+
+      // Also check current user context
+      console.log('Current user from context:', user);
+
+      // Test auth first
+      console.log('Testing auth endpoint first...');
+      try {
+        const authTest = await workOrderAPI.testAuth(token);
+        console.log('Auth test result:', authTest);
+      } catch (authError) {
+        console.error('Auth test failed:', authError);
+      }
+      
+      console.log('Attempting to delete all work orders...');
+      const response = await workOrderAPI.deleteAllWorkOrders(token, confirmPhrase);
+      
+      if (response.success) {
+        // Clear all local state
+        setWorkOrders([]);
+        setFilteredOrders([]);
+        calculateStats([]);
+        
+        console.log('Successfully deleted all work orders');
+        setError(null);
+        
+        // Reload data to confirm deletion
+        setTimeout(() => {
+          loadData();
+        }, 1000);
+      } else {
+        throw new Error(response.message || 'Failed to delete all work orders');
+      }
+    } catch (error) {
+      console.error('Error deleting all orders:', error);
+      console.error('Error details:', {
+        name: error.name,
+        message: error.message,
+        stack: error.stack
+      });
+      throw error; // Re-throw to let the table component handle it
+    }
+  };
+
   // Clean Statistics Card Component
   const StatCard = ({ title, value, icon: Icon, color, bgColor, borderColor, onClick }) => (
     <div 
@@ -1058,6 +1122,7 @@ const AdminWorkOrders = () => {
           onCreateOrder={handleCreateOrder}
           onUpdateOrder={handleUpdateOrder}
           onDeleteOrder={handleDeleteOrder}
+          onDeleteAllOrders={handleDeleteAllOrders}
         />
 
         {/* Premium Detail Modal */}

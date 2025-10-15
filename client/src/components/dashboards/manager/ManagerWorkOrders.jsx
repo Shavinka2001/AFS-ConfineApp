@@ -947,6 +947,27 @@ const ManagerWorkOrders = () => {
               errorHandler.handleError(error, 'Failed to delete work order');
             }
           }}
+          onDeleteAllOrders={async (confirmPhrase) => {
+            try {
+              const token = localStorage.getItem('token');
+              if (!token) {
+                errorHandler.handleError(null, 'Authentication required');
+                return;
+              }
+
+              console.log('Manager: Attempting to delete all work orders...');
+              await workOrderAPI.deleteAllWorkOrders(token, confirmPhrase);
+              
+              errorHandler.handleSuccess('All work orders deleted successfully');
+              
+              // Refresh data
+              fetchWorkOrders();
+              fetchStats();
+            } catch (error) {
+              errorHandler.handleError(error, 'Failed to delete all work orders');
+              throw error; // Re-throw to let the table component handle it
+            }
+          }}
         />
 
         {/* Premium Detail Modal */}

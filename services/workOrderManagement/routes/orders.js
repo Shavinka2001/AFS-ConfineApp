@@ -81,6 +81,23 @@ router.get('/test', async (req, res) => {
   }
 });
 
+// Test auth endpoint
+router.get('/test-auth', authMiddleware, async (req, res) => {
+  try {
+    res.json({
+      success: true,
+      message: 'Auth test endpoint working',
+      user: req.user
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Auth test endpoint error',
+      error: error.message
+    });
+  }
+});
+
 // Apply auth middleware to all other routes
 router.use(authMiddleware);
 
@@ -131,6 +148,12 @@ router.post('/bulk/status',
 router.delete('/:id', 
   orderIdValidation,
   asyncHandler(orderController.deleteOrder)
+);
+
+// DELETE /api/orders/bulk/delete-all - Delete all orders (Admin/Manager only)
+router.delete('/bulk/delete-all', 
+  authMiddleware.requireRole('admin', 'manager'),
+  asyncHandler(orderController.deleteAllOrders)
 );
 
 module.exports = router;

@@ -68,12 +68,19 @@ export const authorize = (...roles) => {
   };
 };
 
-export const generateToken = (id, role = null) => {
-  const payload = { id };
-  if (role) {
-    payload.role = role;
-  }
+export const generateToken = (id, role = null, userInfo = {}) => {
+  const payload = { 
+    id,
+    userId: id, // Add userId as alias for compatibility
+    role: role || userInfo.role || 'user',
+    email: userInfo.email || '',
+    firstName: userInfo.firstName || '',
+    lastName: userInfo.lastName || ''
+  };
+  
+  console.log('Generating token with payload:', payload);
+  
   return jwt.sign(payload, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRE
+    expiresIn: process.env.JWT_EXPIRE || '7d'
   });
 };

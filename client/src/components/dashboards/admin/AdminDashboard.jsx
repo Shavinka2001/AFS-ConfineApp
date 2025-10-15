@@ -131,19 +131,6 @@ const AdminDashboard = () => {
     </div>
   );
 
-  const ActivityCard = ({ icon: Icon, title, description, time, status }) => (
-    <div className="flex items-start space-x-4 p-4 hover:bg-gray-50 rounded-xl transition-colors duration-200 border-l-4 border-transparent hover:border-[#232249]">
-      <div className={`p-3 rounded-xl shadow-md ${status === 'success' ? 'bg-emerald-100' : status === 'warning' ? 'bg-amber-100' : 'bg-rose-100'}`}>
-        <Icon className={`h-5 w-5 ${status === 'success' ? 'text-emerald-600' : status === 'warning' ? 'text-amber-600' : 'text-rose-600'}`} />
-      </div>
-      <div className="flex-1">
-        <h4 className="text-sm font-semibold text-[#232249]">{title}</h4>
-        <p className="text-sm text-gray-600 mt-1">{description}</p>
-        <p className="text-xs text-gray-500 mt-2 font-medium">{time}</p>
-      </div>
-    </div>
-  );
-
   // Helper function to get icon for activity action
   const getActivityIcon = (action) => {
     switch (action) {
@@ -324,73 +311,73 @@ const AdminDashboard = () => {
       {/* Activity Feed and System Status */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent Activity */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-shadow duration-200"
-        >
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center space-x-3">
-              <div className="p-2 bg-gradient-to-br from-[#232249]/10 to-[#232249]/20 rounded-lg">
-                <Activity className="h-6 w-6 text-[#232249]" />
+        <div className="bg-white rounded-xl shadow-md p-5 border border-gray-100 hover:shadow-lg transition-shadow duration-200">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center space-x-2">
+              <div className="p-1.5 bg-gradient-to-br from-[#232249]/10 to-[#232249]/20 rounded-lg">
+                <Activity className="h-5 w-5 text-[#232249]" />
               </div>
-              <h3 className="text-xl font-bold text-[#232249]">Recent Activity</h3>
+              <h3 className="text-lg font-semibold text-[#232249]">Recent Activity</h3>
             </div>
           </div>
-          <div className="space-y-3">
+          <div className="space-y-2 max-h-64 overflow-y-auto">
             {activitiesLoading ? (
               // Loading skeleton
-              Array.from({ length: 4 }).map((_, index) => (
-                <div key={index} className="flex items-start space-x-4 p-4 rounded-xl animate-pulse">
-                  <div className="w-12 h-12 bg-gray-200 rounded-xl"></div>
-                  <div className="flex-1 space-y-2">
-                    <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                    <div className="h-3 bg-gray-200 rounded w-1/2"></div>
-                    <div className="h-3 bg-gray-200 rounded w-1/4"></div>
+              Array.from({ length: 3 }).map((_, index) => (
+                <div key={index} className="flex items-start space-x-3 p-3 rounded-lg animate-pulse">
+                  <div className="w-8 h-8 bg-gray-200 rounded-lg"></div>
+                  <div className="flex-1 space-y-1">
+                    <div className="h-3 bg-gray-200 rounded w-3/4"></div>
+                    <div className="h-2 bg-gray-200 rounded w-1/2"></div>
+                    <div className="h-2 bg-gray-200 rounded w-1/4"></div>
                   </div>
                 </div>
               ))
             ) : activities.length > 0 ? (
-              activities.map((activity, index) => {
+              activities.slice(0, 5).map((activity, index) => {
                 const IconComponent = getActivityIcon(activity.action);
                 return (
-                  <ActivityCard
-                    key={activity.id || index}
-                    icon={IconComponent}
-                    title={activity.title}
-                    description={activity.description}
-                    time={activity.time}
-                    status={activity.status}
-                  />
+                  <div key={activity.id || index} className="flex items-start space-x-3 p-3 hover:bg-gray-50 rounded-lg transition-colors duration-200 border-l-2 border-transparent hover:border-[#232249]">
+                    <div className={`p-2 rounded-lg shadow-sm ${activity.status === 'success' ? 'bg-emerald-100' : activity.status === 'warning' ? 'bg-amber-100' : 'bg-rose-100'}`}>
+                      <IconComponent className={`h-4 w-4 ${activity.status === 'success' ? 'text-emerald-600' : activity.status === 'warning' ? 'text-amber-600' : 'text-rose-600'}`} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-sm font-medium text-[#232249] truncate">{activity.title}</h4>
+                      <p className="text-xs text-gray-600 mt-0.5 line-clamp-2">{activity.description}</p>
+                      <p className="text-xs text-gray-500 mt-1 font-medium">{activity.time}</p>
+                    </div>
+                  </div>
                 );
               })
             ) : (
               // No activities fallback
-              <div className="text-center py-8">
-                <Activity className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-500">No recent activities to display</p>
-                <p className="text-sm text-gray-400 mt-1">Activities will appear here as they occur</p>
+              <div className="text-center py-6">
+                <Activity className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                <p className="text-sm text-gray-500">No recent activities</p>
+                <p className="text-xs text-gray-400 mt-1">Activities will appear here</p>
               </div>
             )}
           </div>
         </div>
 
         {/* System Status */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-shadow duration-200"
-        >
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center space-x-3">
-              <div className="p-2 bg-gradient-to-br from-[#232249]/10 to-[#232249]/20 rounded-lg">
-                <BarChart3 className="h-6 w-6 text-[#232249]" />
+        <div className="bg-white rounded-xl shadow-md p-5 border border-gray-100 hover:shadow-lg transition-shadow duration-200">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center space-x-2">
+              <div className="p-1.5 bg-gradient-to-br from-[#232249]/10 to-[#232249]/20 rounded-lg">
+                <BarChart3 className="h-5 w-5 text-[#232249]" />
               </div>
-              <h3 className="text-xl font-bold text-[#232249]">System Status</h3>
+              <h3 className="text-lg font-semibold text-[#232249]">System Status</h3>
             </div>
           </div>
-          <div className="space-y-5">
+          <div className="space-y-3">
             {systemHealth ? (
               <>
-                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl border border-emerald-100">
-                  <span className="text-sm font-semibold text-gray-700">Database</span>
-                  <div className="flex items-center space-x-3">
-                    <CheckCircle className={`h-5 w-5 ${systemHealth.database?.status === 'healthy' ? 'text-emerald-500' : 'text-red-500'}`} />
-                    <span className={`text-sm font-bold px-3 py-1 rounded-full ${
+                <div className="flex items-center justify-between p-3 bg-gradient-to-r from-emerald-50 to-green-50 rounded-lg border border-emerald-100">
+                  <span className="text-sm font-medium text-gray-700">Database</span>
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className={`h-4 w-4 ${systemHealth.database?.status === 'healthy' ? 'text-emerald-500' : 'text-red-500'}`} />
+                    <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
                       systemHealth.database?.status === 'healthy' 
                         ? 'text-emerald-600 bg-emerald-100' 
                         : 'text-red-600 bg-red-100'
@@ -399,11 +386,11 @@ const AdminDashboard = () => {
                     </span>
                   </div>
                 </div>
-                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl border border-emerald-100">
-                  <span className="text-sm font-semibold text-gray-700">API Service</span>
-                  <div className="flex items-center space-x-3">
-                    <CheckCircle className={`h-5 w-5 ${systemHealth.apiServices?.status === 'healthy' ? 'text-emerald-500' : 'text-red-500'}`} />
-                    <span className={`text-sm font-bold px-3 py-1 rounded-full ${
+                <div className="flex items-center justify-between p-3 bg-gradient-to-r from-emerald-50 to-green-50 rounded-lg border border-emerald-100">
+                  <span className="text-sm font-medium text-gray-700">API Service</span>
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className={`h-4 w-4 ${systemHealth.apiServices?.status === 'healthy' ? 'text-emerald-500' : 'text-red-500'}`} />
+                    <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
                       systemHealth.apiServices?.status === 'healthy' 
                         ? 'text-emerald-600 bg-emerald-100' 
                         : 'text-red-600 bg-red-100'
@@ -412,19 +399,19 @@ const AdminDashboard = () => {
                     </span>
                   </div>
                 </div>
-                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl border border-emerald-100">
-                  <span className="text-sm font-semibold text-gray-700">Authentication</span>
-                  <div className="flex items-center space-x-3">
-                    <CheckCircle className="h-5 w-5 text-emerald-500" />
-                    <span className="text-sm font-bold text-emerald-600 bg-emerald-100 px-3 py-1 rounded-full">Active</span>
+                <div className="flex items-center justify-between p-3 bg-gradient-to-r from-emerald-50 to-green-50 rounded-lg border border-emerald-100">
+                  <span className="text-sm font-medium text-gray-700">Authentication</span>
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="h-4 w-4 text-emerald-500" />
+                    <span className="text-xs font-semibold text-emerald-600 bg-emerald-100 px-2 py-1 rounded-full">Active</span>
                   </div>
                 </div>
                 {systemHealth.activeUsers && (
-                  <div className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
-                    <span className="text-sm font-semibold text-gray-700">Active Users</span>
-                    <div className="flex items-center space-x-3">
-                      <Users className="h-5 w-5 text-blue-500" />
-                      <span className="text-sm font-bold text-blue-600 bg-blue-100 px-3 py-1 rounded-full">
+                  <div className="flex items-center justify-between p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-100">
+                    <span className="text-sm font-medium text-gray-700">Active Users</span>
+                    <div className="flex items-center space-x-2">
+                      <Users className="h-4 w-4 text-blue-500" />
+                      <span className="text-xs font-semibold text-blue-600 bg-blue-100 px-2 py-1 rounded-full">
                         {systemHealth.activeUsers.count}
                       </span>
                     </div>
@@ -433,10 +420,10 @@ const AdminDashboard = () => {
               </>
             ) : (
               // Loading skeleton for system status
-              Array.from({ length: 4 }).map((_, index) => (
-                <div key={index} className="flex items-center justify-between p-4 bg-gray-100 rounded-xl animate-pulse">
-                  <div className="h-4 bg-gray-200 rounded w-1/3"></div>
-                  <div className="h-6 bg-gray-200 rounded w-16"></div>
+              Array.from({ length: 3 }).map((_, index) => (
+                <div key={index} className="flex items-center justify-between p-3 bg-gray-100 rounded-lg animate-pulse">
+                  <div className="h-3 bg-gray-200 rounded w-1/3"></div>
+                  <div className="h-4 bg-gray-200 rounded w-12"></div>
                 </div>
               ))
             )}

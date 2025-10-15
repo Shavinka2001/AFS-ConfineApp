@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { 
   MapPin, Building, Users, Plus, Search, Filter, Edit, 
   Trash2, UserCheck, UserX, Eye, Settings, Calendar,
-  Phone, Mail, AlertTriangle, CheckCircle, ArrowRight, RefreshCw
+  Phone, Mail, AlertTriangle, CheckCircle, ArrowRight, RefreshCw,
+  X, AlertCircle
 } from 'lucide-react';
 import { locationService } from '../../services/locationAPI';
 import { technicianAssignmentService } from '../../services/technicianAssignmentService';
@@ -10,6 +11,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import LocationForm from './LocationForm';
 import LocationWorkflow from './LocationWorkflow';
 import BuildingManagement from './BuildingManagement';
+import Toast from '../ui/Toast';
 
 const LocationManagement = () => {
   const { user } = useAuth();
@@ -25,6 +27,11 @@ const LocationManagement = () => {
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [showTechnicianModal, setShowTechnicianModal] = useState(false);
   const [showBuildingManagement, setShowBuildingManagement] = useState(false);
+  const [showRemoveModal, setShowRemoveModal] = useState(false);
+  const [locationToRemove, setLocationToRemove] = useState(null);
+  const [technicianToRemove, setTechnicianToRemove] = useState(null);
+  
+  const [toast, setToast] = useState(null);
   
   const [filters, setFilters] = useState({
     search: '',
@@ -225,7 +232,10 @@ const LocationManagement = () => {
       await fetchLocations();
       
       // Show success message
-      alert(`Technician ${technicianData.name} has been successfully assigned to ${selectedLocation.name}`);
+      setToast({
+        message: `Technician ${technicianData.name} has been successfully assigned to ${selectedLocation.name}`,
+        type: 'success'
+      });
     } catch (error) {
       console.error('Error assigning technician:', error);
       
@@ -244,17 +254,35 @@ const LocationManagement = () => {
     }
   };
 
-  const handleRemoveTechnician = async (locationId) => {
-    if (!window.confirm('Are you sure you want to remove the technician from this location?')) {
-      return;
-    }
+  const handleRemoveTechnician = async (locationId, technicianData) => {
+    setLocationToRemove(locationId);
+    setTechnicianToRemove(technicianData);
+    setShowRemoveModal(true);
+  };
+
+  const confirmRemoveTechnician = async () => {
+    if (!locationToRemove) return;
 
     try {
-      await locationService.removeTechnician(locationId);
+      await locationService.removeTechnician(locationToRemove);
       await fetchLocations();
+      setShowRemoveModal(false);
+      setLocationToRemove(null);
+      
+      // Show success message
+      if (technicianToRemove) {
+        setToast({
+          message: `Technician ${technicianToRemove.name} has been successfully removed from the location`,
+          type: 'success'
+        });
+      }
+      setTechnicianToRemove(null);
     } catch (error) {
       console.error('Error removing technician:', error);
       setError(error.response?.data?.message || error.response?.data?.error || 'Failed to remove technician');
+      setShowRemoveModal(false);
+      setLocationToRemove(null);
+      setTechnicianToRemove(null);
     }
   };
 
@@ -672,7 +700,7 @@ const LocationManagement = () => {
                         
                         {location.assignedTechnician?.isActive ? (
                           <button
-                            onClick={() => handleRemoveTechnician(location._id)}
+                            onClick={() => handleRemoveTechnician(location._id, location.assignedTechnician)}
                             className="p-1.5 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200"
                             title="Remove Technician"
                           >
@@ -869,6 +897,60 @@ const LocationManagement = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Professional Remove Technician Confirmation Modal */}
+      {showRemoveModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full transform animate-in fade-in-0 zoom-in-95 duration-200">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-red-50 rounded-full flex items-center justify-center">
+                    <AlertCircle className="h-5 w-5 text-red-600" />
+                  </div>
+                  <h3 className="text-lg font-bold text-gray-900">Remove Technician</h3>
+                </div>
+                <button
+                  onClick={() => setShowRemoveModal(false)}
+                  className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center hover:bg-gray-200 transition-colors"
+                >
+                  <X className="h-4 w-4 text-gray-500" />
+                </button>
+              </div>
+
+              <div className="mb-6">
+                <p className="text-gray-700 leading-relaxed">
+                  Are you sure you want to remove the technician from this location? This action cannot be undone.
+                </p>
+              </div>
+
+              <div className="flex space-x-3">
+                <button
+                  onClick={() => setShowRemoveModal(false)}
+                  className="flex-1 px-4 py-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-all duration-200 font-semibold"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmRemoveTechnician}
+                  className="flex-1 px-4 py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all duration-200 font-semibold shadow-sm"
+                >
+                  Remove Technician
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Toast Notification */}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
       )}
 
       </div>

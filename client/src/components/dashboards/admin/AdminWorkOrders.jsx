@@ -506,6 +506,7 @@ const AdminWorkOrders = () => {
       'PPE Required',
       'Air Monitor Required',
       'Warning Sign Posted',
+      'Images',
       'Notes'
     ].join(',');
 
@@ -528,6 +529,7 @@ const AdminWorkOrders = () => {
       `"${order.ppeRequired ? 'Yes' : 'No'}"`,
       `"${order.dedicatedAirMonitor ? 'Yes' : 'No'}"`,
       `"${order.warningSignPosted ? 'Yes' : 'No'}"`,
+      `"${(order.imageUrls && order.imageUrls.length > 0) ? order.imageUrls.join('; ') : ''}"`,
       `"${(order.notes || '').replace(/"/g, '""')}"`
     ].join(','));
 

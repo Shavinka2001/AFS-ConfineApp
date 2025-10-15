@@ -494,6 +494,14 @@ const ManagerWorkOrders = () => {
       'Created Date',
       'Confined Space',
       'Permit Required',
+      'Atmospheric Hazard',
+      'Engulfment Hazard',
+      'Configuration Hazard',
+      'Other Hazards',
+      'PPE Required',
+      'Air Monitor Required',
+      'Warning Sign Posted',
+      'Images',
       'Notes'
     ].join(',');
 
@@ -509,6 +517,14 @@ const ManagerWorkOrders = () => {
       `"${order.createdAt ? formatDate(order.createdAt) : ''}"`,
       `"${order.isConfinedSpace ? 'Yes' : 'No'}"`,
       `"${order.permitRequired ? 'Yes' : 'No'}"`,
+      `"${order.atmosphericHazard ? 'Yes' : 'No'}"`,
+      `"${order.engulfmentHazard ? 'Yes' : 'No'}"`,
+      `"${order.configurationHazard ? 'Yes' : 'No'}"`,
+      `"${order.otherRecognizedHazards ? 'Yes' : 'No'}"`,
+      `"${order.ppeRequired ? 'Yes' : 'No'}"`,
+      `"${order.dedicatedAirMonitor ? 'Yes' : 'No'}"`,
+      `"${order.warningSignPosted ? 'Yes' : 'No'}"`,
+      `"${(order.imageUrls && order.imageUrls.length > 0) ? order.imageUrls.join('; ') : ''}"`,
       `"${(order.notes || '').replace(/"/g, '""')}"`
     ].join(','));
 

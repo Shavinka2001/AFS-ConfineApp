@@ -15,7 +15,9 @@ import {
   Wrench,
   Users,
   MessageSquare,
-  X
+  X,
+  Eye,
+  MoreVertical
 } from 'lucide-react';
 import { userAPI } from '../../../services/api';
 
@@ -95,24 +97,24 @@ const PendingUserApprovals = () => {
   const getRoleColor = (role) => {
     switch (role) {
       case 'admin':
-        return 'bg-red-100 text-red-800 border-red-200';
+        return 'bg-gradient-to-r from-red-50 to-rose-100 text-red-700 border border-red-200/50';
       case 'manager':
-        return 'bg-purple-100 text-purple-800 border-purple-200';
+        return 'bg-gradient-to-r from-purple-50 to-violet-100 text-purple-700 border border-purple-200/50';
       case 'technician':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
+        return 'bg-gradient-to-r from-blue-50 to-sky-100 text-blue-700 border border-blue-200/50';
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return 'bg-gradient-to-r from-slate-50 to-gray-100 text-slate-700 border border-slate-200/50';
     }
   };
 
   if (loading) {
     return (
-      <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+      <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
         <div className="animate-pulse">
           <div className="h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
-          <div className="space-y-4">
+          <div className="space-y-3">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="h-20 bg-gray-200 rounded"></div>
+              <div key={i} className="h-16 bg-gray-100 rounded-xl"></div>
             ))}
           </div>
         </div>
@@ -121,18 +123,23 @@ const PendingUserApprovals = () => {
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-[#232249] to-[#232249]/90 p-6">
-        <div className="flex items-center space-x-4">
-          <div className="p-3 bg-white/20 backdrop-blur-sm rounded-2xl">
-            <Clock className="h-6 w-6 text-white" />
+    <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+      {/* Compact Header */}
+      <div className="bg-gradient-to-r from-slate-800 to-slate-900 px-6 py-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="p-2 bg-white/10 rounded-lg">
+              <Clock className="h-5 w-5 text-white" />
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-white">Pending Approvals</h3>
+              <p className="text-white/70 text-sm">
+                {pendingUsers.length} {pendingUsers.length === 1 ? 'user' : 'users'} awaiting review
+              </p>
+            </div>
           </div>
-          <div>
-            <h3 className="text-xl font-bold text-white">Pending User Approvals</h3>
-            <p className="text-white/80 text-sm">
-              {pendingUsers.length} {pendingUsers.length === 1 ? 'user' : 'users'} awaiting approval
-            </p>
+          <div className="px-3 py-1 bg-white/10 rounded-lg">
+            <span className="text-white text-sm font-medium">Today</span>
           </div>
         </div>
       </div>
@@ -141,76 +148,97 @@ const PendingUserApprovals = () => {
       <div className="p-6">
         {pendingUsers.length === 0 ? (
           <div className="text-center py-12">
-            <div className="p-6 bg-gradient-to-br from-emerald-50 to-green-100 rounded-2xl w-24 h-24 mx-auto mb-6 flex items-center justify-center">
-              <UserCheck className="h-12 w-12 text-emerald-600" />
+            <div className="w-20 h-20 bg-emerald-100 rounded-2xl mx-auto mb-4 flex items-center justify-center">
+              <UserCheck className="h-10 w-10 text-emerald-600" />
             </div>
-            <h4 className="text-xl font-bold text-gray-900 mb-2">All caught up!</h4>
-            <p className="text-gray-600 font-medium">No users are pending approval at this time.</p>
+            <h4 className="text-xl font-semibold text-gray-900 mb-2">All Set!</h4>
+            <p className="text-gray-600">No pending approvals at the moment.</p>
           </div>
         ) : (
-          <div className="space-y-4">
-            {pendingUsers.map((user, index) => (
-              <motion.div
-                key={user._id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-6 hover:shadow-lg transition-all duration-300"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-4 flex-1">
-                    {/* User Avatar */}
-                    <div className="h-12 w-12 bg-gradient-to-br from-[#232249] to-[#232249]/80 rounded-xl flex items-center justify-center shadow-md">
-                      <span className="text-white font-bold text-lg">
+          <div className="overflow-hidden rounded-xl border border-gray-200">
+            {/* Table Header */}
+            <div className="bg-gray-50 border-b border-gray-200">
+              <div className="grid grid-cols-12 gap-4 px-6 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wide">
+                <div className="col-span-4">User</div>
+                <div className="col-span-2">Role</div>
+                <div className="col-span-3">Contact</div>
+                <div className="col-span-2">Date</div>
+                <div className="col-span-1">Actions</div>
+              </div>
+            </div>
+
+            {/* Table Body */}
+            <div className="divide-y divide-gray-200 bg-white">
+              {pendingUsers.map((user, index) => (
+                <motion.div
+                  key={user._id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05, duration: 0.3 }}
+                  className="grid grid-cols-12 gap-4 px-6 py-4 hover:bg-gray-50 transition-colors duration-200"
+                >
+                  {/* User Info */}
+                  <div className="col-span-4 flex items-center space-x-3">
+                    <div className="h-10 w-10 bg-gradient-to-br from-slate-600 to-slate-800 rounded-xl flex items-center justify-center shadow-sm">
+                      <span className="text-white font-semibold text-sm">
                         {user.firstName.charAt(0)}{user.lastName.charAt(0)}
                       </span>
                     </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-semibold text-gray-900 truncate">
+                        {user.firstName} {user.lastName}
+                      </p>
+                      {user.department && (
+                        <p className="text-xs text-gray-500 truncate">{user.department}</p>
+                      )}
+                    </div>
+                  </div>
 
-                    {/* User Info */}
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-3 mb-2">
-                        <h4 className="text-lg font-bold text-gray-900">
-                          {user.firstName} {user.lastName}
-                        </h4>
-                        <span className={`inline-flex items-center space-x-1 px-2 py-1 rounded-lg text-xs font-bold border ${getRoleColor(user.role)} shadow-sm`}>
-                          {getRoleIcon(user.role)}
-                          <span className="capitalize">{user.role}</span>
-                        </span>
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
-                        <div className="flex items-center space-x-2 text-gray-600">
-                          <Mail className="h-4 w-4" />
-                          <span>{user.email}</span>
-                        </div>
-                        <div className="flex items-center space-x-2 text-gray-600">
-                          <Calendar className="h-4 w-4" />
-                          <span>Registered {new Date(user.createdAt).toLocaleDateString()}</span>
-                        </div>
-                        {user.department && (
-                          <div className="flex items-center space-x-2 text-gray-600">
-                            <User className="h-4 w-4" />
-                            <span>{user.department}</span>
-                          </div>
-                        )}
+                  {/* Role */}
+                  <div className="col-span-2 flex items-center">
+                    <span className={`inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg text-xs font-semibold ${getRoleColor(user.role)}`}>
+                      {getRoleIcon(user.role)}
+                      <span className="capitalize">{user.role}</span>
+                    </span>
+                  </div>
+
+                  {/* Contact */}
+                  <div className="col-span-3 flex items-center">
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm text-gray-900 truncate">{user.email}</p>
+                      <div className="flex items-center space-x-1 mt-1">
+                        <Mail className="h-3 w-3 text-gray-400" />
+                        <span className="text-xs text-gray-500">Email</span>
                       </div>
                     </div>
                   </div>
 
-                  {/* Action Buttons */}
-                  <div className="flex items-center space-x-3">
+                  {/* Date */}
+                  <div className="col-span-2 flex items-center">
+                    <div>
+                      <p className="text-sm text-gray-900">{new Date(user.createdAt).toLocaleDateString()}</p>
+                      <div className="flex items-center space-x-1 mt-1">
+                        <Calendar className="h-3 w-3 text-gray-400" />
+                        <span className="text-xs text-gray-500">Registered</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="col-span-1 flex items-center justify-end space-x-2">
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={() => handleApprove(user._id)}
                       disabled={actionLoading === user._id}
-                      className="bg-gradient-to-r from-emerald-500 to-green-600 text-white px-4 py-3 rounded-xl hover:shadow-xl transition-all duration-300 font-semibold flex items-center space-x-2 disabled:opacity-50"
+                      className="p-2 bg-emerald-100 text-emerald-700 hover:bg-emerald-200 rounded-lg transition-all duration-200 disabled:opacity-50"
+                      title="Approve"
                     >
                       {actionLoading === user._id ? (
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        <div className="w-4 h-4 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
                       ) : (
                         <CheckCircle className="h-4 w-4" />
                       )}
-                      <span>Approve</span>
                     </motion.button>
                     
                     <motion.button
@@ -221,43 +249,53 @@ const PendingUserApprovals = () => {
                         setShowRejectModal(true);
                       }}
                       disabled={actionLoading === user._id}
-                      className="bg-gradient-to-r from-red-500 to-red-600 text-white px-4 py-3 rounded-xl hover:shadow-xl transition-all duration-300 font-semibold flex items-center space-x-2 disabled:opacity-50"
+                      className="p-2 bg-red-100 text-red-700 hover:bg-red-200 rounded-lg transition-all duration-200 disabled:opacity-50"
+                      title="Reject"
                     >
                       <XCircle className="h-4 w-4" />
-                      <span>Reject</span>
+                    </motion.button>
+
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="p-2 bg-gray-100 text-gray-600 hover:bg-gray-200 rounded-lg transition-all duration-200"
+                      title="View Details"
+                    >
+                      <Eye className="h-4 w-4" />
                     </motion.button>
                   </div>
-                </div>
-              </motion.div>
-            ))}
+                </motion.div>
+              ))}
+            </div>
           </div>
         )}
       </div>
 
-      {/* Reject Modal */}
+      {/* Compact Reject Modal */}
       <AnimatePresence>
         {showRejectModal && selectedUser && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              className="bg-white rounded-2xl shadow-2xl w-full max-w-md border border-gray-100"
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              className="bg-white rounded-2xl shadow-xl w-full max-w-md border border-gray-200"
             >
-              {/* Header */}
-              <div className="bg-gradient-to-r from-red-500 to-red-600 p-6 rounded-t-2xl">
+              {/* Compact Header */}
+              <div className="bg-gradient-to-r from-red-500 to-red-600 px-6 py-4 rounded-t-2xl">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    <div className="p-2 bg-white/20 backdrop-blur-sm rounded-xl">
-                      <UserX className="h-6 w-6 text-white" />
+                    <div className="p-2 bg-white/20 rounded-lg">
+                      <UserX className="h-5 w-5 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold text-white">Reject User</h3>
+                      <h3 className="text-lg font-semibold text-white">Reject Application</h3>
                       <p className="text-white/80 text-sm">Provide a reason for rejection</p>
                     </div>
                   </div>
@@ -269,25 +307,25 @@ const PendingUserApprovals = () => {
                       setSelectedUser(null);
                       setRejectionReason('');
                     }}
-                    className="p-2 hover:bg-white/20 rounded-xl transition-all duration-200"
+                    className="p-2 hover:bg-white/20 rounded-lg transition-colors duration-200"
                   >
-                    <X className="h-5 w-5 text-white" />
+                    <X className="h-4 w-4 text-white" />
                   </motion.button>
                 </div>
               </div>
 
-              {/* Content */}
-              <div className="p-6 space-y-6">
+              {/* Compact Content */}
+              <div className="p-6 space-y-4">
                 {/* User Info */}
                 <div className="bg-red-50 border border-red-200 rounded-xl p-4">
                   <div className="flex items-center space-x-3">
-                    <div className="h-10 w-10 bg-gradient-to-br from-[#232249] to-[#232249]/80 rounded-lg flex items-center justify-center">
-                      <span className="text-white font-bold text-sm">
+                    <div className="h-10 w-10 bg-gradient-to-br from-slate-600 to-slate-800 rounded-lg flex items-center justify-center">
+                      <span className="text-white font-semibold text-sm">
                         {selectedUser.firstName.charAt(0)}{selectedUser.lastName.charAt(0)}
                       </span>
                     </div>
-                    <div>
-                      <p className="font-bold text-gray-900">{selectedUser.firstName} {selectedUser.lastName}</p>
+                    <div className="flex-1">
+                      <p className="font-semibold text-gray-900">{selectedUser.firstName} {selectedUser.lastName}</p>
                       <p className="text-sm text-gray-600">{selectedUser.email}</p>
                     </div>
                   </div>
@@ -298,35 +336,32 @@ const PendingUserApprovals = () => {
                   <label className="block text-sm font-semibold text-gray-700">
                     Reason for Rejection
                   </label>
-                  <div className="relative">
-                    <MessageSquare className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                    <textarea
-                      value={rejectionReason}
-                      onChange={(e) => setRejectionReason(e.target.value)}
-                      placeholder="Please provide a clear reason for rejecting this user account..."
-                      rows={4}
-                      className="w-full pl-11 pr-4 py-3 bg-gray-50/50 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-red-100 focus:border-red-500 transition-all duration-300 placeholder-gray-400 resize-none"
-                    />
-                  </div>
-                  <p className="text-xs text-gray-500">This reason will be recorded and may be shared with the user.</p>
+                  <textarea
+                    value={rejectionReason}
+                    onChange={(e) => setRejectionReason(e.target.value)}
+                    placeholder="Please provide a clear reason for rejecting this application..."
+                    rows={3}
+                    className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200 placeholder-gray-400 resize-none text-sm"
+                  />
+                  <p className="text-xs text-gray-500">This reason will be recorded in the system.</p>
                 </div>
 
                 {/* Warning */}
-                <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
-                  <div className="flex items-start space-x-3">
-                    <AlertTriangle className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
+                <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                  <div className="flex items-start space-x-2">
+                    <AlertTriangle className="h-4 w-4 text-amber-600 mt-0.5 flex-shrink-0" />
                     <div>
-                      <p className="text-sm font-semibold text-amber-800 mb-1">Important</p>
-                      <p className="text-xs text-amber-700">
-                        Rejecting this user will prevent them from accessing the system. This action can be reversed by creating a new account for the user.
+                      <p className="text-sm font-medium text-amber-800">Important</p>
+                      <p className="text-xs text-amber-700 mt-1">
+                        This action will prevent the user from accessing the system and cannot be easily reversed.
                       </p>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Actions */}
-              <div className="bg-gray-50 p-6 rounded-b-2xl flex space-x-4">
+              {/* Compact Actions */}
+              <div className="bg-gray-50 px-6 py-4 rounded-b-2xl flex space-x-3">
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
@@ -335,7 +370,7 @@ const PendingUserApprovals = () => {
                     setSelectedUser(null);
                     setRejectionReason('');
                   }}
-                  className="flex-1 px-6 py-3 border-2 border-gray-200 text-gray-700 rounded-xl hover:bg-white hover:border-gray-300 transition-all duration-300 font-semibold"
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-white transition-colors duration-200 font-medium"
                 >
                   Cancel
                 </motion.button>
@@ -344,14 +379,14 @@ const PendingUserApprovals = () => {
                   whileTap={{ scale: 0.98 }}
                   onClick={handleReject}
                   disabled={!rejectionReason.trim() || actionLoading}
-                  className="flex-1 bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-3 rounded-xl hover:shadow-xl transition-all duration-300 font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                  className="flex-1 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
                 >
                   {actionLoading ? (
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                   ) : (
                     <UserX className="h-4 w-4" />
                   )}
-                  <span>Reject User</span>
+                  <span>Reject</span>
                 </motion.button>
               </div>
             </motion.div>

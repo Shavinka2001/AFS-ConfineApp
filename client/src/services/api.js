@@ -116,6 +116,11 @@ export const userAPI = {
   getUserStats: () => api.get('/users/stats'),
   changeUserRole: (id, role) => api.put(`/users/${id}/role`, { role }),
   toggleUserStatus: (id) => api.put(`/users/${id}/toggle-status`),
+  
+  // User approval functions
+  getPendingUsers: (params) => api.get('/users/pending', { params }),
+  approveUser: (id) => api.put(`/users/${id}/approve`),
+  rejectUser: (id, reason) => api.put(`/users/${id}/reject`, { reason }),
 };
 
 // Admin settings API functions

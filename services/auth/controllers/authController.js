@@ -35,7 +35,13 @@ export const register = async (req, res) => {
       lastName,
       role: role || 'user',
       department,
-      createdBy: req.user?._id
+      createdBy: req.user?._id,
+      // Set approval status based on role and context
+      // Admin accounts are always auto-approved
+      // Regular users need approval unless created by admin
+      approvalStatus: role === 'admin' || req.user?.role === 'admin' ? 'approved' : 'pending',
+      approvedBy: (role === 'admin' || req.user?.role === 'admin') ? req.user?._id || 'system' : undefined,
+      approvedAt: (role === 'admin' || req.user?.role === 'admin') ? new Date() : undefined
     });
 
     // Log registration activity
@@ -48,11 +54,34 @@ export const register = async (req, res) => {
     await logActivity(
       mockReq,
       'USER_REGISTER',
-      `New user registered: ${firstName} ${lastName} (${email})`,
-      { userId: user._id, role: user.role },
+      `New user registered: ${firstName} ${lastName} (${email}) - Status: ${user.approvalStatus}`,
+      { userId: user._id, role: user.role, approvalStatus: user.approvalStatus },
       'medium',
       'success'
     );
+
+    // Handle response based on approval status
+    if (user.approvalStatus === 'pending') {
+      return res.status(201).json({
+        success: true,
+        message: 'Registration successful! Your account is pending approval from an administrator.',
+        data: {
+          user: {
+            id: user._id,
+            username: user.username,
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            fullName: user.fullName,
+            role: user.role,
+            department: user.department,
+            isActive: user.isActive,
+            approvalStatus: user.approvalStatus
+          },
+          requiresApproval: true
+        }
+      });
+    }
 
     const token = generateToken(user._id, user.role, {
       email: user.email || '',
@@ -74,7 +103,8 @@ export const register = async (req, res) => {
           fullName: user.fullName,
           role: user.role,
           department: user.department,
-          isActive: user.isActive
+          isActive: user.isActive,
+          approvalStatus: user.approvalStatus
         },
         token
       }
@@ -107,6 +137,23 @@ export const login = async (req, res) => {
       return res.status(401).json({
         success: false,
         message: 'Account is deactivated. Please contact administrator.'
+      });
+    }
+
+    // Check if user is approved
+    if (user.approvalStatus === 'pending') {
+      return res.status(401).json({
+        success: false,
+        message: 'Your account is pending approval from an administrator. Please wait for approval before trying to login.',
+        code: 'PENDING_APPROVAL'
+      });
+    }
+
+    if (user.approvalStatus === 'rejected') {
+      return res.status(401).json({
+        success: false,
+        message: 'Your account has been rejected. Please contact an administrator for more information.',
+        code: 'ACCOUNT_REJECTED'
       });
     }
 
@@ -177,6 +224,7 @@ export const login = async (req, res) => {
           role: user.role,
           department: user.department,
           isActive: user.isActive,
+          approvalStatus: user.approvalStatus,
           lastLogin: user.lastLogin
         },
         token

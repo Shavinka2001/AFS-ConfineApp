@@ -63,11 +63,19 @@ const Register = () => {
     const result = await registerUser(userData);
     console.log('Registration result:', result);
     if (result.success) {
-      setSuccessMessage(result.message || 'Registration successful!');
-      // Redirect to login page after a short delay
-      setTimeout(() => {
-        navigate('/login');
-      }, 2000);
+      if (result.data?.requiresApproval) {
+        setSuccessMessage('Registration successful! Your account is pending approval from an administrator. You will receive an email notification once approved.');
+        // Don't redirect for pending approval accounts
+        setTimeout(() => {
+          navigate('/login');
+        }, 5000); // Longer delay to let user read the message
+      } else {
+        setSuccessMessage(result.message || 'Registration successful!');
+        // Redirect to login page after a short delay
+        setTimeout(() => {
+          navigate('/login');
+        }, 2000);
+      }
     }
   };
 
@@ -94,16 +102,20 @@ const Register = () => {
 
         {/* Success Alert */}
         {successMessage && (
-          <div className="mb-4 p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
-            <div className="flex items-center">
-              <div className="w-5 h-5 mr-2 rounded-full bg-emerald-500 flex items-center justify-center">
+          <div className="mb-4 p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
+            <div className="flex items-start">
+              <div className="w-6 h-6 mr-3 mt-0.5 rounded-full bg-emerald-500 flex items-center justify-center flex-shrink-0">
                 <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
               </div>
-              <div>
-                <p className="text-emerald-700 text-sm font-medium">{successMessage}</p>
-                <p className="text-emerald-600 text-xs mt-0.5">Redirecting to login page...</p>
+              <div className="flex-1">
+                <p className="text-emerald-700 text-sm font-medium mb-1">{successMessage}</p>
+                {successMessage.includes('pending approval') ? (
+                  <p className="text-emerald-600 text-xs">You will be redirected to the login page in a few seconds...</p>
+                ) : (
+                  <p className="text-emerald-600 text-xs">Redirecting to login page...</p>
+                )}
               </div>
             </div>
           </div>

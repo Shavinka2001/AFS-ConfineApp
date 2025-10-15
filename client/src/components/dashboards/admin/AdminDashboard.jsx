@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
 import { userAPI, activityAPI } from '../../../services/api';
+import PendingUserApprovals from './PendingUserApprovals';
 
 const AdminDashboard = () => {
   const { user } = useAuth();
@@ -442,6 +443,9 @@ const AdminDashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* Pending User Approvals */}
+      <PendingUserApprovals />
     </div>
   );
 };

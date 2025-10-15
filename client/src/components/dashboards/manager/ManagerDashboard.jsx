@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
 import workOrderAPI from '../../../services/workOrderAPI';
+import PendingUserApprovals from '../admin/PendingUserApprovals';
 
 const ManagerDashboard = () => {
   const { user } = useAuth();
@@ -798,6 +799,15 @@ const ManagerDashboard = () => {
             </div>
           </motion.div>
         </div>
+
+        {/* Pending User Approvals */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.7 }}
+        >
+          <PendingUserApprovals />
+        </motion.div>
       </div>
     </div>
   );

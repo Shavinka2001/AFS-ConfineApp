@@ -68,6 +68,23 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: true
   },
+  approvalStatus: {
+    type: String,
+    enum: ['pending', 'approved', 'rejected'],
+    default: 'pending'
+  },
+  approvedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    default: null
+  },
+  approvedAt: {
+    type: Date
+  },
+  rejectionReason: {
+    type: String,
+    trim: true
+  },
   lastLogin: {
     type: Date
   },
@@ -85,6 +102,8 @@ const userSchema = new mongoose.Schema({
 
 // Index for better query performance (email and username already have unique: true)
 userSchema.index({ role: 1 });
+userSchema.index({ approvalStatus: 1 });
+userSchema.index({ createdAt: -1 });
 
 // Hash password before saving
 userSchema.pre('save', async function(next) {

@@ -77,10 +77,63 @@ const Login = () => {
 
         {/* Error Alert */}
         {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-            <div className="flex items-center">
-              <AlertCircle className="w-4 h-4 text-red-500 mr-2" />
-              <p className="text-red-700 text-sm font-medium">{error}</p>
+          <div className={`mb-4 p-4 border rounded-lg ${
+            error.includes('pending approval') || error.includes('PENDING_APPROVAL') 
+              ? 'bg-amber-50 border-amber-200' 
+              : error.includes('rejected') || error.includes('ACCOUNT_REJECTED')
+              ? 'bg-orange-50 border-orange-200'
+              : 'bg-red-50 border-red-200'
+          }`}>
+            <div className="flex items-start">
+              <div className={`w-5 h-5 mr-3 mt-0.5 flex-shrink-0 ${
+                error.includes('pending approval') || error.includes('PENDING_APPROVAL') 
+                  ? 'text-amber-500' 
+                  : error.includes('rejected') || error.includes('ACCOUNT_REJECTED')
+                  ? 'text-orange-500'
+                  : 'text-red-500'
+              }`}>
+                {error.includes('pending approval') || error.includes('PENDING_APPROVAL') ? (
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+                  </svg>
+                ) : error.includes('rejected') || error.includes('ACCOUNT_REJECTED') ? (
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z" clipRule="evenodd" />
+                  </svg>
+                ) : (
+                  <AlertCircle className="w-5 h-5" />
+                )}
+              </div>
+              <div className="flex-1">
+                <p className={`text-sm font-medium ${
+                  error.includes('pending approval') || error.includes('PENDING_APPROVAL') 
+                    ? 'text-amber-700' 
+                    : error.includes('rejected') || error.includes('ACCOUNT_REJECTED')
+                    ? 'text-orange-700'
+                    : 'text-red-700'
+                }`}>
+                  {error.includes('pending approval') || error.includes('PENDING_APPROVAL') 
+                    ? 'Account Pending Approval'
+                    : error.includes('rejected') || error.includes('ACCOUNT_REJECTED')
+                    ? 'Account Access Denied'
+                    : 'Login Failed'
+                  }
+                </p>
+                <p className={`text-xs mt-1 ${
+                  error.includes('pending approval') || error.includes('PENDING_APPROVAL') 
+                    ? 'text-amber-600' 
+                    : error.includes('rejected') || error.includes('ACCOUNT_REJECTED')
+                    ? 'text-orange-600'
+                    : 'text-red-600'
+                }`}>
+                  {error.includes('pending approval') || error.includes('PENDING_APPROVAL') 
+                    ? 'Your account is being reviewed by an administrator. You will receive an email notification once approved.'
+                    : error.includes('rejected') || error.includes('ACCOUNT_REJECTED')
+                    ? 'Your account application has been declined. Please contact support for more information.'
+                    : error
+                  }
+                </p>
+              </div>
             </div>
           </div>
         )}

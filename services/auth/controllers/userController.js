@@ -421,3 +421,145 @@ export const toggleUserStatus = async (req, res) => {
     });
   }
 };
+
+export const approveUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Only admin and manager can approve users
+    if (!['admin', 'manager'].includes(req.user.role)) {
+      return res.status(403).json({
+        success: false,
+        message: 'Only administrators and managers can approve users'
+      });
+    }
+
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    if (user.approvalStatus !== 'pending') {
+      return res.status(400).json({
+        success: false,
+        message: 'User is not pending approval'
+      });
+    }
+
+    user.approvalStatus = 'approved';
+    user.approvedBy = req.user._id;
+    user.approvedAt = new Date();
+    user.isActive = true;
+    await user.save();
+
+    res.json({
+      success: true,
+      message: 'User approved successfully',
+      data: { user: { ...user.toObject(), password: undefined } }
+    });
+  } catch (error) {
+    console.error('Approve user error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error while approving user'
+    });
+  }
+};
+
+export const rejectUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { reason } = req.body;
+
+    // Only admin and manager can reject users
+    if (!['admin', 'manager'].includes(req.user.role)) {
+      return res.status(403).json({
+        success: false,
+        message: 'Only administrators and managers can reject users'
+      });
+    }
+
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    if (user.approvalStatus !== 'pending') {
+      return res.status(400).json({
+        success: false,
+        message: 'User is not pending approval'
+      });
+    }
+
+    user.approvalStatus = 'rejected';
+    user.approvedBy = req.user._id;
+    user.approvedAt = new Date();
+    user.rejectionReason = reason || 'No reason provided';
+    user.isActive = false;
+    await user.save();
+
+    res.json({
+      success: true,
+      message: 'User rejected successfully',
+      data: { user: { ...user.toObject(), password: undefined } }
+    });
+  } catch (error) {
+    console.error('Reject user error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error while rejecting user'
+    });
+  }
+};
+
+export const getPendingUsers = async (req, res) => {
+  try {
+    console.log('getPendingUsers called by user:', req.user?.email, 'role:', req.user?.role);
+    
+    // Only admin and manager can view pending users
+    if (!['admin', 'manager'].includes(req.user.role)) {
+      console.log('Access denied for role:', req.user.role);
+      return res.status(403).json({
+        success: false,
+        message: 'Only administrators and managers can view pending users'
+      });
+    }
+
+    const { page = 1, limit = 50 } = req.query;
+    console.log('Fetching pending users with params:', { page, limit });
+
+    const users = await User.find({ approvalStatus: 'pending' })
+      .select('-password')
+      .sort({ createdAt: -1 })
+      .limit(limit * 1)
+      .skip((page - 1) * limit);
+
+    const total = await User.countDocuments({ approvalStatus: 'pending' });
+    
+    console.log('Found pending users:', users.length, 'total:', total);
+
+    res.json({
+      success: true,
+      data: users,
+      pagination: {
+        currentPage: parseInt(page),
+        totalPages: Math.ceil(total / limit),
+        totalUsers: total,
+        hasNext: page < Math.ceil(total / limit),
+        hasPrev: page > 1
+      }
+    });
+  } catch (error) {
+    console.error('Get pending users error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error while fetching pending users'
+    });
+  }
+};

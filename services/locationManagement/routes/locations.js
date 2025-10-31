@@ -69,4 +69,7 @@ router.post('/:id/assign-technician', adminAndManager, validateTechnicianAssignm
 // Remove technician from location (admin and manager only)
 router.post('/:id/remove-technician', adminAndManager, locationController.removeTechnician);
 
+// Technician self-remove assignment (technician only)
+router.post('/my-location/self-remove', authenticate, locationController.technicianSelfRemove);
+
 export default router;

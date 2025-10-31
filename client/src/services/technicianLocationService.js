@@ -253,6 +253,28 @@ export const technicianLocationService = {
         error: error.response?.data?.message || error.message
       };
     }
+  },
+
+  /**
+   * Remove own location assignment (technician self-remove)
+   */
+  async removeMyAssignment() {
+    try {
+      const response = await locationAxios.post('/locations/my-location/self-remove');
+      
+      return {
+        success: true,
+        data: response.data.data,
+        message: response.data.message
+      };
+    } catch (error) {
+      console.error('Error removing assignment:', error);
+      
+      throw {
+        success: false,
+        error: error.response?.data?.message || error.message || 'Failed to remove assignment'
+      };
+    }
   }
 };
 

@@ -11,7 +11,8 @@ import {
   Clock,
   AlertTriangle,
   CheckCircle,
-  Info
+  Info,
+  XCircle
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import LocationMap from './LocationMap';
@@ -23,6 +24,8 @@ const TechnicianLocationMap = () => {
   const [assignedLocation, setAssignedLocation] = useState(location.state?.location || null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [showRemoveConfirm, setShowRemoveConfirm] = useState(false);
+  const [removing, setRemoving] = useState(false);
 
   useEffect(() => {
     // If no location passed in state, try to fetch current technician's location
@@ -58,6 +61,36 @@ const TechnicianLocationMap = () => {
 
   const handleBack = () => {
     navigate('/technician/dashboard');
+  };
+
+  const handleRemoveAssignment = async () => {
+    try {
+      setRemoving(true);
+      setError('');
+      
+      const { technicianLocationService } = await import('../../services/technicianLocationService');
+      await technicianLocationService.removeMyAssignment();
+      
+      // Show success message and redirect
+      setShowRemoveConfirm(false);
+      setAssignedLocation(null);
+      
+      // Redirect to dashboard after a short delay
+      setTimeout(() => {
+        navigate('/technician/dashboard', {
+          state: {
+            message: 'Successfully removed your location assignment',
+            type: 'success'
+          }
+        });
+      }, 1000);
+    } catch (error) {
+      console.error('Error removing assignment:', error);
+      setError(error.error || 'Failed to remove assignment. Please try again.');
+      setShowRemoveConfirm(false);
+    } finally {
+      setRemoving(false);
+    }
   };
 
   const getStatusColor = (status) => {
@@ -238,6 +271,13 @@ const TechnicianLocationMap = () => {
                     <Clock className="h-4 w-4" />
                     <span>View Work Orders</span>
                   </button>
+                  <button
+                    onClick={() => setShowRemoveConfirm(true)}
+                    className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
+                  >
+                    <XCircle className="h-4 w-4" />
+                    <span>Remove Assignment</span>
+                  </button>
                 </div>
               </div>
             </motion.div>
@@ -329,6 +369,82 @@ const TechnicianLocationMap = () => {
             </motion.div>
           </div>
         </div>
+
+        {/* Error Message */}
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-red-50 border-l-4 border-red-500 rounded-lg p-4"
+          >
+            <div className="flex items-center space-x-3">
+              <AlertTriangle className="h-5 w-5 text-red-600" />
+              <p className="text-red-800 font-medium">{error}</p>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Remove Assignment Confirmation Modal */}
+        {showRemoveConfirm && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6"
+            >
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="p-3 bg-red-100 rounded-full">
+                  <XCircle className="h-6 w-6 text-red-600" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900">Remove Assignment</h3>
+              </div>
+
+              <p className="text-gray-600 mb-6">
+                Are you sure you want to remove yourself from <span className="font-semibold text-gray-900">{assignedLocation.name}</span>? 
+                You will no longer have access to this location's information and tasks.
+              </p>
+
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6">
+                <div className="flex items-start space-x-2">
+                  <AlertTriangle className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="text-sm font-medium text-amber-900">Warning</p>
+                    <p className="text-xs text-amber-700 mt-1">
+                      This action will notify your manager. You may need to contact them to be reassigned.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex space-x-3">
+                <button
+                  onClick={() => setShowRemoveConfirm(false)}
+                  disabled={removing}
+                  className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleRemoveAssignment}
+                  disabled={removing}
+                  className="flex-1 px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium disabled:opacity-50 flex items-center justify-center space-x-2"
+                >
+                  {removing ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                      <span>Removing...</span>
+                    </>
+                  ) : (
+                    <>
+                      <XCircle className="h-4 w-4" />
+                      <span>Remove Assignment</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
       </div>
     </div>
   );

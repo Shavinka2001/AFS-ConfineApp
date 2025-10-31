@@ -312,12 +312,7 @@ const buildingSchema = new mongoose.Schema({
     safetyEquipment: [String],
     lastInspected: Date,
     nextInspectionDue: Date,
-    inspectionNotes: String,
-    status: {
-      type: String,
-      enum: ['active', 'inactive', 'restricted', 'maintenance'],
-      default: 'active'
-    }
+    inspectionNotes: String
   }],
   accessibility: {
     wheelchairAccessible: {
@@ -398,11 +393,6 @@ buildingSchema.virtual('confinedSpacesCount').get(function() {
   return this.confinedSpaces ? this.confinedSpaces.length : 0;
 });
 
-// Virtual for active confined spaces count
-buildingSchema.virtual('activeConfinedSpacesCount').get(function() {
-  return this.confinedSpaces ? this.confinedSpaces.filter(space => space.status === 'active').length : 0;
-});
-
 // Virtual for high-risk confined spaces count
 buildingSchema.virtual('highRiskConfinedSpacesCount').get(function() {
   return this.confinedSpaces ? this.confinedSpaces.filter(space => 
@@ -418,7 +408,6 @@ buildingSchema.index({ status: 1 });
 buildingSchema.index({ createdBy: 1 });
 buildingSchema.index({ isActive: 1 });
 buildingSchema.index({ 'confinedSpaces.type': 1 });
-buildingSchema.index({ 'confinedSpaces.status': 1 });
 
 // Pre-save middleware to update unit count
 buildingSchema.pre('save', function(next) {
@@ -454,11 +443,6 @@ buildingSchema.methods.addConfinedSpace = function(spaceData) {
 buildingSchema.methods.removeConfinedSpace = function(spaceId) {
   this.confinedSpaces = this.confinedSpaces.filter(space => space._id.toString() !== spaceId);
   return this.save();
-};
-
-// Instance method to get confined spaces by status
-buildingSchema.methods.getConfinedSpacesByStatus = function(status) {
-  return this.confinedSpaces.filter(space => space.status === status);
 };
 
 const Building = mongoose.model('Building', buildingSchema);

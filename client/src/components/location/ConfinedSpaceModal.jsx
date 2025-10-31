@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Plus, Trash2, AlertTriangle, CheckCircle, Eye, Info } from 'lucide-react';
+import { X, Plus, Trash2, CheckCircle, Eye, Info } from 'lucide-react';
 import { locationService } from '../../services/locationAPI';
 
 const ConfinedSpaceModal = ({ building, onClose }) => {
@@ -26,8 +26,7 @@ const ConfinedSpaceModal = ({ building, onClose }) => {
     hazards: [],
     ventilationRequired: true,
     permitRequired: true,
-    safetyEquipment: [],
-    status: 'active'
+    safetyEquipment: []
   });
 
   const spaceTypes = [
@@ -54,10 +53,6 @@ const ConfinedSpaceModal = ({ building, onClose }) => {
       critical: 'bg-red-100 text-red-800'
     };
     return colors[severity] || colors.medium;
-  };
-
-  const getStatusIcon = (status) => {
-    return status === 'active' ? CheckCircle : AlertTriangle;
   };
 
   const handleInputChange = (e) => {
@@ -154,8 +149,7 @@ const ConfinedSpaceModal = ({ building, onClose }) => {
         hazards: [],
         ventilationRequired: true,
         permitRequired: true,
-        safetyEquipment: [],
-        status: 'active'
+        safetyEquipment: []
       });
       // Refresh building data would be handled by parent component
     } catch (error) {
@@ -247,13 +241,7 @@ const ConfinedSpaceModal = ({ building, onClose }) => {
                       <div className="flex justify-between items-start mb-3">
                         <div>
                           <h3 className="text-lg font-medium text-gray-900">{space.name}</h3>
-                          <div className="flex items-center space-x-4 mt-1">
-                            <span className="text-sm text-gray-600 capitalize">{space.type}</span>
-                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getSeverityColor(space.status)}`}>
-                              <StatusIcon className="h-3 w-3 mr-1" />
-                              {space.status.charAt(0).toUpperCase() + space.status.slice(1)}
-                            </span>
-                          </div>
+                          <span className="text-sm text-gray-600 capitalize mt-1 block">{space.type}</span>
                         </div>
                         <button
                           onClick={() => handleRemoveSpace(space._id)}

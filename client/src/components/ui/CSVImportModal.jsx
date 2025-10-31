@@ -11,10 +11,10 @@ const CSVImportModal = ({ isOpen, onClose, onImport, isLoading = false }) => {
   const fileInputRef = useRef(null);
 
   const csvTemplate = [
-    'Work Order ID,Space Name,Building,Location Description,Confined Space Description,Technician,Priority,Status,Survey Date,Created Date,Confined Space,Permit Required,Entry Requirements,Atmospheric Hazard,Atmospheric Hazard Description,Engulfment Hazard,Engulfment Hazard Description,Configuration Hazard,Configuration Hazard Description,Other Hazards,Other Hazards Description,PPE Required,PPE List,Forced Air Ventilation Sufficient,Air Monitor Required,Warning Sign Posted,Number of Entry Points,Other People Working Near Space,Can Others See Into Space,Contractors Enter Space,Images,Notes',
-    'WO-001,Tank Storage Room,Building A,Main Floor Storage Area,Underground storage tank,John Smith,medium,pending,2024-01-15,2024-01-14,Yes,Yes,Permit required for entry,No,,No,,Yes,Limited headroom,No,,Yes,Hard hat required,Yes,Yes,Yes,2,Yes,Yes,No,,Regular inspection required',
-    'WO-002,Electrical Vault,Building B,Basement Level,Electrical equipment vault,Jane Doe,high,approved,2024-01-16,2024-01-15,Yes,Yes,Lockout procedures required,Yes,Electrical hazards present,No,,No,,No,,Yes,Electrical PPE required,Yes,Yes,No,1,No,Yes,No,,Critical safety check needed',
-    'WO-003,Chemical Storage,Building C,Ground Floor East Wing,Chemical storage area,Mike Johnson,critical,in-progress,2024-01-17,2024-01-16,Yes,Yes,Chemical PPE required,Yes,Toxic vapor detection,Yes,Chemical engulfment risk,Yes,Multiple tank hazards,Yes,Multiple chemical hazards,Yes,Full chemical PPE,Yes,Yes,Yes,3,Yes,No,Yes,,Emergency inspection required'
+    'Work Order ID,Space Name,Building,Location Description,Confined Space Description,Technician,Priority,Survey Date,Created Date,Confined Space,Permit Required,Entry Requirements,Atmospheric Hazard,Atmospheric Hazard Description,Engulfment Hazard,Engulfment Hazard Description,Configuration Hazard,Configuration Hazard Description,Other Hazards,Other Hazards Description,PPE Required,PPE List,Forced Air Ventilation Sufficient,Air Monitor Required,Warning Sign Posted,Number of Entry Points,Other People Working Near Space,Can Others See Into Space,Contractors Enter Space,Images,Notes',
+    'WO-001,Tank Storage Room,Building A,Main Floor Storage Area,Underground storage tank,John Smith,medium,2024-01-15,2024-01-14,Yes,Yes,Permit required for entry,No,,No,,Yes,Limited headroom,No,,Yes,Hard hat required,Yes,Yes,Yes,2,Yes,Yes,No,,Regular inspection required',
+    'WO-002,Electrical Vault,Building B,Basement Level,Electrical equipment vault,Jane Doe,high,2024-01-16,2024-01-15,Yes,Yes,Lockout procedures required,Yes,Electrical hazards present,No,,No,,No,,Yes,Electrical PPE required,Yes,Yes,No,1,No,Yes,No,,Critical safety check needed',
+    'WO-003,Chemical Storage,Building C,Ground Floor East Wing,Chemical storage area,Mike Johnson,critical,2024-01-17,2024-01-16,Yes,Yes,Chemical PPE required,Yes,Toxic vapor detection,Yes,Chemical engulfment risk,Yes,Multiple tank hazards,Yes,Multiple chemical hazards,Yes,Full chemical PPE,Yes,Yes,Yes,3,Yes,No,Yes,,Emergency inspection required'
   ];
 
   const downloadTemplate = () => {
@@ -125,7 +125,6 @@ const CSVImportModal = ({ isOpen, onClose, onImport, isLoading = false }) => {
         'Confined Space Description': 'confinedSpaceDescription',
         'Technician': 'technician',
         'Priority': 'priority',
-        'Status': 'status',
         'Survey Date': 'surveyDate',
         'Created Date': 'createdDate',
         'Confined Space': 'isConfinedSpace',
@@ -344,7 +343,6 @@ const CSVImportModal = ({ isOpen, onClose, onImport, isLoading = false }) => {
                           <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Building</th>
                           <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Technician</th>
                           <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Priority</th>
-                          <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Status</th>
                           <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Confined Space</th>
                         </tr>
                       </thead>
@@ -355,7 +353,6 @@ const CSVImportModal = ({ isOpen, onClose, onImport, isLoading = false }) => {
                             <td className="px-4 py-3 text-sm text-gray-900">{row.building}</td>
                             <td className="px-4 py-3 text-sm text-gray-900">{row.technician}</td>
                             <td className="px-4 py-3 text-sm text-gray-900">{row.priority}</td>
-                            <td className="px-4 py-3 text-sm text-gray-900">{row.status}</td>
                             <td className="px-4 py-3 text-sm text-gray-900">{row.confinedSpace}</td>
                           </tr>
                         ))}

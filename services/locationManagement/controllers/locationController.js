@@ -519,6 +519,53 @@ class LocationController {
     }
   }
 
+  // Technician self-remove assignment
+  async technicianSelfRemove(req, res) {
+    try {
+      const technicianId = req.user.id;
+
+      // Find the location assigned to this technician
+      const location = await Location.findOne({
+        'assignedTechnician.technicianId': technicianId,
+        'assignedTechnician.isActive': true,
+        isActive: true
+      });
+
+      if (!location) {
+        return res.status(404).json({
+          success: false,
+          error: 'No assigned location',
+          message: 'You do not have any assigned location to remove'
+        });
+      }
+
+      // Verify the technician is removing their own assignment
+      if (location.assignedTechnician.technicianId !== technicianId) {
+        return res.status(403).json({
+          success: false,
+          error: 'Unauthorized',
+          message: 'You can only remove your own assignment'
+        });
+      }
+
+      await location.removeTechnician(technicianId);
+
+      res.json({
+        success: true,
+        data: { location },
+        message: 'Successfully removed yourself from the assigned location'
+      });
+
+    } catch (error) {
+      console.error('Error in technicianSelfRemove:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Internal server error',
+        message: 'Failed to remove assignment'
+      });
+    }
+  }
+
   // Get locations by technician
   async getLocationsByTechnician(req, res) {
     try {

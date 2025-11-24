@@ -24,14 +24,16 @@ import {
   Wrench,
   Activity,
   BarChart3,
-  Upload
+  Upload,
+  FileSpreadsheet
 } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
 import ManagerWorkOrdersTable from './ManagerWorkOrdersTable';
-import CSVImportModal from '../../ui/CSVImportModal';
 import workOrderAPI from '../../../services/workOrderAPI';
 import errorHandler from '../../../utils/errorHandler';
 import { Toaster } from 'react-hot-toast';
+import CSVImportModal from '../../ui/CSVImportModal';
+import * as XLSX from 'xlsx';
 
 // Consolidated PDF Generator - Groups similar confined spaces into single reports
 const consolidateEntriesLocal = (entries) => {
@@ -173,6 +175,52 @@ const consolidateGroupLocal = (group) => {
   return consolidated;
 };
 
+// Utility functions
+const formatDate = (dateString) => {
+  if (!dateString) return 'N/A';
+  return new Date(dateString).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  });
+};
+
+const getPriorityColor = (priority) => {
+  const colors = {
+    'low': 'text-green-700 bg-green-100 border-green-200',
+    'medium': 'text-yellow-700 bg-yellow-100 border-yellow-200',
+    'high': 'text-orange-700 bg-orange-100 border-orange-200',
+    'critical': 'text-red-700 bg-red-100 border-red-200'
+  };
+  return colors[priority] || 'text-gray-600 bg-gray-100 border-gray-200';
+};
+
+const getStatusColor = (status) => {
+  const colors = {
+    'draft': 'text-gray-700 bg-gray-100 border-gray-200',
+    'pending': 'text-yellow-700 bg-yellow-100 border-yellow-200',
+    'approved': 'text-blue-700 bg-blue-100 border-blue-200',
+    'in-progress': 'text-purple-700 bg-purple-100 border-purple-200',
+    'completed': 'text-green-700 bg-green-100 border-green-200',
+    'cancelled': 'text-red-700 bg-red-100 border-red-200',
+    'on-hold': 'text-orange-700 bg-orange-100 border-orange-200'
+  };
+  return colors[status] || 'text-gray-600 bg-gray-100 border-gray-200';
+};
+
+// Debounce utility
+const debounce = (func, wait) => {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+};
+
 const ManagerWorkOrders = () => {
   const { user } = useAuth();
   
@@ -191,10 +239,10 @@ const ManagerWorkOrders = () => {
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [downloadingPdf, setDownloadingPdf] = useState(null);
+  const [showCSVImportModal, setShowCSVImportModal] = useState(false);
+  const [csvImportLoading, setCsvImportLoading] = useState(false);
   
-  // State for CSV import
-  const [showImportModal, setShowImportModal] = useState(false);
-  const [importing, setImporting] = useState(false);
+
 
   // State for pagination and advanced filters
   const [currentPage, setCurrentPage] = useState(1);
@@ -672,6 +720,111 @@ const ManagerWorkOrders = () => {
     }
   };
 
+  // Handle CSV Import
+  const handleCSVImport = async (csvData) => {
+    try {
+      setCsvImportLoading(true);
+      
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('Authentication required');
+      }
+
+      console.log('Starting CSV import...');
+      console.log('CSV data to import:', csvData);
+      
+      const response = await workOrderAPI.importCSVData(token, csvData);
+      
+      console.log('Import response:', response);
+      
+      if (response.success) {
+        // Refresh the data to show imported orders
+        await fetchWorkOrders();
+        await fetchStats();
+        setShowCSVImportModal(false);
+        
+        return {
+          success: true,
+          message: `Successfully imported ${response.data?.results?.successful || 0} work orders`,
+          data: response.data
+        };
+      } else {
+        throw new Error(response.message || 'Import failed');
+      }
+    } catch (error) {
+      console.error('CSV import error:', error);
+      throw error;
+    } finally {
+      setCsvImportLoading(false);
+    }
+  };
+
+  // Handle Excel Export
+  const handleExportToExcel = () => {
+    try {
+      if (!filteredOrders || filteredOrders.length === 0) {
+        errorHandler.handleError(null, 'No work orders to export');
+        return;
+      }
+
+      // Prepare data for Excel export
+      const exportData = filteredOrders.map(order => ({
+        'Work Order ID': order.workOrderId || order.uniqueId || 'N/A',
+        'Space Name': order.spaceName || 'N/A',
+        'Building': order.building || 'N/A',
+        'Location Description': order.locationDescription || 'N/A',
+        'Confined Space Description': order.confinedSpaceDescription || 'N/A',
+        'Technician': order.technician || 'N/A',
+        'Priority': order.priority || 'N/A',
+        'Status': order.status || 'N/A',
+        'Survey Date': order.surveyDate ? new Date(order.surveyDate).toLocaleDateString() : 'N/A',
+        'Created Date': order.createdAt ? new Date(order.createdAt).toLocaleDateString() : 'N/A',
+        'Confined Space': order.isConfinedSpace ? 'Yes' : 'No',
+        'Permit Required': order.permitRequired ? 'Yes' : 'No',
+        'Entry Requirements': order.entryRequirements || 'N/A',
+        'Atmospheric Hazard': order.atmosphericHazard ? 'Yes' : 'No',
+        'Atmospheric Hazard Description': order.atmosphericHazardDescription || 'N/A',
+        'Engulfment Hazard': order.engulfmentHazard ? 'Yes' : 'No',
+        'Engulfment Hazard Description': order.engulfmentHazardDescription || 'N/A',
+        'Configuration Hazard': order.configurationHazard ? 'Yes' : 'No',
+        'Configuration Hazard Description': order.configurationHazardDescription || 'N/A',
+        'Other Hazards': order.otherRecognizedHazards ? 'Yes' : 'No',
+        'Other Hazards Description': order.otherHazardsDescription || 'N/A',
+        'PPE Required': order.ppeRequired ? 'Yes' : 'No',
+        'PPE List': order.ppeList || 'N/A',
+        'Forced Air Ventilation Sufficient': order.forcedAirVentilationSufficient ? 'Yes' : 'No',
+        'Air Monitor Required': order.dedicatedAirMonitor ? 'Yes' : 'No',
+        'Warning Sign Posted': order.warningSignPosted ? 'Yes' : 'No',
+        'Number of Entry Points': order.numberOfEntryPoints || 'N/A',
+        'Other People Working Near Space': order.otherPeopleWorkingNearSpace ? 'Yes' : 'No',
+        'Can Others See Into Space': order.canOthersSeeIntoSpace ? 'Yes' : 'No',
+        'Contractors Enter Space': order.contractorsEnterSpace ? 'Yes' : 'No',
+        'Images': order.imageUrls ? order.imageUrls.length : 0,
+        'Notes': order.notes || 'N/A'
+      }));
+
+      // Create workbook and worksheet
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.json_to_sheet(exportData);
+      
+      // Add worksheet to workbook
+      XLSX.utils.book_append_sheet(wb, ws, 'Work Orders');
+      
+      // Generate filename with current date
+      const fileName = `work-orders-export-${new Date().toISOString().split('T')[0]}.xlsx`;
+      
+      // Save file
+      XLSX.writeFile(wb, fileName);
+      
+      console.log(`Exported ${exportData.length} work orders to ${fileName}`);
+      errorHandler.handleSuccess(`Exported ${exportData.length} work orders to Excel`);
+      
+    } catch (error) {
+      console.error('Export error:', error);
+      errorHandler.handleError(error, 'Failed to export to Excel');
+    }
+  };
+
   // Handle Bulk Import
   const handleBulkImport = async (csvData) => {
     setImporting(true);
@@ -968,18 +1121,18 @@ const ManagerWorkOrders = () => {
             </div>
             <div className="flex items-center gap-3">
               <button
-                onClick={() => setShowImportModal(true)}
-                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-purple-700 hover:bg-purple-50 rounded-lg transition-colors"
+                onClick={() => setShowCSVImportModal(true)}
+                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-700 hover:bg-blue-50 rounded-lg transition-colors border border-blue-200"
               >
                 <Upload className="w-4 h-4" />
-                Import CSV
+                Import Excel
               </button>
               <button
-                onClick={handleExportToCSV}
-                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-[#232249] hover:bg-gray-50 rounded-lg transition-colors"
+                onClick={handleExportToExcel}
+                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors border border-emerald-200"
               >
-                <Download className="w-4 h-4" />
-                Export
+                <FileSpreadsheet className="w-4 h-4" />
+                Export Excel
               </button>
               <button
                 onClick={handleDownloadConsolidatedPDFs}
@@ -1054,6 +1207,14 @@ const ManagerWorkOrders = () => {
               throw error; // Re-throw to let the table component handle it
             }
           }}
+        />
+
+        {/* CSV Import Modal */}
+        <CSVImportModal
+          isOpen={showCSVImportModal}
+          onClose={() => setShowCSVImportModal(false)}
+          onImport={handleCSVImport}
+          isLoading={csvImportLoading}
         />
 
         {/* Premium Detail Modal */}
@@ -1252,13 +1413,7 @@ const ManagerWorkOrders = () => {
           </div>
         )}
 
-        {/* CSV Import Modal */}
-        <CSVImportModal
-          isOpen={showImportModal}
-          onClose={() => setShowImportModal(false)}
-          onImport={handleBulkImport}
-          isLoading={importing}
-        />
+
       </div>
     </div>
   );

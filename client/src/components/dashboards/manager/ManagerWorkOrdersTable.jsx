@@ -11,15 +11,7 @@ import {
   FileText,
   Download,
   Trash2,
-  CheckCircle,
-  XCircle,
   AlertTriangle,
-  Activity,
-  CheckSquare,
-  Filter,
-  Search,
-  RefreshCw,
-  AlertCircle,
   User,
   Building,
   Shield,
@@ -168,7 +160,6 @@ const consolidateGroup = (group) => {
 const ManagerWorkOrdersTable = ({ 
   workOrders = [], 
   onView, 
-  onStatusUpdate,
   onDownloadPDF,
   onUpdateOrder,
   onDeleteOrder,
@@ -203,19 +194,7 @@ const ManagerWorkOrdersTable = ({
     setExpandedRows(newExpanded);
   };
 
-  const getStatusColor = (status) => {
-    const colors = {
-      'draft': 'bg-gray-100 text-gray-800 border-gray-200',
-      'pending': 'bg-yellow-100 text-yellow-800 border-yellow-200',
-      'approved': 'bg-blue-100 text-blue-800 border-blue-200',
-      'in-progress': 'bg-indigo-100 text-indigo-800 border-indigo-200',
-      'completed': 'bg-green-100 text-green-800 border-green-200',
-      'cancelled': 'bg-red-100 text-red-800 border-red-200',
-      'rejected': 'bg-red-100 text-red-800 border-red-200',
-      'on-hold': 'bg-orange-100 text-orange-800 border-orange-200'
-    };
-    return colors[status] || 'bg-gray-100 text-gray-800 border-gray-200';
-  };
+
 
   const getPriorityColor = (priority) => {
     const colors = {
@@ -237,86 +216,7 @@ const ManagerWorkOrdersTable = ({
     });
   };
 
-  const renderStatusActions = (order) => {
-    const currentStatus = order.status;
-    const actions = [];
 
-    if (currentStatus === 'pending') {
-      actions.push(
-        <button
-          key="approve"
-          onClick={() => onStatusUpdate && onStatusUpdate(order.id || order._id, 'approved')}
-          className="flex items-center space-x-2 p-2 w-full hover:bg-green-50 text-left rounded-md"
-        >
-          <CheckCircle className="h-4 w-4 text-green-600" />
-          <span>Approve</span>
-        </button>
-      );
-      
-      actions.push(
-        <button
-          key="reject"
-          onClick={() => onStatusUpdate && onStatusUpdate(order.id || order._id, 'rejected')}
-          className="flex items-center space-x-2 p-2 w-full hover:bg-red-50 text-left rounded-md"
-        >
-          <XCircle className="h-4 w-4 text-red-600" />
-          <span>Reject</span>
-        </button>
-      );
-    }
-
-    if (currentStatus === 'approved') {
-      actions.push(
-        <button
-          key="in-progress"
-          onClick={() => onStatusUpdate && onStatusUpdate(order.id || order._id, 'in-progress')}
-          className="flex items-center space-x-2 p-2 w-full hover:bg-purple-50 text-left rounded-md"
-        >
-          <Activity className="h-4 w-4 text-purple-600" />
-          <span>Start Work</span>
-        </button>
-      );
-    }
-
-    if (currentStatus === 'in-progress') {
-      actions.push(
-        <button
-          key="completed"
-          onClick={() => onStatusUpdate && onStatusUpdate(order.id || order._id, 'completed')}
-          className="flex items-center space-x-2 p-2 w-full hover:bg-green-50 text-left rounded-md"
-        >
-          <CheckSquare className="h-4 w-4 text-green-600" />
-          <span>Complete</span>
-        </button>
-      );
-      
-      actions.push(
-        <button
-          key="on-hold"
-          onClick={() => onStatusUpdate && onStatusUpdate(order.id || order._id, 'on-hold')}
-          className="flex items-center space-x-2 p-2 w-full hover:bg-yellow-50 text-left rounded-md"
-        >
-          <Clock className="h-4 w-4 text-yellow-600" />
-          <span>Put on Hold</span>
-        </button>
-      );
-    }
-
-    if (currentStatus === 'on-hold') {
-      actions.push(
-        <button
-          key="resume"
-          onClick={() => onStatusUpdate && onStatusUpdate(order.id || order._id, 'in-progress')}
-          className="flex items-center space-x-2 p-2 w-full hover:bg-blue-50 text-left rounded-md"
-        >
-          <Activity className="h-4 w-4 text-blue-600" />
-          <span>Resume Work</span>
-        </button>
-      );
-    }
-
-    return actions;
-  };
 
   // Handle Edit Order
   const handleEditOrder = (order) => {
@@ -503,12 +403,7 @@ const ManagerWorkOrdersTable = ({
                     Work Order
                   </span>
                 </th>
-                <th className="px-3 py-2 text-left text-xs font-semibold text-white uppercase tracking-wider">
-                  <span className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4" />
-                    Status
-                  </span>
-                </th>
+
                 <th className="px-3 py-2 text-left text-xs font-semibold text-white uppercase tracking-wider">
                   <span className="flex items-center gap-2">
                     <User className="h-4 w-4" />
@@ -556,13 +451,8 @@ const ManagerWorkOrdersTable = ({
                       </div>
                     </td>
                     <td className="px-3 py-3">
-                      <div className="space-y-2">
-                        <div className="text-xs text-[#232249] font-medium">
-                          {formatDate(order.surveyDate || order.createdAt)}
-                        </div>
-                        <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium border ${getStatusColor(order.status)}`}>
-                          {order.status}
-                        </span>
+                      <div className="text-xs text-[#232249] font-medium">
+                        {formatDate(order.surveyDate || order.createdAt)}
                       </div>
                     </td>
                     <td className="px-3 py-3">
@@ -633,13 +523,7 @@ const ManagerWorkOrdersTable = ({
                             <MoreVertical className="h-4 w-4" />
                           </button>
                           
-                          {actionMenuOpen === (order.id || order._id) && (
-                            <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-200 z-50 overflow-hidden">
-                              <div className="py-1">
-                                {renderStatusActions(order)}
-                              </div>
-                            </div>
-                          )}
+
                         </div>
                       </div>
                     </td>
@@ -648,7 +532,7 @@ const ManagerWorkOrdersTable = ({
                   {/* Expanded Row */}
                   {expandedRows.has(order.id || order._id) && (
                     <tr>
-                      <td colSpan="6" className="px-3 py-4 bg-gray-50">
+                      <td colSpan="5" className="px-3 py-4 bg-gray-50">
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                           {/* Left Column */}
                           <div className="space-y-3">

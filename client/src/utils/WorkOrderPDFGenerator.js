@@ -1,6 +1,129 @@
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
+// Consolidated PDF Generator - Groups similar confined spaces into single reports
+const consolidateEntries = (entries) => {
+  const consolidated = [];
+  const groupMap = new Map();
+
+  // Group entries by building, location description, and confined space description
+  entries.forEach((entry, index) => {
+    const groupKey = `${entry.building || 'N/A'}|||${entry.locationDescription || 'N/A'}|||${entry.confinedSpaceDescription || 'N/A'}`;
+    
+    if (!groupMap.has(groupKey)) {
+      groupMap.set(groupKey, []);
+    }
+    groupMap.get(groupKey).push({ ...entry, originalIndex: index });
+  });
+
+  // Process each group
+  groupMap.forEach((group, groupKey) => {
+    if (group.length === 1) {
+      // Single entry - use as is but clean up the originalIndex property
+      const singleEntry = { ...group[0] };
+      delete singleEntry.originalIndex; // Remove the temporary property
+      consolidated.push(singleEntry);
+    } else {
+      // Multiple entries - consolidate them
+      const consolidatedEntry = consolidateGroup(group);
+      consolidated.push(consolidatedEntry);
+    }
+  });
+
+  return consolidated;
+};
+
+const consolidateGroup = (group) => {
+  // Use the first entry as the base
+  const baseEntry = { ...group[0] };
+  
+  // Combine unique IDs and form numbers
+  const uniqueIds = group.map(entry => entry.uniqueId || entry._id?.slice(-4).padStart(4, '0') || 'N/A').filter(Boolean);
+  const spaceNames = group.map(entry => entry.confinedSpaceNameOrId).filter(Boolean);
+  
+  // Consolidate arrays and combine unique values
+  const consolidateArrayField = (fieldName) => {
+    const allValues = group.flatMap(entry => entry[fieldName] || []);
+    return [...new Set(allValues)];
+  };
+
+  // Consolidate text fields by combining unique non-empty values
+  const consolidateTextField = (fieldName) => {
+    const allValues = group.map(entry => entry[fieldName]).filter(val => val && val !== 'N/A' && val.trim() !== '');
+    const uniqueValues = [...new Set(allValues)];
+    return uniqueValues.length > 0 ? uniqueValues.join('. ') : 'N/A';
+  };
+
+  // Consolidate boolean fields - true if any entry is true
+  const consolidateBooleanField = (fieldName) => {
+    return group.some(entry => entry[fieldName] === true);
+  };
+
+  // Consolidate dates - use the most recent
+  const consolidateDateField = (fieldName) => {
+    const dates = group.map(entry => entry[fieldName]).filter(Boolean);
+    if (dates.length === 0) return null;
+    return dates.sort((a, b) => new Date(b) - new Date(a))[0]; // Most recent first
+  };
+
+  // Create consolidated entry
+  const consolidated = {
+    ...baseEntry,
+    
+    // Combine unique identifiers
+    uniqueId: uniqueIds.join(', '),
+    confinedSpaceNameOrId: spaceNames.join(', '),
+    
+    // Keep the common fields as they are (building, locationDescription, confinedSpaceDescription)
+    // These are the same across all entries in the group
+    
+    // Use most recent survey date
+    dateOfSurvey: consolidateDateField('dateOfSurvey'),
+    
+    // Combine all surveyors
+    surveyors: consolidateArrayField('surveyors'),
+    
+    // Consolidate text fields
+    entryRequirements: consolidateTextField('entryRequirements'),
+    atmosphericHazardDescription: consolidateTextField('atmosphericHazardDescription'),
+    engulfmentHazardDescription: consolidateTextField('engulfmentHazardDescription'),
+    configurationHazardDescription: consolidateTextField('configurationHazardDescription'),
+    otherHazardsDescription: consolidateTextField('otherHazardsDescription'),
+    ppeList: consolidateTextField('ppeList'),
+    notes: consolidateTextField('notes'),
+    
+    // Consolidate boolean fields (true if any entry is true)
+    confinedSpace: consolidateBooleanField('confinedSpace'),
+    permitRequired: consolidateBooleanField('permitRequired'),
+    atmosphericHazard: consolidateBooleanField('atmosphericHazard'),
+    engulfmentHazard: consolidateBooleanField('engulfmentHazard'),
+    configurationHazard: consolidateBooleanField('configurationHazard'),
+    otherRecognizedHazards: consolidateBooleanField('otherRecognizedHazards'),
+    ppeRequired: consolidateBooleanField('ppeRequired'),
+    forcedAirVentilationSufficient: consolidateBooleanField('forcedAirVentilationSufficient'),
+    dedicatedContinuousAirMonitor: consolidateBooleanField('dedicatedContinuousAirMonitor'),
+    warningSignPosted: consolidateBooleanField('warningSignPosted'),
+    otherPeopleWorkingNearSpace: consolidateBooleanField('otherPeopleWorkingNearSpace'),
+    canOthersSeeIntoSpace: consolidateBooleanField('canOthersSeeIntoSpace'),
+    contractorsEnterSpace: consolidateBooleanField('contractorsEnterSpace'),
+    
+    // Consolidate numeric fields - use maximum or combine unique values
+    numberOfEntryPoints: consolidateTextField('numberOfEntryPoints'),
+    
+    // Combine all images/pictures
+    pictures: consolidateArrayField('pictures'),
+    images: consolidateArrayField('images'),
+    
+    // Add metadata about consolidation
+    _consolidated: true,
+    _originalEntryCount: group.length,
+    _originalIndexes: group.map(entry => entry.originalIndex),
+    _consolidatedSpaceIds: spaceNames
+  };
+
+  return consolidated;
+};
+
 class WorkOrderPDFGenerator {
   constructor() {
     this.pdf = null;
@@ -85,8 +208,17 @@ class WorkOrderPDFGenerator {
       // Add footer
       this.addFooter();
       
-      // Generate filename
-      const fileName = `Work_Order_${workOrder.workOrderId || 'Draft'}_${new Date().toISOString().split('T')[0]}.pdf`;
+      // Generate filename - different for consolidated entries
+      let fileName;
+      if (workOrder._consolidated) {
+        const building = (workOrder.building || 'Building').replace(/\s+/g, '_');
+        const date = new Date().toISOString().split('T')[0];
+        fileName = `Consolidated_${building}_${workOrder._originalEntryCount}entries_${date}.pdf`;
+      } else {
+        const workOrderId = workOrder.workOrderId || workOrder.uniqueId || 'Draft';
+        const date = new Date().toISOString().split('T')[0];
+        fileName = `Work_Order_${workOrderId}_${date}.pdf`;
+      }
       
       // Save the PDF
       this.pdf.save(fileName);
@@ -197,11 +329,15 @@ class WorkOrderPDFGenerator {
     pdf.setFont('helvetica', 'bold');
     pdf.text('CONFINED SPACE', this.margins.left + 8, 14);
     
-    // Sleek subtitle with modern spacing
+    // Sleek subtitle with modern spacing - show if consolidated
     pdf.setFontSize(8);
     pdf.setFont('helvetica', 'normal');
     pdf.setTextColor(200, 200, 200);
-    pdf.text('SAFETY ASSESSMENT REPORT', this.margins.left + 8, 22);
+    if (workOrder._consolidated) {
+      pdf.text('CONSOLIDATED SAFETY ASSESSMENT', this.margins.left + 8, 22);
+    } else {
+      pdf.text('SAFETY ASSESSMENT REPORT', this.margins.left + 8, 22);
+    }
     
     // Ultra-modern floating card design for info
     const cardX = 210 - this.margins.right - 56;
@@ -213,25 +349,39 @@ class WorkOrderPDFGenerator {
     pdf.roundedRect(cardX + 1, 8, cardWidth, 20, 3, 3, 'F');
     pdf.setGState(pdf.GState({ opacity: 1 }));
     
-    // Main info card with modern styling
-    pdf.setFillColor(255, 255, 255);
+    // Main info card with modern styling - use orange accent for consolidated
+    if (workOrder._consolidated) {
+      pdf.setFillColor(255, 237, 213); // Light orange background
+    } else {
+      pdf.setFillColor(255, 255, 255);
+    }
     pdf.roundedRect(cardX, 7, cardWidth, 20, 3, 3, 'F');
     
-    // Accent strip on card
-    pdf.setFillColor(accentRGB.r, accentRGB.g, accentRGB.b);
+    // Accent strip on card - orange for consolidated
+    if (workOrder._consolidated) {
+      pdf.setFillColor(251, 146, 60); // Orange accent
+    } else {
+      pdf.setFillColor(accentRGB.r, accentRGB.g, accentRGB.b);
+    }
     pdf.rect(cardX, 7, cardWidth, 3, 'F');
     
     // Work Order ID with modern layout
     pdf.setTextColor(100, 100, 100);
     pdf.setFontSize(6);
     pdf.setFont('helvetica', 'bold');
-    pdf.text('WORK ORDER', cardX + 3, 14);
+    if (workOrder._consolidated) {
+      pdf.text('CONSOLIDATED', cardX + 3, 14);
+    } else {
+      pdf.text('WORK ORDER', cardX + 3, 14);
+    }
     
-    const workOrderId = workOrder.workOrderId || `WO-${new Date().getFullYear()}-${Math.random().toString(36).substr(2, 4).toUpperCase()}`;
+    const workOrderId = workOrder.workOrderId || workOrder.uniqueId || `WO-${new Date().getFullYear()}-${Math.random().toString(36).substr(2, 4).toUpperCase()}`;
     pdf.setFontSize(10);
     pdf.setFont('helvetica', 'bold');
     pdf.setTextColor(primaryRGB.r, primaryRGB.g, primaryRGB.b);
-    pdf.text(workOrderId, cardX + 3, 18.5);
+    // Truncate long IDs for consolidated entries
+    const displayId = workOrderId.length > 15 ? workOrderId.substring(0, 12) + '...' : workOrderId;
+    pdf.text(displayId, cardX + 3, 18.5);
     
     // Date with icon-style design
     pdf.setTextColor(100, 100, 100);
@@ -239,7 +389,7 @@ class WorkOrderPDFGenerator {
     pdf.setFont('helvetica', 'bold');
     pdf.text('DATE', cardX + 3, 22);
     
-    const date = new Date(workOrder.surveyDate || workOrder.createdAt).toLocaleDateString('en-US', {
+    const date = new Date(workOrder.surveyDate || workOrder.dateOfSurvey || workOrder.createdAt).toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
       year: 'numeric'
@@ -259,38 +409,75 @@ class WorkOrderPDFGenerator {
   addWorkOrderInfo(workOrder) {
     this.addSectionHeader('Work Order Information');
     
-    const info = [
-      ['Status:', this.formatValue(workOrder.status, 'Pending')],
-      ['Priority:', this.formatValue(workOrder.priority, 'Medium')],
-      ['Technician:', this.formatValue(workOrder.technician, 'Not assigned')],
-      ['Created:', new Date(workOrder.createdAt).toLocaleDateString()]
-    ];
+    const info = [];
+    
+    // Add consolidated info first if applicable
+    if (workOrder._consolidated) {
+      info.push(['Type:', `Consolidated (${workOrder._originalEntryCount} entries)`]);
+      info.push(['Survey IDs:', this.formatValue(workOrder.uniqueId || workOrder.workOrderId, 'Multiple')]);
+    } else {
+      info.push(['Work Order ID:', this.formatValue(workOrder.workOrderId || workOrder.uniqueId)]);
+    }
+    
+    info.push(['Status:', this.formatValue(workOrder.status, 'Pending')]);
+    info.push(['Priority:', this.formatValue(workOrder.priority, 'Medium')]);
+    
+    // Handle technician/surveyor info for consolidated entries
+    if (workOrder._consolidated && workOrder.surveyors && workOrder.surveyors.length > 0) {
+      info.push(['Surveyors:', workOrder.surveyors.join(', ')]);
+    } else {
+      info.push(['Technician:', this.formatValue(workOrder.technician, 'Not assigned')]);
+    }
+    
+    info.push(['Created:', new Date(workOrder.createdAt || workOrder.dateOfSurvey).toLocaleDateString()]);
     
     this.addInfoTable(info);
-    this.currentY += 6; // Reduced from 10
+    this.currentY += 6;
   }
 
   addSpaceInformation(workOrder) {
     this.addSectionHeader('Space Information');
     
+    // Show consolidation info if this is a consolidated entry
+    if (workOrder._consolidated) {
+      const pdf = this.pdf;
+      const accentRGB = this.hexToRgb(this.colors.accent);
+      
+      // Add consolidated badge
+      pdf.setFillColor(251, 146, 60); // Orange
+      pdf.roundedRect(this.margins.left, this.currentY - 2, 120, 8, 2, 2, 'F');
+      
+      pdf.setFontSize(8);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setTextColor(255, 255, 255);
+      pdf.text(`🔄 CONSOLIDATED ENTRY (${workOrder._originalEntryCount} spaces combined)`, this.margins.left + 3, this.currentY + 3);
+      
+      this.currentY += 10;
+    }
+    
     const info = [
-      ['Space Name:', this.formatValue(workOrder.spaceName)],
+      ['Space Name/ID:', this.formatValue(workOrder.spaceName || workOrder.confinedSpaceNameOrId)],
       ['Building:', this.formatValue(workOrder.building)],
       ['Location:', this.formatValue(workOrder.locationDescription)],
-      ['Confined Space:', workOrder.isConfinedSpace ? 'Yes' : 'No'],
+      ['Confined Space:', workOrder.isConfinedSpace || workOrder.confinedSpace ? 'Yes' : 'No'],
       ['Permit Required:', workOrder.permitRequired ? 'Yes' : 'No'],
       ['Entry Points:', this.formatValue(workOrder.numberOfEntryPoints, 'Not specified')]
     ];
     
+    // Add consolidated space IDs if available
+    if (workOrder._consolidated && workOrder._consolidatedSpaceIds && workOrder._consolidatedSpaceIds.length > 0) {
+      info.push(['Combined Spaces:', workOrder._consolidatedSpaceIds.join(', ')]);
+    }
+    
     this.addInfoTable(info);
     
     if (workOrder.confinedSpaceDescription) {
-      this.currentY += 3; // Reduced from 5
+      this.currentY += 3;
       this.addText('Description:', true);
       this.addText(this.formatValue(workOrder.confinedSpaceDescription), false, 5);
     }
     
-    this.currentY += 6; // Reduced from 10
+    this.currentY += 6;
   }
 
   addHazardAssessment(workOrder) {
@@ -1264,4 +1451,78 @@ class WorkOrderPDFGenerator {
   }
 }
 
+// Single PDF download function used by consolidated PDF generator
+const downloadSinglePDF = async (entry) => {
+  try {
+    const pdfGenerator = new WorkOrderPDFGenerator();
+    const result = await pdfGenerator.generatePDF(entry);
+    return result;
+  } catch (error) {
+    console.error('Error in downloadSinglePDF:', error);
+    throw error;
+  }
+};
+
+// Consolidated PDF download function - generates multiple PDFs from consolidated entries
+const downloadConsolidatedPDFs = async (entries) => {
+  try {
+    // Consolidate entries first
+    const consolidatedEntries = consolidateEntries(entries);
+    
+    console.log(`Original entries: ${entries.length}`);
+    console.log(`Consolidated entries: ${consolidatedEntries.length}`);
+    console.log(`Saved ${entries.length - consolidatedEntries.length} duplicate reports`);
+    
+    // Log details about each entry
+    consolidatedEntries.forEach((entry, index) => {
+      if (entry._consolidated) {
+        console.log(`Entry ${index + 1}: CONSOLIDATED - ${entry.building} (${entry._originalEntryCount} entries combined)`);
+      } else {
+        console.log(`Entry ${index + 1}: INDIVIDUAL - ${entry.building} - ${entry.confinedSpaceNameOrId}`);
+      }
+    });
+    
+    // Generate PDF for each consolidated entry using the existing downloadSinglePDF function
+    for (let i = 0; i < consolidatedEntries.length; i++) {
+      const entry = consolidatedEntries[i];
+      
+      // Add some visual indicators for consolidated reports
+      if (entry._consolidated) {
+        console.log(`🔄 Generating consolidated PDF ${i + 1}/${consolidatedEntries.length}: ${entry.building} (${entry._originalEntryCount} entries combined)`);
+      } else {
+        console.log(`📄 Generating individual PDF ${i + 1}/${consolidatedEntries.length}: ${entry.confinedSpaceNameOrId}`);
+      }
+      
+      try {
+        // Use the existing working PDF generation function
+        await downloadSinglePDF(entry);
+        console.log(`✅ Successfully generated PDF for: ${entry.confinedSpaceNameOrId}`);
+      } catch (pdfError) {
+        console.error(`❌ Failed to generate PDF for: ${entry.confinedSpaceNameOrId}`, pdfError);
+      }
+      
+      // Add small delay between PDF generations to prevent browser issues
+      if (i < consolidatedEntries.length - 1) {
+        await new Promise(resolve => setTimeout(resolve, 500));
+      }
+    }
+    
+    console.log(`Generated ${consolidatedEntries.length} consolidated PDF reports`);
+    
+    // Return success message
+    return {
+      success: true,
+      message: `Generated ${consolidatedEntries.length} PDFs from ${entries.length} original entries!`,
+      consolidatedCount: consolidatedEntries.length,
+      originalCount: entries.length
+    };
+    
+  } catch (error) {
+    console.error('Error generating consolidated PDFs:', error);
+    throw new Error('Error generating consolidated PDFs. Please try again.');
+  }
+};
+
+// Export functions for use in other scripts
+export { consolidateEntries, downloadConsolidatedPDFs, downloadSinglePDF };
 export default WorkOrderPDFGenerator;

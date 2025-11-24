@@ -25,12 +25,7 @@ const OrderSchema = new mongoose.Schema({
     unique: true,
     index: true
   },
-  status: {
-    type: String,
-    enum: ['draft', 'pending', 'approved', 'in-progress', 'completed', 'cancelled', 'on-hold'],
-    default: 'draft',
-    index: true
-  },
+
   priority: {
     type: String,
     enum: ['low', 'medium', 'high', 'critical'],
@@ -251,10 +246,10 @@ const OrderSchema = new mongoose.Schema({
 });
 
 // Indexes for performance
-OrderSchema.index({ userId: 1, status: 1 });
+OrderSchema.index({ userId: 1 });
 OrderSchema.index({ surveyDate: 1, building: 1 });
 OrderSchema.index({ createdAt: -1 });
-OrderSchema.index({ priority: 1, status: 1 });
+OrderSchema.index({ priority: 1 });
 OrderSchema.index({ technician: 1 });
 OrderSchema.index({ spaceName: 1 });
 
@@ -294,8 +289,8 @@ OrderSchema.pre('save', async function(next) {
       console.log(`Generated work order ID: ${doc.workOrderId}`);
     }
     
-    // Generate uniqueId if it's not already set and status is not draft
-    if (!doc.uniqueId && doc.status !== 'draft') {
+    // Generate uniqueId if it's not already set
+    if (!doc.uniqueId) {
       const counter = await Counter.findByIdAndUpdate(
         { _id: 'orderId' },
         { $inc: { seq: 1 } },
@@ -305,28 +300,14 @@ OrderSchema.pre('save', async function(next) {
       doc.uniqueId = counter.seq.toString().padStart(4, '0');
     }
     
-    // Add to workflow history if status changed
-    if (doc.isModified('status') && !doc.isNew) {
-      const original = await this.constructor.findById(doc._id);
-      doc.workflowHistory.push({
-        action: 'status_change',
-        performedBy: doc.lastModifiedBy || doc.createdBy,
-        timestamp: new Date(),
-        previousStatus: original.status,
-        newStatus: doc.status,
-        comments: `Status changed from ${original.status} to ${doc.status}`
-      });
-    }
+
     
     // Set assignment date when assigned
     if (doc.isModified('assignedTo') && doc.assignedTo && !doc.assignedDate) {
       doc.assignedDate = new Date();
     }
     
-    // Set completion date when completed
-    if (doc.isModified('status') && doc.status === 'completed' && !doc.completedDate) {
-      doc.completedDate = new Date();
-    }
+
     
     next();
   } catch (error) {
@@ -346,27 +327,11 @@ OrderSchema.methods.addWorkflowEntry = function(action, performedBy, comments = 
   return this.save();
 };
 
-OrderSchema.methods.canTransitionTo = function(newStatus) {
-  const validTransitions = {
-    'draft': ['pending', 'cancelled'],
-    'pending': ['approved', 'cancelled', 'draft'],
-    'approved': ['in-progress', 'cancelled', 'on-hold'],
-    'in-progress': ['completed', 'on-hold', 'cancelled'],
-    'on-hold': ['in-progress', 'cancelled'],
-    'completed': [],
-    'cancelled': ['draft'] // Allow reactivation from cancelled
-  };
-  
-  return validTransitions[this.status]?.includes(newStatus) || false;
-};
+
 
 // Static methods
 OrderSchema.statics.findByUser = function(userId, options = {}) {
   const query = { userId };
-  
-  if (options.status) {
-    query.status = options.status;
-  }
   
   if (options.priority) {
     query.priority = options.priority;
@@ -377,16 +342,6 @@ OrderSchema.statics.findByUser = function(userId, options = {}) {
     .limit(options.limit || 50);
 };
 
-OrderSchema.statics.getStatsByUser = function(userId) {
-  return this.aggregate([
-    { $match: { userId } },
-    {
-      $group: {
-        _id: '$status',
-        count: { $sum: 1 }
-      }
-    }
-  ]);
-};
+
 
 module.exports = mongoose.model('Order', OrderSchema);

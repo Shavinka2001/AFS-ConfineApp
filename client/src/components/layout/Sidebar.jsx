@@ -32,7 +32,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { technicianLocationService } from '../../services/technicianLocationService';
 import workOrderAPI from '../../services/workOrderAPI';
 
-const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
+const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, closeMobileMenu }) => {
   const { user, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
@@ -284,12 +284,14 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
   return (
     <motion.div
       initial={false}
-      animate={{ width: isCollapsed ? 80 : 300 }}
+      animate={{ width: isCollapsed ? 80 : (isMobile ? 280 : 300) }}
       transition={{ duration: 0.3, ease: 'easeInOut' }}
-      className={`bg-white shadow-2xl border-r border-gray-100 h-screen fixed left-0 top-0 z-40 flex flex-col`}
+      className={`bg-white shadow-2xl border-r border-gray-100 h-screen flex flex-col ${
+        isMobile ? 'w-280' : 'fixed left-0 top-0 z-40'
+      }`}
     >
       {/* Header */}
-      <div className="p-6 border-b border-gray-100 bg-gradient-to-r from-[#232249] to-[#232249]/90">
+      <div className={`${isMobile ? 'p-4' : 'p-6'} border-b border-gray-100 bg-gradient-to-r from-[#232249] to-[#232249]/90`}>
         <div className="flex items-center justify-between">
           <AnimatePresence>
             {!isCollapsed && (
@@ -298,17 +300,17 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.2 }}
-                className="flex items-center space-x-4"
+                className="flex items-center space-x-3"
               >
-                <div className="h-12 w-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center ring-2 ring-white/30 shadow-lg">
+                <div className={`${isMobile ? 'h-10 w-10' : 'h-12 w-12'} bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center ring-2 ring-white/30 shadow-lg`}>
                   <img 
                     src="/logo.jpg" 
                     alt="Logo" 
-                    className="h-10 w-10 object-contain"
+                    className={`${isMobile ? 'h-8 w-8' : 'h-10 w-10'} object-contain`}
                   />
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold text-white">Confine</h1>
+                  <h1 className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold text-white`}>Confine</h1>
                   <p className="text-xs text-white/80 font-medium">Management System</p>
                 </div>
               </motion.div>
@@ -316,25 +318,35 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
           </AnimatePresence>
           
           <div className="flex items-center space-x-2">
-            <button
-              onClick={() => setIsCollapsed(!isCollapsed)}
-              className="p-2 rounded-xl hover:bg-white/20 transition-all duration-300 backdrop-blur-sm"
-            >
-              {isCollapsed ? (
-                <ChevronRight className="h-5 w-5 text-white" />
-              ) : (
-                <ChevronLeft className="h-5 w-5 text-white" />
-              )}
-            </button>
+            {isMobile && (
+              <button
+                onClick={closeMobileMenu}
+                className="p-2 rounded-xl hover:bg-white/20 transition-all duration-300 backdrop-blur-sm lg:hidden"
+              >
+                <X className="h-5 w-5 text-white" />
+              </button>
+            )}
+            {!isMobile && (
+              <button
+                onClick={() => setIsCollapsed(!isCollapsed)}
+                className="p-2 rounded-xl hover:bg-white/20 transition-all duration-300 backdrop-blur-sm"
+              >
+                {isCollapsed ? (
+                  <ChevronRight className="h-5 w-5 text-white" />
+                ) : (
+                  <ChevronLeft className="h-5 w-5 text-white" />
+                )}
+              </button>
+            )}
           </div>
         </div>
       </div>
 
       {/* User Profile */}
-      <div className="p-6 border-b border-gray-100 bg-gradient-to-br from-gray-50 to-gray-100">
-        <div className="flex items-center space-x-4">
-          <div className={`h-14 w-14 bg-gradient-to-br from-[#232249] to-[#232249]/80 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg ring-2 ring-[#232249]/20`}>
-            <UserCog className="h-7 w-7 text-white" />
+      <div className={`${isMobile ? 'p-4' : 'p-6'} border-b border-gray-100 bg-gradient-to-br from-gray-50 to-gray-100`}>
+        <div className="flex items-center space-x-3">
+          <div className={`${isMobile ? 'h-12 w-12' : 'h-14 w-14'} bg-gradient-to-br from-[#232249] to-[#232249]/80 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg ring-2 ring-[#232249]/20`}>
+            <UserCog className={`${isMobile ? 'h-6 w-6' : 'h-7 w-7'} text-white`} />
           </div>
           <AnimatePresence>
             {!isCollapsed && (
@@ -345,11 +357,11 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
                 transition={{ duration: 0.2 }}
                 className="flex-1 min-w-0"
               >
-                <p className="text-sm font-bold text-[#232249] truncate">
+                <p className={`${isMobile ? 'text-sm' : 'text-sm'} font-bold text-[#232249] truncate`}>
                   {user.firstName} {user.lastName}
                 </p>
                 <div className="flex items-center space-x-2 mt-1">
-                  <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-[#232249] text-white`}>
+                  <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-[#232249] text-white`}>
                     {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
                   </span>
                 </div>
@@ -360,7 +372,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
       </div>
 
       {/* Navigation Menu */}
-      <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+      <nav className={`flex-1 ${isMobile ? 'px-3 py-4' : 'px-4 py-6'} space-y-1 overflow-y-auto`}>
         {menuItems.map((item) => {
           const isActive = location.pathname === item.path;
           const Icon = item.icon;
@@ -369,14 +381,15 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
             <Link
               key={item.path}
               to={item.path}
-              className={`flex items-center space-x-4 px-4 py-3 rounded-xl transition-all duration-300 group ${
+              onClick={isMobile ? closeMobileMenu : undefined}
+              className={`flex items-center space-x-3 px-3 py-3 rounded-xl transition-all duration-300 group touch-manipulation ${
                 isActive
-                  ? `bg-gradient-to-r from-[#232249] to-[#232249]/90 text-white shadow-xl transform scale-105`
-                  : 'text-gray-700 hover:bg-gradient-to-r hover:from-[#232249]/10 hover:to-[#232249]/5 hover:text-[#232249] hover:shadow-lg'
-              }`}
+                  ? `bg-gradient-to-r from-[#232249] to-[#232249]/90 text-white shadow-xl ${!isMobile ? 'transform scale-105' : ''}`
+                  : 'text-gray-700 hover:bg-gradient-to-r hover:from-[#232249]/10 hover:to-[#232249]/5 hover:text-[#232249] hover:shadow-lg active:bg-[#232249]/20'
+              } ${isMobile ? 'min-h-[44px]' : ''}`} // 44px minimum touch target for mobile
             >
-              <div className={`p-2 rounded-lg ${isActive ? 'bg-white/20' : 'bg-gray-100 group-hover:bg-[#232249]/10'} transition-all duration-300`}>
-                <Icon className={`h-5 w-5 flex-shrink-0 ${isActive ? 'text-white' : 'text-[#232249] group-hover:text-[#232249]'}`} />
+              <div className={`p-2 rounded-lg ${isActive ? 'bg-white/20' : 'bg-gray-100 group-hover:bg-[#232249]/10'} transition-all duration-300 flex-shrink-0`}>
+                <Icon className={`h-5 w-5 ${isActive ? 'text-white' : 'text-[#232249] group-hover:text-[#232249]'}`} />
               </div>
               <AnimatePresence>
                 {!isCollapsed && (
@@ -385,7 +398,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -10 }}
                     transition={{ duration: 0.2 }}
-                    className="text-sm font-semibold"
+                    className="text-sm font-semibold flex-1 truncate"
                   >
                     {item.label}
                   </motion.span>
@@ -399,13 +412,18 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
       {/* Technician Tasks Section removed: Assigned Location tab hidden for technicians */}
 
       {/* Logout Button */}
-      <div className="p-4 border-t border-gray-100 bg-gradient-to-br from-gray-50 to-gray-100">
+      <div className={`${isMobile ? 'p-3' : 'p-4'} border-t border-gray-100 bg-gradient-to-br from-gray-50 to-gray-100`}>
         <button
-          onClick={handleLogout}
-          className="flex items-center space-x-4 w-full px-4 py-3 text-red-600 hover:bg-gradient-to-r hover:from-red-50 hover:to-red-100 rounded-xl transition-all duration-300 group hover:shadow-lg"
+          onClick={() => {
+            handleLogout();
+            if (isMobile) closeMobileMenu();
+          }}
+          className={`flex items-center space-x-3 w-full px-3 py-3 text-red-600 hover:bg-gradient-to-r hover:from-red-50 hover:to-red-100 rounded-xl transition-all duration-300 group hover:shadow-lg touch-manipulation ${
+            isMobile ? 'min-h-[44px]' : ''
+          }`}
         >
-          <div className="p-2 rounded-lg bg-red-100 group-hover:bg-red-200 transition-all duration-300">
-            <LogOut className="h-5 w-5 flex-shrink-0" />
+          <div className="p-2 rounded-lg bg-red-100 group-hover:bg-red-200 transition-all duration-300 flex-shrink-0">
+            <LogOut className="h-5 w-5" />
           </div>
           <AnimatePresence>
             {!isCollapsed && (
@@ -414,7 +432,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -10 }}
                 transition={{ duration: 0.2 }}
-                className="text-sm font-semibold"
+                className="text-sm font-semibold flex-1 truncate"
               >
                 Logout
               </motion.span>

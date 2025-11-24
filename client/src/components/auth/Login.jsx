@@ -55,29 +55,29 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center p-6">
-      <div className="w-full max-w-lg">
+    <div className="min-h-screen bg-white flex items-center justify-center p-4 sm:p-6 lg:p-8">
+      <div className="w-full max-w-sm sm:max-w-md lg:max-w-lg">
         {/* Logo and Header */}
-        <div className="text-center mb-6">
-          <div className="relative mb-4">
-            <div className="w-24 h-24 mx-auto bg-gradient-to-br from-[#232249] to-[#232249]/80 rounded-2xl shadow-xl flex items-center justify-center">
-              <img src="/logo.jpg" alt="Confine App" className="w-16 h-16 object-contain rounded-xl" />
+        <div className="text-center mb-4 sm:mb-6">
+          <div className="relative mb-3 sm:mb-4">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto bg-gradient-to-br from-[#232249] to-[#232249]/80 rounded-2xl shadow-xl flex items-center justify-center">
+              <img src="/logo.jpg" alt="Confine App" className="w-14 h-14 sm:w-16 sm:h-16 object-contain rounded-xl" />
             </div>
-            <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-white rounded-full shadow-md flex items-center justify-center">
-              <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+            <div className="absolute -bottom-1 -right-1 w-5 h-5 sm:w-6 sm:h-6 bg-white rounded-full shadow-md flex items-center justify-center">
+              <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-emerald-500 rounded-full animate-pulse"></div>
             </div>
           </div>
         </div>
 
         {/* Sign In Header */}
-        <div className="text-center mb-6">
-          <h2 className="text-2xl font-bold mb-2 tracking-wide text-[#232249]">Welcome Back</h2>
-          <p className="text-gray-600 text-base">Sign in to your account to continue</p>
+        <div className="text-center mb-4 sm:mb-6">
+          <h2 className="text-xl sm:text-2xl font-bold mb-1 sm:mb-2 tracking-wide text-[#232249]">Welcome Back</h2>
+          <p className="text-gray-600 text-sm sm:text-base">Sign in to your account to continue</p>
         </div>
 
         {/* Error Alert */}
         {error && (
-          <div className={`mb-4 p-4 border rounded-lg ${
+          <div className={`mb-3 sm:mb-4 p-3 sm:p-4 border rounded-lg ${
             error.includes('pending approval') || error.includes('PENDING_APPROVAL') 
               ? 'bg-amber-50 border-amber-200' 
               : error.includes('rejected') || error.includes('ACCOUNT_REJECTED')
@@ -139,23 +139,23 @@ const Login = () => {
         )}
 
         {/* Login Form */}
-        <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-4 sm:p-6">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-3 sm:space-y-4">
             {/* Email Field */}
             <div>
-              <label htmlFor="email" className="block text-sm font-semibold mb-2 text-[#232249]">
+              <label htmlFor="email" className="block text-sm font-semibold mb-1.5 sm:mb-2 text-[#232249]">
                 Email Address
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="w-4 h-4 text-gray-400" style={{color: focusedField === 'email' ? '#232249' : undefined}} />
+                  <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" style={{color: focusedField === 'email' ? '#232249' : undefined}} />
                 </div>
                 <input
                   {...register('email')}
                   type="email"
                   id="email"
-                  className={`w-full pl-10 pr-3 py-3 border-2 rounded-lg text-gray-900 placeholder-gray-500 
-                    transition-all duration-200 focus:outline-none focus:ring-3 ${
+                  className={`w-full pl-10 sm:pl-11 pr-3 py-3 sm:py-3.5 border-2 rounded-lg text-gray-900 placeholder-gray-500 text-sm sm:text-base
+                    transition-all duration-200 focus:outline-none focus:ring-3 touch-manipulation ${
                     errors.email 
                       ? 'border-red-300 focus:border-red-500 focus:ring-red-100' 
                       : 'border-gray-200 hover:border-gray-300 focus:border-[#232249] focus:ring-[#232249]/10'
@@ -170,25 +170,25 @@ const Login = () => {
                 />
               </div>
               {errors.email && (
-                <p className="mt-1 text-sm text-red-600 font-medium">{errors.email.message}</p>
+                <p className="mt-1 text-xs sm:text-sm text-red-600 font-medium">{errors.email.message}</p>
               )}
             </div>
 
             {/* Password Field */}
             <div>
-              <label htmlFor="password" className="block text-sm font-semibold mb-2 text-[#232249]">
+              <label htmlFor="password" className="block text-sm font-semibold mb-1.5 sm:mb-2 text-[#232249]">
                 Password
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="w-4 h-4 text-gray-400" style={{color: focusedField === 'password' ? '#232249' : undefined}} />
+                  <Lock className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" style={{color: focusedField === 'password' ? '#232249' : undefined}} />
                 </div>
                 <input
                   {...register('password')}
                   type={showPassword ? 'text' : 'password'}
                   id="password"
-                  className={`w-full pl-10 pr-10 py-3 border-2 rounded-lg text-gray-900 placeholder-gray-500 
-                    transition-all duration-200 focus:outline-none focus:ring-3 ${
+                  className={`w-full pl-10 sm:pl-11 pr-10 sm:pr-12 py-3 sm:py-3.5 border-2 rounded-lg text-gray-900 placeholder-gray-500 text-sm sm:text-base
+                    transition-all duration-200 focus:outline-none focus:ring-3 touch-manipulation ${
                     errors.password 
                       ? 'border-red-300 focus:border-red-500 focus:ring-red-100' 
                       : 'border-gray-200 hover:border-gray-300 focus:border-[#232249] focus:ring-[#232249]/10'
@@ -203,33 +203,33 @@ const Login = () => {
                 />
                 <button
                   type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center hover:bg-gray-50 rounded-r-lg transition-colors duration-200"
+                  className="absolute inset-y-0 right-0 pr-3 sm:pr-4 flex items-center hover:bg-gray-50 rounded-r-lg transition-colors duration-200 touch-manipulation min-w-[44px] min-h-[44px]"
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? (
-                    <EyeOff className="w-4 h-4 text-gray-400 hover:text-[#232249]" />
+                    <EyeOff className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 hover:text-[#232249]" />
                   ) : (
-                    <Eye className="w-4 h-4 text-gray-400 hover:text-[#232249]" />
+                    <Eye className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 hover:text-[#232249]" />
                   )}
                 </button>
               </div>
               {errors.password && (
-                <p className="mt-1 text-sm text-red-600 font-medium">{errors.password.message}</p>
+                <p className="mt-1 text-xs sm:text-sm text-red-600 font-medium">{errors.password.message}</p>
               )}
             </div>
 
             {/* Remember me & Forgot password */}
-            <div className="flex items-center justify-between py-2">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0 py-2">
               <label className="flex items-center">
                 <input
                   type="checkbox"
-                  className="w-4 h-4 rounded border-gray-300 text-[#232249] focus:ring-[#232249]/20"
+                  className="w-4 h-4 sm:w-5 sm:h-5 rounded border-gray-300 text-[#232249] focus:ring-[#232249]/20 touch-manipulation"
                 />
-                <span className="ml-2 text-sm text-gray-600 font-medium">Remember me</span>
+                <span className="ml-2 text-xs sm:text-sm text-gray-600 font-medium">Remember me</span>
               </label>
               <Link
                 to="/forgot-password"
-                className="text-sm font-semibold text-[#232249] hover:text-[#232249]/80 transition-colors duration-200"
+                className="text-xs sm:text-sm font-semibold text-[#232249] hover:text-[#232249]/80 transition-colors duration-200 touch-manipulation min-h-[44px] flex items-center sm:min-h-0"
               >
                 Forgot password?
               </Link>
@@ -239,10 +239,10 @@ const Login = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className={`w-full py-3 px-6 rounded-lg font-bold text-white text-base transition-all duration-200 ${
+              className={`w-full py-3 sm:py-3.5 px-6 rounded-lg font-bold text-white text-sm sm:text-base transition-all duration-200 touch-manipulation min-h-[48px] ${
                 isLoading
                   ? 'bg-gray-400 cursor-not-allowed'
-                  : 'bg-[#232249] hover:bg-[#232249]/90 hover:shadow-md transform hover:-translate-y-0.5'
+                  : 'bg-[#232249] hover:bg-[#232249]/90 hover:shadow-md transform hover:-translate-y-0.5 active:scale-95'
               }`}
             >
               {isLoading ? (
@@ -260,12 +260,12 @@ const Login = () => {
           </form>
 
           {/* Divider */}
-          <div className="my-6">
+          <div className="my-4 sm:my-6">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-gray-200"></div>
               </div>
-              <div className="relative flex justify-center text-sm">
+              <div className="relative flex justify-center text-xs sm:text-sm">
                 <span className="px-3 bg-white text-gray-500 font-medium">Don't have an account?</span>
               </div>
             </div>
@@ -274,7 +274,7 @@ const Login = () => {
           {/* Register Link */}
           <Link
             to="/register"
-            className="w-full flex items-center justify-center py-3 px-6 border-2 border-[#232249] rounded-lg font-bold text-base text-[#232249] hover:bg-[#232249] hover:text-white transition-all duration-200 transform hover:-translate-y-0.5"
+            className="w-full flex items-center justify-center py-3 sm:py-3.5 px-6 border-2 border-[#232249] rounded-lg font-bold text-sm sm:text-base text-[#232249] hover:bg-[#232249] hover:text-white transition-all duration-200 transform hover:-translate-y-0.5 active:scale-95 touch-manipulation min-h-[48px]"
           >
             <User className="w-4 h-4 mr-2" />
             Create Account
@@ -282,9 +282,9 @@ const Login = () => {
         </div>
 
         {/* Footer */}
-        <div className="mt-6 text-center">
-          <div className="flex items-center justify-center space-x-2 text-sm text-gray-500">
-            <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+        <div className="mt-4 sm:mt-6 text-center">
+          <div className="flex items-center justify-center space-x-2 text-xs sm:text-sm text-gray-500">
+            <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-emerald-500 rounded-full animate-pulse flex-shrink-0"></div>
             <span>Secured with enterprise-grade encryption</span>
           </div>
         </div>

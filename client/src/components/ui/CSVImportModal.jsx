@@ -230,70 +230,75 @@ const CSVImportModal = ({ isOpen, onClose, onImport, isLoading = false }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-xl flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-3xl shadow-2xl border border-gray-200/50 overflow-hidden max-w-6xl w-full max-h-[90vh] overflow-y-auto">
-        {/* Header */}
-        <div className="bg-gradient-to-r from-[#232249] to-[#2d2d5f] px-8 py-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="bg-white/15 backdrop-blur-sm rounded-xl p-3 border border-white/20">
-                <Upload className="w-6 h-6 text-white" />
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-xl flex items-start sm:items-center justify-center z-50 p-0 sm:p-4 safe-area-inset-top safe-area-inset-bottom overflow-y-auto">
+      <div className="bg-white rounded-none sm:rounded-3xl shadow-2xl border-0 sm:border border-gray-200/50 overflow-hidden max-w-6xl w-full min-h-screen sm:min-h-0 sm:max-h-[95vh] overflow-y-auto">
+        {/* Mobile-Responsive Header */}
+        <div className="sticky top-0 z-10 bg-gradient-to-r from-[#232249] to-[#2d2d5f] px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
+              <div className="bg-white/15 backdrop-blur-sm rounded-xl p-2 sm:p-3 border border-white/20 shrink-0">
+                <Upload className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               </div>
-              <div>
-                <h2 className="text-2xl font-bold text-white">Bulk Import Work Orders</h2>
-                <p className="text-white/70 text-sm">Upload CSV or Excel file to import multiple work orders</p>
+              <div className="min-w-0 flex-1">
+                <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-white truncate">
+                  Bulk Import Work Orders
+                </h2>
+                <p className="text-white/70 text-xs sm:text-sm mt-1">
+                  Upload CSV or Excel file to import
+                </p>
               </div>
             </div>
             <button
               onClick={handleClose}
-              className="p-3 hover:bg-white/10 rounded-2xl transition-colors border border-white/20"
+              className="bg-white/10 hover:bg-white/20 rounded-xl p-2 sm:p-3 transition-colors border border-white/20 shrink-0 touch-manipulation"
             >
-              <X className="h-6 w-6 text-white" />
+              <X className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
             </button>
           </div>
         </div>
 
-        <div className="p-8">
+        <div className="p-4 sm:p-6 lg:p-8">
           {!importResults ? (
             <>
-              {/* Download Template Section */}
-              <div className="mb-8 p-6 bg-blue-50 rounded-2xl border border-blue-200">
-                <div className="flex items-center justify-between">
+              {/* Mobile-Responsive Download Template Section */}
+              <div className="mb-6 sm:mb-8 p-4 sm:p-6 bg-blue-50 rounded-2xl border border-blue-200">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-0">
                   <div className="flex items-center gap-3">
-                    <FileText className="w-6 h-6 text-blue-600" />
-                    <div>
-                      <h3 className="text-lg font-semibold text-blue-900">Download Excel Template</h3>
+                    <FileText className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 shrink-0" />
+                    <div className="min-w-0">
+                      <h3 className="text-base sm:text-lg font-semibold text-blue-900">Download Excel Template</h3>
                       <p className="text-blue-700 text-sm">Use this template to format your data correctly</p>
                     </div>
                   </div>
                   <button
                     onClick={downloadTemplate}
-                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
+                    className="flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors touch-manipulation whitespace-nowrap"
                   >
-                    <Download className="w-4 h-4" />
-                    Download Excel Template
+                    <Download className="w-4 h-4 shrink-0" />
+                    <span className="hidden sm:inline">Download Excel Template</span>
+                    <span className="sm:hidden">Download Template</span>
                   </button>
                 </div>
               </div>
 
-              {/* File Upload Section */}
-              <div className="mb-8">
-                <label className="block text-lg font-semibold text-gray-900 mb-4">
+              {/* Mobile-Responsive File Upload Section */}
+              <div className="mb-6 sm:mb-8">
+                <label className="block text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">
                   Select CSV or Excel File
                 </label>
-                <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-[#232249] transition-colors">
-                  <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 sm:p-8 text-center hover:border-[#232249] transition-colors touch-manipulation">
+                  <Upload className="w-10 h-10 sm:w-12 sm:h-12 text-gray-400 mx-auto mb-3 sm:mb-4" />
                   <div className="space-y-2">
-                    <p className="text-gray-600">
+                    <p className="text-gray-600 text-sm sm:text-base">
                       <button
                         onClick={() => fileInputRef.current?.click()}
-                        className="text-[#232249] hover:underline font-medium"
+                        className="text-[#232249] hover:underline font-medium touch-manipulation"
                       >
                         Click to upload
                       </button>
-                      {' '}or drag and drop your file here
+                      <span className="hidden sm:inline"> or drag and drop your file here</span>
                     </p>
-                    <p className="text-sm text-gray-500">CSV, Excel (.xlsx, .xls) files supported</p>
+                    <p className="text-xs sm:text-sm text-gray-500">CSV, Excel (.xlsx, .xls) files supported</p>
                   </div>
                   <input
                     ref={fileInputRef}
@@ -304,26 +309,26 @@ const CSVImportModal = ({ isOpen, onClose, onImport, isLoading = false }) => {
                   />
                 </div>
                 {csvFile && (
-                  <div className="mt-4 p-4 bg-green-50 rounded-xl border border-green-200">
-                    <div className="flex items-center gap-3">
-                      <FileText className="w-5 h-5 text-green-600" />
-                      <span className="text-green-800 font-medium">{csvFile.name}</span>
-                      <span className="text-green-600 text-sm">({csvData.length} rows)</span>
+                  <div className="mt-4 p-3 sm:p-4 bg-green-50 rounded-xl border border-green-200">
+                    <div className="flex items-center gap-2 sm:gap-3">
+                      <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-green-600 shrink-0" />
+                      <span className="text-green-800 font-medium text-sm sm:text-base truncate flex-1">{csvFile.name}</span>
+                      <span className="text-green-600 text-xs sm:text-sm whitespace-nowrap">({csvData.length} rows)</span>
                     </div>
                   </div>
                 )}
               </div>
 
-              {/* Errors */}
+              {/* Mobile-Responsive Errors */}
               {errors.length > 0 && (
                 <div className="mb-6 p-4 bg-red-50 rounded-xl border border-red-200">
                   <div className="flex items-start gap-3">
-                    <AlertTriangle className="w-5 h-5 text-red-600 mt-0.5" />
-                    <div>
-                      <h4 className="text-red-800 font-medium mb-2">Errors Found:</h4>
+                    <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5 text-red-600 mt-0.5 shrink-0" />
+                    <div className="min-w-0 flex-1">
+                      <h4 className="text-red-800 font-medium mb-2 text-sm sm:text-base">Errors Found:</h4>
                       <ul className="list-disc list-inside space-y-1">
                         {errors.map((error, index) => (
-                          <li key={index} className="text-red-700 text-sm">{error}</li>
+                          <li key={index} className="text-red-700 text-xs sm:text-sm break-words">{error}</li>
                         ))}
                       </ul>
                     </div>
@@ -331,29 +336,29 @@ const CSVImportModal = ({ isOpen, onClose, onImport, isLoading = false }) => {
                 </div>
               )}
 
-              {/* Preview */}
+              {/* Mobile-Responsive Preview */}
               {preview.length > 0 && (
-                <div className="mb-8">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Data Preview (First 5 rows)</h3>
-                  <div className="overflow-x-auto bg-gray-50 rounded-xl border border-gray-200">
+                <div className="mb-6 sm:mb-8">
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">Data Preview (First 5 rows)</h3>
+                  <div className="table-responsive overflow-x-auto bg-gray-50 rounded-xl border border-gray-200 -webkit-overflow-scrolling-touch">
                     <table className="min-w-full">
                       <thead className="bg-gray-100">
                         <tr>
-                          <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Space Name</th>
-                          <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Building</th>
-                          <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Technician</th>
-                          <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Priority</th>
-                          <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Confined Space</th>
+                          <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-bold text-gray-700 whitespace-nowrap">Space Name</th>
+                          <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-bold text-gray-700 whitespace-nowrap">Building</th>
+                          <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-bold text-gray-700 whitespace-nowrap">Technician</th>
+                          <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-bold text-gray-700 whitespace-nowrap">Priority</th>
+                          <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-bold text-gray-700 whitespace-nowrap">Confined Space</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-200">
                         {preview.map((row, index) => (
                           <tr key={index} className="hover:bg-gray-50">
-                            <td className="px-4 py-3 text-sm text-gray-900">{row.spaceName}</td>
-                            <td className="px-4 py-3 text-sm text-gray-900">{row.building}</td>
-                            <td className="px-4 py-3 text-sm text-gray-900">{row.technician}</td>
-                            <td className="px-4 py-3 text-sm text-gray-900">{row.priority}</td>
-                            <td className="px-4 py-3 text-sm text-gray-900">{row.confinedSpace}</td>
+                            <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-900">{row.spaceName}</td>
+                            <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-900">{row.building}</td>
+                            <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-900">{row.technician}</td>
+                            <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-900">{row.priority}</td>
+                            <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-900">{row.confinedSpace}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -362,69 +367,69 @@ const CSVImportModal = ({ isOpen, onClose, onImport, isLoading = false }) => {
                 </div>
               )}
 
-              {/* Import Button */}
-              <div className="flex items-center justify-end gap-4">
+              {/* Mobile-Responsive Import Buttons */}
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center sm:justify-end gap-3 sm:gap-4">
                 <button
                   onClick={handleClose}
-                  className="px-6 py-3 text-gray-700 hover:bg-gray-100 rounded-xl transition-colors"
+                  className="px-6 py-3 text-gray-700 hover:bg-gray-100 rounded-xl transition-colors font-medium touch-manipulation order-2 sm:order-1"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleImport}
                   disabled={csvData.length === 0 || errors.length > 0 || isLoading}
-                  className="flex items-center gap-2 px-6 py-3 bg-[#232249] text-white rounded-xl hover:bg-[#1a1a3a] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="flex items-center justify-center gap-2 px-6 py-3 bg-[#232249] text-white rounded-xl hover:bg-[#1a1a3a] disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium touch-manipulation order-1 sm:order-2"
                 >
                   {isLoading ? (
                     <>
                       <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
-                      Importing...
+                      <span>Importing...</span>
                     </>
                   ) : (
                     <>
-                      <Upload className="w-4 h-4" />
-                      Import {csvData.length} Work Orders
+                      <Upload className="w-4 h-4 shrink-0" />
+                      <span>Import {csvData.length} Work Orders</span>
                     </>
                   )}
                 </button>
               </div>
             </>
           ) : (
-            /* Import Results */
-            <div className="space-y-6">
+            /* Mobile-Responsive Import Results */
+            <div className="space-y-4 sm:space-y-6">
               <div className="text-center">
                 {importResults.data?.results?.successful > 0 ? (
-                  <CheckCircle className="w-16 h-16 text-green-600 mx-auto mb-4" />
+                  <CheckCircle className="w-12 h-12 sm:w-16 sm:h-16 text-green-600 mx-auto mb-3 sm:mb-4" />
                 ) : (
-                  <XCircle className="w-16 h-16 text-red-600 mx-auto mb-4" />
+                  <XCircle className="w-12 h-12 sm:w-16 sm:h-16 text-red-600 mx-auto mb-3 sm:mb-4" />
                 )}
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">Import Complete</h3>
-                <p className="text-gray-600">{importResults.message}</p>
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Import Complete</h3>
+                <p className="text-gray-600 px-4 text-sm sm:text-base">{importResults.message}</p>
               </div>
 
               {importResults.data?.results && (
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                   <div className="bg-blue-50 rounded-xl p-4 text-center border border-blue-200">
-                    <div className="text-2xl font-bold text-blue-900">{importResults.data.results.total}</div>
-                    <div className="text-blue-700 text-sm">Total Processed</div>
+                    <div className="text-xl sm:text-2xl font-bold text-blue-900">{importResults.data.results.total}</div>
+                    <div className="text-blue-700 text-xs sm:text-sm">Total Processed</div>
                   </div>
                   <div className="bg-green-50 rounded-xl p-4 text-center border border-green-200">
-                    <div className="text-2xl font-bold text-green-900">{importResults.data.results.successful}</div>
-                    <div className="text-green-700 text-sm">Successful</div>
+                    <div className="text-xl sm:text-2xl font-bold text-green-900">{importResults.data.results.successful}</div>
+                    <div className="text-green-700 text-xs sm:text-sm">Successful</div>
                   </div>
                   <div className="bg-red-50 rounded-xl p-4 text-center border border-red-200">
-                    <div className="text-2xl font-bold text-red-900">{importResults.data.results.failed}</div>
-                    <div className="text-red-700 text-sm">Failed</div>
+                    <div className="text-xl sm:text-2xl font-bold text-red-900">{importResults.data.results.failed}</div>
+                    <div className="text-red-700 text-xs sm:text-sm">Failed</div>
                   </div>
                 </div>
               )}
 
               {importResults.data?.results?.errors?.length > 0 && (
-                <div className="bg-red-50 rounded-xl p-6 border border-red-200">
-                  <h4 className="text-red-800 font-medium mb-4">Import Errors:</h4>
+                <div className="bg-red-50 rounded-xl p-4 sm:p-6 border border-red-200">
+                  <h4 className="text-red-800 font-medium mb-3 sm:mb-4 text-sm sm:text-base">Import Errors:</h4>
                   <div className="space-y-2 max-h-40 overflow-y-auto">
                     {importResults.data.results.errors.map((error, index) => (
-                      <div key={index} className="text-red-700 text-sm">
+                      <div key={index} className="text-red-700 text-xs sm:text-sm break-words">
                         <span className="font-medium">Row {error.row}:</span> {error.error}
                       </div>
                     ))}
@@ -432,10 +437,10 @@ const CSVImportModal = ({ isOpen, onClose, onImport, isLoading = false }) => {
                 </div>
               )}
 
-              <div className="flex items-center justify-center gap-4">
+              <div className="flex items-center justify-center gap-4 pt-4">
                 <button
                   onClick={handleClose}
-                  className="px-6 py-3 bg-[#232249] text-white rounded-xl hover:bg-[#1a1a3a] transition-colors"
+                  className="px-6 sm:px-8 py-3 bg-[#232249] text-white rounded-xl hover:bg-[#1a1a3a] transition-colors font-medium touch-manipulation"
                 >
                   Close
                 </button>

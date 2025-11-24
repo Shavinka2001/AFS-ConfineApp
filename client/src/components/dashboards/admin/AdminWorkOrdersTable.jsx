@@ -2,10 +2,6 @@ import React, { useState } from 'react';
 import {
   Eye,
   Edit,
-  Check,
-  X,
-  Pause,
-  Play,
   Download,
   Calendar,
   Clock,
@@ -20,8 +16,9 @@ import {
   ChevronDown,
   ChevronUp,
   Trash2,
-  Save,
-  XCircle
+  XCircle,
+  Check,
+  X
 } from 'lucide-react';
 
 // Import the new comprehensive edit form
@@ -170,7 +167,6 @@ const consolidateGroup = (group) => {
 const AdminWorkOrdersTable = ({ 
   workOrders = [], 
   onView, 
-  onStatusUpdate,
   onDownloadPDF,
   onUpdateOrder,
   onDeleteOrder,
@@ -204,18 +200,7 @@ const AdminWorkOrdersTable = ({
     setExpandedRows(newExpanded);
   };
 
-  const getStatusColor = (status) => {
-    const colors = {
-      'draft': 'bg-gray-100 text-gray-800 border-gray-200',
-      'pending': 'bg-yellow-100 text-yellow-800 border-yellow-200',
-      'approved': 'bg-blue-100 text-blue-800 border-blue-200',
-      'in-progress': 'bg-indigo-100 text-indigo-800 border-indigo-200',
-      'completed': 'bg-green-100 text-green-800 border-green-200',
-      'cancelled': 'bg-red-100 text-red-800 border-red-200',
-      'on-hold': 'bg-orange-100 text-orange-800 border-orange-200'
-    };
-    return colors[status] || 'bg-gray-100 text-gray-800 border-gray-200';
-  };
+
 
   const getPriorityColor = (priority) => {
     const colors = {
@@ -236,80 +221,7 @@ const AdminWorkOrdersTable = ({
     });
   };
 
-  const renderStatusActions = (order) => {
-    const currentStatus = order.status;
-    const actions = [];
 
-    if (currentStatus === 'pending') {
-      actions.push(
-        <button
-          key="approve"
-          onClick={() => onStatusUpdate(order.id || order._id, 'approved')}
-          className="flex items-center px-3 py-2 text-sm text-[#232249] hover:bg-gray-50 rounded-lg transition-colors font-medium w-full text-left"
-        >
-          <Check className="w-4 h-4 mr-2" />
-          Approve
-        </button>,
-        <button
-          key="reject"
-          onClick={() => onStatusUpdate(order.id || order._id, 'cancelled')}
-          className="flex items-center px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors font-medium w-full text-left"
-        >
-          <X className="w-4 h-4 mr-2" />
-          Reject
-        </button>
-      );
-    }
-
-    if (currentStatus === 'approved') {
-      actions.push(
-        <button
-          key="start"
-          onClick={() => onStatusUpdate(order.id || order._id, 'in-progress')}
-          className="flex items-center px-3 py-2 text-sm text-[#232249] hover:bg-gray-50 rounded-lg transition-colors font-medium w-full text-left"
-        >
-          <Play className="w-4 h-4 mr-2" />
-          Start Work
-        </button>
-      );
-    }
-
-    if (currentStatus === 'in-progress') {
-      actions.push(
-        <button
-          key="complete"
-          onClick={() => onStatusUpdate(order.id || order._id, 'completed')}
-          className="flex items-center px-3 py-2 text-sm text-green-600 hover:bg-green-50 rounded-lg transition-colors font-medium w-full text-left"
-        >
-          <Check className="w-4 h-4 mr-2" />
-          Complete
-        </button>,
-        <button
-          key="hold"
-          onClick={() => onStatusUpdate(order.id || order._id, 'on-hold')}
-          className="flex items-center px-3 py-2 text-sm text-orange-600 hover:bg-orange-50 rounded-lg transition-colors font-medium w-full text-left"
-        >
-          <Pause className="w-4 h-4 mr-2" />
-          Put on Hold
-        </button>
-      );
-    }
-
-    if (currentStatus === 'on-hold') {
-      actions.push(
-        <button
-          key="resume"
-          onClick={() => onStatusUpdate(order.id || order._id, 'in-progress')}
-          className="flex items-center px-3 py-2 text-sm text-[#232249] hover:bg-gray-50 rounded-lg transition-colors font-medium w-full text-left"
-        >
-          <Play className="w-4 h-4 mr-2" />
-          Resume
-        </button>
-      );
-    }
-
-    return actions;
-  };
 
   // Handle Edit Order
   const handleEditOrder = (order) => {
@@ -468,33 +380,33 @@ const AdminWorkOrdersTable = ({
 
   if (!workOrders || workOrders.length === 0) {
     return (
-      <div className="space-y-6">
-        {/* Modern Header */}
-        <div className="bg-gradient-to-r from-[#232249] to-[#2d2d5f] rounded-2xl shadow-lg p-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="bg-white/15 backdrop-blur-sm rounded-xl p-3 border border-white/20">
-                <FileText className="w-7 h-7 text-white" />
+      <div className="space-y-4 sm:space-y-6">
+        {/* Mobile-Responsive Header */}
+        <div className="bg-gradient-to-r from-[#232249] to-[#2d2d5f] rounded-2xl sm:rounded-3xl shadow-xl p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-0">
+            <div className="flex items-center gap-3 sm:gap-4">
+              <div className="bg-white/15 backdrop-blur-sm rounded-xl p-2 sm:p-3 border border-white/20 shrink-0">
+                <FileText className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 text-white" />
               </div>
-              <div>
-                <h2 className="text-2xl font-bold text-white mb-1">
+              <div className="min-w-0">
+                <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-white mb-1 truncate">
                   Work Orders Management
                 </h2>
-                <p className="text-white/70 text-sm">
-                  Manage confined space assessments and work orders
+                <p className="text-white/70 text-xs sm:text-sm">
+                  Manage confined space assessments
                 </p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Empty State */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-12 text-center">
-          <div className="bg-gradient-to-br from-[#232249]/5 to-[#232249]/10 rounded-full p-8 w-32 h-32 mx-auto mb-8 flex items-center justify-center">
-            <FileText className="w-16 h-16 text-[#232249]" />
+        {/* Mobile-Responsive Empty State */}
+        <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl border border-gray-100 p-6 sm:p-8 lg:p-12 text-center">
+          <div className="bg-gradient-to-br from-[#232249]/5 to-[#232249]/10 rounded-full p-6 sm:p-8 w-20 h-20 sm:w-24 sm:h-24 lg:w-32 lg:h-32 mx-auto mb-6 sm:mb-8 flex items-center justify-center">
+            <FileText className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16 text-[#232249]" />
           </div>
-          <h3 className="text-2xl font-bold text-[#232249] mb-4">No Work Orders Found</h3>
-          <p className="text-gray-500 max-w-lg mx-auto leading-relaxed">
+          <h3 className="text-xl sm:text-2xl font-bold text-[#232249] mb-3 sm:mb-4">No Work Orders Found</h3>
+          <p className="text-gray-500 max-w-lg mx-auto leading-relaxed text-sm sm:text-base">
             No confined space assessments have been submitted yet. Work orders will appear here once technicians submit their assessments.
           </p>
         </div>
@@ -504,94 +416,99 @@ const AdminWorkOrdersTable = ({
 
   return (
     <div className="space-y-6">
-        {/* Modern Header */}
-        <div className="bg-gradient-to-r from-[#232249] to-[#2d2d5f] rounded-2xl shadow-lg p-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="bg-white/15 backdrop-blur-sm rounded-xl p-3 border border-white/20">
-                <FileText className="w-7 h-7 text-white" />
+        {/* Mobile-Responsive Header */}
+        <div className="bg-gradient-to-r from-[#232249] to-[#2d2d5f] rounded-2xl sm:rounded-3xl shadow-xl p-4 sm:p-6">
+          <div className="flex flex-col gap-4 sm:gap-0 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-3 sm:gap-4">
+              <div className="bg-white/15 backdrop-blur-sm rounded-xl p-2 sm:p-3 border border-white/20 shrink-0">
+                <FileText className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 text-white" />
               </div>
-              <div>
-                <h2 className="text-2xl font-bold text-white mb-1">
+              <div className="min-w-0">
+                <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-white mb-1 truncate">
                   Work Orders Management
                 </h2>
-                <p className="text-white/70 text-sm">
-                  Manage confined space assessments and work orders
+                <p className="text-white/70 text-xs sm:text-sm">
+                  Manage confined space assessments
                 </p>
               </div>
             </div>
             
-            {/* Action Buttons */}
-            <div className="flex items-center gap-3">
+            {/* Mobile-Responsive Action Buttons */}
+            <div className="flex items-center gap-2 sm:gap-3 overflow-x-auto">
               <button
                 onClick={handleDownloadConsolidatedPDFs}
-                className="flex items-center gap-2 px-4 py-2 bg-white/10 text-white rounded-xl hover:bg-white/20 transition-all duration-200 border border-white/20 hover:border-white/40"
+                className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 bg-white/10 text-white rounded-xl hover:bg-white/20 transition-all duration-200 border border-white/20 hover:border-white/40 touch-manipulation whitespace-nowrap"
                 title="Download Consolidated PDF"
               >
-                <Download className="w-4 h-4" />
-                <span className="text-sm font-medium">PDF Report</span>
+                <Download className="w-4 h-4 shrink-0" />
+                <span className="text-xs sm:text-sm font-medium">PDF Report</span>
               </button>
               
               <button
                 onClick={handleDeleteAllOrders}
-                className="flex items-center gap-2 px-4 py-2 bg-red-600/80 text-white rounded-xl hover:bg-red-700 transition-all duration-200 border border-red-500/20 hover:border-red-400"
+                className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 bg-red-600/80 text-white rounded-xl hover:bg-red-700 transition-all duration-200 border border-red-500/20 hover:border-red-400 touch-manipulation whitespace-nowrap"
                 title="Delete All Work Orders"
                 disabled={workOrders.length === 0}
               >
-                <Trash2 className="w-4 h-4" />
-                <span className="text-sm font-medium">Delete All</span>
+                <Trash2 className="w-4 h-4 shrink-0" />
+                <span className="text-xs sm:text-sm font-medium">Delete All</span>
               </button>
             </div>
           </div>
         </div>
 
-      {/* Enhanced Table Container */}
-      <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
+      {/* Mobile-Responsive Table Container */}
+      <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+        <div className="table-responsive overflow-x-auto -webkit-overflow-scrolling-touch">
+          <table className="w-full min-w-[800px]">
             <thead>
               <tr style={{ backgroundColor: '#232249' }}>
-                <th className="px-3 py-2 text-left text-xs font-semibold text-white uppercase tracking-wider">
-                  <span className="flex items-center gap-2">
-                    <FileText className="h-4 w-4" />
-                    Work Order
+                <th className="px-3 sm:px-4 py-3 sm:py-4 text-left text-xs font-bold text-white uppercase tracking-wider">
+                  <span className="flex items-center gap-2 whitespace-nowrap">
+                    <FileText className="h-4 w-4 shrink-0" />
+                    <span className="hidden sm:inline">Work Order</span>
+                    <span className="sm:hidden">Order</span>
                   </span>
                 </th>
-                <th className="px-3 py-2 text-left text-xs font-semibold text-white uppercase tracking-wider">
-                  <span className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4" />
-                    Status
+                <th className="px-3 sm:px-4 py-3 sm:py-4 text-left text-xs font-bold text-white uppercase tracking-wider">
+                  <span className="flex items-center gap-2 whitespace-nowrap">
+                    <Calendar className="h-4 w-4 shrink-0" />
+                    <span className="hidden sm:inline">Survey Date</span>
+                    <span className="sm:hidden">Date</span>
                   </span>
                 </th>
-                <th className="px-3 py-2 text-left text-xs font-semibold text-white uppercase tracking-wider">
-                  <span className="flex items-center gap-2">
-                    <User className="h-4 w-4" />
-                    Technician
+                <th className="px-3 sm:px-4 py-3 sm:py-4 text-left text-xs font-bold text-white uppercase tracking-wider">
+                  <span className="flex items-center gap-2 whitespace-nowrap">
+                    <User className="h-4 w-4 shrink-0" />
+                    <span className="hidden sm:inline">Technician</span>
+                    <span className="sm:hidden">Tech</span>
                   </span>
                 </th>
-                <th className="px-3 py-2 text-left text-xs font-semibold text-white uppercase tracking-wider">
-                  <span className="flex items-center gap-2">
-                    <Building className="h-4 w-4" />
-                    Building
+                <th className="px-3 sm:px-4 py-3 sm:py-4 text-left text-xs font-bold text-white uppercase tracking-wider">
+                  <span className="flex items-center gap-2 whitespace-nowrap">
+                    <Building className="h-4 w-4 shrink-0" />
+                    <span className="hidden sm:inline">Building</span>
+                    <span className="sm:hidden">Bldg</span>
                   </span>
                 </th>
-                <th className="px-3 py-2 text-left text-xs font-semibold text-white uppercase tracking-wider">
-                  Priority
+                <th className="px-3 sm:px-4 py-3 sm:py-4 text-left text-xs font-bold text-white uppercase tracking-wider">
+                  <span className="whitespace-nowrap">Priority</span>
                 </th>
-                <th className="px-3 py-2 text-center text-xs font-semibold text-white uppercase tracking-wider">
-                  Actions
+                <th className="px-3 sm:px-4 py-3 sm:py-4 text-center text-xs font-bold text-white uppercase tracking-wider">
+                  <span className="whitespace-nowrap">Actions</span>
                 </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
               {workOrders.map((order) => (
                 <React.Fragment key={order.id || order._id}>
-                  <tr className="hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-50/50 transition-all duration-200 group">
-                    <td className="px-3 py-3">
-                      <div className="flex items-center gap-2">
+                  <tr className="hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-50/50 transition-all duration-200 group touch-manipulation">
+                    {/* Work Order Column */}
+                    <td className="px-3 sm:px-4 py-3 sm:py-4">
+                      <div className="flex items-center gap-2 sm:gap-3">
                         <button
                           onClick={() => toggleExpand(order.id || order._id)}
-                          className="p-1 hover:bg-[#232249]/10 rounded-lg transition-all duration-200"
+                          className="p-1 sm:p-2 hover:bg-[#232249]/10 rounded-lg transition-all duration-200 touch-manipulation shrink-0"
                         >
                           {expandedRows.has(order.id || order._id) ? (
                             <ChevronUp className="h-4 w-4 text-[#232249]" />
@@ -600,7 +517,7 @@ const AdminWorkOrdersTable = ({
                           )}
                         </button>
                         <div className="min-w-0 flex-1">
-                          <p className="font-semibold text-[#232249] text-sm mb-1">
+                          <p className="font-bold text-[#232249] text-xs sm:text-sm mb-1 truncate">
                             {order.workOrderId || order.uniqueId || `WO-${new Date(order.createdAt).getFullYear()}-${String(order.id || order._id).slice(-4)}`}
                           </p>
                           <p className="text-xs text-gray-600 truncate">
@@ -609,27 +526,28 @@ const AdminWorkOrdersTable = ({
                         </div>
                       </div>
                     </td>
-                    <td className="px-3 py-3">
-                      <div className="space-y-2">
-                        <div className="text-xs text-[#232249] font-medium">
-                          {formatDate(order.surveyDate || order.createdAt)}
-                        </div>
-                        <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium border ${getStatusColor(order.status)}`}>
-                          {order.status}
-                        </span>
+                    
+                    {/* Survey Date Column */}
+                    <td className="px-3 sm:px-4 py-3 sm:py-4">
+                      <div className="text-xs sm:text-sm text-[#232249] font-medium whitespace-nowrap">
+                        {formatDate(order.surveyDate || order.createdAt)}
                       </div>
                     </td>
-                    <td className="px-3 py-3">
-                      <div>
-                        <p className="font-medium text-[#232249] text-sm mb-1">{order.technician || 'Unknown'}</p>
-                        <p className="text-xs text-gray-500">
+                    
+                    {/* Technician Column */}
+                    <td className="px-3 sm:px-4 py-3 sm:py-4">
+                      <div className="min-w-0">
+                        <p className="font-medium text-[#232249] text-xs sm:text-sm mb-1 truncate">{order.technician || 'Unknown'}</p>
+                        <p className="text-xs text-gray-500 truncate">
                           {formatDate(order.createdAt)}
                         </p>
                       </div>
                     </td>
-                    <td className="px-3 py-3">
+                    
+                    {/* Building Column */}
+                    <td className="px-3 sm:px-4 py-3 sm:py-4">
                       <div className="min-w-0">
-                        <p className="text-sm font-medium text-[#232249] mb-1 truncate">
+                        <p className="text-xs sm:text-sm font-medium text-[#232249] mb-1 truncate">
                           {order.building || 'Unknown Building'}
                         </p>
                         <p className="text-xs text-gray-500 truncate">
@@ -637,72 +555,67 @@ const AdminWorkOrdersTable = ({
                         </p>
                       </div>
                     </td>
-                    <td className="px-3 py-3">
-                      <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium border ${getPriorityColor(order.priority)}`}>
+                    
+                    {/* Priority Column */}
+                    <td className="px-3 sm:px-4 py-3 sm:py-4">
+                      <span className={`inline-flex items-center px-2 py-1 rounded-lg text-xs font-bold border-2 ${getPriorityColor(order.priority)} whitespace-nowrap`}>
                         {order.priority || 'medium'}
                       </span>
                     </td>
-                    <td className="px-3 py-3">
-                      <div className="flex items-center justify-center gap-1">
+                    
+                    {/* Actions Column - Mobile Optimized */}
+                    <td className="px-3 sm:px-4 py-3 sm:py-4">
+                      <div className="flex items-center justify-center gap-1 sm:gap-2">
                         <button
                           onClick={() => onView && onView(order)}
-                          className="p-2 text-gray-400 hover:text-[#232249] hover:bg-[#232249]/10 rounded-lg transition-all duration-200"
+                          className="p-1.5 sm:p-2 text-gray-400 hover:text-[#232249] hover:bg-[#232249]/10 rounded-lg transition-all duration-200 touch-manipulation"
                           title="View Details"
                         >
-                          <Eye className="h-4 w-4" />
+                          <Eye className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                         </button>
                         
                         <button
                           onClick={() => handleEditOrder(order)}
-                          className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200"
+                          className="p-1.5 sm:p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 touch-manipulation"
                           title="Edit Order"
                         >
-                          <Edit className="h-4 w-4" />
+                          <Edit className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                         </button>
                         
                         {onDownloadPDF && (
                           <button
                             onClick={() => onDownloadPDF(order)}
-                            className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-all duration-200"
+                            className="p-1.5 sm:p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-all duration-200 touch-manipulation"
                             title="Download PDF"
                           >
-                            <Download className="h-4 w-4" />
+                            <Download className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                           </button>
                         )}
                         
                         <button
                           onClick={() => handleDeleteOrder(order.id || order._id)}
-                          className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200"
+                          className="p-1.5 sm:p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200 touch-manipulation"
                           title="Delete Order"
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                         </button>
                         
                         <div className="relative">
                           <button
                             onClick={() => setActionMenuOpen(actionMenuOpen === (order.id || order._id) ? null : (order.id || order._id))}
-                            className="p-2 text-gray-400 hover:text-[#232249] hover:bg-[#232249]/10 rounded-lg transition-all duration-200"
+                            className="p-1.5 sm:p-2 text-gray-400 hover:text-[#232249] hover:bg-[#232249]/10 rounded-lg transition-all duration-200 touch-manipulation"
                             title="More Actions"
                           >
-                            <MoreVertical className="h-4 w-4" />
+                            <MoreVertical className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                           </button>
-                          
-                          {actionMenuOpen === (order.id || order._id) && (
-                            <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-200 z-50 overflow-hidden">
-                              <div className="py-1">
-                                {renderStatusActions(order)}
-                              </div>
-                            </div>
-                          )}
                         </div>
                       </div>
-                    </td>
-                  </tr>
+                    </td>\n                  </tr>
                   
                   {/* Expanded Row Details */}
                   {expandedRows.has(order.id || order._id) && (
                     <tr>
-                      <td colSpan="6" className="px-3 py-4 bg-gray-50">
+                      <td colSpan="5" className="px-3 py-4 bg-gray-50">
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                           {/* Left Column - Space Information */}
                           <div className="space-y-3">

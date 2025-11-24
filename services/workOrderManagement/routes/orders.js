@@ -7,9 +7,7 @@ const {
   createOrderValidation,
   updateOrderValidation,
   orderIdValidation,
-  statusUpdateValidation,
-  queryValidation,
-  bulkUpdateValidation
+  queryValidation
 } = require('../middleware/validation');
 
 // GET /api/orders/proxy-image - Proxy images to bypass CORS (no auth required)
@@ -131,18 +129,9 @@ router.put('/:id',
   asyncHandler(orderController.updateOrder)
 );
 
-// PATCH /api/orders/:id/status - Update order status
-router.patch('/:id/status', 
-  orderIdValidation,
-  statusUpdateValidation,
-  asyncHandler(orderController.updateOrderStatus)
-);
 
-// POST /api/orders/bulk/status - Bulk update status
-router.post('/bulk/status', 
-  bulkUpdateValidation,
-  asyncHandler(orderController.bulkUpdateStatus)
-);
+
+
 
 // POST /api/orders/bulk/import - Bulk import from CSV
 router.post('/bulk/import',

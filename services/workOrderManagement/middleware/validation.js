@@ -193,11 +193,6 @@ const createOrderValidation = [
     .isIn(['low', 'medium', 'high', 'critical'])
     .withMessage('Priority must be one of: low, medium, high, critical'),
 
-  body('status')
-    .optional()
-    .isIn(['draft', 'pending', 'approved', 'in-progress', 'completed', 'cancelled', 'on-hold'])
-    .withMessage('Status must be valid'),
-
   body('tags')
     .optional()
     .isArray()
@@ -264,11 +259,6 @@ const updateOrderValidation = [
     .isIn(['low', 'medium', 'high', 'critical'])
     .withMessage('Priority must be one of: low, medium, high, critical'),
 
-  body('status')
-    .optional()
-    .isIn(['draft', 'pending', 'approved', 'in-progress', 'completed', 'cancelled', 'on-hold'])
-    .withMessage('Status must be valid'),
-
   body('notes')
     .optional()
     .trim()
@@ -308,18 +298,7 @@ const orderIdValidation = [
     })
 ];
 
-// Status update validation
-const statusUpdateValidation = [
-  body('status')
-    .isIn(['draft', 'pending', 'approved', 'in-progress', 'completed', 'cancelled', 'on-hold'])
-    .withMessage('Status must be valid'),
 
-  body('comments')
-    .optional()
-    .trim()
-    .isLength({ max: 500 })
-    .withMessage('Comments cannot exceed 500 characters')
-];
 
 // Query validation for filtering
 const queryValidation = [
@@ -333,11 +312,6 @@ const queryValidation = [
     .isInt({ min: 1, max: 100 })
     .withMessage('Limit must be between 1 and 100'),
 
-  query('status')
-    .optional()
-    .isIn(['draft', 'pending', 'approved', 'in-progress', 'completed', 'cancelled', 'on-hold'])
-    .withMessage('Status must be valid'),
-
   query('priority')
     .optional()
     .isIn(['low', 'medium', 'high', 'critical'])
@@ -345,7 +319,7 @@ const queryValidation = [
 
   query('sortBy')
     .optional()
-    .isIn(['createdAt', 'dateOfSurvey', 'priority', 'status', 'building'])
+    .isIn(['createdAt', 'dateOfSurvey', 'priority', 'building'])
     .withMessage('Invalid sort field'),
 
   query('sortOrder')
@@ -370,28 +344,11 @@ const queryValidation = [
     .withMessage('Date to must be a valid date')
 ];
 
-// Bulk operations validation
-const bulkUpdateValidation = [
-  body('orderIds')
-    .isArray({ min: 1, max: 50 })
-    .withMessage('Order IDs must be an array with 1-50 items'),
 
-  body('status')
-    .isIn(['draft', 'pending', 'approved', 'in-progress', 'completed', 'cancelled', 'on-hold'])
-    .withMessage('Status must be valid'),
-
-  body('comments')
-    .optional()
-    .trim()
-    .isLength({ max: 500 })
-    .withMessage('Comments cannot exceed 500 characters')
-];
 
 module.exports = {
   createOrderValidation,
   updateOrderValidation,
   orderIdValidation,
-  statusUpdateValidation,
-  queryValidation,
-  bulkUpdateValidation
+  queryValidation
 };

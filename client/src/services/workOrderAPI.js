@@ -277,6 +277,11 @@ class WorkOrderAPI {
     return this.handleResponse(response);
   }
 
+  // Import CSV data - alias for bulkImportOrders
+  async importCSVData(token, csvData) {
+    return this.bulkImportOrders(token, csvData);
+  }
+
   // Bulk import work orders from CSV data
   async bulkImportOrders(token, csvData) {
     const response = await fetch(`${this.baseURL}/orders/bulk/import`, {

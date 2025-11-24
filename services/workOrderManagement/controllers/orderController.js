@@ -13,6 +13,8 @@ function validateStatus(status) {
   return validStatuses.includes(status?.toLowerCase()) ? status.toLowerCase() : null;
 }
 
+
+
 function parseDate(dateString) {
   if (!dateString) return null;
   
@@ -35,7 +37,6 @@ class OrderController {
       const { 
         page = 1, 
         limit = 10, 
-        status, 
         priority, 
         sortBy = 'createdAt', 
         sortOrder = 'desc',
@@ -78,7 +79,6 @@ class OrderController {
         query.userId = userId;
       }
       
-      if (status) query.status = status;
       if (priority) query.priority = priority;
       
       if (search) {

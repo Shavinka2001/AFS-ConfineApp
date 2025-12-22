@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: confine-ingress
+  namespace: confine-prod
+  annotations:
+    kubernetes.io/ingress.class: nginx
+spec:
+  rules:
+  - host: confine.company.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: client
+            port:
+              number: 80

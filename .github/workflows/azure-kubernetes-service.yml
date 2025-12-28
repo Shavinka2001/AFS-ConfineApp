@@ -8,7 +8,8 @@ on:
 env:
   REGISTRY: ${{ secrets.ACR_LOGIN_SERVER }}
   TAG: ${{ github.sha }}
-  NAMESPACE: confine-prod
+  NAMESPACE: confine-dev
+  DEPLOYMENT_MANIFEST_PATH: confine-k8s/
 
 jobs:
   build-and-deploy:
@@ -21,7 +22,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    # 2️⃣ Azure Login (manual Service Principal)
+    # 2️⃣ Azure Login using Service Principal
     - name: Azure CLI Login
       run: |
         az login --service-principal \
@@ -29,12 +30,20 @@ jobs:
           --password ${{ secrets.AZURE_CLIENT_SECRET }} \
           --tenant ${{ secrets.AZURE_TENANT_ID }}
 
-    # 3️⃣ Login to ACR
+    # 3️⃣ Ensure ACR secret is present
+    - name: Check ACR Name
+      run: |
+        if [ -z "${{ secrets.ACR_NAME }}" ]; then
+          echo "Error: ACR_NAME secret is not set!"
+          exit 1
+        fi
+
+    # 4️⃣ Login to ACR
     - name: ACR Login
       run: |
         az acr login --name ${{ secrets.ACR_NAME }}
 
-    # 4️⃣ Build & Push Docker Images
+    # 5️⃣ Build & Push Docker Images
     - name: Build & Push Images
       run: |
         docker build -t $REGISTRY/client:$TAG ./client
@@ -47,7 +56,7 @@ jobs:
         docker push $REGISTRY/location-service:$TAG
         docker push $REGISTRY/workorder-service:$TAG
 
-    # 5️⃣ Get AKS context
+    # 6️⃣ Get AKS context
     - name: Set AKS Context
       run: |
         az aks get-credentials \
@@ -55,12 +64,12 @@ jobs:
           --name ${{ secrets.AKS_NAME }} \
           --overwrite-existing
 
-    # 6️⃣ Ensure Namespace Exists
+    # 7️⃣ Ensure Namespace Exists
     - name: Ensure Namespace
       run: |
         kubectl get ns $NAMESPACE || kubectl create ns $NAMESPACE
 
-    # 7️⃣ Create / Update Kubernetes Secrets
+    # 8️⃣ Create / Update Kubernetes Secrets
     - name: Apply Kubernetes Secrets
       run: |
         kubectl create secret generic confine-secrets \
@@ -69,13 +78,13 @@ jobs:
           --from-literal=JWT_SECRET="${{ secrets.JWT_SECRET }}" \
           --dry-run=client -o yaml | kubectl apply -f -
 
-    # 8️⃣ Inject Image Tags in manifests
+    # 9️⃣ Inject Image Tags in manifests
     - name: Inject Image Tags
       run: |
-        find confine-k8s -type f -name "*.yaml" \
+        find ${{ env.DEPLOYMENT_MANIFEST_PATH }} -type f -name "*.yaml" \
         -exec sed -i "s/IMAGE_TAG/$TAG/g" {} \;
 
-    # 9️⃣ Deploy to AKS
+    # 🔟 Deploy to AKS
     - name: Deploy to AKS
       run: |
-        kubectl apply -f confine-k8s/
+        kubectl apply -f ${{ env.DEPLOYMENT_MANIFEST_PATH }}/

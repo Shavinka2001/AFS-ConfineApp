@@ -30,18 +30,12 @@ jobs:
           --password ${{ secrets.AZURE_CLIENT_SECRET }} \
           --tenant ${{ secrets.AZURE_TENANT_ID }}
 
-    # 3️⃣ Ensure ACR secret is present
-    - name: Check ACR Name
-      run: |
-        if [ -z "${{ secrets.ACR_NAME }}" ]; then
-          echo "Error: ACR_NAME secret is not set!"
-          exit 1
-        fi
+
 
     # 4️⃣ Login to ACR
     - name: ACR Login
       run: |
-        az acr login --name ${{ secrets.ACR_NAME }}
+        az acr login --name afsapp
 
     # 5️⃣ Build & Push Docker Images
     - name: Build & Push Images

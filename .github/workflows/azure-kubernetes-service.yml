@@ -74,8 +74,8 @@ jobs:
     - name: Set AKS Context
       run: |
         az aks get-credentials \
-          --resource-group ${{ secrets.AKS_RG }} \
-          --name ${{ secrets.AKS_NAME }} \
+          --resource-group aks-dev \
+          --name confin \
           --overwrite-existing
 
     # 7️⃣ Ensure Namespace Exists
@@ -84,13 +84,13 @@ jobs:
         kubectl get ns $NAMESPACE || kubectl create ns $NAMESPACE
 
     # 8️⃣ Create / Update Kubernetes Secrets
-    - name: Apply Kubernetes Secrets
-      run: |
-        kubectl create secret generic confine-secrets \
-          -n $NAMESPACE \
-          --from-literal=MONGODB_URI="${{ secrets.MONGODB_URI }}" \
-          --from-literal=JWT_SECRET="${{ secrets.JWT_SECRET }}" \
-          --dry-run=client -o yaml | kubectl apply -f -
+    #- name: Apply Kubernetes Secrets
+    #  run: |
+    #    kubectl create secret generic confine-secrets \
+    #      -n $NAMESPACE \
+    #      --from-literal=MONGODB_URI="${{ secrets.MONGODB_URI }}" \
+    #      --from-literal=JWT_SECRET="${{ secrets.JWT_SECRET }}" \
+    #      --dry-run=client -o yaml | kubectl apply -f -
 
     # 9️⃣ Inject Image Tags in manifests
     - name: Inject Image Tags

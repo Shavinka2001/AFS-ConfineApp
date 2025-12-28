@@ -16,20 +16,19 @@ jobs:
 
     permissions:
       contents: read
-      id-token: write
 
     steps:
     # 1️⃣ Checkout
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    # 2️⃣ Azure Login (OIDC / SP)
+    # 2️⃣ Azure Login (Service Principal)
     - name: Azure Login
       uses: azure/login@v2
       with:
         client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
     # 3️⃣ Login to ACR
     - name: ACR Login
@@ -57,7 +56,12 @@ jobs:
           --name ${{ secrets.AKS_NAME }} \
           --overwrite-existing
 
-    # 6️⃣ Create / Update Kubernetes Secrets
+    # 6️⃣ Ensure Namespace Exists
+    - name: Ensure Namespace
+      run: |
+        kubectl get ns $NAMESPACE || kubectl create ns $NAMESPACE
+
+    # 7️⃣ Create / Update Kubernetes Secrets
     - name: Apply Kubernetes Secrets
       run: |
         kubectl create secret generic confine-secrets \
@@ -66,14 +70,13 @@ jobs:
           --from-literal=JWT_SECRET="${{ secrets.JWT_SECRET }}" \
           --dry-run=client -o yaml | kubectl apply -f -
 
-    # 7️⃣ Replace image tags in manifests
+    # 8️⃣ Inject Image Tags
     - name: Inject Image Tags
       run: |
         find confine-k8s -type f -name "*.yaml" \
         -exec sed -i "s/IMAGE_TAG/$TAG/g" {} \;
 
-    # 8️⃣ Deploy to AKS
+    # 9️⃣ Deploy to AKS
     - name: Deploy to AKS
       run: |
         kubectl apply -f confine-k8s/
-

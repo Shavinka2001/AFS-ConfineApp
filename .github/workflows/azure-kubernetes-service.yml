@@ -14,6 +14,7 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
+    # ✅ Only contents read; NO id-token to avoid OIDC/federated token errors
     permissions:
       contents: read
 
@@ -22,7 +23,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    # 2️⃣ Azure Login (Service Principal – separate secrets)
+    # 2️⃣ Azure Login using Service Principal (separate secrets)
     - name: Azure Login
       uses: azure/login@v2
       with:

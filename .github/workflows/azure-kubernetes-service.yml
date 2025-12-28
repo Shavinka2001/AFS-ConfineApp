@@ -13,8 +13,6 @@ env:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-
-    # Only contents read; no id-token needed
     permissions:
       contents: read
 
@@ -23,21 +21,13 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    # 2️⃣ Azure Login using Service Principal (separate secrets)
-    - name: Azure Login
-      uses: azure/login@v2
-      with:
-        auth-type: service_principal       # ⚠ lowercase!
-        client-id: ${{ secrets.AZURE_CLIENT_ID }}
-        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-        allow-no-subscriptions: false
-      env:
-        AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-
-    # 2.1️⃣ Optional: Verify login
-    - name: Verify Azure Login
-      run: az account show
+    # 2️⃣ Azure Login (manual Service Principal)
+    - name: Azure CLI Login
+      run: |
+        az login --service-principal \
+          --username ${{ secrets.AZURE_CLIENT_ID }} \
+          --password ${{ secrets.AZURE_CLIENT_SECRET }} \
+          --tenant ${{ secrets.AZURE_TENANT_ID }}
 
     # 3️⃣ Login to ACR
     - name: ACR Login
@@ -79,7 +69,7 @@ jobs:
           --from-literal=JWT_SECRET="${{ secrets.JWT_SECRET }}" \
           --dry-run=client -o yaml | kubectl apply -f -
 
-    # 8️⃣ Inject Image Tags
+    # 8️⃣ Inject Image Tags in manifests
     - name: Inject Image Tags
       run: |
         find confine-k8s -type f -name "*.yaml" \

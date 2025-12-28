@@ -36,6 +36,26 @@ jobs:
     - name: ACR Login
       run: |
         az acr login --name afsapp
+        # 4️⃣ Prepare Node dependencies (to fix npm ci error)
+    - name: Prepare Node dependencies for client
+      run: |
+        cd ./client
+        npm install
+
+    - name: Prepare Node dependencies for auth-service
+      run: |
+        cd ./services/auth
+        npm install
+
+    - name: Prepare Node dependencies for location-service
+      run: |
+        cd ./services/locationManagement
+        npm install
+
+    - name: Prepare Node dependencies for workorder-service
+      run: |
+        cd ./services/workOrderManagement
+        npm install
 
     # 5️⃣ Build & Push Docker Images
     - name: Build & Push Images

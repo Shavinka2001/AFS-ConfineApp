@@ -101,4 +101,4 @@ jobs:
     # 🔟 Deploy to AKS
     - name: Deploy to AKS
       run: |
-        kubectl apply -f ${{ env.DEPLOYMENT_MANIFEST_PATH }}/
+        kubectl apply -f confine-k8s/

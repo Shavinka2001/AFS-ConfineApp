@@ -16,6 +16,7 @@ spec:
       containers:
       - name: workorder-service
         image: afsapp.azurecr.io/workorder-service:IMAGE_TAG
+        imagePullPolicy: Always
         ports:
         - containerPort: 3012
         env:
@@ -23,25 +24,69 @@ spec:
           value: "production"
         - name: PORT
           value: "3012"
+
+        # CORS / Frontend
         - name: CLIENT_URL
-          value: "http://client"
+          value: "https://devapp.agilefacilities.com"
+
+        # JWT
         - name: JWT_EXPIRES_IN
           value: "7d"
-        - name: UPLOAD_PATH
-          value: "/app/uploads"
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: workorder-secrets
+              key: JWT_SECRET
+
+        # Mongo
         - name: MONGODB_URI
           valueFrom:
             secretKeyRef:
               name: confine-secrets
               key: MONGODB_URI
-        - name: JWT_SECRET
+
+        # Azure Blob Storage (FIXES CRASH)
+        - name: AZURE_STORAGE_CONNECTION_STRING
           valueFrom:
             secretKeyRef:
-              name: confine-secrets
-              key: JWT_SECRET
+              name: workorder-secrets
+              key: AZURE_STORAGE_CONNECTION_STRING
+        - name: AZURE_CONTAINER_NAME
+          valueFrom:
+            secretKeyRef:
+              name: workorder-secrets
+              key: AZURE_CONTAINER_NAME
+
+        # Uploads
+        - name: UPLOAD_PATH
+          value: "/app/uploads"
+        - name: MAX_FILE_SIZE
+          value: "5mb"
+
+        # Rate limiting
+        - name: RATE_LIMIT_WINDOW_MS
+          value: "900000"
+        - name: RATE_LIMIT_MAX_REQUESTS
+          value: "100"
+
+        # Logging / API
+        - name: LOG_LEVEL
+          value: "info"
+        - name: API_VERSION
+          value: "v1"
+
         volumeMounts:
         - name: uploads
           mountPath: /app/uploads
+
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "256Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+
       volumes:
       - name: uploads
         persistentVolumeClaim:

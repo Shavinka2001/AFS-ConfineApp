@@ -24,7 +24,11 @@ spec:
         - name: PORT
           value: "5004"
         - name: FRONTEND_URL
-          value: "http://client"
+          value: "https://devapp.agilefacilities.com"
+        - name: RATE_LIMIT_WINDOW_MS
+          value: "900000"
+        - name: "RATE_LIMIT_MAX_REQUESTS"
+          value: "1000"
         - name: AUTH_SERVICE_URL
           value: "http://auth-service:3001"
         - name: WORK_ORDER_SERVICE_URL

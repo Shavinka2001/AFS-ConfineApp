@@ -86,7 +86,7 @@ const AdminEditWorkOrderForm = ({
       formData.append('image', file);
       formData.append('orderId', editingOrder._id || editingOrder.id);
       
-      const response = await fetch('http://localhost:3012/api/upload-image', {
+      const response = await fetch('/api/workorder/upload-image', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`

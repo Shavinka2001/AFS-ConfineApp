@@ -108,7 +108,7 @@ const EditModal = ({
       formData.append('image', file);
       formData.append('orderId', editingForm._id || editingForm.id || `temp-${Date.now()}`);
       
-      const response = await fetch('http://localhost:3012/api/upload-image', {
+      const response = await fetch('/api/workorder/upload-image', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`

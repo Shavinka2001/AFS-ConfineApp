@@ -311,9 +311,9 @@ const TechnicianForm = () => {
       formData.append('image', file);
       formData.append('orderId', `temp-${Date.now()}`); // Temporary ID until order is created
       
-      console.log('Uploading to:', 'http://localhost:3012/api/upload-image');
+      console.log('Uploading to:', '/api/workorder/upload-image');
       
-      const response = await fetch('http://localhost:3012/api/upload-image', {
+      const response = await fetch('/api/workorder/upload-image', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`

@@ -289,12 +289,12 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, closeMobileMen
       animate={{ width: isCollapsed ? 80 : (isMobile ? 280 : 300) }}
       transition={{ duration: 0.3, ease: 'easeInOut' }}
       className={`bg-white shadow-2xl border-r border-gray-100 h-screen flex flex-col ${
-        isMobile ? 'w-280 fixed left-0 top-0 z-40' : ''
+        isMobile ? 'w-full sm:w-280 fixed left-0 top-0 z-40' : ''
       }`}
     >
       {/* Header */}
-      <div className={`${isMobile ? 'p-4' : 'p-6'} border-b border-gray-100 bg-gradient-to-r from-[#232249] to-[#232249]/90`}>
-        <div className="flex items-center justify-between">
+      <div className="p-4 sm:p-5 lg:p-6 border-b border-gray-100 bg-gradient-to-r from-[#232249] to-[#232249]/90">
+        <div className="flex items-center justify-between gap-3">
           <AnimatePresence>
             {!isCollapsed && (
               <motion.div
@@ -302,36 +302,36 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, closeMobileMen
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.2 }}
-                className="flex items-center space-x-3"
+                className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0"
               >
-                <div className={`${isMobile ? 'h-10 w-10' : 'h-12 w-12'} bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center ring-2 ring-white/30 shadow-lg`}>
+                <div className="h-10 w-10 sm:h-11 sm:w-11 lg:h-12 lg:w-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center ring-2 ring-white/30 shadow-lg flex-shrink-0">
                   <img 
                     src="/logo.jpg" 
                     alt="Logo" 
-                    className={`${isMobile ? 'h-8 w-8' : 'h-10 w-10'} object-contain`}
+                    className="h-8 w-8 sm:h-9 sm:w-9 lg:h-10 lg:w-10 object-contain"
                   />
                 </div>
-                <div>
-                  <h1 className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold text-white`}>Confine</h1>
-                  <p className="text-xs text-white/80 font-medium">Management System</p>
+                <div className="min-w-0 flex-1">
+                  <h1 className="text-lg sm:text-xl font-bold text-white truncate">Confine</h1>
+                  <p className="text-xs text-white/80 font-medium truncate">Management System</p>
                 </div>
               </motion.div>
             )}
           </AnimatePresence>
           
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center gap-2 flex-shrink-0">
             {isMobile && (
               <button
                 onClick={closeMobileMenu}
-                className="p-2 rounded-xl hover:bg-white/20 transition-all duration-300 backdrop-blur-sm lg:hidden"
+                className="p-2.5 sm:p-2 rounded-xl hover:bg-white/20 transition-all duration-300 backdrop-blur-sm lg:hidden touch-manipulation min-w-[44px] min-h-[44px] flex items-center justify-center"
               >
-                <X className="h-5 w-5 text-white" />
+                <X className="h-5 w-5 sm:h-5 sm:w-5 text-white" />
               </button>
             )}
             {!isMobile && (
               <button
                 onClick={() => setIsCollapsed(!isCollapsed)}
-                className="p-2 rounded-xl hover:bg-white/20 transition-all duration-300 backdrop-blur-sm"
+                className="p-2.5 sm:p-2 rounded-xl hover:bg-white/20 transition-all duration-300 backdrop-blur-sm touch-manipulation min-w-[44px] min-h-[44px] flex items-center justify-center"
               >
                 {isCollapsed ? (
                   <ChevronRight className="h-5 w-5 text-white" />
@@ -345,10 +345,10 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, closeMobileMen
       </div>
 
       {/* User Profile */}
-      <div className={`${isMobile ? 'p-4' : 'p-6'} border-b border-gray-100 bg-gradient-to-br from-gray-50 to-gray-100`}>
-        <div className="flex items-center space-x-3">
-          <div className={`${isMobile ? 'h-12 w-12' : 'h-14 w-14'} bg-gradient-to-br from-[#232249] to-[#232249]/80 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg ring-2 ring-[#232249]/20`}>
-            <UserCog className={`${isMobile ? 'h-6 w-6' : 'h-7 w-7'} text-white`} />
+      <div className="p-4 sm:p-5 lg:p-6 border-b border-gray-100 bg-gradient-to-br from-gray-50 to-gray-100">
+        <div className="flex items-center gap-3">
+          <div className="h-12 w-12 sm:h-13 sm:w-13 lg:h-14 lg:w-14 bg-gradient-to-br from-[#232249] to-[#232249]/80 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg ring-2 ring-[#232249]/20">
+            <UserCog className="h-6 w-6 sm:h-6 sm:w-6 lg:h-7 lg:w-7 text-white" />
           </div>
           <AnimatePresence>
             {!isCollapsed && (
@@ -359,11 +359,11 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, closeMobileMen
                 transition={{ duration: 0.2 }}
                 className="flex-1 min-w-0"
               >
-                <p className={`${isMobile ? 'text-sm' : 'text-sm'} font-bold text-[#232249] truncate`}>
+                <p className="text-sm sm:text-sm font-bold text-[#232249] truncate">
                   {user.firstName} {user.lastName}
                 </p>
-                <div className="flex items-center space-x-2 mt-1">
-                  <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-[#232249] text-white`}>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-[#232249] text-white">
                     {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
                   </span>
                 </div>
@@ -374,7 +374,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, closeMobileMen
       </div>
 
       {/* Enhanced Navigation Menu with Mobile Optimization */}
-      <nav className={`flex-1 ${isMobile ? 'px-3 py-4' : 'px-4 py-6'} space-y-2 overflow-y-auto swipeable-y`}>
+      <nav className="flex-1 px-3 sm:px-3 lg:px-4 py-4 sm:py-5 lg:py-6 space-y-1.5 sm:space-y-2 overflow-y-auto swipeable-y">
         {menuItems.map((item, index) => {
           const isActive = location.pathname === item.path;
           const Icon = item.icon;
@@ -399,15 +399,15 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, closeMobileMen
                     }, 200);
                   }
                 }}
-                className={`flex items-center space-x-3 px-3 py-3 rounded-2xl transition-all duration-300 group touch-manipulation relative overflow-hidden ${
+                className={`flex items-center gap-3 px-3 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl transition-all duration-300 group touch-manipulation relative overflow-hidden ${
                   isActive
                     ? `bg-gradient-to-r from-[#232249] to-[#1a1a3a] text-white mobile-shadow-xl ${!isMobile ? 'transform scale-105' : ''}`
                     : 'text-gray-700 hover:bg-gradient-to-r hover:from-[#232249]/10 hover:to-[#232249]/5 hover:text-[#232249] hover:mobile-shadow-lg active:bg-[#232249]/20'
-                } ${isMobile ? 'min-h-[48px]' : 'min-h-[44px]'}`} // 48px for better mobile touch
+                } min-h-[48px]`} // Consistent 48px min-height for mobile touch
               >
                 {/* Icon Container */}
                 <motion.div 
-                  className={`p-2.5 rounded-xl ${isActive ? 'bg-white/20 shadow-lg' : 'bg-gray-100 group-hover:bg-[#232249]/10'} transition-all duration-300 flex-shrink-0 relative overflow-hidden`}
+                  className={`p-2 sm:p-2.5 rounded-lg sm:rounded-xl ${isActive ? 'bg-white/20 shadow-lg' : 'bg-gray-100 group-hover:bg-[#232249]/10'} transition-all duration-300 flex-shrink-0 relative overflow-hidden`}
                   whileHover={{ scale: 1.1, rotate: 5 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -415,7 +415,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, closeMobileMen
                   
                   {/* Icon glow effect */}
                   {(isActive || hoveredItem === item.path) && (
-                    <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-blue-400/20 to-purple-400/20 opacity-50"></div>
+                    <div className="absolute inset-0 rounded-lg sm:rounded-xl bg-gradient-to-br from-blue-400/20 to-purple-400/20 opacity-50"></div>
                   )}
                 </motion.div>
                 
@@ -449,7 +449,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, closeMobileMen
                 {/* Hover ripple effect */}
                 {hoveredItem === item.path && !isActive && (
                   <motion.div
-                    className="absolute inset-0 rounded-2xl bg-gradient-to-r from-[#232249]/5 to-[#232249]/10"
+                    className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-r from-[#232249]/5 to-[#232249]/10"
                     initial={{ scale: 0, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     exit={{ scale: 0, opacity: 0 }}
@@ -460,7 +460,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, closeMobileMen
                 {/* Active background animation */}
                 {isActive && (
                   <motion.div
-                    className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-500/10 to-purple-500/10"
+                    className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-r from-blue-500/10 to-purple-500/10"
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     transition={{ duration: 0.5, ease: "easeOut" }}
@@ -475,7 +475,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, closeMobileMen
       {/* Technician Tasks Section removed: Assigned Location tab hidden for technicians */}
 
       {/* Enhanced Logout Button with Mobile Optimization */}
-      <div className={`${isMobile ? 'p-3' : 'p-4'} border-t border-gray-100 bg-gradient-to-br from-gray-50 to-gray-100`}>
+      <div className="p-3 sm:p-3 lg:p-4 border-t border-gray-100 bg-gradient-to-br from-gray-50 to-gray-100">
         <motion.button
           onClick={() => {
             handleLogout();
@@ -483,19 +483,17 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, closeMobileMen
           }}
           whileHover={{ scale: 1.02, y: -2 }}
           whileTap={{ scale: 0.98 }}
-          className={`flex items-center space-x-3 w-full px-3 py-3 text-red-600 hover:bg-gradient-to-r hover:from-red-50 hover:to-red-100 rounded-2xl transition-all duration-300 group hover:mobile-shadow-lg touch-manipulation relative overflow-hidden ${
-            isMobile ? 'min-h-[48px]' : 'min-h-[44px]'
-          }`}
+          className="flex items-center gap-3 w-full px-3 py-2.5 sm:py-3 text-red-600 hover:bg-gradient-to-r hover:from-red-50 hover:to-red-100 rounded-xl sm:rounded-2xl transition-all duration-300 group hover:mobile-shadow-lg touch-manipulation relative overflow-hidden min-h-[48px]"
         >
           {/* Icon container with enhanced effects */}
           <motion.div 
-            className="p-2.5 rounded-xl bg-red-100 group-hover:bg-red-200 transition-all duration-300 flex-shrink-0 relative overflow-hidden"
+            className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-red-100 group-hover:bg-red-200 transition-all duration-300 flex-shrink-0 relative overflow-hidden"
             whileHover={{ scale: 1.1, rotate: -5 }}
           >
             <LogOut className="h-5 w-5 transition-all duration-300" />
             
             {/* Icon glow effect */}
-            <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-red-400/20 to-pink-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <div className="absolute inset-0 rounded-lg sm:rounded-xl bg-gradient-to-br from-red-400/20 to-pink-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           </motion.div>
           
           {/* Label with enhanced animation */}
@@ -520,7 +518,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, closeMobileMen
           
           {/* Hover ripple effect */}
           <motion.div
-            className="absolute inset-0 rounded-2xl bg-gradient-to-r from-red-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+            className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-r from-red-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ duration: 0.5 }}

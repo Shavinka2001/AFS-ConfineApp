@@ -80,24 +80,24 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center p-6">
-      <div className="w-full max-w-2xl">
+    <div className="min-h-screen bg-white flex items-center justify-center p-4 sm:p-6 lg:p-8">
+      <div className="w-full max-w-sm sm:max-w-md lg:max-w-2xl">
         {/* Logo and Header */}
-        <div className="text-center mb-6">
-          <div className="relative mb-4">
-            <div className="w-24 h-24 mx-auto bg-gradient-to-br from-[#232249] to-[#232249]/80 rounded-2xl shadow-xl flex items-center justify-center">
-              <img src="/logo.jpg" alt="Confine App" className="w-16 h-16 object-contain rounded-xl" />
+        <div className="text-center mb-4 sm:mb-6">
+          <div className="relative mb-3 sm:mb-4 inline-block">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto bg-gradient-to-br from-[#232249] to-[#232249]/80 rounded-2xl shadow-xl flex items-center justify-center">
+              <img src="/logo.jpg" alt="Confine App" className="w-14 h-14 sm:w-16 sm:h-16 object-contain rounded-xl" />
             </div>
-            <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-white rounded-full shadow-md flex items-center justify-center">
-              <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+            <div className="absolute -bottom-1 -right-1 w-5 h-5 sm:w-6 sm:h-6 bg-white rounded-full shadow-md flex items-center justify-center">
+              <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-emerald-500 rounded-full animate-pulse"></div>
             </div>
           </div>
         </div>
 
         {/* Sign Up Header */}
-        <div className="text-center mb-6">
-          <h2 className="text-2xl font-bold mb-2 tracking-wide text-[#232249]">Create Account</h2>
-          <p className="text-gray-600 text-base">Join our secure platform today</p>
+        <div className="text-center mb-4 sm:mb-6">
+          <h2 className="text-xl sm:text-2xl font-bold mb-1 sm:mb-2 tracking-wide text-[#232249]">Create Account</h2>
+          <p className="text-gray-600 text-sm sm:text-base">Join our secure platform today</p>
         </div>
 
         {/* Success Alert */}

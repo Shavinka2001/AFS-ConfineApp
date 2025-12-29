@@ -513,11 +513,16 @@ ${entry.notes ? `Notes:\n${entry.notes}` : ''}
         ],
         [
           { content: 'Assessment Details', styles: { fontStyle: 'bold', fillColor: [245, 245, 245], fontSize: 11 } },
-          { content: `Photographic Documentation (${loadedImages.length} Images)`, styles: { fontStyle: 'bold', halign: 'center', fillColor: [245, 245, 245], fontSize: 11 } }
+          { 
+            content: loadedImages.length > 0 
+              ? `Photographic Documentation (${loadedImages.length}/${imagePaths.length} Images Loaded)` 
+              : `Photographic Documentation (${imagePaths.length > 0 ? imagePaths.length + ' Images - Load Failed' : 'No Images'})`,
+            styles: { fontStyle: 'bold', halign: 'center', fillColor: [245, 245, 245], fontSize: 11 } 
+          }
         ],
         [
-          { content: detailsText, styles: { valign: 'top', fontSize: 9, cellPadding: 8 } },
-          { content: '', styles: { valign: 'top', halign: 'center', cellPadding: 8 } }
+          { content: detailsText, styles: { valign: 'top', fontSize: 9, cellPadding: 8, overflow: 'linebreak' } },
+          { content: '', styles: { valign: 'top', halign: 'center', cellPadding: 8, minCellHeight: 100 } }
         ]
       ];
 
@@ -550,7 +555,25 @@ ${entry.notes ? `Notes:\n${entry.notes}` : ''}
             }
           },
           didDrawCell: (data) => {
-            if (data.row.index === 2 && data.column.index === 1 && loadedImages.length > 0) {
+            if (data.row.index === 2 && data.column.index === 1) {
+              if (loadedImages.length === 0) {
+                // Draw placeholder text when no images loaded
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'italic');
+                doc.setTextColor(150, 150, 150);
+                const placeholderText = imagePaths.length > 0 
+                  ? `⚠️ ${imagePaths.length} image(s) failed to load due to CORS restrictions`
+                  : 'No images available';
+                doc.text(
+                  placeholderText,
+                  data.cell.x + data.cell.width / 2,
+                  data.cell.y + data.cell.height / 2,
+                  { align: 'center', baseline: 'middle' }
+                );
+                doc.setTextColor(0, 0, 0);
+                return;
+              }
+              
               const imagesPerRow = 2;
               const gap = 8;
               const padding = 10;
@@ -633,7 +656,18 @@ ${entry.notes ? `Notes:\n${entry.notes}` : ''}
     }
 
     // SIGNATURE SECTION
-    currentY += 5;
+    // Add extra safety margin to prevent overlap with last table
+    if (doc.previousAutoTable && doc.previousAutoTable.finalY) {
+      currentY = doc.previousAutoTable.finalY + 30;
+    } else {
+      currentY += 30;
+    }
+    
+    // Check if we need a new page for signature section
+    if (currentY + 60 > pageHeight - margin) {
+      doc.addPage();
+      currentY = margin;
+    }
     doc.setFillColor(35, 34, 73);
     doc.rect(margin, currentY, pageWidth - 2 * margin, 10, 'F');
     doc.setFontSize(12);

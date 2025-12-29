@@ -612,7 +612,7 @@ const TechnicianForm = () => {
       console.log('Submitting confined space assessment:', JSON.stringify(submitData, null, 2));
 
       // Use the workOrderAPI service for consistency
-      const response = await fetch('http://localhost:3012/api/orders', {
+      const response = await fetch('/api/workorder/orders', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

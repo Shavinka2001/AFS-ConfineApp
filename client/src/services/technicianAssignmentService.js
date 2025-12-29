@@ -414,7 +414,7 @@ export const technicianAssignmentService = {
       // Note: This assumes work orders are accessible via the work order API
       // You may need to adjust the endpoint and filtering logic
       const workOrderAxios = axios.create({
-        baseURL: 'http://localhost:3012/api',
+        baseURL: '/api/workorder',
       });
       workOrderAxios.interceptors.request.use(addAuthHeader);
 
@@ -462,7 +462,7 @@ export const technicianAssignmentService = {
   async updateTaskStatus(taskId, newStatus) {
     try {
       const workOrderAxios = axios.create({
-        baseURL: 'http://localhost:3012/api',
+        baseURL: '/api/workorder',
       });
       workOrderAxios.interceptors.request.use(addAuthHeader);
 

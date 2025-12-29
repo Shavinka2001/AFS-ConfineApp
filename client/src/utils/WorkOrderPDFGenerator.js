@@ -543,11 +543,11 @@ ${entry.notes ? `Notes:\n${entry.notes}` : ''}
           },
           didParseCell: (data) => {
             if (data.row.index === 2 && data.column.index === 1 && loadedImages.length > 0) {
-              const imagesPerRow = 2;
-              const gap = 8;
+              const imagesPerRow = 1; // Vertical stacking - one image per row
+              const gap = 10;
               const padding = 10;
-              const imgWidth = (data.cell.width - padding * 2 - gap * (imagesPerRow - 1)) / imagesPerRow;
-              const rows = Math.ceil(loadedImages.length / imagesPerRow);
+              const imgWidth = data.cell.width - padding * 2;
+              const rows = loadedImages.length; // One row per image
               const requiredHeight = rows * (imageMaxHeight + gap) - gap + padding * 2;
               if (requiredHeight > (data.cell.styles.minCellHeight || 0)) {
                 data.cell.styles.minCellHeight = requiredHeight;
@@ -600,16 +600,16 @@ ${entry.notes ? `Notes:\n${entry.notes}` : ''}
                 return;
               }
               
-              const imagesPerRow = 2;
-              const gap = 8;
+              const imagesPerRow = 1; // Vertical stacking
+              const gap = 10;
               const padding = 10;
-              const imgWidth = (data.cell.width - padding * 2 - gap * (imagesPerRow - 1)) / imagesPerRow;
+              const imgWidth = data.cell.width - padding * 2;
               
               loadedImages.forEach((img, idx) => {
-                const row = Math.floor(idx / imagesPerRow);
-                const col = idx % imagesPerRow;
+                const row = idx; // Each image gets its own row
+                const col = 0; // Always first column since only 1 per row
                 
-                const x = data.cell.x + padding + col * (imgWidth + gap);
+                const x = data.cell.x + padding;
                 const y = data.cell.y + padding + row * (imageMaxHeight + gap);
                 
                 // Calculate aspect ratio
@@ -629,12 +629,7 @@ ${entry.notes ? `Notes:\n${entry.notes}` : ''}
                 const offsetX = (imgWidth - drawWidth) / 2;
                 const offsetY = (imageMaxHeight - drawHeight) / 2;
                 
-                // Draw border
-                doc.setDrawColor(200, 200, 200);
-                doc.setLineWidth(1);
-                doc.rect(x, y, imgWidth, imageMaxHeight);
-                
-                // Draw image
+                // Draw image (no border)
                 try {
                   doc.addImage(
                     img.dataUrl, 
@@ -682,31 +677,32 @@ ${entry.notes ? `Notes:\n${entry.notes}` : ''}
     }
 
     // SIGNATURE SECTION
-    // Ensure proper spacing after the last table using lastAutoTable.finalY
+    // Ensure proper spacing after the last table using lastAutoTable.finalY + 50
     if (doc.lastAutoTable && typeof doc.lastAutoTable.finalY === 'number') {
-      currentY = doc.lastAutoTable.finalY + 30;
+      currentY = doc.lastAutoTable.finalY + 50;
       console.log(`Using lastAutoTable.finalY: ${doc.lastAutoTable.finalY}, setting currentY to ${currentY}`);
     } else if (doc.previousAutoTable && typeof doc.previousAutoTable.finalY === 'number') {
-      currentY = doc.previousAutoTable.finalY + 30;
+      currentY = doc.previousAutoTable.finalY + 50;
       console.log(`Using previousAutoTable.finalY: ${doc.previousAutoTable.finalY}, setting currentY to ${currentY}`);
     } else {
-      currentY += 30;
-      console.warn('⚠️ No autoTable reference found, using current position + 30');
+      currentY += 50;
+      console.warn('⚠️ No autoTable reference found, using current position + 50');
     }
     
-    // Check if we need a new page for signature section
-    if (currentY + 60 > pageHeight - margin) {
+    // Check if we need a new page for signature section (stricter check)
+    if (currentY + 80 > pageHeight - margin) {
       doc.addPage();
-      currentY = margin;
+      currentY = margin + 20;
+      console.log('Created new page for Surveyor Acknowledgement section');
     }
     doc.setFillColor(35, 34, 73);
-    doc.rect(margin, currentY, pageWidth - 2 * margin, 10, 'F');
+    doc.rect(0, currentY, pageWidth, 10, 'F'); // Full width bar from edge to edge
     doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(255, 255, 255);
     doc.text('Surveyor Acknowledgement', margin + 5, currentY + 7);
     doc.setTextColor(0, 0, 0);
-    currentY += 15;
+    currentY += 20; // Increased spacing after bar
 
     // Get unique surveyors from all orders
     const allSurveyors = new Set();

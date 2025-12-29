@@ -1,16 +1,13 @@
 import axios from 'axios';
 
-const AUTH_API_BASE_URL = 'http://localhost:3001/api';
-const LOCATION_API_BASE_URL = 'http://localhost:5004/api';
-
 // Create axios instance for auth service (where users/technicians are managed)
 const authAxios = axios.create({
-  baseURL: AUTH_API_BASE_URL,
+  baseURL: '/api/auth',
 });
 
 // Create axios instance for location service
 const locationAxios = axios.create({
-  baseURL: LOCATION_API_BASE_URL,
+  baseURL: '/api/location',
 });
 
 // Add token to requests

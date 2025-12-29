@@ -1,9 +1,7 @@
 // Work Order API Service
-const API_BASE_URL = import.meta.env.VITE_WORKORDER_API_URL || 'http://localhost:3012/api';
-
 class WorkOrderAPI {
   constructor() {
-    this.baseURL = API_BASE_URL;
+    this.baseURL = '/api/workorder';
   }
 
   // Helper method to get auth headers

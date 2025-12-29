@@ -1,10 +1,8 @@
 import axios from 'axios';
 
-const LOCATION_API_BASE_URL = import.meta.env.VITE_LOCATION_API_URL || 'http://localhost:5004/api';
-
 // Create axios instance for location management service
 const locationAPI = axios.create({
-  baseURL: LOCATION_API_BASE_URL,
+  baseURL: '/api/location',
   timeout: 15000,
   headers: {
     'Content-Type': 'application/json',

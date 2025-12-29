@@ -1,10 +1,8 @@
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_AUTH_API_URL || 'http://localhost:3001/api';
-
 // Create axios instance with default config
 const api = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: '/api/auth',
   timeout: 15000, // Increased timeout
   headers: {
     'Content-Type': 'application/json',

@@ -557,19 +557,45 @@ ${entry.notes ? `Notes:\n${entry.notes}` : ''}
           didDrawCell: (data) => {
             if (data.row.index === 2 && data.column.index === 1) {
               if (loadedImages.length === 0) {
-                // Draw placeholder text when no images loaded
-                doc.setFontSize(10);
-                doc.setFont('helvetica', 'italic');
-                doc.setTextColor(150, 150, 150);
-                const placeholderText = imagePaths.length > 0 
-                  ? `⚠️ ${imagePaths.length} image(s) failed to load due to CORS restrictions`
-                  : 'No images available';
+                // Draw placeholder box and text when no images loaded
+                const boxPadding = 20;
+                const boxX = data.cell.x + boxPadding;
+                const boxY = data.cell.y + boxPadding;
+                const boxWidth = data.cell.width - boxPadding * 2;
+                const boxHeight = data.cell.height - boxPadding * 2;
+                
+                // Draw dashed border box
+                doc.setDrawColor(200, 200, 200);
+                doc.setLineDash([3, 3]);
+                doc.setLineWidth(1);
+                doc.rect(boxX, boxY, boxWidth, boxHeight);
+                doc.setLineDash([]); // Reset to solid line
+                
+                // Draw warning text
+                doc.setFontSize(11);
+                doc.setFont('helvetica', 'bold');
+                doc.setTextColor(200, 100, 100);
+                const warningTitle = imagePaths.length > 0 ? '⚠️ IMAGE LOAD FAILED' : 'ℹ️ NO IMAGES';
                 doc.text(
-                  placeholderText,
+                  warningTitle,
                   data.cell.x + data.cell.width / 2,
-                  data.cell.y + data.cell.height / 2,
+                  data.cell.y + data.cell.height / 2 - 10,
                   { align: 'center', baseline: 'middle' }
                 );
+                
+                doc.setFontSize(9);
+                doc.setFont('helvetica', 'italic');
+                doc.setTextColor(150, 150, 150);
+                const detailText = imagePaths.length > 0 
+                  ? `${imagePaths.length} image(s) blocked by CORS restrictions`
+                  : 'No photographic documentation available';
+                doc.text(
+                  detailText,
+                  data.cell.x + data.cell.width / 2,
+                  data.cell.y + data.cell.height / 2 + 10,
+                  { align: 'center', baseline: 'middle' }
+                );
+                
                 doc.setTextColor(0, 0, 0);
                 return;
               }
@@ -656,11 +682,16 @@ ${entry.notes ? `Notes:\n${entry.notes}` : ''}
     }
 
     // SIGNATURE SECTION
-    // Add extra safety margin to prevent overlap with last table
-    if (doc.previousAutoTable && doc.previousAutoTable.finalY) {
+    // Ensure proper spacing after the last table using lastAutoTable.finalY
+    if (doc.lastAutoTable && typeof doc.lastAutoTable.finalY === 'number') {
+      currentY = doc.lastAutoTable.finalY + 30;
+      console.log(`Using lastAutoTable.finalY: ${doc.lastAutoTable.finalY}, setting currentY to ${currentY}`);
+    } else if (doc.previousAutoTable && typeof doc.previousAutoTable.finalY === 'number') {
       currentY = doc.previousAutoTable.finalY + 30;
+      console.log(`Using previousAutoTable.finalY: ${doc.previousAutoTable.finalY}, setting currentY to ${currentY}`);
     } else {
       currentY += 30;
+      console.warn('⚠️ No autoTable reference found, using current position + 30');
     }
     
     // Check if we need a new page for signature section
@@ -734,8 +765,21 @@ ${entry.notes ? `Notes:\n${entry.notes}` : ''}
       );
     }
 
-    // Save PDF
-    const filename = `confined_space_assessments_${new Date().toISOString().slice(0, 10)}_${new Date().getTime()}.pdf`;
+    // Save PDF with dynamic filename
+    const currentDate = new Date().toISOString().slice(0, 10);
+    let filename;
+    
+    if (consolidatedEntries.length === 1 && !consolidatedEntries[0]._consolidated) {
+      // Single work order - use specific naming
+      const entry = consolidatedEntries[0];
+      const workOrderId = (entry.uniqueId || entry.workOrderId || 'UnknownID').replace(/[^a-zA-Z0-9-_]/g, '_');
+      const building = (entry.building || 'UnknownBuilding').replace(/[^a-zA-Z0-9-_]/g, '_');
+      filename = `Assessment_${workOrderId}_${building}_${currentDate}.pdf`;
+    } else {
+      // Multiple or consolidated orders
+      filename = `Consolidated_Report_${currentDate}_${Date.now()}.pdf`;
+    }
+    
     console.log(`Saving PDF: ${filename}`);
     doc.save(filename);
     

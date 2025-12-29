@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: workorder-service
+  namespace: confine-prod
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: workorder-service
+  template:
+    metadata:
+      labels:
+        app: workorder-service
+    spec:
+      containers:
+      - name: workorder-service
+        image: afsapp.azurecr.io/workorder-service:IMAGE_TAG
+        ports:
+        - containerPort: 3012
+        env:
+        - name: NODE_ENV
+          value: "production"
+        - name: PORT
+          value: "3012"
+        - name: CLIENT_URL
+          value: "http://client"
+        - name: JWT_EXPIRES_IN
+          value: "7d"
+        - name: UPLOAD_PATH
+          value: "/app/uploads"
+        - name: MONGODB_URI
+          valueFrom:
+            secretKeyRef:
+              name: confine-secrets
+              key: MONGODB_URI
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: confine-secrets
+              key: JWT_SECRET
+        volumeMounts:
+        - name: uploads
+          mountPath: /app/uploads
+      volumes:
+      - name: uploads
+        persistentVolumeClaim:
+          claimName: workorder-uploads-pvc

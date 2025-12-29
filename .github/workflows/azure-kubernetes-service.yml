@@ -1,0 +1,106 @@
+name: Confine AKS CI-CD
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+env:
+  REGISTRY: ${{ secrets.ACR_LOGIN_SERVER }}
+  TAG: ${{ github.sha }}
+  NAMESPACE: confine-dev
+  DEPLOYMENT_MANIFEST_PATH: confine-k8s/
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+    # 1️⃣ Checkout repository
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    # 2️⃣ Azure Login using Service Principal
+    - name: Azure CLI Login
+      run: |
+        az login --service-principal \
+          --username ${{ secrets.AZURE_CLIENT_ID }} \
+          --password ${{ secrets.AZURE_CLIENT_SECRET }} \
+          --tenant ${{ secrets.AZURE_TENANT_ID }}
+
+
+
+    # 4️⃣ Login to ACR
+    - name: ACR Login
+      run: |
+        az acr login --name afsapp
+        # 4️⃣ Prepare Node dependencies (to fix npm ci error)
+    - name: Prepare Node dependencies for client
+      run: |
+        cd ./client
+        npm install
+
+    - name: Prepare Node dependencies for auth-service
+      run: |
+        cd ./services/auth
+        npm install
+
+    - name: Prepare Node dependencies for location-service
+      run: |
+        cd ./services/locationManagement
+        npm install
+
+    - name: Prepare Node dependencies for workorder-service
+      run: |
+        cd ./services/workOrderManagement
+        npm install
+
+    # 5️⃣ Build & Push Docker Images
+    - name: Build & Push Images
+      run: |
+        docker build -t $REGISTRY/client:$TAG ./client
+        docker build -t $REGISTRY/auth-service:$TAG ./services/auth
+        docker build -t $REGISTRY/location-service:$TAG ./services/locationManagement
+        docker build -t $REGISTRY/workorder-service:$TAG ./services/workOrderManagement
+
+        docker push $REGISTRY/client:$TAG
+        docker push $REGISTRY/auth-service:$TAG
+        docker push $REGISTRY/location-service:$TAG
+        docker push $REGISTRY/workorder-service:$TAG
+
+    # 6️⃣ Get AKS context
+    - name: Set AKS Context
+      run: |
+        az aks get-credentials \
+          --resource-group aks-dev \
+          --name confin \
+          --overwrite-existing
+
+    # 7️⃣ Ensure Namespace Exists
+    - name: Ensure Namespace
+      run: |
+        kubectl get ns $NAMESPACE || kubectl create ns $NAMESPACE
+
+    # 8️⃣ Create / Update Kubernetes Secrets
+    #- name: Apply Kubernetes Secrets
+    #  run: |
+    #    kubectl create secret generic confine-secrets \
+    #      -n $NAMESPACE \
+    #      --from-literal=MONGODB_URI="${{ secrets.MONGODB_URI }}" \
+    #      --from-literal=JWT_SECRET="${{ secrets.JWT_SECRET }}" \
+    #      --dry-run=client -o yaml | kubectl apply -f -
+
+    # 9️⃣ Inject Image Tags in manifests
+    - name: Inject Image Tags
+      run: |
+        find ${{ env.DEPLOYMENT_MANIFEST_PATH }} -type f -name "*.yaml" \
+        -exec sed -i "s/IMAGE_TAG/$TAG/g" {} \;
+
+    # 🔟 Deploy to AKS
+    - name: Deploy to AKS
+      run: |
+        find confine-k8s/ -type f -name "*.yaml" -exec kubectl apply -f {} \;
+
+

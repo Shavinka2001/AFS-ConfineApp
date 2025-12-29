@@ -96,12 +96,12 @@ api.interceptors.response.use(
 
 // Auth API functions
 export const authAPI = {
-  login: (credentials) => api.post('/auth/login', credentials),
-  register: (userData) => api.post('/auth/register', userData),
-  logout: () => api.post('/auth/logout'),
-  getProfile: () => api.get('/auth/profile'),
-  updateProfile: (data) => api.put('/auth/profile', data),
-  changePassword: (data) => api.put('/auth/change-password', data),
+  login: (credentials) => api.post('/login', credentials),
+  register: (userData) => api.post('/register', userData),
+  logout: () => api.post('/logout'),
+  getProfile: () => api.get('/profile'),
+  updateProfile: (data) => api.put('/profile', data),
+  changePassword: (data) => api.put('/change-password', data),
 };
 
 // User management API functions

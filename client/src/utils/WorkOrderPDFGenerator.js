@@ -412,7 +412,7 @@ export const handleDownloadFilteredPDF = async (orders = [], sortBy) => {
       for (const imgPath of imagePaths) {
         try {
           const imageUrl = getImageUrl(imgPath);
-          console.log(`[${i + 1}/${filteredOrders.length}] Loading image:`, imageUrl);
+          console.log(`[${i + 1}/${consolidatedEntries.length}] Loading image:`, imageUrl);
           
           // Wrap in try-catch to handle CORS and network errors
           let base64Data;
@@ -521,86 +521,91 @@ ${entry.notes ? `Notes:\n${entry.notes}` : ''}
         ]
       ];
 
-      autoTable(doc, {
-        body: tableData,
-        startY: currentY,
-        theme: 'grid',
-        styles: { 
-          fontSize: 10, 
-          cellPadding: 6,
-          lineColor: [200, 200, 200],
-          lineWidth: 0.5
-        },
-        columnStyles: { 
-          0: { cellWidth: pageWidth * 0.5 - margin }, 
-          1: { cellWidth: pageWidth * 0.5 - margin } 
-        },
-        didParseCell: (data) => {
-          if (data.row.index === 2 && data.column.index === 1 && loadedImages.length > 0) {
-            const imagesPerRow = 2;
-            const gap = 8;
-            const padding = 10;
-            const imgWidth = (data.cell.width - padding * 2 - gap * (imagesPerRow - 1)) / imagesPerRow;
-            const rows = Math.ceil(loadedImages.length / imagesPerRow);
-            const requiredHeight = rows * (imageMaxHeight + gap) - gap + padding * 2;
-            if (requiredHeight > (data.cell.styles.minCellHeight || 0)) {
-              data.cell.styles.minCellHeight = requiredHeight;
+      try {
+        autoTable(doc, {
+          body: tableData,
+          startY: currentY,
+          theme: 'grid',
+          styles: { 
+            fontSize: 10, 
+            cellPadding: 6,
+            lineColor: [200, 200, 200],
+            lineWidth: 0.5
+          },
+          columnStyles: { 
+            0: { cellWidth: pageWidth * 0.5 - margin }, 
+            1: { cellWidth: pageWidth * 0.5 - margin } 
+          },
+          didParseCell: (data) => {
+            if (data.row.index === 2 && data.column.index === 1 && loadedImages.length > 0) {
+              const imagesPerRow = 2;
+              const gap = 8;
+              const padding = 10;
+              const imgWidth = (data.cell.width - padding * 2 - gap * (imagesPerRow - 1)) / imagesPerRow;
+              const rows = Math.ceil(loadedImages.length / imagesPerRow);
+              const requiredHeight = rows * (imageMaxHeight + gap) - gap + padding * 2;
+              if (requiredHeight > (data.cell.styles.minCellHeight || 0)) {
+                data.cell.styles.minCellHeight = requiredHeight;
+              }
+            }
+          },
+          didDrawCell: (data) => {
+            if (data.row.index === 2 && data.column.index === 1 && loadedImages.length > 0) {
+              const imagesPerRow = 2;
+              const gap = 8;
+              const padding = 10;
+              const imgWidth = (data.cell.width - padding * 2 - gap * (imagesPerRow - 1)) / imagesPerRow;
+              
+              loadedImages.forEach((img, idx) => {
+                const row = Math.floor(idx / imagesPerRow);
+                const col = idx % imagesPerRow;
+                
+                const x = data.cell.x + padding + col * (imgWidth + gap);
+                const y = data.cell.y + padding + row * (imageMaxHeight + gap);
+                
+                // Calculate aspect ratio
+                const imgAspectRatio = img.width / img.height;
+                const containerAspectRatio = imgWidth / imageMaxHeight;
+                
+                let drawWidth, drawHeight;
+                if (imgAspectRatio > containerAspectRatio) {
+                  drawWidth = imgWidth;
+                  drawHeight = imgWidth / imgAspectRatio;
+                } else {
+                  drawHeight = imageMaxHeight;
+                  drawWidth = imageMaxHeight * imgAspectRatio;
+                }
+                
+                // Center image in container
+                const offsetX = (imgWidth - drawWidth) / 2;
+                const offsetY = (imageMaxHeight - drawHeight) / 2;
+                
+                // Draw border
+                doc.setDrawColor(200, 200, 200);
+                doc.setLineWidth(1);
+                doc.rect(x, y, imgWidth, imageMaxHeight);
+                
+                // Draw image
+                try {
+                  doc.addImage(
+                    img.dataUrl, 
+                    'JPEG', 
+                    x + offsetX, 
+                    y + offsetY, 
+                    drawWidth, 
+                    drawHeight
+                  );
+                } catch (error) {
+                  console.error('Error adding image to PDF:', error);
+                }
+              });
             }
           }
-        },
-        didDrawCell: (data) => {
-          if (data.row.index === 2 && data.column.index === 1 && loadedImages.length > 0) {
-            const imagesPerRow = 2;
-            const gap = 8;
-            const padding = 10;
-            const imgWidth = (data.cell.width - padding * 2 - gap * (imagesPerRow - 1)) / imagesPerRow;
-            
-            loadedImages.forEach((img, idx) => {
-              const row = Math.floor(idx / imagesPerRow);
-              const col = idx % imagesPerRow;
-              
-              const x = data.cell.x + padding + col * (imgWidth + gap);
-              const y = data.cell.y + padding + row * (imageMaxHeight + gap);
-              
-              // Calculate aspect ratio
-              const imgAspectRatio = img.width / img.height;
-              const containerAspectRatio = imgWidth / imageMaxHeight;
-              
-              let drawWidth, drawHeight;
-              if (imgAspectRatio > containerAspectRatio) {
-                drawWidth = imgWidth;
-                drawHeight = imgWidth / imgAspectRatio;
-              } else {
-                drawHeight = imageMaxHeight;
-                drawWidth = imageMaxHeight * imgAspectRatio;
-              }
-              
-              // Center image in container
-              const offsetX = (imgWidth - drawWidth) / 2;
-              const offsetY = (imageMaxHeight - drawHeight) / 2;
-              
-              // Draw border
-              doc.setDrawColor(200, 200, 200);
-              doc.setLineWidth(1);
-              doc.rect(x, y, imgWidth, imageMaxHeight);
-              
-              // Draw image
-              try {
-                doc.addImage(
-                  img.dataUrl, 
-                  'JPEG', 
-                  x + offsetX, 
-                  y + offsetY, 
-                  drawWidth, 
-                  drawHeight
-                );
-              } catch (error) {
-                console.error('Error adding image to PDF:', error);
-              }
-            });
-          }
-        }
-      });
+        });
+      } catch (tableError) {
+        console.error('⚠️ Error rendering autoTable:', tableError);
+        // Continue with PDF generation even if table fails
+      }
 
       // Safely get the table's final Y position with null check
       if (doc.previousAutoTable && doc.previousAutoTable.finalY) {
@@ -638,9 +643,9 @@ ${entry.notes ? `Notes:\n${entry.notes}` : ''}
     doc.setTextColor(0, 0, 0);
     currentY += 15;
 
-    // Get unique surveyors from all filtered orders
+    // Get unique surveyors from all orders
     const allSurveyors = new Set();
-    filteredOrders.forEach(order => {
+    orders.forEach(order => {
       const surveyors = extractSurveyors(order);
       surveyors.forEach(name => allSurveyors.add(name));
     });

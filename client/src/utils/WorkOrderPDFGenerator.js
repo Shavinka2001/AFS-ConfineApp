@@ -127,7 +127,13 @@ const loadImageAsBase64 = (imageUrl) => {
     const img = new Image();
     img.crossOrigin = "anonymous";
     
+    // Set timeout to prevent hanging
+    const timeout = setTimeout(() => {
+      reject(new Error(`Image load timeout (10s): ${imageUrl}`));
+    }, 10000);
+    
     img.onload = () => {
+      clearTimeout(timeout);
       try {
         const canvas = document.createElement('canvas');
         // Use higher resolution for better quality
@@ -135,6 +141,10 @@ const loadImageAsBase64 = (imageUrl) => {
         canvas.height = img.height;
         
         const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          throw new Error('Failed to get canvas context');
+        }
+        
         ctx.imageSmoothingEnabled = true;
         ctx.imageSmoothingQuality = "high";
         ctx.drawImage(img, 0, 0);
@@ -143,21 +153,27 @@ const loadImageAsBase64 = (imageUrl) => {
         resolve(dataUrl);
       } catch (error) {
         console.error('Canvas conversion error:', error);
-        reject(error);
+        reject(new Error(`Canvas conversion failed: ${error.message}`));
       }
     };
     
     img.onerror = (error) => {
+      clearTimeout(timeout);
       console.error('Image load error for URL:', imageUrl, error);
-      reject(new Error(`Failed to load image: ${imageUrl}`));
+      reject(new Error(`CORS or network error loading image: ${imageUrl}`));
     };
     
     // Add timestamp to prevent caching issues
-    const urlWithTimestamp = imageUrl.includes('?') 
-      ? `${imageUrl}&t=${Date.now()}`
-      : `${imageUrl}?t=${Date.now()}`;
-    
-    img.src = urlWithTimestamp;
+    try {
+      const urlWithTimestamp = imageUrl.includes('?') 
+        ? `${imageUrl}&t=${Date.now()}`
+        : `${imageUrl}?t=${Date.now()}`;
+      
+      img.src = urlWithTimestamp;
+    } catch (error) {
+      clearTimeout(timeout);
+      reject(new Error(`Invalid image URL: ${imageUrl}`));
+    }
   });
 };
 
@@ -392,31 +408,48 @@ export const handleDownloadFilteredPDF = async (orders = [], sortBy) => {
 
       const loadedImages = [];
       
-      // Pre-load all images with base64 conversion
+      // Pre-load all images with base64 conversion (with comprehensive error handling)
       for (const imgPath of imagePaths) {
         try {
           const imageUrl = getImageUrl(imgPath);
-          console.log('Loading image:', imageUrl);
+          console.log(`[${i + 1}/${filteredOrders.length}] Loading image:`, imageUrl);
           
-          const base64Data = await loadImageAsBase64(imageUrl);
+          // Wrap in try-catch to handle CORS and network errors
+          let base64Data;
+          try {
+            base64Data = await loadImageAsBase64(imageUrl);
+          } catch (loadError) {
+            console.warn('⚠️ CORS/Network error loading image, skipping:', imageUrl, loadError.message);
+            continue; // Skip this image and continue with next
+          }
           
-          // Get image dimensions
+          // Get image dimensions with timeout protection
           const img = new Image();
-          await new Promise((resolve, reject) => {
-            img.onload = resolve;
-            img.onerror = reject;
-            img.src = base64Data;
-          });
+          try {
+            await Promise.race([
+              new Promise((resolve, reject) => {
+                img.onload = resolve;
+                img.onerror = reject;
+                img.src = base64Data;
+              }),
+              new Promise((_, reject) => 
+                setTimeout(() => reject(new Error('Image dimension calculation timeout')), 5000)
+              )
+            ]);
+          } catch (dimError) {
+            console.warn('⚠️ Failed to get image dimensions, skipping:', dimError.message);
+            continue;
+          }
           
           const ratio = Math.min(imageMaxWidth / img.width, imageMaxHeight / img.height);
           const width = img.width * ratio;
           const height = img.height * ratio;
           
           loadedImages.push({ dataUrl: base64Data, width, height });
-          console.log('Image loaded successfully:', imageUrl);
+          console.log('✅ Image loaded successfully:', imageUrl);
         } catch (error) {
-          console.error('Failed to load image:', imgPath, error);
-          // Continue with other images
+          console.error('❌ Unexpected error loading image:', imgPath, error);
+          // Continue with other images - don't let one failure stop the PDF
         }
       }
 
@@ -569,7 +602,13 @@ ${entry.notes ? `Notes:\n${entry.notes}` : ''}
         }
       });
 
-      currentY = doc.previousAutoTable.finalY + 15;
+      // Safely get the table's final Y position with null check
+      if (doc.previousAutoTable && doc.previousAutoTable.finalY) {
+        currentY = doc.previousAutoTable.finalY + 15;
+      } else {
+        console.warn('⚠️ autoTable did not complete properly, using estimated position');
+        currentY += 250; // Estimate based on typical table height
+      }
 
       // PAGE BREAK IF NEEDED
       if (currentY + 40 > pageHeight - margin) {

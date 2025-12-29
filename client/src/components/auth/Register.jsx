@@ -102,15 +102,15 @@ const Register = () => {
 
         {/* Success Alert */}
         {successMessage && (
-          <div className="mb-4 p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
-            <div className="flex items-start">
-              <div className="w-6 h-6 mr-3 mt-0.5 rounded-full bg-emerald-500 flex items-center justify-center flex-shrink-0">
+          <div className="mb-3 sm:mb-4 p-3 sm:p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
+            <div className="flex items-start gap-3">
+              <div className="w-5 h-5 sm:w-6 sm:h-6 mt-0.5 rounded-full bg-emerald-500 flex items-center justify-center flex-shrink-0">
                 <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
               </div>
-              <div className="flex-1">
-                <p className="text-emerald-700 text-sm font-medium mb-1">{successMessage}</p>
+              <div className="flex-1 min-w-0">
+                <p className="text-emerald-700 text-xs sm:text-sm font-medium mb-1">{successMessage}</p>
                 {successMessage.includes('pending approval') ? (
                   <p className="text-emerald-600 text-xs">You will be redirected to the login page in a few seconds...</p>
                 ) : (
@@ -123,35 +123,35 @@ const Register = () => {
 
         {/* Error Alert */}
         {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-            <div className="flex items-center">
-              <AlertCircle className="w-4 h-4 mr-2 text-red-500" />
-              <p className="text-red-700 text-sm font-medium">{error}</p>
+          <div className="mb-3 sm:mb-4 p-3 sm:p-4 bg-red-50 border border-red-200 rounded-lg">
+            <div className="flex items-start gap-3">
+              <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 mt-0.5 text-red-500 flex-shrink-0" />
+              <p className="text-red-700 text-xs sm:text-sm font-medium flex-1 min-w-0">{error}</p>
             </div>
           </div>
         )}
 
         {/* Register Form */}
-        <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
+        <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-4 sm:p-6">
           <form 
             onSubmit={handleSubmit(onSubmit)} 
             onChange={handleInputChange}
-            className="space-y-4"
+            className="space-y-3 sm:space-y-4"
           >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="flex flex-col md:grid md:grid-cols-2 gap-3 sm:gap-4">
               <div>
-                <label htmlFor="firstName" className="block text-sm font-semibold mb-2 text-[#232249]">
+                <label htmlFor="firstName" className="block text-sm font-semibold mb-1.5 sm:mb-2 text-[#232249]">
                   First Name
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <User className="h-4 w-4 text-gray-400" />
+                    <User className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
                   </div>
                   <input
                     {...register('firstName')}
                     type="text"
-                    className={`w-full pl-10 pr-3 py-3 border-2 rounded-lg text-gray-900 placeholder-gray-500 
-                      transition-all duration-200 focus:outline-none focus:ring-3 ${
+                    className={`w-full pl-10 sm:pl-11 pr-3 py-3 sm:py-3.5 border-2 rounded-lg text-gray-900 placeholder-gray-500 text-sm sm:text-base
+                      transition-all duration-200 focus:outline-none focus:ring-3 touch-manipulation ${
                       errors.firstName 
                         ? 'border-red-300 focus:border-red-500 focus:ring-red-100' 
                         : 'border-gray-200 hover:border-gray-300 focus:border-[#232249] focus:ring-[#232249]/10'
@@ -160,19 +160,19 @@ const Register = () => {
                   />
                 </div>
                 {errors.firstName && (
-                  <p className="mt-1 text-sm text-red-600 font-medium">{errors.firstName.message}</p>
+                  <p className="mt-1 text-xs sm:text-sm text-red-600 font-medium">{errors.firstName.message}</p>
                 )}
               </div>
 
               <div>
-                <label htmlFor="lastName" className="block text-sm font-semibold mb-2 text-[#232249]">
+                <label htmlFor="lastName" className="block text-sm font-semibold mb-1.5 sm:mb-2 text-[#232249]">
                   Last Name
                 </label>
                 <input
                   {...register('lastName')}
                   type="text"
-                  className={`w-full px-3 py-3 border-2 rounded-lg text-gray-900 placeholder-gray-500 
-                    transition-all duration-200 focus:outline-none focus:ring-3 ${
+                  className={`w-full px-3 py-3 sm:py-3.5 border-2 rounded-lg text-gray-900 placeholder-gray-500 text-sm sm:text-base
+                    transition-all duration-200 focus:outline-none focus:ring-3 touch-manipulation ${
                     errors.lastName 
                       ? 'border-red-300 focus:border-red-500 focus:ring-red-100' 
                       : 'border-gray-200 hover:border-gray-300 focus:border-[#232249] focus:ring-[#232249]/10'
@@ -180,25 +180,25 @@ const Register = () => {
                   placeholder="Last name"
                 />
                 {errors.lastName && (
-                  <p className="mt-1 text-sm text-red-600 font-medium">{errors.lastName.message}</p>
+                  <p className="mt-1 text-xs sm:text-sm text-red-600 font-medium">{errors.lastName.message}</p>
                 )}
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="flex flex-col md:grid md:grid-cols-2 gap-3 sm:gap-4">
               <div>
-                <label htmlFor="username" className="block text-sm font-semibold mb-2 text-[#232249]">
+                <label htmlFor="username" className="block text-sm font-semibold mb-1.5 sm:mb-2 text-[#232249]">
                   Username
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <UserPlus className="h-4 w-4 text-gray-400" />
+                    <UserPlus className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
                   </div>
                   <input
                     {...register('username')}
                     type="text"
-                    className={`w-full pl-10 pr-3 py-3 border-2 rounded-lg text-gray-900 placeholder-gray-500 
-                      transition-all duration-200 focus:outline-none focus:ring-3 ${
+                    className={`w-full pl-10 sm:pl-11 pr-3 py-3 sm:py-3.5 border-2 rounded-lg text-gray-900 placeholder-gray-500 text-sm sm:text-base
+                      transition-all duration-200 focus:outline-none focus:ring-3 touch-manipulation ${
                       errors.username 
                         ? 'border-red-300 focus:border-red-500 focus:ring-red-100' 
                         : 'border-gray-200 hover:border-gray-300 focus:border-[#232249] focus:ring-[#232249]/10'
@@ -207,23 +207,23 @@ const Register = () => {
                   />
                 </div>
                 {errors.username && (
-                  <p className="mt-1 text-sm text-red-600 font-medium">{errors.username.message}</p>
+                  <p className="mt-1 text-xs sm:text-sm text-red-600 font-medium">{errors.username.message}</p>
                 )}
               </div>
 
               <div>
-                <label htmlFor="email" className="block text-sm font-semibold mb-2 text-[#232249]">
+                <label htmlFor="email" className="block text-sm font-semibold mb-1.5 sm:mb-2 text-[#232249]">
                   Email Address
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Mail className="h-4 w-4 text-gray-400" />
+                    <Mail className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
                   </div>
                   <input
                     {...register('email')}
                     type="email"
-                    className={`w-full pl-10 pr-3 py-3 border-2 rounded-lg text-gray-900 placeholder-gray-500 
-                      transition-all duration-200 focus:outline-none focus:ring-3 ${
+                    className={`w-full pl-10 sm:pl-11 pr-3 py-3 sm:py-3.5 border-2 rounded-lg text-gray-900 placeholder-gray-500 text-sm sm:text-base
+                      transition-all duration-200 focus:outline-none focus:ring-3 touch-manipulation ${
                       errors.email 
                         ? 'border-red-300 focus:border-red-500 focus:ring-red-100' 
                         : 'border-gray-200 hover:border-gray-300 focus:border-[#232249] focus:ring-[#232249]/10'
@@ -232,38 +232,38 @@ const Register = () => {
                   />
                 </div>
                 {errors.email && (
-                  <p className="mt-1 text-sm text-red-600 font-medium">{errors.email.message}</p>
+                  <p className="mt-1 text-xs sm:text-sm text-red-600 font-medium">{errors.email.message}</p>
                 )}
               </div>
             </div>
 
             <div>
-              <label htmlFor="department" className="block text-sm font-semibold mb-2 text-[#232249]">
+              <label htmlFor="department" className="block text-sm font-semibold mb-1.5 sm:mb-2 text-[#232249]">
                 Department <span className="text-gray-400 font-normal">(Optional)</span>
               </label>
               <input
                 {...register('department')}
                 type="text"
-                className="w-full px-3 py-3 border-2 border-gray-200 rounded-lg text-gray-900 placeholder-gray-500 
-                  transition-all duration-200 focus:outline-none focus:ring-3 hover:border-gray-300 focus:border-[#232249] focus:ring-[#232249]/10"
+                className="w-full px-3 py-3 sm:py-3.5 border-2 border-gray-200 rounded-lg text-gray-900 placeholder-gray-500 text-sm sm:text-base
+                  transition-all duration-200 focus:outline-none focus:ring-3 hover:border-gray-300 focus:border-[#232249] focus:ring-[#232249]/10 touch-manipulation"
                 placeholder="Enter your department"
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="flex flex-col md:grid md:grid-cols-2 gap-3 sm:gap-4">
               <div>
-                <label htmlFor="password" className="block text-sm font-semibold mb-2 text-[#232249]">
+                <label htmlFor="password" className="block text-sm font-semibold mb-1.5 sm:mb-2 text-[#232249]">
                   Password
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Lock className="h-4 w-4 text-gray-400" />
+                    <Lock className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
                   </div>
                   <input
                     {...register('password')}
                     type={showPassword ? 'text' : 'password'}
-                    className={`w-full pl-10 pr-10 py-3 border-2 rounded-lg text-gray-900 placeholder-gray-500 
-                      transition-all duration-200 focus:outline-none focus:ring-3 ${
+                    className={`w-full pl-10 sm:pl-11 pr-10 sm:pr-12 py-3 sm:py-3.5 border-2 rounded-lg text-gray-900 placeholder-gray-500 text-sm sm:text-base
+                      transition-all duration-200 focus:outline-none focus:ring-3 touch-manipulation ${
                       errors.password 
                         ? 'border-red-300 focus:border-red-500 focus:ring-red-100' 
                         : 'border-gray-200 hover:border-gray-300 focus:border-[#232249] focus:ring-[#232249]/10'
@@ -272,34 +272,34 @@ const Register = () => {
                   />
                   <button
                     type="button"
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center hover:bg-gray-50 rounded-r-lg transition-colors duration-200"
+                    className="absolute inset-y-0 right-0 pr-3 sm:pr-4 flex items-center hover:bg-gray-50 rounded-r-lg transition-colors duration-200 touch-manipulation min-w-[44px] min-h-[44px]"
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? (
-                      <EyeOff className="h-4 w-4 text-gray-400 hover:text-[#232249]" />
+                      <EyeOff className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 hover:text-[#232249]" />
                     ) : (
-                      <Eye className="h-4 w-4 text-gray-400 hover:text-[#232249]" />
+                      <Eye className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 hover:text-[#232249]" />
                     )}
                   </button>
                 </div>
                 {errors.password && (
-                  <p className="mt-1 text-sm text-red-600 font-medium">{errors.password.message}</p>
+                  <p className="mt-1 text-xs sm:text-sm text-red-600 font-medium">{errors.password.message}</p>
                 )}
               </div>
 
               <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-semibold mb-2 text-[#232249]">
+                <label htmlFor="confirmPassword" className="block text-sm font-semibold mb-1.5 sm:mb-2 text-[#232249]">
                   Confirm Password
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Lock className="h-4 w-4 text-gray-400" />
+                    <Lock className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
                   </div>
                   <input
                     {...register('confirmPassword')}
                     type={showConfirmPassword ? 'text' : 'password'}
-                    className={`w-full pl-10 pr-10 py-3 border-2 rounded-lg text-gray-900 placeholder-gray-500 
-                      transition-all duration-200 focus:outline-none focus:ring-3 ${
+                    className={`w-full pl-10 sm:pl-11 pr-10 sm:pr-12 py-3 sm:py-3.5 border-2 rounded-lg text-gray-900 placeholder-gray-500 text-sm sm:text-base
+                      transition-all duration-200 focus:outline-none focus:ring-3 touch-manipulation ${
                       errors.confirmPassword 
                         ? 'border-red-300 focus:border-red-500 focus:ring-red-100' 
                         : 'border-gray-200 hover:border-gray-300 focus:border-[#232249] focus:ring-[#232249]/10'
@@ -308,18 +308,18 @@ const Register = () => {
                   />
                   <button
                     type="button"
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center hover:bg-gray-50 rounded-r-lg transition-colors duration-200"
+                    className="absolute inset-y-0 right-0 pr-3 sm:pr-4 flex items-center hover:bg-gray-50 rounded-r-lg transition-colors duration-200 touch-manipulation min-w-[44px] min-h-[44px]"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   >
                     {showConfirmPassword ? (
-                      <EyeOff className="h-4 w-4 text-gray-400 hover:text-[#232249]" />
+                      <EyeOff className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 hover:text-[#232249]" />
                     ) : (
-                      <Eye className="h-4 w-4 text-gray-400 hover:text-[#232249]" />
+                      <Eye className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 hover:text-[#232249]" />
                     )}
                   </button>
                 </div>
                 {errors.confirmPassword && (
-                  <p className="mt-1 text-sm text-red-600 font-medium">{errors.confirmPassword.message}</p>
+                  <p className="mt-1 text-xs sm:text-sm text-red-600 font-medium">{errors.confirmPassword.message}</p>
                 )}
               </div>
             </div>
@@ -327,10 +327,10 @@ const Register = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className={`w-full py-3 px-6 rounded-lg font-bold text-white text-base transition-all duration-200 ${
+              className={`w-full py-3 sm:py-3.5 px-6 rounded-lg font-bold text-white text-sm sm:text-base transition-all duration-200 touch-manipulation min-h-[48px] ${
                 isLoading
                   ? 'bg-gray-400 cursor-not-allowed'
-                  : 'bg-[#232249] hover:bg-[#232249]/90 hover:shadow-md transform hover:-translate-y-0.5'
+                  : 'bg-[#232249] hover:bg-[#232249]/90 hover:shadow-md transform hover:-translate-y-0.5 active:scale-95'
               }`}
             >
               {isLoading ? (
@@ -348,12 +348,12 @@ const Register = () => {
           </form>
 
           {/* Divider */}
-          <div className="my-6">
+          <div className="my-4 sm:my-6">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-gray-200"></div>
               </div>
-              <div className="relative flex justify-center text-sm">
+              <div className="relative flex justify-center text-xs sm:text-sm">
                 <span className="px-3 bg-white text-gray-500 font-medium">Already have an account?</span>
               </div>
             </div>
@@ -362,7 +362,7 @@ const Register = () => {
           {/* Login Link */}
           <Link
             to="/login"
-            className="w-full flex items-center justify-center py-3 px-6 border-2 border-[#232249] rounded-lg font-bold text-base text-[#232249] hover:bg-[#232249] hover:text-white transition-all duration-200 transform hover:-translate-y-0.5"
+            className="w-full flex items-center justify-center py-3 sm:py-3.5 px-6 border-2 border-[#232249] rounded-lg font-bold text-sm sm:text-base text-[#232249] hover:bg-[#232249] hover:text-white transition-all duration-200 transform hover:-translate-y-0.5 active:scale-95 touch-manipulation min-h-[48px]"
           >
             <User className="w-4 h-4 mr-2" />
             Sign In Instead
@@ -370,9 +370,9 @@ const Register = () => {
         </div>
 
         {/* Footer */}
-        <div className="mt-6 text-center">
-          <div className="flex items-center justify-center space-x-2 text-sm text-gray-500">
-            <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+        <div className="mt-4 sm:mt-6 text-center">
+          <div className="flex items-center justify-center gap-2 text-xs sm:text-sm text-gray-500">
+            <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-emerald-500 rounded-full animate-pulse flex-shrink-0"></div>
             <span>Secured with enterprise-grade encryption</span>
           </div>
         </div>

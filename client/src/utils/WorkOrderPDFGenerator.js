@@ -677,32 +677,30 @@ ${entry.notes ? `Notes:\n${entry.notes}` : ''}
     }
 
     // SIGNATURE SECTION
-    // Ensure proper spacing after the last table using lastAutoTable.finalY + 50
-    if (doc.lastAutoTable && typeof doc.lastAutoTable.finalY === 'number') {
-      currentY = doc.lastAutoTable.finalY + 50;
-      console.log(`Using lastAutoTable.finalY: ${doc.lastAutoTable.finalY}, setting currentY to ${currentY}`);
-    } else if (doc.previousAutoTable && typeof doc.previousAutoTable.finalY === 'number') {
-      currentY = doc.previousAutoTable.finalY + 50;
-      console.log(`Using previousAutoTable.finalY: ${doc.previousAutoTable.finalY}, setting currentY to ${currentY}`);
-    } else {
-      currentY += 50;
-      console.warn('⚠️ No autoTable reference found, using current position + 50');
-    }
+    // 1. Capture Table End with proper fallback
+    const tableEnd = doc.lastAutoTable ? doc.lastAutoTable.finalY : currentY + 400;
+    console.log(`Table ended at: ${tableEnd}`);
     
-    // Check if we need a new page for signature section (stricter check)
-    if (currentY + 80 > pageHeight - margin) {
+    // 2. Add Buffer Space
+    currentY = tableEnd + 50;
+    console.log(`Setting currentY to ${currentY} (tableEnd + 50)`);
+    
+    // 3. Page Break Logic
+    if (currentY > pageHeight - 120) {
       doc.addPage();
-      currentY = margin + 20;
+      currentY = 60;
       console.log('Created new page for Surveyor Acknowledgement section');
     }
+    
+    // 4. Header Styling - Full width blue bar with text inside
     doc.setFillColor(35, 34, 73);
-    doc.rect(0, currentY, pageWidth, 10, 'F'); // Full width bar from edge to edge
+    doc.rect(0, currentY, pageWidth, 12, 'F'); // Full width bar
     doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(255, 255, 255);
-    doc.text('Surveyor Acknowledgement', margin + 5, currentY + 7);
+    doc.text('Surveyor Acknowledgement', margin + 5, currentY + 8);
     doc.setTextColor(0, 0, 0);
-    currentY += 20; // Increased spacing after bar
+    currentY += 25; // Spacing after header bar
 
     // Get unique surveyors from all orders
     const allSurveyors = new Set();

@@ -30,10 +30,8 @@ const ManagerDashboard = () => {
   const { user } = useAuth();
   const [stats, setStats] = useState({
     teamMembers: 0,
-    activeWorkOrders: 0,
-    completedThisMonth: 0,
-    pendingApprovals: 0,
-    efficiency: 0,
+    totalWorkOrders: 0,
+    confinedSpaces: 0,
     loading: true
   });
 
@@ -63,25 +61,10 @@ const ManagerDashboard = () => {
             // Calculate stats from work orders
             const statsData = {
               teamMembers: 0, // Will be fetched from user API
-              activeWorkOrders: orders.filter(order => 
-                ['pending', 'approved', 'in-progress'].includes(order.status)
-              ).length,
-              completedThisMonth: orders.filter(order => {
-                const createdDate = new Date(order.createdAt);
-                const now = new Date();
-                return order.status === 'completed' && 
-                       createdDate.getMonth() === now.getMonth() && 
-                       createdDate.getFullYear() === now.getFullYear();
-              }).length,
-              pendingApprovals: orders.filter(order => order.status === 'pending').length,
-              efficiency: 0, // Will be calculated
+              totalWorkOrders: orders.length,
+              confinedSpaces: orders.filter(order => order.isConfinedSpace === true).length,
               loading: false
             };
-
-            // Calculate efficiency based on completion rate
-            const totalOrders = orders.length;
-            const completedOrders = orders.filter(order => order.status === 'completed').length;
-            statsData.efficiency = totalOrders > 0 ? Math.round((completedOrders / totalOrders) * 100) : 0;
 
             setStats(statsData);
             setWorkOrders(orders.slice(0, 4)); // Show first 4 work orders
@@ -150,10 +133,8 @@ const ManagerDashboard = () => {
         // Set fallback data
         setStats({
           teamMembers: '--',
-          activeWorkOrders: '--',
-          completedThisMonth: '--',
-          pendingApprovals: '--',
-          efficiency: '--',
+          totalWorkOrders: '--',
+          confinedSpaces: '--',
           loading: false
         });
         setWorkOrders([]);
@@ -504,8 +485,8 @@ const ManagerDashboard = () => {
           </div>
         </motion.div>
 
-        {/* Stats Grid - Dynamic with Loading States */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Essential Stats Grid - 3 Key Metrics */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
           <StatCard
             icon={Users}
             title="Team Members"
@@ -517,29 +498,20 @@ const ManagerDashboard = () => {
           />
           <StatCard
             icon={FileText}
-            title="Active Work Orders"
-            value={stats.activeWorkOrders}
-            change={stats.activeWorkOrders > 0 ? "+5" : null}
+            title="Total Work Orders"
+            value={stats.totalWorkOrders}
+            change={stats.totalWorkOrders > 0 ? "+5" : null}
             trend="up"
-            subtitle="In progress"
+            subtitle="All orders"
             loading={loading}
           />
           <StatCard
-            icon={CheckCircle}
-            title="Completed This Month"
-            value={stats.completedThisMonth}
-            change={stats.completedThisMonth > 0 ? "+15%" : null}
-            trend="up"
-            subtitle="Above target"
-            loading={loading}
-          />
-          <StatCard
-            icon={Clock}
-            title="Pending Approvals"
-            value={stats.pendingApprovals}
-            change={stats.pendingApprovals > 0 ? "-2" : null}
-            trend="down"
-            subtitle="Awaiting review"
+            icon={AlertTriangle}
+            title="Confined Spaces"
+            value={stats.confinedSpaces}
+            change={stats.confinedSpaces > 0 ? "Critical" : null}
+            trend="neutral"
+            subtitle="Safety priority"
             loading={loading}
           />
         </div>

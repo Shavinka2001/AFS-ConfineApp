@@ -7,5 +7,8 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
     port: 3000
+  },
+  optimizeDeps: {
+    include: ['jspdf', 'jspdf-autotable']
   }
 })

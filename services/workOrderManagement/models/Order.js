@@ -41,17 +41,19 @@ const OrderSchema = new mongoose.Schema({
   },
   technician: { 
     type: String, 
-    required: [true, 'Technician name is required'],
+    required: false, // Made optional
     trim: true,
-    maxlength: [100, 'Technician name cannot exceed 100 characters']
+    maxlength: [100, 'Technician name cannot exceed 100 characters'],
+    default: 'Unassigned'
   },
   
   // Space Information
   spaceName: { 
     type: String, 
-    required: [true, 'Space name or ID is required'],
+    required: false, // Made optional
     trim: true,
-    maxlength: [100, 'Space name cannot exceed 100 characters']
+    maxlength: [100, 'Space name cannot exceed 100 characters'],
+    default: 'N/A'
   },
   building: { 
     type: String, 
@@ -166,6 +168,11 @@ const OrderSchema = new mongoose.Schema({
   contractorsEnterSpace: { 
     type: Boolean, 
     required: [true, 'Contractor entry must be specified']
+  },
+  isSpaceNormallyLocked: { 
+    type: Boolean, 
+    required: false,
+    default: false
   },
   
   // Additional Information

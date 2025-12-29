@@ -5,7 +5,8 @@ import {
   Clock,
   FileText,
   CheckCircle,
-  XCircle
+  XCircle,
+  Download
 } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
 
@@ -18,6 +19,9 @@ import EditModal from './workOrders/EditModal';
 
 // Import PDF generator
 import { generateInspectionFormPDF } from './workOrders/PDFGenerator';
+
+// Import Excel export utility
+import { exportWorkOrdersToExcel } from '../../../utils/excelExport';
 
 // Import API service
 import workOrderAPI from '../../../services/workOrderAPI';
@@ -40,6 +44,7 @@ const TechnicianWorkOrders = () => {
   const [editingForm, setEditingForm] = useState(null);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [downloadingPdf, setDownloadingPdf] = useState(null);
+  const [exportingExcel, setExportingExcel] = useState(false);
 
   // Update time every second
   useEffect(() => {
@@ -290,6 +295,31 @@ const TechnicianWorkOrders = () => {
     }
   };
 
+  // Handle Excel export
+  const handleExportToExcel = async () => {
+    setExportingExcel(true);
+    try {
+      // Use filtered forms if available, otherwise use all forms
+      const dataToExport = filteredForms.length > 0 ? filteredForms : inspectionForms;
+      
+      if (dataToExport.length === 0) {
+        alert('No data available to export');
+        return;
+      }
+
+      const result = exportWorkOrdersToExcel(dataToExport, 'confined_space_assessments');
+      
+      if (result.success) {
+        alert(result.message);
+      }
+    } catch (error) {
+      console.error('Error exporting to Excel:', error);
+      alert(`Failed to export to Excel: ${error.message}`);
+    } finally {
+      setExportingExcel(false);
+    }
+  };
+
   const closeDetailModal = () => {
     setShowDetailModal(false);
     setSelectedForm(null);
@@ -355,9 +385,8 @@ const TechnicianWorkOrders = () => {
   // Statistics
   const stats = {
     total: inspectionForms.length,
-    approved: inspectionForms.filter(f => f.status === 'Approved').length,
-    pending: inspectionForms.filter(f => f.status === 'Pending').length,
-    rejected: inspectionForms.filter(f => f.status === 'Rejected').length
+    confinedSpaces: inspectionForms.filter(f => f.isConfinedSpace === true).length,
+    highPriority: inspectionForms.filter(f => f.priority === 'high' || f.priority === 'critical').length
   };
 
   if (loading) {
@@ -442,39 +471,59 @@ const TechnicianWorkOrders = () => {
           </div>
         </div>
 
-      {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+      {/* Essential Statistics Cards - Technician Focused */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 max-w-4xl mx-auto">
         <StatCard
           title="Total Forms"
           value={stats.total}
           icon={Package}
         />
         <StatCard
-          title="Approved"
-          value={stats.approved}
-          icon={FileText}
-        />
-        <StatCard
-          title="Pending"
-          value={stats.pending}
-          icon={Clock}
-        />
-        <StatCard
-          title="Rejected"
-          value={stats.rejected}
+          title="Confined Spaces"
+          value={stats.confinedSpaces}
           icon={AlertTriangle}
+        />
+        <StatCard
+          title="High Priority"
+          value={stats.highPriority}
+          icon={FileText}
         />
       </div>
 
       {/* Search and Filters */}
-      <SearchAndFilters
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        statusFilter={statusFilter}
-        setStatusFilter={setStatusFilter}
-        priorityFilter={priorityFilter}
-        setPriorityFilter={setPriorityFilter}
-      />
+      <div className="mb-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
+          <h2 className="text-xl font-bold text-gray-800">Assessment Records</h2>
+          
+          {/* Export to Excel Button */}
+          <button
+            onClick={handleExportToExcel}
+            disabled={exportingExcel || filteredForms.length === 0}
+            className="flex items-center px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-200 font-semibold shadow-md hover:shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed"
+          >
+            {exportingExcel ? (
+              <>
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                Exporting...
+              </>
+            ) : (
+              <>
+                <Download className="w-5 h-5 mr-2" />
+                Export to Excel ({filteredForms.length})
+              </>
+            )}
+          </button>
+        </div>
+        
+        <SearchAndFilters
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          statusFilter={statusFilter}
+          setStatusFilter={setStatusFilter}
+          priorityFilter={priorityFilter}
+          setPriorityFilter={setPriorityFilter}
+        />
+      </div>
 
       {/* Work Orders Table */}
       <WorkOrderTable

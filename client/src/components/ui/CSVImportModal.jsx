@@ -11,10 +11,10 @@ const CSVImportModal = ({ isOpen, onClose, onImport, isLoading = false }) => {
   const fileInputRef = useRef(null);
 
   const csvTemplate = [
-    'Work Order ID,Space Name,Building,Location Description,Confined Space Description,Technician,Priority,Survey Date,Created Date,Confined Space,Permit Required,Entry Requirements,Atmospheric Hazard,Atmospheric Hazard Description,Engulfment Hazard,Engulfment Hazard Description,Configuration Hazard,Configuration Hazard Description,Other Hazards,Other Hazards Description,PPE Required,PPE List,Forced Air Ventilation Sufficient,Air Monitor Required,Warning Sign Posted,Number of Entry Points,Other People Working Near Space,Can Others See Into Space,Contractors Enter Space,Images,Notes',
-    'WO-001,Tank Storage Room,Building A,Main Floor Storage Area,Underground storage tank,John Smith,medium,2024-01-15,2024-01-14,Yes,Yes,Permit required for entry,No,,No,,Yes,Limited headroom,No,,Yes,Hard hat required,Yes,Yes,Yes,2,Yes,Yes,No,,Regular inspection required',
-    'WO-002,Electrical Vault,Building B,Basement Level,Electrical equipment vault,Jane Doe,high,2024-01-16,2024-01-15,Yes,Yes,Lockout procedures required,Yes,Electrical hazards present,No,,No,,No,,Yes,Electrical PPE required,Yes,Yes,No,1,No,Yes,No,,Critical safety check needed',
-    'WO-003,Chemical Storage,Building C,Ground Floor East Wing,Chemical storage area,Mike Johnson,critical,2024-01-17,2024-01-16,Yes,Yes,Chemical PPE required,Yes,Toxic vapor detection,Yes,Chemical engulfment risk,Yes,Multiple tank hazards,Yes,Multiple chemical hazards,Yes,Full chemical PPE,Yes,Yes,Yes,3,Yes,No,Yes,,Emergency inspection required'
+    'Survey Date,Confined Space Name/ID,Building,Location Description,Confined Space Description,Is this a Confined Space?,Permit Required?,Entry Requirements,Atmospheric Hazard?,Atmospheric Hazard Description,Engulfment Hazard?,Engulfment Hazard Description,Configuration Hazard?,Configuration Hazard Description,Other Recognized Hazards?,Other Hazards Description,PPE Required?,PPE List,Forced Air Ventilation Sufficient?,Dedicated Air Monitor?,Warning Sign Posted?,Number of Entry Points,Other People Working Near Space?,Can Others See into Space?,Do Contractors Enter Space?,Is the Space Normally Locked?',
+    '2024-01-15,Underground Storage Tank,Building A,Main Floor Storage Area,Underground storage tank with limited access and ventilation requirements,Yes,Yes,Permit required for entry with gas testing,No,,No,,Yes,Limited headroom and narrow opening,No,,Yes,Hard hat and safety harness required,Yes,Yes,Yes,2,Yes,Yes,No,Yes',
+    '2024-01-16,Electrical Vault,Building B,Basement Level,Electrical equipment vault with high voltage systems,Yes,Yes,Lockout/tagout procedures required,Yes,Electrical arc flash and oxygen deficiency,No,,No,,No,,Yes,Electrical rated PPE and insulated gloves,Yes,Yes,No,1,No,Yes,No,Yes',
+    '2024-01-17,Chemical Storage Area,Building C,Ground Floor East Wing,Chemical storage area with ventilation system and emergency eyewash,Yes,Yes,Chemical PPE and continuous air monitoring required,Yes,Toxic vapor and oxygen deficiency potential,Yes,Chemical engulfment risk from spills,Yes,Multiple tank configurations and piping hazards,Yes,Multiple chemical storage and reaction hazards,Yes,Full chemical PPE with SCBA respirator,Yes,Yes,Yes,3,Yes,No,Yes,Yes'
   ];
 
   const downloadTemplate = () => {
@@ -74,12 +74,16 @@ const CSVImportModal = ({ isOpen, onClose, onImport, isLoading = false }) => {
           data = { headers, dataRows };
         } else {
           // Parse Excel (.xlsx, .xls)
-          const workbook = XLSX.read(e.target.result, { type: 'array' });
+          const workbook = XLSX.read(e.target.result, { type: 'array', cellDates: true });
           const sheetName = workbook.SheetNames[0];
           const worksheet = workbook.Sheets[sheetName];
           
-          // Convert to array of arrays
-          const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+          // Convert to array of arrays with raw values (preserving dates and numbers)
+          const jsonData = XLSX.utils.sheet_to_json(worksheet, { 
+            header: 1,
+            raw: false, // Get formatted values
+            dateNF: 'yyyy-mm-dd' // Format dates as ISO
+          });
           
           if (jsonData.length < 2) {
             setErrors(['File must contain at least a header row and one data row']);
@@ -88,7 +92,12 @@ const CSVImportModal = ({ isOpen, onClose, onImport, isLoading = false }) => {
           
           const headers = jsonData[0].map(h => String(h || '').trim());
           const dataRows = jsonData.slice(1).map(row => 
-            row.map(cell => String(cell || '').trim())
+            row.map(cell => {
+              // Preserve the original cell value type
+              if (cell === null || cell === undefined) return '';
+              if (typeof cell === 'number') return cell; // Keep numbers as numbers
+              return String(cell).trim(); // Convert others to trimmed strings
+            })
           );
           
           data = { headers, dataRows };
@@ -116,43 +125,132 @@ const CSVImportModal = ({ isOpen, onClose, onImport, isLoading = false }) => {
       console.log('Data rows count:', dataRows.length);
       console.log('First data row:', dataRows[0]);
       
-      // Expected headers mapping
+      // Helper function to parse boolean values (Yes/No)
+      const parseBoolean = (value) => {
+        if (value === null || value === undefined || value === '') return '';
+        if (typeof value === 'boolean') return value;
+        
+        // Trim whitespace and convert to lowercase for case-insensitive comparison
+        const normalized = String(value).trim().toLowerCase();
+        
+        // Check for truthy values
+        if (['yes', 'y', 'true', '1', 'x'].includes(normalized)) {
+          return 'Yes';
+        }
+        
+        // Check for falsy values
+        if (['no', 'n', 'false', '0', ''].includes(normalized)) {
+          return 'No';
+        }
+        
+        // Return original if unrecognized
+        return value;
+      };
+      
+      // Helper function to parse numeric values
+      const parseNumeric = (value) => {
+        if (value === null || value === undefined || value === '') return '';
+        if (typeof value === 'number') return value;
+        
+        // Try parsing as number
+        const num = Number(String(value).trim());
+        return isNaN(num) ? '' : num;
+      };
+      
+      // Helper function to parse Excel dates
+      const parseExcelDate = (value) => {
+        if (!value) return '';
+        
+        // If it's already a valid date string, return it
+        if (typeof value === 'string' && value.includes('-')) {
+          return value;
+        }
+        
+        // Excel stores dates as serial numbers (days since 1900-01-01)
+        if (!isNaN(value) && typeof value === 'number') {
+          // Excel's epoch is 1900-01-01, but Excel incorrectly treats 1900 as a leap year
+          // So we subtract 1 to account for this
+          const excelEpoch = new Date(1900, 0, 1);
+          const msPerDay = 86400000; // milliseconds in a day
+          const date = new Date(excelEpoch.getTime() + (value - 2) * msPerDay);
+          
+          // Format as YYYY-MM-DD for backend
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          const day = String(date.getDate()).padStart(2, '0');
+          return `${year}-${month}-${day}`;
+        }
+        
+        // Try parsing as regular date string
+        try {
+          const date = new Date(value);
+          if (!isNaN(date.getTime())) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+          }
+        } catch (e) {
+          console.warn('Could not parse date:', value);
+        }
+        
+        return value;
+      };
+      
+      // Expected headers mapping - handles new professional format and legacy formats
       const headerMapping = {
-        'Work Order ID': 'workOrderId',
-        'Space Name': 'spaceName',
+        'Survey Date': 'surveyDate',
+        'Confined Space Name/ID': 'spaceName',
+        'Space Name': 'spaceName', // Legacy support
+        'Space Name/ID': 'spaceName', // Legacy support
         'Building': 'building',
         'Location Description': 'locationDescription',
         'Confined Space Description': 'confinedSpaceDescription',
-        'Technician': 'technician',
-        'Priority': 'priority',
-        'Survey Date': 'surveyDate',
-        'Created Date': 'createdDate',
-        'Confined Space': 'isConfinedSpace',
-        'Permit Required': 'permitRequired',
+        'Is this a Confined Space?': 'isConfinedSpace',
+        'Confined Space': 'isConfinedSpace', // Legacy support
+        'Is Confined Space': 'isConfinedSpace', // Legacy support
+        'Permit Required?': 'permitRequired',
+        'Permit Required': 'permitRequired', // Legacy support
         'Entry Requirements': 'entryRequirements',
-        'Atmospheric Hazard': 'atmosphericHazard',
+        'Atmospheric Hazard?': 'atmosphericHazard',
+        'Atmospheric Hazard': 'atmosphericHazard', // Legacy support
         'Atmospheric Hazard Description': 'atmosphericHazardDescription',
-        'Engulfment Hazard': 'engulfmentHazard',
+        'Engulfment Hazard?': 'engulfmentHazard',
+        'Engulfment Hazard': 'engulfmentHazard', // Legacy support
         'Engulfment Hazard Description': 'engulfmentHazardDescription',
-        'Configuration Hazard': 'configurationHazard',
+        'Configuration Hazard?': 'configurationHazard',
+        'Configuration Hazard': 'configurationHazard', // Legacy support
         'Configuration Hazard Description': 'configurationHazardDescription',
-        'Other Hazards': 'otherRecognizedHazards',
+        'Other Recognized Hazards?': 'otherRecognizedHazards',
+        'Other Hazards': 'otherRecognizedHazards', // Legacy support
+        'Other Recognized Hazards': 'otherRecognizedHazards', // Legacy support
         'Other Hazards Description': 'otherHazardsDescription',
-        'PPE Required': 'ppeRequired',
+        'PPE Required?': 'ppeRequired',
+        'PPE Required': 'ppeRequired', // Legacy support
         'PPE List': 'ppeList',
-        'Forced Air Ventilation Sufficient': 'forcedAirVentilationSufficient',
-        'Air Monitor Required': 'dedicatedAirMonitor',
-        'Warning Sign Posted': 'warningSignPosted',
+        'Forced Air Ventilation Sufficient?': 'forcedAirVentilationSufficient',
+        'Forced Air Ventilation Sufficient': 'forcedAirVentilationSufficient', // Legacy support
+        'Dedicated Air Monitor?': 'dedicatedAirMonitor',
+        'Air Monitor Required': 'dedicatedAirMonitor', // Legacy support
+        'Dedicated Air Monitor': 'dedicatedAirMonitor', // Legacy support
+        'Warning Sign Posted?': 'warningSignPosted',
+        'Warning Sign Posted': 'warningSignPosted', // Legacy support
         'Number of Entry Points': 'numberOfEntryPoints',
-        'Other People Working Near Space': 'otherPeopleWorkingNearSpace',
-        'Can Others See Into Space': 'canOthersSeeIntoSpace',
-        'Contractors Enter Space': 'contractorsEnterSpace',
+        'Other People Working Near Space?': 'otherPeopleWorkingNearSpace',
+        'Other People Working Near Space': 'otherPeopleWorkingNearSpace', // Legacy support
+        'Can Others See into Space?': 'canOthersSeeIntoSpace',
+        'Can Others See Into Space': 'canOthersSeeIntoSpace', // Legacy support
+        'Do Contractors Enter Space?': 'contractorsEnterSpace',
+        'Contractors Enter Space': 'contractorsEnterSpace', // Legacy support
+        'Is the Space Normally Locked?': 'isSpaceNormallyLocked',
         'Images': 'images',
-        'Notes': 'notes'
+        'Image URLs': 'images', // Legacy support
+        'Notes': 'notes',
+        'Additional Notes': 'notes' // Legacy support
       };
 
       // Validate headers
-      const requiredHeaders = ['Space Name', 'Building', 'Technician'];
+      const requiredHeaders = ['Building'];
       const missingHeaders = requiredHeaders.filter(header => !headers.includes(header));
       
       if (missingHeaders.length > 0) {
@@ -160,6 +258,18 @@ const CSVImportModal = ({ isOpen, onClose, onImport, isLoading = false }) => {
         return;
       }
 
+      // Define boolean and numeric fields
+      const booleanFields = [
+        'isConfinedSpace', 'permitRequired', 'atmosphericHazard', 'engulfmentHazard',
+        'configurationHazard', 'otherRecognizedHazards', 'ppeRequired',
+        'forcedAirVentilationSufficient', 'dedicatedAirMonitor', 'warningSignPosted',
+        'otherPeopleWorkingNearSpace', 'canOthersSeeIntoSpace', 'contractorsEnterSpace',
+        'isSpaceNormallyLocked'
+      ];
+      
+      const numericFields = ['numberOfEntryPoints'];
+      const dateFields = ['surveyDate', 'createdDate'];
+      
       // Parse data rows
       const parsedData = dataRows.map((row, index) => {
         const rowData = {};
@@ -167,16 +277,29 @@ const CSVImportModal = ({ isOpen, onClose, onImport, isLoading = false }) => {
         headers.forEach((header, i) => {
           const mappedField = headerMapping[header];
           if (mappedField) {
-            rowData[mappedField] = row[i] || '';
+            let value = row[i];
+            
+            // Special handling for different field types
+            if (dateFields.includes(mappedField)) {
+              value = parseExcelDate(value);
+            } else if (booleanFields.includes(mappedField)) {
+              value = parseBoolean(value);
+            } else if (numericFields.includes(mappedField)) {
+              value = parseNumeric(value);
+            } else if (value === null || value === undefined) {
+              value = '';
+            } else {
+              value = String(value).trim();
+            }
+            
+            rowData[mappedField] = value;
           }
         });
 
         return rowData;
       }).filter(rowData => {
         // Filter out completely empty rows or rows missing critical data
-        return rowData.spaceName && rowData.spaceName.trim() !== '' &&
-               rowData.building && rowData.building.trim() !== '' &&
-               rowData.technician && rowData.technician.trim() !== '';
+        return rowData.building && String(rowData.building).trim() !== '';
       });
 
       console.log('Parsed data sample:', parsedData[0]);
@@ -354,11 +477,11 @@ const CSVImportModal = ({ isOpen, onClose, onImport, isLoading = false }) => {
                       <tbody className="divide-y divide-gray-200">
                         {preview.map((row, index) => (
                           <tr key={index} className="hover:bg-gray-50">
-                            <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-900">{row.spaceName}</td>
-                            <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-900">{row.building}</td>
-                            <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-900">{row.technician}</td>
-                            <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-900">{row.priority}</td>
-                            <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-900">{row.confinedSpace}</td>
+                            <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-900">{row.spaceName || 'N/A'}</td>
+                            <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-900">{row.building || 'N/A'}</td>
+                            <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-900">{row.technician || 'N/A'}</td>
+                            <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-900">{row.priority || 'N/A'}</td>
+                            <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-900">{row.isConfinedSpace || 'N/A'}</td>
                           </tr>
                         ))}
                       </tbody>

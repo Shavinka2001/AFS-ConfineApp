@@ -43,6 +43,8 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, closeMobileMen
   const [workOrders, setWorkOrders] = useState([]);
   const [tasksLoading, setTasksLoading] = useState(false);
   const [showTasksSection, setShowTasksSection] = useState(false);
+  const [hoveredItem, setHoveredItem] = useState(null);
+  const [isAnimating, setIsAnimating] = useState(false);
 
   // Fetch technician's location and tasks if user is a technician
   useEffect(() => {
@@ -287,7 +289,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, closeMobileMen
       animate={{ width: isCollapsed ? 80 : (isMobile ? 280 : 300) }}
       transition={{ duration: 0.3, ease: 'easeInOut' }}
       className={`bg-white shadow-2xl border-r border-gray-100 h-screen flex flex-col ${
-        isMobile ? 'w-280' : 'fixed left-0 top-0 z-40'
+        isMobile ? 'w-280 fixed left-0 top-0 z-40' : ''
       }`}
     >
       {/* Header */}
@@ -371,74 +373,159 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, closeMobileMen
         </div>
       </div>
 
-      {/* Navigation Menu */}
-      <nav className={`flex-1 ${isMobile ? 'px-3 py-4' : 'px-4 py-6'} space-y-1 overflow-y-auto`}>
-        {menuItems.map((item) => {
+      {/* Enhanced Navigation Menu with Mobile Optimization */}
+      <nav className={`flex-1 ${isMobile ? 'px-3 py-4' : 'px-4 py-6'} space-y-2 overflow-y-auto swipeable-y`}>
+        {menuItems.map((item, index) => {
           const isActive = location.pathname === item.path;
           const Icon = item.icon;
           
           return (
-            <Link
+            <motion.div
               key={item.path}
-              to={item.path}
-              onClick={isMobile ? closeMobileMenu : undefined}
-              className={`flex items-center space-x-3 px-3 py-3 rounded-xl transition-all duration-300 group touch-manipulation ${
-                isActive
-                  ? `bg-gradient-to-r from-[#232249] to-[#232249]/90 text-white shadow-xl ${!isMobile ? 'transform scale-105' : ''}`
-                  : 'text-gray-700 hover:bg-gradient-to-r hover:from-[#232249]/10 hover:to-[#232249]/5 hover:text-[#232249] hover:shadow-lg active:bg-[#232249]/20'
-              } ${isMobile ? 'min-h-[44px]' : ''}`} // 44px minimum touch target for mobile
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: index * 0.05, duration: 0.3, ease: "easeOut" }}
+              onHoverStart={() => setHoveredItem(item.path)}
+              onHoverEnd={() => setHoveredItem(null)}
             >
-              <div className={`p-2 rounded-lg ${isActive ? 'bg-white/20' : 'bg-gray-100 group-hover:bg-[#232249]/10'} transition-all duration-300 flex-shrink-0`}>
-                <Icon className={`h-5 w-5 ${isActive ? 'text-white' : 'text-[#232249] group-hover:text-[#232249]'}`} />
-              </div>
-              <AnimatePresence>
-                {!isCollapsed && (
-                  <motion.span
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -10 }}
-                    transition={{ duration: 0.2 }}
-                    className="text-sm font-semibold flex-1 truncate"
-                  >
-                    {item.label}
-                  </motion.span>
+              <Link
+                to={item.path}
+                onClick={() => {
+                  if (isMobile) {
+                    setIsAnimating(true);
+                    setTimeout(() => {
+                      closeMobileMenu();
+                      setIsAnimating(false);
+                    }, 200);
+                  }
+                }}
+                className={`flex items-center space-x-3 px-3 py-3 rounded-2xl transition-all duration-300 group touch-manipulation relative overflow-hidden ${
+                  isActive
+                    ? `bg-gradient-to-r from-[#232249] to-[#1a1a3a] text-white mobile-shadow-xl ${!isMobile ? 'transform scale-105' : ''}`
+                    : 'text-gray-700 hover:bg-gradient-to-r hover:from-[#232249]/10 hover:to-[#232249]/5 hover:text-[#232249] hover:mobile-shadow-lg active:bg-[#232249]/20'
+                } ${isMobile ? 'min-h-[48px]' : 'min-h-[44px]'}`} // 48px for better mobile touch
+              >
+                {/* Icon Container */}
+                <motion.div 
+                  className={`p-2.5 rounded-xl ${isActive ? 'bg-white/20 shadow-lg' : 'bg-gray-100 group-hover:bg-[#232249]/10'} transition-all duration-300 flex-shrink-0 relative overflow-hidden`}
+                  whileHover={{ scale: 1.1, rotate: 5 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Icon className={`h-5 w-5 ${isActive ? 'text-white' : 'text-[#232249] group-hover:text-[#232249]'} transition-all duration-300`} />
+                  
+                  {/* Icon glow effect */}
+                  {(isActive || hoveredItem === item.path) && (
+                    <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-blue-400/20 to-purple-400/20 opacity-50"></div>
+                  )}
+                </motion.div>
+                
+                {/* Label with smooth animation */}
+                <AnimatePresence>
+                  {!isCollapsed && (
+                    <motion.div
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -10 }}
+                      transition={{ duration: 0.2 }}
+                      className="flex-1 min-w-0"
+                    >
+                      <span className="text-sm font-semibold truncate block">
+                        {item.label}
+                      </span>
+                      
+                      {/* Active indicator */}
+                      {isActive && (
+                        <motion.div
+                          className="h-0.5 bg-white/50 rounded-full mt-1"
+                          initial={{ width: 0 }}
+                          animate={{ width: '100%' }}
+                          transition={{ delay: 0.2, duration: 0.3 }}
+                        />
+                      )}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+                
+                {/* Hover ripple effect */}
+                {hoveredItem === item.path && !isActive && (
+                  <motion.div
+                    className="absolute inset-0 rounded-2xl bg-gradient-to-r from-[#232249]/5 to-[#232249]/10"
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0, opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                  />
                 )}
-              </AnimatePresence>
-            </Link>
+                
+                {/* Active background animation */}
+                {isActive && (
+                  <motion.div
+                    className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-500/10 to-purple-500/10"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ duration: 0.5, ease: "easeOut" }}
+                  />
+                )}
+              </Link>
+            </motion.div>
           );
         })}
       </nav>
 
       {/* Technician Tasks Section removed: Assigned Location tab hidden for technicians */}
 
-      {/* Logout Button */}
+      {/* Enhanced Logout Button with Mobile Optimization */}
       <div className={`${isMobile ? 'p-3' : 'p-4'} border-t border-gray-100 bg-gradient-to-br from-gray-50 to-gray-100`}>
-        <button
+        <motion.button
           onClick={() => {
             handleLogout();
             if (isMobile) closeMobileMenu();
           }}
-          className={`flex items-center space-x-3 w-full px-3 py-3 text-red-600 hover:bg-gradient-to-r hover:from-red-50 hover:to-red-100 rounded-xl transition-all duration-300 group hover:shadow-lg touch-manipulation ${
-            isMobile ? 'min-h-[44px]' : ''
+          whileHover={{ scale: 1.02, y: -2 }}
+          whileTap={{ scale: 0.98 }}
+          className={`flex items-center space-x-3 w-full px-3 py-3 text-red-600 hover:bg-gradient-to-r hover:from-red-50 hover:to-red-100 rounded-2xl transition-all duration-300 group hover:mobile-shadow-lg touch-manipulation relative overflow-hidden ${
+            isMobile ? 'min-h-[48px]' : 'min-h-[44px]'
           }`}
         >
-          <div className="p-2 rounded-lg bg-red-100 group-hover:bg-red-200 transition-all duration-300 flex-shrink-0">
-            <LogOut className="h-5 w-5" />
-          </div>
+          {/* Icon container with enhanced effects */}
+          <motion.div 
+            className="p-2.5 rounded-xl bg-red-100 group-hover:bg-red-200 transition-all duration-300 flex-shrink-0 relative overflow-hidden"
+            whileHover={{ scale: 1.1, rotate: -5 }}
+          >
+            <LogOut className="h-5 w-5 transition-all duration-300" />
+            
+            {/* Icon glow effect */}
+            <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-red-400/20 to-pink-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          </motion.div>
+          
+          {/* Label with enhanced animation */}
           <AnimatePresence>
             {!isCollapsed && (
-              <motion.span
+              <motion.div
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -10 }}
                 transition={{ duration: 0.2 }}
-                className="text-sm font-semibold flex-1 truncate"
+                className="flex-1 min-w-0 text-left"
               >
-                Logout
-              </motion.span>
+                <span className="text-sm font-semibold block">
+                  Logout
+                </span>
+                <span className="text-xs text-red-500/70 group-hover:text-red-600 transition-colors duration-300">
+                  Sign out safely
+                </span>
+              </motion.div>
             )}
           </AnimatePresence>
-        </button>
+          
+          {/* Hover ripple effect */}
+          <motion.div
+            className="absolute inset-0 rounded-2xl bg-gradient-to-r from-red-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 0.5 }}
+          />
+        </motion.button>
       </div>
     </motion.div>
   );

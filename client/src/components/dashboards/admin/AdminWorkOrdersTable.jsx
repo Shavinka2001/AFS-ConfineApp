@@ -23,6 +23,7 @@ import {
 
 // Import the new comprehensive edit form
 import AdminEditWorkOrderForm from './AdminEditWorkOrderForm';
+import PDFDownloadButton from '../../ui/PDFDownloadButton';
 
 // Consolidated PDF Generator - Groups similar confined spaces into single reports
 const consolidateEntries = (entries) => {
@@ -167,7 +168,6 @@ const consolidateGroup = (group) => {
 const AdminWorkOrdersTable = ({ 
   workOrders = [], 
   onView, 
-  onDownloadPDF,
   onUpdateOrder,
   onDeleteOrder,
   onDeleteAllOrders
@@ -294,90 +294,6 @@ const AdminWorkOrdersTable = ({
     }
   };
 
-  // Handle Consolidated PDF Download
-  const handleDownloadConsolidatedPDFs = async () => {
-    if (!workOrders || workOrders.length === 0) {
-      setNotification({
-        type: 'error',
-        title: 'No Work Orders Available',
-        message: 'No work orders available to consolidate. Please add some work orders first.'
-      });
-      return;
-    }
-
-    if (!onDownloadPDF) {
-      setNotification({
-        type: 'error',
-        title: 'Feature Not Available',
-        message: 'PDF download functionality not available. Please contact support.'
-      });
-      return;
-    }
-
-    // Consolidate entries first
-      const consolidatedEntries = consolidateEntries(workOrders);
-      
-      console.log(`Original entries: ${workOrders.length}`);
-      console.log(`Consolidated entries: ${consolidatedEntries.length}`);
-      console.log(`Saved ${workOrders.length - consolidatedEntries.length} duplicate reports`);
-      
-      // Log details about each entry
-      consolidatedEntries.forEach((entry, index) => {
-        if (entry._consolidated) {
-          console.log(`Entry ${index + 1}: CONSOLIDATED - ${entry.building} (${entry._originalEntryCount} entries combined)`);
-        } else {
-          console.log(`Entry ${index + 1}: INDIVIDUAL - ${entry.building} - ${entry.spaceName}`);
-        }
-      });
-
-      // Create a single consolidated PDF containing all entries
-      const consolidatedReport = {
-        _isConsolidatedReport: true,
-        _totalOriginalEntries: workOrders.length,
-        _totalConsolidatedEntries: consolidatedEntries.length,
-        _savedReports: workOrders.length - consolidatedEntries.length,
-        _generatedAt: new Date().toISOString(),
-        consolidatedEntries: consolidatedEntries,
-        // Use metadata from the first entry as base
-        ...consolidatedEntries[0],
-        // Override with consolidated report title
-        workOrderId: `CONSOLIDATED-REPORT-${new Date().toISOString().split('T')[0]}`,
-        uniqueId: `CONSOLIDATED-REPORT-${new Date().toISOString().split('T')[0]}`,
-        spaceName: `Consolidated Report (${consolidatedEntries.length} entries)`,
-        building: 'Multiple Buildings',
-        locationDescription: `Consolidated assessment report containing ${consolidatedEntries.length} entries from ${workOrders.length} original assessments`
-      };
-
-      console.log(`� Generating single consolidated PDF with ${consolidatedEntries.length} entries...`);
-      
-      // Generate single consolidated PDF
-      await onDownloadPDF(consolidatedReport).then(() => {
-        console.log(`✅ Successfully generated consolidated PDF with ${consolidatedEntries.length} entries`);
-        
-        // Show modern success notification
-        setNotification({
-          type: 'success',
-          title: 'PDF Generated Successfully!',
-          message: `Generated 1 consolidated PDF containing ${consolidatedEntries.length} entries from ${workOrders.length} original assessments`,
-          stats: {
-            consolidated: consolidatedEntries.length,
-            original: workOrders.length,
-            saved: workOrders.length - consolidatedEntries.length,
-            efficiency: Math.round(((workOrders.length - consolidatedEntries.length) / workOrders.length) * 100)
-          }
-        });
-      }).catch(pdfError => {
-        console.error(`❌ Failed to generate consolidated PDF`, pdfError);
-        setNotification({
-          type: 'error',
-          title: 'PDF Generation Failed',
-          message: 'Error generating consolidated PDF. Please try again.',
-          error: pdfError.message
-        });
-      });
-
-  };
-
   if (!workOrders || workOrders.length === 0) {
     return (
       <div className="space-y-4 sm:space-y-6">
@@ -435,15 +351,6 @@ const AdminWorkOrdersTable = ({
             
             {/* Mobile-Responsive Action Buttons */}
             <div className="flex items-center gap-2 sm:gap-3 overflow-x-auto">
-              <button
-                onClick={handleDownloadConsolidatedPDFs}
-                className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 bg-white/10 text-white rounded-xl hover:bg-white/20 transition-all duration-200 border border-white/20 hover:border-white/40 touch-manipulation whitespace-nowrap"
-                title="Download Consolidated PDF"
-              >
-                <Download className="w-4 h-4 shrink-0" />
-                <span className="text-xs sm:text-sm font-medium">PDF Report</span>
-              </button>
-              
               <button
                 onClick={handleDeleteAllOrders}
                 className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 bg-red-600/80 text-white rounded-xl hover:bg-red-700 transition-all duration-200 border border-red-500/20 hover:border-red-400 touch-manipulation whitespace-nowrap"
@@ -582,15 +489,12 @@ const AdminWorkOrdersTable = ({
                           <Edit className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                         </button>
                         
-                        {onDownloadPDF && (
-                          <button
-                            onClick={() => onDownloadPDF(order)}
-                            className="p-1.5 sm:p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-all duration-200 touch-manipulation"
-                            title="Download PDF"
-                          >
-                            <Download className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                          </button>
-                        )}
+                        <PDFDownloadButton
+                          workOrder={order}
+                          type="single"
+                          size="small"
+                          className="!p-1.5 sm:!p-2"
+                        />
                         
                         <button
                           onClick={() => handleDeleteOrder(order.id || order._id)}
@@ -610,7 +514,8 @@ const AdminWorkOrdersTable = ({
                           </button>
                         </div>
                       </div>
-                    </td>\n                  </tr>
+                    </td>
+                  </tr>
                   
                   {/* Expanded Row Details */}
                   {expandedRows.has(order.id || order._id) && (

@@ -16,16 +16,86 @@ function validateStatus(status) {
 
 
 function parseDate(dateString) {
-  if (!dateString) return null;
+  if (!dateString || dateString === '') return null;
   
-  const date = new Date(dateString);
-  return isNaN(date.getTime()) ? null : date;
+  // Handle various date formats
+  let date;
+  
+  // Try parsing as Excel serial number first (days since 1900-01-01)
+  const numericValue = Number(dateString);
+  if (!isNaN(numericValue) && numericValue > 0 && numericValue < 100000) {
+    // Excel date serial number (typically between 1 and 50000 for recent dates)
+    const excelEpoch = new Date(1900, 0, 1);
+    date = new Date(excelEpoch.getTime() + (numericValue - 2) * 86400000);
+    
+    if (!isNaN(date.getTime())) {
+      console.log(`Parsed Excel serial ${numericValue} to date: ${date.toISOString()}`);
+      return date;
+    }
+  }
+  
+  if (typeof dateString === 'string') {
+    // Remove any extra whitespace
+    dateString = dateString.trim();
+    
+    // Try ISO format first (YYYY-MM-DD)
+    if (/^\d{4}-\d{2}-\d{2}/.test(dateString)) {
+      date = new Date(dateString);
+      if (!isNaN(date.getTime())) {
+        return date;
+      }
+    }
+    
+    // Try common date formats
+    const datePatterns = [
+      // MM/DD/YYYY or M/D/YYYY
+      { regex: /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/, order: [2, 0, 1] }, // month, day, year
+      // DD/MM/YYYY or D/M/YYYY  
+      { regex: /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/, order: [2, 1, 0] }, // day, month, year
+      // YYYY/MM/DD
+      { regex: /^(\d{4})\/(\d{1,2})\/(\d{1,2})$/, order: [0, 1, 2] },
+      // DD-MM-YYYY
+      { regex: /^(\d{1,2})-(\d{1,2})-(\d{4})$/, order: [2, 1, 0] },
+      // MM-DD-YYYY
+      { regex: /^(\d{1,2})-(\d{1,2})-(\d{4})$/, order: [2, 0, 1] }
+    ];
+    
+    for (const pattern of datePatterns) {
+      const match = dateString.match(pattern.regex);
+      if (match) {
+        const parts = [match[1], match[2], match[3]];
+        const year = parseInt(parts[pattern.order[0]]);
+        const month = parseInt(parts[pattern.order[1]]) - 1; // JS months are 0-indexed
+        const day = parseInt(parts[pattern.order[2]]);
+        
+        date = new Date(year, month, day);
+        if (!isNaN(date.getTime()) && month >= 0 && month < 12 && day >= 1 && day <= 31) {
+          return date;
+        }
+      }
+    }
+    
+    // Try native Date parsing as last resort
+    date = new Date(dateString);
+    if (!isNaN(date.getTime())) {
+      return date;
+    }
+  }
+  
+  console.warn(`Could not parse date: ${dateString}`);
+  return null;
 }
 
 function parseBoolean(value) {
+  if (value === null || value === undefined) return false;
   if (typeof value === 'boolean') return value;
   if (typeof value === 'string') {
-    return ['yes', 'true', '1', 'y'].includes(value.toLowerCase());
+    // Trim whitespace and convert to lowercase for robust comparison
+    const normalized = value.trim().toLowerCase();
+    return ['yes', 'y', 'true', '1', 'x'].includes(normalized);
+  }
+  if (typeof value === 'number') {
+    return value === 1;
   }
   return false;
 }
@@ -852,15 +922,9 @@ class OrderController {
           const row = csvData[i];
           console.log(`Processing row ${i + 1}:`, row);
           
-          // Validate that required fields are not empty
-          if (!row.spaceName || row.spaceName.trim() === '') {
-            throw new Error(`Row ${i + 1}: Space Name is required and cannot be empty`);
-          }
+          // Validate that required fields are not empty (only Building is required now)
           if (!row.building || row.building.trim() === '') {
             throw new Error(`Row ${i + 1}: Building is required and cannot be empty`);
-          }
-          if (!row.technician || row.technician.trim() === '') {
-            throw new Error(`Row ${i + 1}: Technician is required and cannot be empty`);
           }
           
           // Map CSV fields to order object
@@ -868,11 +932,11 @@ class OrderController {
             userId: userId,
             createdBy: userId,
             workOrderId: row.workOrderId || undefined, // Let the system generate if empty
-            spaceName: row.spaceName || '',
+            spaceName: row.spaceName || row.locationDescription || 'N/A', // Use locationDescription if spaceName not provided
             building: row.building || '',
             locationDescription: row.locationDescription || '',
             confinedSpaceDescription: row.confinedSpaceDescription || '',
-            technician: row.technician || '',
+            technician: row.technician || 'Unassigned', // Default to Unassigned if not provided
             priority: validatePriority(row.priority) || 'medium',
             status: validateStatus(row.status) || 'draft',
             surveyDate: parseDate(row.surveyDate) || new Date(),
@@ -906,6 +970,7 @@ class OrderController {
             otherPeopleWorkingNearSpace: parseBoolean(row.otherPeopleWorkingNearSpace),
             canOthersSeeIntoSpace: parseBoolean(row.canOthersSeeIntoSpace),
             contractorsEnterSpace: parseBoolean(row.contractorsEnterSpace),
+            isSpaceNormallyLocked: parseBoolean(row.isSpaceNormallyLocked),
             
             // Additional Information
             notes: row.notes || '',
@@ -916,9 +981,9 @@ class OrderController {
 
           console.log(`Mapped order data for row ${i + 1}:`, orderData);
 
-          // Validate required fields
-          if (!orderData.spaceName || !orderData.building || !orderData.technician) {
-            throw new Error(`Row ${i + 1}: Missing required fields (spaceName, building, or technician)`);
+          // Validate required fields (only building is required)
+          if (!orderData.building) {
+            throw new Error(`Row ${i + 1}: Building is required`);
           }
 
           // Create the order
@@ -961,6 +1026,96 @@ class OrderController {
       res.status(500).json({
         success: false,
         message: 'Failed to import work orders',
+        error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      });
+    }
+  }
+
+  // Get orders with consolidated data for PDF generation
+  async getOrdersWithConsolidatedData(req, res) {
+    try {
+      const userId = req.user.id;
+      const userRole = req.user.role;
+
+      // Build query based on user role
+      const query = {};
+      if (userRole === 'admin' || userRole === 'manager') {
+        // Admins and managers see all orders
+        console.log(`${userRole} accessing all work orders for PDF`);
+      } else if (userRole === 'technician') {
+        // Technicians see orders assigned to them
+        const firstName = req.user.firstName || '';
+        const lastName = req.user.lastName || '';
+        const fullName = `${firstName} ${lastName}`.trim();
+        
+        query.$or = [
+          { technician: { $regex: new RegExp(fullName, 'i') } },
+          { technician: { $regex: new RegExp(`${lastName}, ${firstName}`, 'i') } }
+        ];
+      } else {
+        // Regular users see only their own orders
+        query.userId = userId;
+      }
+
+      // Fetch all matching orders
+      const orders = await Order.find(query)
+        .sort({ createdAt: -1 })
+        .lean();
+
+      // Group orders by building, location, and confined space
+      const consolidatedMap = new Map();
+      
+      orders.forEach(order => {
+        const building = order.building || 'N/A';
+        const location = order.locationDescription || 'N/A';
+        const confinedSpace = order.confinedSpaceDescription || order.spaceName || 'N/A';
+        
+        const groupKey = `${building}|||${location}|||${confinedSpace}`;
+        
+        if (!consolidatedMap.has(groupKey)) {
+          consolidatedMap.set(groupKey, {
+            building,
+            locationDescription: location,
+            confinedSpaceDescription: confinedSpace,
+            orders: [],
+            count: 0,
+            workOrderIds: [],
+            surveyDates: [],
+            technicians: []
+          });
+        }
+        
+        const group = consolidatedMap.get(groupKey);
+        group.orders.push(order);
+        group.count++;
+        
+        if (order.workOrderId) group.workOrderIds.push(order.workOrderId);
+        if (order.surveyDate && !group.surveyDates.includes(order.surveyDate.toString())) {
+          group.surveyDates.push(order.surveyDate);
+        }
+        if (order.technician && !group.technicians.includes(order.technician)) {
+          group.technicians.push(order.technician);
+        }
+      });
+
+      const consolidatedData = Array.from(consolidatedMap.values());
+
+      res.status(200).json({
+        success: true,
+        message: 'Orders with consolidated data retrieved successfully',
+        data: {
+          totalOrders: orders.length,
+          consolidatedGroups: consolidatedData.length,
+          orders: orders,
+          consolidated: consolidatedData
+        }
+      });
+
+    } catch (error) {
+      console.error('Error getting consolidated data:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to retrieve consolidated data',
         error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
       });
     }

@@ -34,6 +34,7 @@ import errorHandler from '../../../utils/errorHandler';
 import { Toaster } from 'react-hot-toast';
 import CSVImportModal from '../../ui/CSVImportModal';
 import * as XLSX from 'xlsx';
+import { exportWorkOrdersToExcel } from '../../../utils/excelExport';
 
 // Consolidated PDF Generator - Groups similar confined spaces into single reports
 const consolidateEntriesLocal = (entries) => {
@@ -241,6 +242,7 @@ const ManagerWorkOrders = () => {
   const [downloadingPdf, setDownloadingPdf] = useState(null);
   const [showCSVImportModal, setShowCSVImportModal] = useState(false);
   const [csvImportLoading, setCsvImportLoading] = useState(false);
+  const [exportingExcel, setExportingExcel] = useState(false);
   
 
 
@@ -259,11 +261,7 @@ const ManagerWorkOrders = () => {
   // State for statistics
   const [stats, setStats] = useState({
     total: 0,
-    pending: 0,
-    approved: 0,
-    inProgress: 0,
-    completed: 0,
-    rejected: 0,
+    confinedSpaces: 0,
     highPriority: 0
   });
 
@@ -359,9 +357,7 @@ const ManagerWorkOrders = () => {
         // Calculate basic stats from current data
         const basicStats = {
           total: orders.length,
-          pending: orders.filter(o => o.status === 'pending').length,
-          inProgress: orders.filter(o => o.status === 'in-progress').length,
-          completed: orders.filter(o => o.status === 'completed').length,
+          confinedSpaces: orders.filter(o => o.isConfinedSpace === true).length,
           highPriority: orders.filter(o => o.priority === 'high' || o.priority === 'critical').length,
         };
         setStats(basicStats);
@@ -457,11 +453,7 @@ const ManagerWorkOrders = () => {
     // Calculate statistics for filtered data
     const stats = {
       total: filtered.length,
-      pending: filtered.filter(o => o.status === 'pending').length,
-      approved: filtered.filter(o => o.status === 'approved').length,
-      inProgress: filtered.filter(o => o.status === 'in-progress').length,
-      completed: filtered.filter(o => o.status === 'completed').length,
-      rejected: filtered.filter(o => o.status === 'cancelled' || o.status === 'rejected').length,
+      confinedSpaces: filtered.filter(o => o.isConfinedSpace === true).length,
       highPriority: filtered.filter(o => o.priority === 'high' || o.priority === 'critical').length
     };
     setStats(stats);
@@ -476,6 +468,101 @@ const ManagerWorkOrders = () => {
   const handleView = (order) => {
     setSelectedOrder(order);
     setShowDetailModal(true);
+  };
+
+  const handleUpdateOrder = async (orderId, updatedData) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('Authentication required');
+      }
+
+      console.log('Updating order:', orderId, updatedData);
+      
+      const response = await workOrderAPI.updateWorkOrder(token, orderId, updatedData);
+      
+      if (response.success) {
+        // Refresh the work orders list
+        await fetchWorkOrders();
+        await fetchStats();
+        errorHandler.handleSuccess('Work order updated successfully');
+        return true;
+      } else {
+        throw new Error(response.message || 'Failed to update work order');
+      }
+    } catch (error) {
+      console.error('Error updating work order:', error);
+      errorHandler.handleError(error, 'Failed to update work order');
+      return false;
+    }
+  };
+
+  const handleDeleteOrder = async (orderId) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('Authentication required');
+      }
+
+      const confirmed = window.confirm('Are you sure you want to delete this work order? This action cannot be undone.');
+      if (!confirmed) return false;
+
+      console.log('Deleting order:', orderId);
+      
+      const response = await workOrderAPI.deleteWorkOrder(token, orderId);
+      
+      if (response.success) {
+        // Refresh the work orders list
+        await fetchWorkOrders();
+        await fetchStats();
+        errorHandler.handleSuccess('Work order deleted successfully');
+        return true;
+      } else {
+        throw new Error(response.message || 'Failed to delete work order');
+      }
+    } catch (error) {
+      console.error('Error deleting work order:', error);
+      errorHandler.handleError(error, 'Failed to delete work order');
+      return false;
+    }
+  };
+
+  const handleDeleteAllOrders = async () => {
+    try {
+      const confirmationPhrase = 'DELETE ALL WORK ORDERS';
+      const userInput = window.prompt(
+        `⚠️ WARNING: This will permanently delete ALL work orders!\n\nTo confirm, please type: ${confirmationPhrase}`
+      );
+
+      if (!userInput || userInput.trim().toUpperCase() !== confirmationPhrase) {
+        errorHandler.handleWarning('Delete all operation cancelled');
+        return false;
+      }
+
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('Authentication required');
+      }
+
+      console.log('Deleting all work orders');
+      
+      // Send the uppercase version to match backend validation
+      const response = await workOrderAPI.deleteAllWorkOrders(token, userInput.trim().toUpperCase());
+      
+      if (response.success) {
+        // Refresh the work orders list and stats
+        await fetchWorkOrders();
+        await fetchStats();
+        errorHandler.handleSuccess(`Successfully deleted ${response.data?.deletedCount || 'all'} work orders`);
+        return true;
+      } else {
+        throw new Error(response.message || 'Failed to delete work orders');
+      }
+    } catch (error) {
+      console.error('Error deleting all work orders:', error);
+      errorHandler.handleError(error, 'Failed to delete all work orders');
+      return false;
+    }
   };
 
   const handleStatusUpdate = async (orderId, newStatus) => {
@@ -517,6 +604,30 @@ const ManagerWorkOrders = () => {
   const handleRefresh = () => {
     fetchWorkOrders();
     fetchStats();
+  };
+
+  // Handle Excel export with all fields
+  const handleExportToExcel = async () => {
+    setExportingExcel(true);
+    try {
+      const dataToExport = filteredOrders.length > 0 ? filteredOrders : workOrders;
+      
+      if (dataToExport.length === 0) {
+        alert('No data available to export');
+        return;
+      }
+
+      const result = exportWorkOrdersToExcel(dataToExport, 'manager_confined_space_assessments');
+      
+      if (result.success) {
+        alert(result.message);
+      }
+    } catch (error) {
+      console.error('Error exporting to Excel:', error);
+      alert(`Failed to export to Excel: ${error.message}`);
+    } finally {
+      setExportingExcel(false);
+    }
   };
 
   const closeDetailModal = () => {
@@ -759,71 +870,7 @@ const ManagerWorkOrders = () => {
     }
   };
 
-  // Handle Excel Export
-  const handleExportToExcel = () => {
-    try {
-      if (!filteredOrders || filteredOrders.length === 0) {
-        errorHandler.handleError(null, 'No work orders to export');
-        return;
-      }
-
-      // Prepare data for Excel export
-      const exportData = filteredOrders.map(order => ({
-        'Work Order ID': order.workOrderId || order.uniqueId || 'N/A',
-        'Space Name': order.spaceName || 'N/A',
-        'Building': order.building || 'N/A',
-        'Location Description': order.locationDescription || 'N/A',
-        'Confined Space Description': order.confinedSpaceDescription || 'N/A',
-        'Technician': order.technician || 'N/A',
-        'Priority': order.priority || 'N/A',
-        'Status': order.status || 'N/A',
-        'Survey Date': order.surveyDate ? new Date(order.surveyDate).toLocaleDateString() : 'N/A',
-        'Created Date': order.createdAt ? new Date(order.createdAt).toLocaleDateString() : 'N/A',
-        'Confined Space': order.isConfinedSpace ? 'Yes' : 'No',
-        'Permit Required': order.permitRequired ? 'Yes' : 'No',
-        'Entry Requirements': order.entryRequirements || 'N/A',
-        'Atmospheric Hazard': order.atmosphericHazard ? 'Yes' : 'No',
-        'Atmospheric Hazard Description': order.atmosphericHazardDescription || 'N/A',
-        'Engulfment Hazard': order.engulfmentHazard ? 'Yes' : 'No',
-        'Engulfment Hazard Description': order.engulfmentHazardDescription || 'N/A',
-        'Configuration Hazard': order.configurationHazard ? 'Yes' : 'No',
-        'Configuration Hazard Description': order.configurationHazardDescription || 'N/A',
-        'Other Hazards': order.otherRecognizedHazards ? 'Yes' : 'No',
-        'Other Hazards Description': order.otherHazardsDescription || 'N/A',
-        'PPE Required': order.ppeRequired ? 'Yes' : 'No',
-        'PPE List': order.ppeList || 'N/A',
-        'Forced Air Ventilation Sufficient': order.forcedAirVentilationSufficient ? 'Yes' : 'No',
-        'Air Monitor Required': order.dedicatedAirMonitor ? 'Yes' : 'No',
-        'Warning Sign Posted': order.warningSignPosted ? 'Yes' : 'No',
-        'Number of Entry Points': order.numberOfEntryPoints || 'N/A',
-        'Other People Working Near Space': order.otherPeopleWorkingNearSpace ? 'Yes' : 'No',
-        'Can Others See Into Space': order.canOthersSeeIntoSpace ? 'Yes' : 'No',
-        'Contractors Enter Space': order.contractorsEnterSpace ? 'Yes' : 'No',
-        'Images': order.imageUrls ? order.imageUrls.length : 0,
-        'Notes': order.notes || 'N/A'
-      }));
-
-      // Create workbook and worksheet
-      const wb = XLSX.utils.book_new();
-      const ws = XLSX.utils.json_to_sheet(exportData);
-      
-      // Add worksheet to workbook
-      XLSX.utils.book_append_sheet(wb, ws, 'Work Orders');
-      
-      // Generate filename with current date
-      const fileName = `work-orders-export-${new Date().toISOString().split('T')[0]}.xlsx`;
-      
-      // Save file
-      XLSX.writeFile(wb, fileName);
-      
-      console.log(`Exported ${exportData.length} work orders to ${fileName}`);
-      errorHandler.handleSuccess(`Exported ${exportData.length} work orders to Excel`);
-      
-    } catch (error) {
-      console.error('Export error:', error);
-      errorHandler.handleError(error, 'Failed to export to Excel');
-    }
-  };
+  // Duplicate function removed - using comprehensive export defined earlier
 
   // Handle Bulk Import
   const handleBulkImport = async (csvData) => {
@@ -982,10 +1029,10 @@ const ManagerWorkOrders = () => {
           </div>
         </div>
 
-        {/* Clean Statistics Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        {/* Essential Statistics Grid - Only 3 Key Metrics */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-4xl mx-auto">
           <StatCard
-            title="Total"
+            title="Total Work Orders"
             value={stats.total}
             icon={FileText}
             color="text-blue-700"
@@ -994,48 +1041,21 @@ const ManagerWorkOrders = () => {
             onClick={() => setStatusFilter('')}
           />
           <StatCard
-            title="Pending"
-            value={stats.pending}
-            icon={Clock}
-            color="text-amber-700"
-            bgColor="bg-amber-50"
-            borderColor="border-amber-200"
-            onClick={() => setStatusFilter('pending')}
-          />
-          <StatCard
-            title="Approved"
-            value={stats.approved}
-            icon={CheckCircle}
-            color="text-cyan-700"
-            bgColor="bg-cyan-50"
-            borderColor="border-cyan-200"
-            onClick={() => setStatusFilter('approved')}
-          />
-          <StatCard
-            title="Active"
-            value={stats.inProgress}
-            icon={Activity}
-            color="text-purple-700"
-            bgColor="bg-purple-50"
-            borderColor="border-purple-200"
-            onClick={() => setStatusFilter('in-progress')}
-          />
-          <StatCard
-            title="Done"
-            value={stats.completed}
-            icon={CheckCircle}
-            color="text-green-700"
-            bgColor="bg-green-50"
-            borderColor="border-green-200"
-            onClick={() => setStatusFilter('completed')}
-          />
-          <StatCard
-            title="High Priority"
-            value={stats.highPriority}
+            title="Confined Spaces"
+            value={stats.confinedSpaces}
             icon={AlertTriangle}
             color="text-red-700"
             bgColor="bg-red-50"
             borderColor="border-red-200"
+            onClick={() => {}}
+          />
+          <StatCard
+            title="High Priority"
+            value={stats.highPriority}
+            icon={Shield}
+            color="text-orange-700"
+            bgColor="bg-orange-50"
+            borderColor="border-orange-200"
             onClick={() => setPriorityFilter('high')}
           />
         </div>
@@ -1159,54 +1179,9 @@ const ManagerWorkOrders = () => {
           onStatusUpdate={handleStatusUpdate}
           onDownloadPDF={handleDownloadPDF}
           onCreateOrder={() => setShowCreateModal(true)}
-          onUpdateOrder={(order) => {
-            setSelectedOrder(order);
-            setShowEditModal(true);
-          }}
-          onDeleteOrder={async (orderId) => {
-            const confirmed = await errorHandler.confirmAction(
-              'Are you sure you want to delete this work order? This action cannot be undone.',
-              'Delete Work Order'
-            );
-
-            if (!confirmed) return;
-
-            try {
-              const token = localStorage.getItem('token');
-              if (!token) {
-                errorHandler.handleError(null, 'Authentication required');
-                return;
-              }
-
-              await workOrderAPI.deleteWorkOrder(token, orderId);
-              errorHandler.handleSuccess('Work order deleted successfully');
-              fetchWorkOrders();
-              fetchStats();
-            } catch (error) {
-              errorHandler.handleError(error, 'Failed to delete work order');
-            }
-          }}
-          onDeleteAllOrders={async (confirmPhrase) => {
-            try {
-              const token = localStorage.getItem('token');
-              if (!token) {
-                errorHandler.handleError(null, 'Authentication required');
-                return;
-              }
-
-              console.log('Manager: Attempting to delete all work orders...');
-              await workOrderAPI.deleteAllWorkOrders(token, confirmPhrase);
-              
-              errorHandler.handleSuccess('All work orders deleted successfully');
-              
-              // Refresh data
-              fetchWorkOrders();
-              fetchStats();
-            } catch (error) {
-              errorHandler.handleError(error, 'Failed to delete all work orders');
-              throw error; // Re-throw to let the table component handle it
-            }
-          }}
+          onUpdateOrder={handleUpdateOrder}
+          onDeleteOrder={handleDeleteOrder}
+          onDeleteAllOrders={handleDeleteAllOrders}
         />
 
         {/* CSV Import Modal */}

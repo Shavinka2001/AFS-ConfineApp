@@ -316,11 +316,10 @@ class WorkOrderAPI {
   // Download work order report using client-side PDF generation
   async generateWorkOrderPDF(token, workOrder, format = 'pdf') {
     // Import the PDF generator dynamically
-    const { default: WorkOrderPDFGenerator } = await import('../utils/WorkOrderPDFGenerator.js');
+    const { downloadSinglePDF } = await import('../utils/WorkOrderPDFGenerator.js');
     
     try {
-      const pdfGenerator = new WorkOrderPDFGenerator();
-      const result = await pdfGenerator.generatePDF(workOrder);
+      const result = await downloadSinglePDF(workOrder);
       return result;
     } catch (error) {
       console.error('PDF generation error:', error);
@@ -504,4 +503,18 @@ export const formatDateTime = (dateString) => {
     hour: '2-digit',
     minute: '2-digit'
   });
+};
+// Get orders with consolidated data for PDF generation
+WorkOrderAPI.prototype.getConsolidatedData = async function(token) {
+  try {
+    const response = await fetch(`${this.baseURL}/orders/consolidated-data`, {
+      method: 'GET',
+      headers: this.getAuthHeaders(token)
+    });
+
+    return this.handleResponse(response);
+  } catch (error) {
+    console.error('Error fetching consolidated data:', error);
+    throw error;
+  }
 };

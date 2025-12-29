@@ -110,6 +110,11 @@ router.get('/stats',
   asyncHandler(orderController.getUserStats)
 );
 
+// GET /api/orders/consolidated-data - Get orders with consolidated data for PDF
+router.get('/consolidated-data',
+  asyncHandler(orderController.getOrdersWithConsolidatedData)
+);
+
 // GET /api/orders/:id - Get single order
 router.get('/:id', 
   orderIdValidation,

@@ -738,79 +738,176 @@ const TechnicianForm = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-3 md:p-6">
-      <div className="max-w-6xl mx-auto">
-        {/* Simple Professional Header */}
-        <div className="bg-[#232249] rounded-lg shadow-md mb-4 md:mb-6">
-          <div className="p-4 md:p-6">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-              {/* Title */}
-              <div className="flex items-center gap-3">
-                <div className="bg-white/10 rounded-lg p-2.5">
-                  <Shield className="w-6 h-6 md:w-7 md:h-7 text-white" />
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-gray-100 p-4 md:p-8">
+      <div className="max-w-7xl mx-auto">
+        {/* Ultra-Modern Professional Header */}
+        <div className="relative bg-gradient-to-br from-[#1a1b3a] via-[#232249] to-[#2d2e5f] rounded-3xl shadow-2xl mb-8 overflow-hidden border border-white/10">
+          {/* Animated Background Pattern */}
+          <div className="absolute inset-0 opacity-5">
+            <div className="absolute inset-0" style={{
+              backgroundImage: `radial-gradient(circle at 2px 2px, white 1px, transparent 0)`,
+              backgroundSize: '32px 32px',
+            }}></div>
+          </div>
+          
+          {/* Gradient Overlay Effects */}
+          <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
+          
+          {/* Header Content */}
+          <div className="relative z-10 p-6 md:p-10">
+            <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
+              {/* Left Side - Title and Description */}
+              <div className="flex-1">
+                <div className="flex items-start mb-6">
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-purple-500 rounded-2xl blur opacity-50"></div>
+                    <div className="relative bg-white/15 backdrop-blur-md rounded-2xl p-4 border border-white/20 shadow-2xl">
+                      <Shield className="w-10 h-10 text-white drop-shadow-lg" />
+                    </div>
+                  </div>
+                  <div className="ml-5 flex-1">
+                    <h1 className="text-3xl md:text-5xl font-bold text-white mb-3 tracking-tight">
+                      Confined Space Assessment
+                    </h1>
+                    <div className="flex items-center gap-2 text-blue-100/90">
+                      <div className="h-1 w-1 rounded-full bg-blue-300"></div>
+                      <FileText className="w-4 h-4" />
+                      <span className="text-sm font-medium tracking-wide">Safety Evaluation & Documentation System</span>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <h1 className="text-xl md:text-2xl font-bold text-white">
-                    Confined Space Assessment
-                  </h1>
-                  <p className="text-white/80 text-xs md:text-sm mt-0.5">
-                    Safety Evaluation & Documentation
-                  </p>
-                </div>
+                
+                <p className="text-blue-100/90 text-base md:text-lg max-w-3xl leading-relaxed ml-[88px]">
+                  Complete comprehensive safety assessment for confined space entry procedures, 
+                  hazard identification, and regulatory compliance documentation with real-time validation.
+                </p>
               </div>
 
-              {/* Time and Status */}
-              <div className="flex items-center gap-3 md:gap-4">
-                <div className="bg-white/10 rounded-lg px-3 md:px-4 py-2 md:py-2.5 text-center">
-                  <div className="text-white text-sm md:text-base font-bold font-mono">
-                    {formatTime(currentTime)}
-                  </div>
-                  <div className="text-white/70 text-xs">
-                    {formatDate(currentTime)}
+              {/* Right Side - Time and Status Card */}
+              <div className="lg:min-w-[280px]">
+                <div className="relative group">
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-400/20 to-purple-500/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-300"></div>
+                  <div className="relative bg-white/10 backdrop-blur-xl rounded-2xl p-6 border border-white/20 shadow-xl">
+                    <div className="text-center">
+                      <div className="flex items-center justify-center mb-4">
+                        <div className="p-2 bg-white/10 rounded-lg mr-2">
+                          <Clock className="w-5 h-5 text-blue-200" />
+                        </div>
+                        <span className="text-blue-200 text-sm font-semibold tracking-wide uppercase">Live Time</span>
+                      </div>
+                      <div className="text-white text-3xl font-bold mb-2 font-mono tracking-wider drop-shadow-lg">
+                        {formatTime(currentTime)}
+                      </div>
+                      <div className="text-blue-200/80 text-sm font-medium mb-4">
+                        {formatDate(currentTime)}
+                      </div>
+                      
+                      {/* Assessment Status Badge */}
+                      <div className="pt-4 border-t border-white/20">
+                        <div className="flex items-center justify-center gap-2 px-3 py-2 bg-green-500/20 rounded-lg border border-green-400/30">
+                          <div className="relative">
+                            <div className="w-2.5 h-2.5 bg-green-400 rounded-full animate-pulse"></div>
+                            <div className="absolute inset-0 w-2.5 h-2.5 bg-green-400 rounded-full animate-ping"></div>
+                          </div>
+                          <span className="text-green-100 text-xs font-bold tracking-wider">SYSTEM ACTIVE</span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div className="bg-emerald-500/20 border border-emerald-400/30 rounded-lg px-3 py-2">
-                  <span className="text-emerald-200 text-xs font-semibold">ACTIVE</span>
+              </div>
+            </div>
+            
+            {/* Enhanced Progress Indicator Bar */}
+            <div className="mt-8 pt-6 border-t border-white/10">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-blue-100/90 text-sm">
+                <div className="flex items-center gap-3 px-4 py-3 bg-white/5 rounded-xl border border-white/10 backdrop-blur-sm">
+                  <div className="p-2 bg-blue-500/20 rounded-lg">
+                    <CheckCircle className="w-4 h-4 text-blue-300" />
+                  </div>
+                  <div>
+                    <div className="text-blue-300/70 text-xs font-medium uppercase tracking-wide">Status</div>
+                    <div className="text-white font-semibold">In Progress</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 px-4 py-3 bg-white/5 rounded-xl border border-white/10 backdrop-blur-sm">
+                  <div className="p-2 bg-purple-500/20 rounded-lg">
+                    <User className="w-4 h-4 text-purple-300" />
+                  </div>
+                  <div>
+                    <div className="text-purple-300/70 text-xs font-medium uppercase tracking-wide">Current Section</div>
+                    <div className="text-white font-semibold truncate">{sections.find(s => s.id === activeSection)?.title}</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 px-4 py-3 bg-white/5 rounded-xl border border-white/10 backdrop-blur-sm">
+                  <div className="p-2 bg-green-500/20 rounded-lg">
+                    <Calendar className="w-4 h-4 text-green-300" />
+                  </div>
+                  <div>
+                    <div className="text-green-300/70 text-xs font-medium uppercase tracking-wide">Date</div>
+                    <div className="text-white font-semibold">{new Date().toLocaleDateString()}</div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Navigation Tabs */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-4 md:mb-6 overflow-hidden">
-          <div className="flex overflow-x-auto">
+        {/* Modern Navigation Tabs with Gradient */}
+        <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-gray-200/50 mb-8 overflow-hidden">
+          <div className="flex overflow-x-auto scrollbar-hide">
             {sections.map((section, index) => {
               const Icon = section.icon;
               const isActive = activeSection === section.id;
+              const isCompleted = false;
               
               return (
                 <button
                   key={section.id}
                   onClick={() => setActiveSection(section.id)}
-                  className={`flex-1 min-w-[100px] flex flex-col items-center justify-center p-3 border-b-3 ${
+                  className={`group relative flex-1 min-w-[140px] flex flex-col items-center justify-center p-4 md:p-5 transition-all duration-300 ${
                     isActive 
-                      ? 'bg-[#232249] border-[#232249] text-white' 
-                      : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
+                      ? 'bg-gradient-to-br from-[#232249] to-[#2d2e5f] text-white shadow-lg scale-105' 
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50/80'
                   }`}
                 >
-                  <div className={`p-2 rounded-lg mb-1.5 ${
+                  {/* Active Indicator Line */}
+                  {isActive && (
+                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400"></div>
+                  )}
+                  
+                  {/* Icon with Background */}
+                  <div className={`p-2.5 rounded-xl mb-2 transition-all duration-300 ${
                     isActive 
-                      ? 'bg-white/15' 
-                      : 'bg-gray-100'
+                      ? 'bg-white/15 backdrop-blur-sm shadow-lg' 
+                      : 'bg-gray-100 group-hover:bg-gray-200 group-hover:scale-110'
                   }`}>
-                    <Icon className={`w-4 h-4 md:w-5 md:h-5 ${isActive ? 'text-white' : 'text-gray-600'}`} />
+                    <Icon className={`w-5 h-5 transition-transform duration-300 ${isActive ? 'text-white' : 'text-gray-600'}`} />
                   </div>
-                  <span className={`font-medium text-xs leading-tight text-center ${
-                    isActive ? 'text-white' : 'text-gray-700'
+                  
+                  {/* Text */}
+                  <span className={`font-semibold text-xs md:text-sm text-center leading-tight ${
+                    isActive ? 'text-white' : 'text-gray-700 group-hover:text-gray-900'
                   }`}>
                     {section.title}
                   </span>
-                  <span className={`text-xs mt-0.5 ${
-                    isActive ? 'text-white/70' : 'text-gray-500'
+                  
+                  {/* Completion Badge */}
+                  {isCompleted && (
+                    <div className="absolute top-2 right-2">
+                      <CheckCircle className="w-4 h-4 text-green-500 bg-white rounded-full" />
+                    </div>
+                  )}
+                  
+                  {/* Step Number */}
+                  <div className={`absolute top-2 left-2 w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${
+                    isActive 
+                      ? 'bg-white/20 text-white' 
+                      : 'bg-gray-200 text-gray-600'
                   }`}>
-                    {index + 1}/{sections.length}
-                  </span>
+                    {index + 1}
+                  </div>
                 </button>
               );
             })}
@@ -821,94 +918,188 @@ const TechnicianForm = () => {
         <div className="space-y-6">
           {/* Basic Information Section */}
           {activeSection === 'basic' && (
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 md:p-6">
-              <div className="flex items-center gap-3 mb-6 pb-4 border-b border-gray-200">
-                <div className="p-2.5 bg-[#232249] rounded-lg">
-                  <FileText className="w-5 h-5 text-white" />
+            <div className="group relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 rounded-2xl blur-xl"></div>
+              <div className="relative bg-white/90 backdrop-blur-sm p-6 md:p-8 rounded-2xl shadow-xl border border-gray-200/50 hover:shadow-2xl transition-all duration-300">
+                {/* Section Header with Icon */}
+                <div className="flex items-center mb-6 pb-4 border-b border-gray-200">
+                  <div className="p-3 bg-gradient-to-br from-[#232249] to-[#2d2e5f] rounded-xl shadow-lg mr-4">
+                    <FileText className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold text-gray-900">Basic Information</h3>
+                    <p className="text-sm text-gray-500 mt-1">Start with essential assessment details</p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-lg md:text-xl font-bold text-gray-900">Basic Information</h3>
-                  <p className="text-xs md:text-sm text-gray-600 mt-0.5">Essential assessment details</p>
-                </div>
-              </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Survey Date <span className="text-red-500">*</span>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="flex items-center text-sm font-semibold text-gray-700 mb-3">
+                    <div className="p-1.5 bg-blue-50 rounded-lg mr-2">
+                      <Calendar className="w-4 h-4 text-blue-600" />
+                    </div>
+                    Survey Date
+                    <span className="text-red-500 ml-1">*</span>
                   </label>
                   <input
                     type="date"
                     value={formData.surveyDate}
                     onChange={(e) => handleInputChange('surveyDate', e.target.value)}
-                    className="w-full px-3 md:px-4 py-2.5 md:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-[#232249] bg-white text-gray-900"
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-[#232249] transition-all duration-200 bg-white hover:border-gray-300 shadow-sm"
                     required
                   />
                 </div>
 
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Technician Name <span className="text-red-500">*</span>
+                <div className="space-y-2">
+                  <label className="flex items-center text-sm font-semibold text-gray-700 mb-3">
+                    <div className="p-1.5 bg-purple-50 rounded-lg mr-2">
+                      <User className="w-4 h-4 text-purple-600" />
+                    </div>
+                    Technician Name
+                    <span className="text-red-500 ml-1">*</span>
                   </label>
                   <input
                     type="text"
                     value={formData.technician}
                     onChange={(e) => handleInputChange('technician', e.target.value)}
-                    className="w-full px-3 md:px-4 py-2.5 md:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-[#232249] bg-white text-gray-900"
-                    placeholder="Enter your full name"
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-[#232249] transition-all duration-200 bg-white hover:border-gray-300 shadow-sm"
+                    placeholder="Enter technician name"
                     required
                   />
                 </div>
+
+                <div className="space-y-2">
+                  <label className="flex items-center text-sm font-semibold text-gray-700 mb-3">
+                    <div className="p-1.5 bg-green-50 rounded-lg mr-2">
+                      <Clock className="w-4 h-4 text-green-600" />
+                    </div>
+                    Priority Level
+                  </label>
+                  <select
+                    value={formData.priority}
+                    onChange={(e) => handleInputChange('priority', e.target.value)}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-[#232249] transition-all duration-200 bg-white hover:border-gray-300 shadow-sm appearance-none cursor-pointer"
+                  >
+                    <option value="low">🟢 Low Priority</option>
+                    <option value="medium">🟡 Medium Priority</option>
+                    <option value="high">🟠 High Priority</option>
+                    <option value="critical">🔴 Critical Priority</option>
+                  </select>
+                </div>
+              </div>
               </div>
             </div>
           )}
 
           {/* Space Information Section */}
           {activeSection === 'space' && (
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 md:p-6">
-              <div className="flex items-center gap-3 mb-6 pb-4 border-b border-gray-200">
-                <div className="p-2.5 bg-[#232249] rounded-lg">
-                  <Building className="w-5 h-5 text-white" />
+            <div className="group relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 rounded-2xl blur-xl"></div>
+              <div className="relative bg-white/90 backdrop-blur-sm p-6 md:p-8 rounded-2xl shadow-xl border border-gray-200/50 hover:shadow-2xl transition-all duration-300">
+                <div className="flex items-center mb-6 pb-4 border-b border-gray-200">
+                  <div className="p-3 bg-gradient-to-br from-[#232249] to-[#2d2e5f] rounded-xl shadow-lg mr-4">
+                    <Building className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold text-gray-900">Space Information</h3>
+                    <p className="text-sm text-gray-500 mt-1">Define location and space details</p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-lg md:text-xl font-bold text-gray-900">Space Information</h3>
-                  <p className="text-xs md:text-sm text-gray-600 mt-0.5">Location and space details</p>
-                </div>
-              </div>
               
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="flex items-center text-sm font-bold text-gray-800 mb-2">
-                      <div className="p-1.5 bg-blue-100 rounded-lg mr-2">
-                        <MapPin className="w-4 h-4 text-blue-700" />
+                    <label className="flex items-center text-sm font-semibold text-gray-700 mb-3">
+                      <div className="p-1.5 bg-blue-50 rounded-lg mr-2">
+                        <MapPin className="w-4 h-4 text-blue-600" />
                       </div>
                       Space Name/ID
-                      <span className="text-red-500 ml-1.5">*</span>
+                      <span className="text-red-500 ml-1">*</span>
                     </label>
                     <input
                       type="text"
                       value={formData.spaceName}
                       onChange={(e) => handleInputChange('spaceName', e.target.value)}
-                      className="w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white hover:border-gray-400 text-gray-900"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-[#232249] transition-all duration-200 bg-white hover:border-gray-300 shadow-sm"
                       placeholder="Enter space identifier"
                       required
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <label className="flex items-center text-sm font-bold text-gray-800 mb-2">
-                      <div className="p-1.5 bg-orange-100 rounded-lg mr-2">
-                        <Building className="w-4 h-4 text-orange-700" />
+                    <label className="flex items-center text-sm font-semibold text-gray-700 mb-3">
+                      <div className="p-1.5 bg-purple-50 rounded-lg mr-2">
+                        <MapPin className="w-4 h-4 text-purple-600" />
+                      </div>
+                      Location
+                      <span className="text-red-500 ml-1">*</span>
+                    </label>
+                    {(() => {
+                      const userData = JSON.parse(localStorage.getItem('user') || '{}');
+                      const userRole = userData.role;
+                      const isTechnicianWithSingleLocation = userRole === 'technician' && locations.length === 1;
+                      
+                      if (isTechnicianWithSingleLocation) {
+                        return (
+                          <div className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl bg-gradient-to-r from-gray-50 to-blue-50 text-gray-700 font-medium shadow-sm">
+                            🏛️ {locations[0]?.name} - {locations[0]?.address?.city}, {locations[0]?.address?.state}
+                          </div>
+                        );
+                      } else {
+                        return (
+                          <select
+                            value={formData.locationId}
+                            onChange={(e) => handleLocationSelect(e.target.value)}
+                            className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-[#232249] transition-all duration-200 bg-white hover:border-gray-300 shadow-sm appearance-none cursor-pointer"
+                            required
+                          >
+                            <option value="">Select a location</option>
+                            {loadingLocations ? (
+                              <option disabled>Loading locations...</option>
+                            ) : (
+                              Array.isArray(locations) && locations.map((location) => (
+                                <option key={location._id} value={location._id}>
+                                  {location.name} - {location.address?.city}, {location.address?.state}
+                                </option>
+                              ))
+                            )}
+                          </select>
+                        );
+                      }
+                    })()}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="flex items-center text-sm font-semibold text-gray-700 mb-3">
+                    <div className="p-1.5 bg-green-50 rounded-lg mr-2">
+                      <FileText className="w-4 h-4 text-green-600" />
+                    </div>
+                    Location Description
+                  </label>
+                  <textarea
+                    value={formData.locationDescription}
+                    onChange={(e) => handleInputChange('locationDescription', e.target.value)}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-[#232249] transition-all duration-200 bg-gradient-to-br from-gray-50 to-blue-50/30 shadow-sm resize-none"
+                    rows="3"
+                    placeholder="Location details will be auto-populated when you select a location"
+                    readOnly
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="flex items-center text-sm font-semibold text-gray-700 mb-3">
+                      <div className="p-1.5 bg-orange-50 rounded-lg mr-2">
+                        <Building className="w-4 h-4 text-orange-600" />
                       </div>
                       Building
-                      <span className="text-red-500 ml-1.5">*</span>
+                      <span className="text-red-500 ml-1">*</span>
                     </label>
                     <select
                       value={formData.buildingId}
                       onChange={(e) => handleBuildingSelect(e.target.value)}
-                      className="w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white hover:border-gray-400 appearance-none cursor-pointer text-gray-900 font-medium"
-                      style={{ backgroundImage: "url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23232249%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E')", backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '0.65em auto' }}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-[#232249] transition-all duration-200 bg-white hover:border-gray-300 shadow-sm disabled:bg-gray-100 disabled:cursor-not-allowed appearance-none cursor-pointer"
                       required
                       disabled={!selectedLocation}
                     >
@@ -924,6 +1115,30 @@ const TechnicianForm = () => {
                           </option>
                         ))
                       )}
+                    </select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="flex items-center text-sm font-semibold text-gray-700 mb-3">
+                      <div className="p-1.5 bg-red-50 rounded-lg mr-2">
+                        <Shield className="w-4 h-4 text-red-600" />
+                      </div>
+                      Confined Space
+                    </label>
+                    <select
+                      value={formData.confinedSpaceId}
+                      onChange={(e) => handleConfinedSpaceSelect(e.target.value)}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-[#232249] transition-all duration-200 bg-white hover:border-gray-300 shadow-sm disabled:bg-gray-100 disabled:cursor-not-allowed appearance-none cursor-pointer"
+                      disabled={!selectedBuilding}
+                    >
+                      <option value="">
+                        {selectedBuilding ? 'Select a confined space (optional)' : 'Select a building first'}
+                      </option>
+                      {Array.isArray(confinedSpaces) && confinedSpaces.map((space) => (
+                        <option key={space._id} value={space._id}>
+                          {space.name} ({space.type})
+                        </option>
+                      ))}
                     </select>
                   </div>
                 </div>
@@ -971,81 +1186,81 @@ const TechnicianForm = () => {
                   </div>
                   
                   <div className="space-y-6">
-                    <div className="bg-gradient-to-br from-blue-50 to-indigo-50/50 p-5 rounded-2xl border border-blue-200">
-                      <label className="flex items-center text-sm font-bold text-gray-800 mb-4">
-                        <span className="text-blue-600 mr-2 text-lg">⚠️</span>
+                    <div className="bg-gradient-to-br from-blue-50/50 to-purple-50/30 p-6 rounded-xl border-2 border-blue-100">
+                      <label className="flex items-center text-sm font-semibold text-gray-800 mb-4">
+                        <span className="text-blue-600 mr-2">⚠️</span>
                         Is this a confined space?
                         <span className="text-red-500 ml-2">*</span>
                       </label>
-                      <div className="flex gap-3">
-                        <label className="flex items-center justify-center px-6 py-3 bg-white border-2 border-gray-300 rounded-xl cursor-pointer hover:border-[#232249] hover:shadow-md transition-all has-[:checked]:border-[#232249] has-[:checked]:bg-[#232249] has-[:checked]:text-white flex-1 group">
+                      <div className="flex gap-4">
+                        <label className="flex items-center px-6 py-3 bg-white border-2 border-gray-200 rounded-xl cursor-pointer hover:border-[#232249] hover:shadow-md transition-all duration-200 has-[:checked]:border-[#232249] has-[:checked]:bg-[#232249] has-[:checked]:text-white flex-1">
                           <input
                             type="radio"
                             name="isConfinedSpace"
                             value="true"
                             checked={formData.isConfinedSpace === true}
                             onChange={() => handleRadioChange('isConfinedSpace', true)}
-                            className="sr-only"
+                            className="w-5 h-5 text-[#232249] border-gray-300 focus:ring-[#232249] mr-3"
                           />
-                          <span className="font-bold text-center">Yes</span>
+                          <span className="font-semibold text-center flex-1">✔️ Yes</span>
                         </label>
-                        <label className="flex items-center justify-center px-6 py-3 bg-white border-2 border-gray-300 rounded-xl cursor-pointer hover:border-[#232249] hover:shadow-md transition-all has-[:checked]:border-[#232249] has-[:checked]:bg-[#232249] has-[:checked]:text-white flex-1 group">
+                        <label className="flex items-center px-6 py-3 bg-white border-2 border-gray-200 rounded-xl cursor-pointer hover:border-[#232249] hover:shadow-md transition-all duration-200 has-[:checked]:border-[#232249] has-[:checked]:bg-[#232249] has-[:checked]:text-white flex-1">
                           <input
                             type="radio"
                             name="isConfinedSpace"
                             value="false"
                             checked={formData.isConfinedSpace === false}
                             onChange={() => handleRadioChange('isConfinedSpace', false)}
-                            className="sr-only"
+                            className="w-5 h-5 text-[#232249] border-gray-300 focus:ring-[#232249] mr-3"
                           />
-                          <span className="font-bold text-center">No</span>
+                          <span className="font-semibold text-center flex-1">❌ No</span>
                         </label>
                       </div>
                     </div>
 
-                    <div className="bg-gradient-to-br from-orange-50 to-amber-50/50 p-5 rounded-2xl border border-orange-200">
-                      <label className="flex items-center text-sm font-bold text-gray-800 mb-4">
-                        <span className="text-orange-600 mr-2 text-lg">📋</span>
+                    <div className="bg-gradient-to-br from-orange-50/50 to-red-50/30 p-6 rounded-xl border-2 border-orange-100">
+                      <label className="flex items-center text-sm font-semibold text-gray-800 mb-4">
+                        <span className="text-orange-600 mr-2">📋</span>
                         Is an entry permit required?
                         <span className="text-red-500 ml-2">*</span>
                       </label>
-                      <div className="flex gap-3">
-                        <label className="flex items-center justify-center px-6 py-3 bg-white border-2 border-gray-300 rounded-xl cursor-pointer hover:border-[#232249] hover:shadow-md transition-all has-[:checked]:border-[#232249] has-[:checked]:bg-[#232249] has-[:checked]:text-white flex-1 group">
+                      <div className="flex gap-4">
+                        <label className="flex items-center px-6 py-3 bg-white border-2 border-gray-200 rounded-xl cursor-pointer hover:border-[#232249] hover:shadow-md transition-all duration-200 has-[:checked]:border-[#232249] has-[:checked]:bg-[#232249] has-[:checked]:text-white flex-1">
                           <input
                             type="radio"
                             name="permitRequired"
                             value="true"
                             checked={formData.permitRequired === true}
                             onChange={() => handleRadioChange('permitRequired', true)}
-                            className="sr-only"
+                            className="w-5 h-5 text-[#232249] border-gray-300 focus:ring-[#232249] mr-3"
                           />
-                          <span className="font-bold text-center">Yes</span>
+                          <span className="font-semibold text-center flex-1">✔️ Yes</span>
                         </label>
-                        <label className="flex items-center justify-center px-6 py-3 bg-white border-2 border-gray-300 rounded-xl cursor-pointer hover:border-[#232249] hover:shadow-md transition-all has-[:checked]:border-[#232249] has-[:checked]:bg-[#232249] has-[:checked]:text-white flex-1 group">
+                        <label className="flex items-center px-6 py-3 bg-white border-2 border-gray-200 rounded-xl cursor-pointer hover:border-[#232249] hover:shadow-md transition-all duration-200 has-[:checked]:border-[#232249] has-[:checked]:bg-[#232249] has-[:checked]:text-white flex-1">
                           <input
                             type="radio"
                             name="permitRequired"
                             value="false"
                             checked={formData.permitRequired === false}
                             onChange={() => handleRadioChange('permitRequired', false)}
-                            className="sr-only"
+                            className="w-5 h-5 text-[#232249] border-gray-300 focus:ring-[#232249] mr-3"
                           />
-                          <span className="font-bold text-center">No</span>
+                          <span className="font-semibold text-center flex-1">❌ No</span>
                         </label>
                       </div>
                     </div>
 
                     <div className="space-y-2">
-                      <label className="flex items-center text-sm font-bold text-gray-800 mb-2">
-                        <div className="p-1.5 bg-purple-100 rounded-lg mr-2">
-                          <FileText className="w-4 h-4 text-purple-700" />
+                      <label className="flex items-center text-sm font-semibold text-gray-700 mb-3">
+                        <div className="p-1.5 bg-purple-50 rounded-lg mr-2">
+                          <FileText className="w-4 h-4 text-purple-600" />
                         </div>
                         Entry Requirements
                       </label>
                       <textarea
                         value={formData.entryRequirements}
                         onChange={(e) => handleInputChange('entryRequirements', e.target.value)}
-                        className="w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white hover:border-gray-400 resize-none text-gray-900"
+                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-[#232249] transition-all duration-200 bg-white hover:border-gray-300 shadow-sm resize-none"
                         rows="3"
                         placeholder="Describe specific entry requirements or procedures"
                       />
@@ -1053,21 +1268,24 @@ const TechnicianForm = () => {
                   </div>
                 </div>
               </div>
+              </div>
             </div>
           )}
 
           {/* Hazard Assessment Section */}
           {activeSection === 'hazards' && (
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 md:p-6">
-              <div className="flex items-center gap-3 mb-6 pb-4 border-b border-gray-200">
-                <div className="p-2.5 bg-[#232249] rounded-lg">
-                  <AlertTriangle className="w-5 h-5 text-white" />
+            <div className="group relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-orange-500/5 rounded-2xl blur-xl"></div>
+              <div className="relative bg-white/90 backdrop-blur-sm p-6 md:p-8 rounded-2xl shadow-xl border border-gray-200/50 hover:shadow-2xl transition-all duration-300">
+                <div className="flex items-center mb-6 pb-4 border-b border-gray-200">
+                  <div className="p-3 bg-gradient-to-br from-red-500 to-orange-500 rounded-xl shadow-lg mr-4">
+                    <AlertTriangle className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold text-gray-900">Hazard Assessment</h3>
+                    <p className="text-sm text-gray-500 mt-1">Identify and document potential hazards</p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-lg md:text-xl font-bold text-gray-900">Hazard Assessment</h3>
-                  <p className="text-xs md:text-sm text-gray-600 mt-0.5">Identify potential hazards</p>
-                </div>
-              </div>
               
               <div className="space-y-6">
                 {/* Atmospheric Hazard */}
@@ -1080,25 +1298,25 @@ const TechnicianForm = () => {
                     <span className="text-red-500 ml-2">*</span>
                   </label>
                   <div className="flex gap-4 mb-4">
-                    <label className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
+                    <label className="flex items-center px-6 py-3 bg-white border-2 border-gray-200 rounded-xl cursor-pointer hover:border-[#232249] hover:shadow-md transition-all duration-200 has-[:checked]:border-[#232249] has-[:checked]:bg-[#232249] has-[:checked]:text-white flex-1">
                       <input
                         type="radio"
                         name="atmosphericHazard"
                         value="true"
                         checked={formData.atmosphericHazard === true}
                         onChange={() => handleRadioChange('atmosphericHazard', true)}
-                        className="w-2.5 h-2.5 text-blue-600 border-gray-300 focus:ring-[#232249] mr-2"
+                        className="w-5 h-5 text-[#232249] border-gray-300 focus:ring-[#232249] mr-3"
                       />
                       <span className="font-semibold text-center flex-1">✔️ Yes</span>
                     </label>
-                    <label className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
+                    <label className="flex items-center px-6 py-3 bg-white border-2 border-gray-200 rounded-xl cursor-pointer hover:border-[#232249] hover:shadow-md transition-all duration-200 has-[:checked]:border-[#232249] has-[:checked]:bg-[#232249] has-[:checked]:text-white flex-1">
                       <input
                         type="radio"
                         name="atmosphericHazard"
                         value="false"
                         checked={formData.atmosphericHazard === false}
                         onChange={() => handleRadioChange('atmosphericHazard', false)}
-                        className="w-2.5 h-2.5 text-blue-600 border-gray-300 focus:ring-[#232249] mr-2"
+                        className="w-5 h-5 text-[#232249] border-gray-300 focus:ring-[#232249] mr-3"
                       />
                       <span className="font-semibold text-center flex-1">❌ No</span>
                     </label>
@@ -1122,25 +1340,25 @@ const TechnicianForm = () => {
                     <span className="text-red-500 ml-2">*</span>
                   </label>
                   <div className="flex gap-4 mb-4">
-                    <label className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
+                    <label className="flex items-center px-6 py-3 bg-white border-2 border-gray-200 rounded-xl cursor-pointer hover:border-[#232249] hover:shadow-md transition-all duration-200 has-[:checked]:border-[#232249] has-[:checked]:bg-[#232249] has-[:checked]:text-white flex-1">
                       <input
                         type="radio"
                         name="engulfmentHazard"
                         value="true"
                         checked={formData.engulfmentHazard === true}
                         onChange={() => handleRadioChange('engulfmentHazard', true)}
-                        className="w-2.5 h-2.5 text-blue-600 border-gray-300 focus:ring-[#232249] mr-2"
+                        className="w-5 h-5 text-[#232249] border-gray-300 focus:ring-[#232249] mr-3"
                       />
                       <span className="font-semibold text-center flex-1">✔️ Yes</span>
                     </label>
-                    <label className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
+                    <label className="flex items-center px-6 py-3 bg-white border-2 border-gray-200 rounded-xl cursor-pointer hover:border-[#232249] hover:shadow-md transition-all duration-200 has-[:checked]:border-[#232249] has-[:checked]:bg-[#232249] has-[:checked]:text-white flex-1">
                       <input
                         type="radio"
                         name="engulfmentHazard"
                         value="false"
                         checked={formData.engulfmentHazard === false}
                         onChange={() => handleRadioChange('engulfmentHazard', false)}
-                        className="w-2.5 h-2.5 text-blue-600 border-gray-300 focus:ring-[#232249] mr-2"
+                        className="w-5 h-5 text-[#232249] border-gray-300 focus:ring-[#232249] mr-3"
                       />
                       <span className="font-semibold text-center flex-1">❌ No</span>
                     </label>
@@ -1164,25 +1382,25 @@ const TechnicianForm = () => {
                     <span className="text-red-500 ml-2">*</span>
                   </label>
                   <div className="flex gap-4 mb-4">
-                    <label className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
+                    <label className="flex items-center px-6 py-3 bg-white border-2 border-gray-200 rounded-xl cursor-pointer hover:border-[#232249] hover:shadow-md transition-all duration-200 has-[:checked]:border-[#232249] has-[:checked]:bg-[#232249] has-[:checked]:text-white flex-1">
                       <input
                         type="radio"
                         name="configurationHazard"
                         value="true"
                         checked={formData.configurationHazard === true}
                         onChange={() => handleRadioChange('configurationHazard', true)}
-                        className="w-2.5 h-2.5 text-blue-600 border-gray-300 focus:ring-[#232249] mr-2"
+                        className="w-5 h-5 text-[#232249] border-gray-300 focus:ring-[#232249] mr-3"
                       />
                       <span className="font-semibold text-center flex-1">✔️ Yes</span>
                     </label>
-                    <label className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
+                    <label className="flex items-center px-6 py-3 bg-white border-2 border-gray-200 rounded-xl cursor-pointer hover:border-[#232249] hover:shadow-md transition-all duration-200 has-[:checked]:border-[#232249] has-[:checked]:bg-[#232249] has-[:checked]:text-white flex-1">
                       <input
                         type="radio"
                         name="configurationHazard"
                         value="false"
                         checked={formData.configurationHazard === false}
                         onChange={() => handleRadioChange('configurationHazard', false)}
-                        className="w-2.5 h-2.5 text-blue-600 border-gray-300 focus:ring-[#232249] mr-2"
+                        className="w-5 h-5 text-[#232249] border-gray-300 focus:ring-[#232249] mr-3"
                       />
                       <span className="font-semibold text-center flex-1">❌ No</span>
                     </label>
@@ -1206,25 +1424,25 @@ const TechnicianForm = () => {
                     <span className="text-red-500 ml-2">*</span>
                   </label>
                   <div className="flex gap-4 mb-4">
-                    <label className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
+                    <label className="flex items-center px-6 py-3 bg-white border-2 border-gray-200 rounded-xl cursor-pointer hover:border-[#232249] hover:shadow-md transition-all duration-200 has-[:checked]:border-[#232249] has-[:checked]:bg-[#232249] has-[:checked]:text-white flex-1">
                       <input
                         type="radio"
                         name="otherRecognizedHazards"
                         value="true"
                         checked={formData.otherRecognizedHazards === true}
                         onChange={() => handleRadioChange('otherRecognizedHazards', true)}
-                        className="w-2.5 h-2.5 text-blue-600 border-gray-300 focus:ring-[#232249] mr-2"
+                        className="w-5 h-5 text-[#232249] border-gray-300 focus:ring-[#232249] mr-3"
                       />
                       <span className="font-semibold text-center flex-1">✔️ Yes</span>
                     </label>
-                    <label className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
+                    <label className="flex items-center px-6 py-3 bg-white border-2 border-gray-200 rounded-xl cursor-pointer hover:border-[#232249] hover:shadow-md transition-all duration-200 has-[:checked]:border-[#232249] has-[:checked]:bg-[#232249] has-[:checked]:text-white flex-1">
                       <input
                         type="radio"
                         name="otherRecognizedHazards"
                         value="false"
                         checked={formData.otherRecognizedHazards === false}
                         onChange={() => handleRadioChange('otherRecognizedHazards', false)}
-                        className="w-2.5 h-2.5 text-blue-600 border-gray-300 focus:ring-[#232249] mr-2"
+                        className="w-5 h-5 text-[#232249] border-gray-300 focus:ring-[#232249] mr-3"
                       />
                       <span className="font-semibold text-center flex-1">❌ No</span>
                     </label>
@@ -1238,21 +1456,24 @@ const TechnicianForm = () => {
                   />
                 </div>
               </div>
+              </div>
             </div>
           )}
 
           {/* Safety Requirements Section */}
           {activeSection === 'safety' && (
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 md:p-6">
-              <div className="flex items-center gap-3 mb-6 pb-4 border-b border-gray-200">
-                <div className="p-2.5 bg-[#232249] rounded-lg">
-                  <Shield className="w-5 h-5 text-white" />
+            <div className="group relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-emerald-500/5 rounded-2xl blur-xl"></div>
+              <div className="relative bg-white/90 backdrop-blur-sm p-6 md:p-8 rounded-2xl shadow-xl border border-gray-200/50 hover:shadow-2xl transition-all duration-300">
+                <div className="flex items-center mb-6 pb-4 border-b border-gray-200">
+                  <div className="p-3 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl shadow-lg mr-4">
+                    <Shield className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold text-gray-900">Safety Requirements</h3>
+                    <p className="text-sm text-gray-500 mt-1">Define required safety measures and equipment</p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-lg md:text-xl font-bold text-gray-900">Safety Requirements</h3>
-                  <p className="text-xs md:text-sm text-gray-600 mt-0.5">Safety measures and equipment</p>
-                </div>
-              </div>
               
               <div className="space-y-6">
                 {/* PPE Required */}
@@ -1263,25 +1484,25 @@ const TechnicianForm = () => {
                     <span className="text-red-500 ml-2">*</span>
                   </label>
                   <div className="flex gap-4 mb-4">
-                    <label className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
+                    <label className="flex items-center px-6 py-3 bg-white border-2 border-gray-200 rounded-xl cursor-pointer hover:border-[#232249] hover:shadow-md transition-all duration-200 has-[:checked]:border-[#232249] has-[:checked]:bg-[#232249] has-[:checked]:text-white flex-1">
                       <input
                         type="radio"
                         name="ppeRequired"
                         value="true"
                         checked={formData.ppeRequired === true}
                         onChange={() => handleRadioChange('ppeRequired', true)}
-                        className="w-2.5 h-2.5 text-blue-600 border-gray-300 focus:ring-[#232249] mr-2"
+                        className="w-5 h-5 text-[#232249] border-gray-300 focus:ring-[#232249] mr-3"
                       />
                       <span className="font-semibold text-center flex-1">✔️ Yes</span>
                     </label>
-                    <label className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
+                    <label className="flex items-center px-6 py-3 bg-white border-2 border-gray-200 rounded-xl cursor-pointer hover:border-[#232249] hover:shadow-md transition-all duration-200 has-[:checked]:border-[#232249] has-[:checked]:bg-[#232249] has-[:checked]:text-white flex-1">
                       <input
                         type="radio"
                         name="ppeRequired"
                         value="false"
                         checked={formData.ppeRequired === false}
                         onChange={() => handleRadioChange('ppeRequired', false)}
-                        className="w-2.5 h-2.5 text-blue-600 border-gray-300 focus:ring-[#232249] mr-2"
+                        className="w-5 h-5 text-[#232249] border-gray-300 focus:ring-[#232249] mr-3"
                       />
                       <span className="font-semibold text-center flex-1">❌ No</span>
                     </label>
@@ -1305,25 +1526,25 @@ const TechnicianForm = () => {
                     <span className="text-red-500 ml-2">*</span>
                   </label>
                   <div className="flex gap-4">
-                    <label className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
+                    <label className="flex items-center px-6 py-3 bg-white border-2 border-gray-200 rounded-xl cursor-pointer hover:border-[#232249] hover:shadow-md transition-all duration-200 has-[:checked]:border-[#232249] has-[:checked]:bg-[#232249] has-[:checked]:text-white flex-1">
                       <input
                         type="radio"
                         name="forcedAirVentilationSufficient"
                         value="true"
                         checked={formData.forcedAirVentilationSufficient === true}
                         onChange={() => handleRadioChange('forcedAirVentilationSufficient', true)}
-                        className="w-2.5 h-2.5 text-blue-600 border-gray-300 focus:ring-[#232249] mr-2"
+                        className="w-5 h-5 text-[#232249] border-gray-300 focus:ring-[#232249] mr-3"
                       />
                       <span className="font-semibold text-center flex-1">✔️ Yes</span>
                     </label>
-                    <label className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
+                    <label className="flex items-center px-6 py-3 bg-white border-2 border-gray-200 rounded-xl cursor-pointer hover:border-[#232249] hover:shadow-md transition-all duration-200 has-[:checked]:border-[#232249] has-[:checked]:bg-[#232249] has-[:checked]:text-white flex-1">
                       <input
                         type="radio"
                         name="forcedAirVentilationSufficient"
                         value="false"
                         checked={formData.forcedAirVentilationSufficient === false}
                         onChange={() => handleRadioChange('forcedAirVentilationSufficient', false)}
-                        className="w-2.5 h-2.5 text-blue-600 border-gray-300 focus:ring-[#232249] mr-2"
+                        className="w-5 h-5 text-[#232249] border-gray-300 focus:ring-[#232249] mr-3"
                       />
                       <span className="font-semibold text-center flex-1">❌ No</span>
                     </label>
@@ -1340,25 +1561,25 @@ const TechnicianForm = () => {
                     <span className="text-red-500 ml-2">*</span>
                   </label>
                   <div className="flex gap-4">
-                    <label className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
+                    <label className="flex items-center px-6 py-3 bg-white border-2 border-gray-200 rounded-xl cursor-pointer hover:border-[#232249] hover:shadow-md transition-all duration-200 has-[:checked]:border-[#232249] has-[:checked]:bg-[#232249] has-[:checked]:text-white flex-1">
                       <input
                         type="radio"
                         name="dedicatedAirMonitor"
                         value="true"
                         checked={formData.dedicatedAirMonitor === true}
                         onChange={() => handleRadioChange('dedicatedAirMonitor', true)}
-                        className="w-2.5 h-2.5 text-blue-600 border-gray-300 focus:ring-[#232249] mr-2"
+                        className="w-5 h-5 text-[#232249] border-gray-300 focus:ring-[#232249] mr-3"
                       />
                       <span className="font-semibold text-center flex-1">✔️ Yes</span>
                     </label>
-                    <label className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
+                    <label className="flex items-center px-6 py-3 bg-white border-2 border-gray-200 rounded-xl cursor-pointer hover:border-[#232249] hover:shadow-md transition-all duration-200 has-[:checked]:border-[#232249] has-[:checked]:bg-[#232249] has-[:checked]:text-white flex-1">
                       <input
                         type="radio"
                         name="dedicatedAirMonitor"
                         value="false"
                         checked={formData.dedicatedAirMonitor === false}
                         onChange={() => handleRadioChange('dedicatedAirMonitor', false)}
-                        className="w-2.5 h-2.5 text-blue-600 border-gray-300 focus:ring-[#232249] mr-2"
+                        className="w-5 h-5 text-[#232249] border-gray-300 focus:ring-[#232249] mr-3"
                       />
                       <span className="font-semibold text-center flex-1">❌ No</span>
                     </label>
@@ -1373,46 +1594,49 @@ const TechnicianForm = () => {
                     <span className="text-red-500 ml-2">*</span>
                   </label>
                   <div className="flex gap-4">
-                    <label className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
+                    <label className="flex items-center px-6 py-3 bg-white border-2 border-gray-200 rounded-xl cursor-pointer hover:border-[#232249] hover:shadow-md transition-all duration-200 has-[:checked]:border-[#232249] has-[:checked]:bg-[#232249] has-[:checked]:text-white flex-1">
                       <input
                         type="radio"
                         name="warningSignPosted"
                         value="true"
                         checked={formData.warningSignPosted === true}
                         onChange={() => handleRadioChange('warningSignPosted', true)}
-                        className="w-2.5 h-2.5 text-blue-600 border-gray-300 focus:ring-[#232249] mr-2"
+                        className="w-5 h-5 text-[#232249] border-gray-300 focus:ring-[#232249] mr-3"
                       />
                       <span className="font-semibold text-center flex-1">✔️ Yes</span>
                     </label>
-                    <label className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
+                    <label className="flex items-center px-6 py-3 bg-white border-2 border-gray-200 rounded-xl cursor-pointer hover:border-[#232249] hover:shadow-md transition-all duration-200 has-[:checked]:border-[#232249] has-[:checked]:bg-[#232249] has-[:checked]:text-white flex-1">
                       <input
                         type="radio"
                         name="warningSignPosted"
                         value="false"
                         checked={formData.warningSignPosted === false}
                         onChange={() => handleRadioChange('warningSignPosted', false)}
-                        className="w-2.5 h-2.5 text-blue-600 border-gray-300 focus:ring-[#232249] mr-2"
+                        className="w-5 h-5 text-[#232249] border-gray-300 focus:ring-[#232249] mr-3"
                       />
                       <span className="font-semibold text-center flex-1">❌ No</span>
                     </label>
                   </div>
                 </div>
               </div>
+              </div>
             </div>
           )}
 
           {/* Personnel & Access Section */}
           {activeSection === 'personnel' && (
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 md:p-6">
-              <div className="flex items-center gap-3 mb-6 pb-4 border-b border-gray-200">
-                <div className="p-2.5 bg-[#232249] rounded-lg">
-                  <Users className="w-5 h-5 text-white" />
+            <div className="group relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 rounded-2xl blur-xl"></div>
+              <div className="relative bg-white/90 backdrop-blur-sm p-6 md:p-8 rounded-2xl shadow-xl border border-gray-200/50 hover:shadow-2xl transition-all duration-300">
+                <div className="flex items-center mb-6 pb-4 border-b border-gray-200">
+                  <div className="p-3 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl shadow-lg mr-4">
+                    <Users className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold text-gray-900">Personnel & Access</h3>
+                    <p className="text-sm text-gray-500 mt-1">Assess personnel activities and space visibility</p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-lg md:text-xl font-bold text-gray-900">Personnel & Access</h3>
-                  <p className="text-xs md:text-sm text-gray-600 mt-0.5">Personnel activities and visibility</p>
-                </div>
-              </div>
               
               <div className="space-y-6">
                 {/* Other People Working */}
@@ -1425,25 +1649,25 @@ const TechnicianForm = () => {
                     <span className="text-red-500 ml-2">*</span>
                   </label>
                   <div className="flex gap-4">
-                    <label className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
+                    <label className="flex items-center px-6 py-3 bg-white border-2 border-gray-200 rounded-xl cursor-pointer hover:border-[#232249] hover:shadow-md transition-all duration-200 has-[:checked]:border-[#232249] has-[:checked]:bg-[#232249] has-[:checked]:text-white flex-1">
                       <input
                         type="radio"
                         name="otherPeopleWorkingNearSpace"
                         value="true"
                         checked={formData.otherPeopleWorkingNearSpace === true}
                         onChange={() => handleRadioChange('otherPeopleWorkingNearSpace', true)}
-                        className="w-2.5 h-2.5 text-blue-600 border-gray-300 focus:ring-[#232249] mr-2"
+                        className="w-5 h-5 text-[#232249] border-gray-300 focus:ring-[#232249] mr-3"
                       />
                       <span className="font-semibold text-center flex-1">✔️ Yes</span>
                     </label>
-                    <label className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
+                    <label className="flex items-center px-6 py-3 bg-white border-2 border-gray-200 rounded-xl cursor-pointer hover:border-[#232249] hover:shadow-md transition-all duration-200 has-[:checked]:border-[#232249] has-[:checked]:bg-[#232249] has-[:checked]:text-white flex-1">
                       <input
                         type="radio"
                         name="otherPeopleWorkingNearSpace"
                         value="false"
                         checked={formData.otherPeopleWorkingNearSpace === false}
                         onChange={() => handleRadioChange('otherPeopleWorkingNearSpace', false)}
-                        className="w-2.5 h-2.5 text-blue-600 border-gray-300 focus:ring-[#232249] mr-2"
+                        className="w-5 h-5 text-[#232249] border-gray-300 focus:ring-[#232249] mr-3"
                       />
                       <span className="font-semibold text-center flex-1">❌ No</span>
                     </label>
@@ -1458,25 +1682,25 @@ const TechnicianForm = () => {
                     <span className="text-red-500 ml-2">*</span>
                   </label>
                   <div className="flex gap-4">
-                    <label className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
+                    <label className="flex items-center px-6 py-3 bg-white border-2 border-gray-200 rounded-xl cursor-pointer hover:border-[#232249] hover:shadow-md transition-all duration-200 has-[:checked]:border-[#232249] has-[:checked]:bg-[#232249] has-[:checked]:text-white flex-1">
                       <input
                         type="radio"
                         name="canOthersSeeIntoSpace"
                         value="true"
                         checked={formData.canOthersSeeIntoSpace === true}
                         onChange={() => handleRadioChange('canOthersSeeIntoSpace', true)}
-                        className="w-2.5 h-2.5 text-blue-600 border-gray-300 focus:ring-[#232249] mr-2"
+                        className="w-5 h-5 text-[#232249] border-gray-300 focus:ring-[#232249] mr-3"
                       />
                       <span className="font-semibold text-center flex-1">✔️ Yes</span>
                     </label>
-                    <label className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
+                    <label className="flex items-center px-6 py-3 bg-white border-2 border-gray-200 rounded-xl cursor-pointer hover:border-[#232249] hover:shadow-md transition-all duration-200 has-[:checked]:border-[#232249] has-[:checked]:bg-[#232249] has-[:checked]:text-white flex-1">
                       <input
                         type="radio"
                         name="canOthersSeeIntoSpace"
                         value="false"
                         checked={formData.canOthersSeeIntoSpace === false}
                         onChange={() => handleRadioChange('canOthersSeeIntoSpace', false)}
-                        className="w-2.5 h-2.5 text-blue-600 border-gray-300 focus:ring-[#232249] mr-2"
+                        className="w-5 h-5 text-[#232249] border-gray-300 focus:ring-[#232249] mr-3"
                       />
                       <span className="font-semibold text-center flex-1">❌ No</span>
                     </label>
@@ -1491,25 +1715,25 @@ const TechnicianForm = () => {
                     <span className="text-red-500 ml-2">*</span>
                   </label>
                   <div className="flex gap-4">
-                    <label className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
+                    <label className="flex items-center px-6 py-3 bg-white border-2 border-gray-200 rounded-xl cursor-pointer hover:border-[#232249] hover:shadow-md transition-all duration-200 has-[:checked]:border-[#232249] has-[:checked]:bg-[#232249] has-[:checked]:text-white flex-1">
                       <input
                         type="radio"
                         name="contractorsEnterSpace"
                         value="true"
                         checked={formData.contractorsEnterSpace === true}
                         onChange={() => handleRadioChange('contractorsEnterSpace', true)}
-                        className="w-2.5 h-2.5 text-blue-600 border-gray-300 focus:ring-[#232249] mr-2"
+                        className="w-5 h-5 text-[#232249] border-gray-300 focus:ring-[#232249] mr-3"
                       />
                       <span className="font-semibold text-center flex-1">✔️ Yes</span>
                     </label>
-                    <label className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
+                    <label className="flex items-center px-6 py-3 bg-white border-2 border-gray-200 rounded-xl cursor-pointer hover:border-[#232249] hover:shadow-md transition-all duration-200 has-[:checked]:border-[#232249] has-[:checked]:bg-[#232249] has-[:checked]:text-white flex-1">
                       <input
                         type="radio"
                         name="contractorsEnterSpace"
                         value="false"
                         checked={formData.contractorsEnterSpace === false}
                         onChange={() => handleRadioChange('contractorsEnterSpace', false)}
-                        className="w-2.5 h-2.5 text-blue-600 border-gray-300 focus:ring-[#232249] mr-2"
+                        className="w-5 h-5 text-[#232249] border-gray-300 focus:ring-[#232249] mr-3"
                       />
                       <span className="font-semibold text-center flex-1">❌ No</span>
                     </label>
@@ -1518,36 +1742,39 @@ const TechnicianForm = () => {
 
                 {/* Additional Notes */}
                 <div className="space-y-2">
-                  <label className="flex items-center text-sm font-bold text-gray-800 mb-2">
-                    <div className="p-1.5 bg-gray-100 rounded-lg mr-2">
-                      <FileText className="w-4 h-4 text-gray-700" />
+                  <label className="flex items-center text-sm font-semibold text-gray-700 mb-3">
+                    <div className="p-1.5 bg-gray-50 rounded-lg mr-2">
+                      <FileText className="w-4 h-4 text-gray-600" />
                     </div>
                     Additional Notes
                   </label>
                   <textarea
                     value={formData.notes}
                     onChange={(e) => handleInputChange('notes', e.target.value)}
-                    className="w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white hover:border-gray-400 resize-none text-gray-900"
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-[#232249] transition-all duration-200 bg-white hover:border-gray-300 shadow-sm resize-none"
                     rows="4"
                     placeholder="Any additional observations, concerns, or notes about the confined space assessment"
                   />
                 </div>
+              </div>
               </div>
             </div>
           )}
 
           {/* Images & Documentation Section */}
           {activeSection === 'images' && (
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 md:p-6">
-              <div className="flex items-center gap-3 mb-6 pb-4 border-b border-gray-200">
-                <div className="p-2.5 bg-[#232249] rounded-lg">
-                  <ImageIcon className="w-5 h-5 text-white" />
+            <div className="group relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-pink-500/5 to-rose-500/5 rounded-2xl blur-xl"></div>
+              <div className="relative bg-white/90 backdrop-blur-sm p-6 md:p-8 rounded-2xl shadow-xl border border-gray-200/50 hover:shadow-2xl transition-all duration-300">
+                <div className="flex items-center mb-6 pb-4 border-b border-gray-200">
+                  <div className="p-3 bg-gradient-to-br from-pink-500 to-rose-500 rounded-xl shadow-lg mr-4">
+                    <ImageIcon className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold text-gray-900">Photos & Documentation</h3>
+                    <p className="text-sm text-gray-500 mt-1">Upload images for visual documentation</p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-lg md:text-xl font-bold text-gray-900">Photos & Documentation</h3>
-                  <p className="text-xs md:text-sm text-gray-600 mt-0.5">Upload visual documentation</p>
-                </div>
-              </div>
               
               <div className="space-y-6">
                 {/* Upload Options */}
@@ -1575,9 +1802,9 @@ const TechnicianForm = () => {
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
                         disabled={uploadingImages}
-                        className="bg-gradient-to-r from-[#232249] to-[#2d2e5f] text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed font-semibold hover:scale-105"
+                        className="bg-gradient-to-r from-[#232249] to-[#2d2e5f] text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed font-semibold"
                       >
-                        {uploadingImages ? 'Uploading...' : 'Choose Files'}
+                        {uploadingImages ? '⏳ Uploading...' : '📁 Choose Files'}
                       </button>
                     </div>
                   </div>
@@ -1597,13 +1824,13 @@ const TechnicianForm = () => {
                         type="button"
                         onClick={isCapturing ? stopCamera : startCamera}
                         disabled={uploadingImages}
-                        className={`px-6 py-3 rounded-xl transition-all duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed font-semibold hover:scale-105 ${
+                        className={`px-6 py-3 rounded-xl transition-all duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed font-semibold ${
                           isCapturing 
                             ? 'bg-gradient-to-r from-red-500 to-red-600 text-white hover:shadow-lg' 
                             : 'bg-gradient-to-r from-[#232249] to-[#2d2e5f] text-white hover:shadow-lg'
                         }`}
                       >
-                        {isCapturing ? 'Stop Camera' : 'Start Camera'}
+                        {isCapturing ? '⏹️ Stop Camera' : '📷 Start Camera'}
                       </button>
                     </div>
                   </div>
@@ -1622,10 +1849,10 @@ const TechnicianForm = () => {
                         <button
                           type="button"
                           onClick={captureImage}
-                          className="bg-gradient-to-r from-[#232249] to-[#2d2e5f] text-white px-8 py-4 rounded-xl hover:shadow-xl transition-all duration-200 flex items-center mx-auto font-semibold text-lg hover:scale-105"
+                          className="bg-gradient-to-r from-[#232249] to-[#2d2e5f] text-white px-8 py-4 rounded-xl hover:shadow-xl transition-all duration-200 flex items-center mx-auto font-semibold text-lg"
                         >
                           <Camera className="w-6 h-6 mr-3" />
-                          Capture Photo
+                          📸 Capture Photo
                         </button>
                       </div>
                     </div>
@@ -1637,11 +1864,11 @@ const TechnicianForm = () => {
 
                 {/* Uploaded Images Display */}
                 {images.length > 0 && (
-                  <div className="bg-gradient-to-br from-gray-50 to-blue-50/30 rounded-2xl p-6 border-2 border-gray-200">
+                  <div className="bg-gradient-to-br from-gray-50 to-blue-50/20 rounded-2xl p-6 border-2 border-gray-200">
                     <div className="flex items-center justify-between mb-6">
                       <h4 className="text-xl font-bold text-gray-900 flex items-center">
-                        <span className="p-2 bg-white rounded-xl mr-3 shadow-sm border border-gray-200">
-                          <ImageIcon className="w-5 h-5 text-blue-600" />
+                        <span className="p-2 bg-white rounded-lg mr-3 shadow-sm">
+                          <ImageIcon className="w-5 h-5 text-[#232249]" />
                         </span>
                         Uploaded Images
                         <span className="ml-3 px-3 py-1 bg-[#232249] text-white rounded-full text-sm font-bold">{images.length}</span>
@@ -1650,11 +1877,11 @@ const TechnicianForm = () => {
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                       {images.map((image) => (
                         <div key={image.id} className="relative group">
-                          <div className="relative overflow-hidden rounded-xl shadow-md border-2 border-gray-200 hover:border-[#232249] transition-all duration-200 hover:shadow-lg">
+                          <div className="relative overflow-hidden rounded-xl shadow-lg border-2 border-gray-200 hover:border-[#232249] transition-all duration-200">
                             <img
                               src={image.url}
                               alt={image.name}
-                              className="w-full h-32 object-cover group-hover:scale-105 transition-transform duration-200"
+                              className="w-full h-32 object-cover group-hover:scale-110 transition-transform duration-300"
                             />
                             <button
                               type="button"
@@ -1665,8 +1892,8 @@ const TechnicianForm = () => {
                             </button>
                           </div>
                           <div className="mt-2 px-1">
-                            <p className="text-xs font-semibold text-gray-800 truncate">{image.name}</p>
-                            <p className="text-xs text-gray-600">
+                            <p className="text-xs font-medium text-gray-700 truncate">{image.name}</p>
+                            <p className="text-xs text-gray-500">
                               {new Date(image.uploadedAt).toLocaleTimeString()}
                             </p>
                           </div>
@@ -1685,61 +1912,154 @@ const TechnicianForm = () => {
                 )}
 
                 {/* Instructions */}
-                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-2xl p-6">
+                <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-200 rounded-2xl p-6">
                   <div className="flex items-start">
-                    <div className="p-2.5 bg-white rounded-xl mr-4 shadow-sm border border-blue-200">
+                    <div className="p-2 bg-white rounded-lg mr-4 shadow-sm">
                       <AlertTriangle className="w-6 h-6 text-blue-600" />
                     </div>
                     <div>
-                      <h5 className="font-bold text-blue-900 mb-3 text-lg">Photo Guidelines</h5>
-                      <ul className="text-sm text-blue-800 space-y-2.5">
+                      <h5 className="font-bold text-blue-900 mb-3 text-lg">📋 Photo Guidelines:</h5>
+                      <ul className="text-sm text-blue-800 space-y-2">
                         <li className="flex items-start">
-                          <span className="mr-2 text-blue-600 font-bold">•</span>
-                          <span className="font-medium">Take photos of confined space entry points</span>
+                          <span className="mr-2">✓</span>
+                          <span>Take photos of confined space entry points</span>
                         </li>
                         <li className="flex items-start">
-                          <span className="mr-2 text-blue-600 font-bold">•</span>
-                          <span className="font-medium">Document any visible hazards or safety equipment</span>
+                          <span className="mr-2">✓</span>
+                          <span>Document any visible hazards or safety equipment</span>
                         </li>
                         <li className="flex items-start">
-                          <span className="mr-2 text-blue-600 font-bold">•</span>
-                          <span className="font-medium">Include photos of warning signs and safety measures</span>
+                          <span className="mr-2">✓</span>
+                          <span>Include photos of warning signs and safety measures</span>
                         </li>
                         <li className="flex items-start">
-                          <span className="mr-2 text-blue-600 font-bold">•</span>
-                          <span className="font-medium">Capture overall space configuration and access routes</span>
+                          <span className="mr-2">✓</span>
+                          <span>Capture overall space configuration and access routes</span>
                         </li>
                         <li className="flex items-start">
-                          <span className="mr-2 text-blue-600 font-bold">•</span>
-                          <span className="font-medium">Ensure images are clear and well-lit</span>
+                          <span className="mr-2">✓</span>
+                          <span>Ensure images are clear and well-lit</span>
                         </li>
                       </ul>
                     </div>
                   </div>
                 </div>
               </div>
+              </div>
             </div>
           )}
 
-          {/* Navigation Buttons */}
-          <div className="flex justify-between items-center gap-3 md:gap-4 mt-4 md:mt-6">
+          {/* Submit Section */}
+          <div className="group relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-emerald-500/5 rounded-2xl blur-xl"></div>
+            <div className="relative bg-white/90 backdrop-blur-sm p-6 md:p-8 rounded-2xl shadow-xl border border-gray-200/50">
+              <div className="flex items-center mb-6">
+                <div className="p-3 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl shadow-lg mr-4">
+                  <CheckCircle className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900">Submit Assessment</h3>
+              </div>
+            
+            {/* Error Message */}
+            {submitError && (
+              <div className="mb-6 relative">
+                <div className="absolute inset-0 bg-red-500/5 rounded-2xl blur-md"></div>
+                <div className="relative bg-red-50 border-2 border-red-200 rounded-2xl p-5">
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0">
+                      <div className="p-2 bg-red-100 rounded-xl">
+                        <AlertTriangle className="h-6 w-6 text-red-600" />
+                      </div>
+                    </div>
+                    <div className="ml-4 flex-1">
+                      <h3 className="text-base font-bold text-red-900 mb-2">⚠️ Submission Error</h3>
+                      <div className="text-sm text-red-800 bg-white/50 rounded-xl p-3 font-medium">
+                        <pre className="whitespace-pre-wrap">{submitError}</pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Success Message */}
+            {submitSuccess && (
+              <div className="mb-6 relative">
+                <div className="absolute inset-0 bg-green-500/5 rounded-2xl blur-md"></div>
+                <div className="relative bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-300 rounded-2xl p-5 shadow-lg">
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0">
+                      <div className="p-2 bg-green-100 rounded-xl">
+                        <CheckCircle className="h-6 w-6 text-green-600 animate-pulse" />
+                      </div>
+                    </div>
+                    <div className="ml-4 flex-1">
+                      <h3 className="text-base font-bold text-green-900 mb-2">✅ Assessment Submitted Successfully!</h3>
+                      <div className="text-sm text-green-800 space-y-1">
+                        <p className="font-medium">Your assessment has been submitted for admin and manager review.</p>
+                        <p className="font-bold bg-white/60 rounded-lg px-3 py-1 inline-block">Status: Pending Review</p>
+                        <p className="text-xs opacity-75 mt-2">The form will reset automatically in a few seconds.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Submit Button */}
+            <button
+              onClick={handleSubmit}
+              disabled={isSubmitting || submitSuccess}
+              className={`group/btn relative w-full flex items-center justify-center px-8 py-5 border-2 text-lg font-bold rounded-2xl shadow-lg transition-all duration-300 ${
+                isSubmitting || submitSuccess
+                  ? 'bg-gray-400 border-gray-400 cursor-not-allowed'
+                  : 'bg-gradient-to-r from-[#232249] to-[#2d2e5f] hover:from-[#2d2e5f] hover:to-[#232249] text-white border-[#232249] hover:shadow-2xl hover:scale-105'
+              }`}
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="animate-spin -ml-1 mr-3 h-6 w-6" />
+                  Submitting Assessment...
+                </>
+              ) : submitSuccess ? (
+                <>
+                  <Check className="mr-3 h-6 w-6" />
+                  ✅ Assessment Submitted
+                </>
+              ) : (
+                <>
+                  <Save className="mr-3 h-6 w-6 group-hover/btn:animate-bounce" />
+                  💾 Submit Assessment
+                </>
+              )}
+            </button>
+            
+            <p className="mt-4 text-sm text-gray-600 text-center bg-blue-50 rounded-xl p-3 border border-blue-100">
+              <span className="font-semibold">ℹ️ Please review all sections before submitting.</span> All required fields must be completed.
+            </p>
+            </div>
+          </div>
+
+          {/* Modern Navigation Buttons */}
+          <div className="flex justify-between items-center gap-4">
             <button
               onClick={prevSection}
               disabled={activeSection === 'basic'}
-              className={`flex items-center px-4 md:px-6 py-2.5 md:py-3 rounded-lg font-semibold text-sm md:text-base ${
+              className={`group flex items-center px-6 py-3 rounded-xl font-bold transition-all duration-300 ${
                 activeSection === 'basic'
                   ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                  : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-300'
+                  : 'bg-white text-gray-700 hover:bg-gradient-to-r hover:from-gray-100 hover:to-gray-200 shadow-lg hover:shadow-xl border-2 border-gray-200 hover:border-gray-300 hover:scale-105'
               }`}
             >
-              <ArrowLeft className="w-4 h-4 md:w-5 md:h-5 mr-1.5 md:mr-2" />
-              <span className="hidden sm:inline">Previous</span>
+              <ArrowLeft className="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform" />
+              ⬅️ Previous
             </button>
 
-            <div className="text-center">
-              <div className="inline-flex items-center gap-2 px-3 md:px-4 py-1.5 md:py-2 bg-gray-100 rounded-lg">
-                <span className="text-xs md:text-sm font-semibold text-gray-700">
-                  Step {sections.findIndex(s => s.id === activeSection) + 1} of {sections.length}
+            <div className="flex-1 text-center">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-200">
+                <span className="text-sm font-medium text-gray-600">Step</span>
+                <span className="px-3 py-1 bg-white rounded-lg font-bold text-[#232249] shadow-sm">
+                  {sections.findIndex(s => s.id === activeSection) + 1} / {sections.length}
                 </span>
               </div>
             </div>
@@ -1747,88 +2067,16 @@ const TechnicianForm = () => {
             <button
               onClick={nextSection}
               disabled={activeSection === 'images'}
-              className={`flex items-center px-4 md:px-6 py-2.5 md:py-3 rounded-lg font-semibold text-sm md:text-base ${
+              className={`group flex items-center px-6 py-3 rounded-xl font-bold transition-all duration-300 ${
                 activeSection === 'images'
                   ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                  : 'bg-[#232249] text-white hover:bg-[#1a1a35]'
+                  : 'bg-gradient-to-r from-[#232249] to-[#2d2e5f] text-white hover:from-[#2d2e5f] hover:to-[#232249] shadow-lg hover:shadow-xl hover:scale-105'
               }`}
             >
-              <span className="hidden sm:inline">Next</span>
-              <ArrowRight className="w-4 h-4 md:w-5 md:h-5 ml-1.5 md:ml-2" />
+              Next ➡️
+              <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
             </button>
           </div>
-        </div>
-
-        {/* Submit Assessment Section - Always visible at bottom */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 md:p-6 mt-4 md:mt-6">
-          <div className="flex items-center gap-3 mb-6 pb-4 border-b border-gray-200">
-            <div className="p-2.5 bg-[#232249] rounded-lg">
-              <CheckCircle className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <h3 className="text-lg md:text-xl font-bold text-gray-900">Submit Assessment</h3>
-              <p className="text-xs md:text-sm text-gray-600 mt-0.5">Review and submit your assessment</p>
-            </div>
-          </div>
-            
-          {/* Error Message */}
-          {submitError && (
-            <div className="mb-4 md:mb-6 bg-red-50 border border-red-300 rounded-lg p-4">
-              <div className="flex items-start gap-3">
-                <AlertTriangle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
-                <div>
-                  <h4 className="text-sm font-bold text-red-900 mb-1">Submission Error</h4>
-                  <p className="text-sm text-red-800">{submitError}</p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Success Message */}
-          {submitSuccess && (
-            <div className="mb-4 md:mb-6 bg-emerald-50 border border-emerald-300 rounded-lg p-4">
-              <div className="flex items-start gap-3">
-                <CheckCircle className="h-5 w-5 text-emerald-600 flex-shrink-0 mt-0.5" />
-                <div>
-                  <h4 className="text-sm font-bold text-emerald-900 mb-1">Assessment Submitted Successfully!</h4>
-                  <p className="text-sm text-emerald-800">Your assessment has been submitted for review.</p>
-                  <span className="inline-block mt-2 px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-semibold rounded">Status: Pending Review</span>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Submit Button */}
-          <button
-            onClick={handleSubmit}
-            disabled={isSubmitting || submitSuccess}
-            className={`w-full flex items-center justify-center px-6 py-3 md:py-4 text-base md:text-lg font-bold rounded-lg ${
-              isSubmitting || submitSuccess
-                ? 'bg-gray-400 text-white cursor-not-allowed'
-                : 'bg-[#232249] text-white hover:bg-[#1a1a35]'
-            }`}
-          >
-            {isSubmitting ? (
-              <>
-                <Loader2 className="w-5 h-5 mr-2" />
-                Submitting...
-              </>
-            ) : submitSuccess ? (
-              <>
-                <Check className="w-5 h-5 mr-2" />
-                Submitted
-              </>
-            ) : (
-              <>
-                <Save className="w-5 h-5 mr-2" />
-                Submit Assessment
-              </>
-            )}
-          </button>
-          
-          <p className="mt-3 md:mt-4 text-xs md:text-sm text-gray-600 text-center">
-            Please review all sections before submitting. All required fields must be completed.
-          </p>
         </div>
       </div>
     </div>
@@ -1836,7 +2084,3 @@ const TechnicianForm = () => {
 };
 
 export default TechnicianForm;
-
-
-
-

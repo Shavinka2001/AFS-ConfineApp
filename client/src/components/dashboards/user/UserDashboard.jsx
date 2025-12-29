@@ -28,9 +28,8 @@ const UserDashboard = () => {
   const [error, setError] = useState(null);
   const [stats, setStats] = useState({
     total: 0,
-    pending: 0,
-    inProgress: 0,
-    completed: 0
+    confinedSpaces: 0,
+    recentOrders: 0
   });
 
   const handleLogout = () => {
@@ -59,11 +58,13 @@ const UserDashboard = () => {
           setWorkOrders(orders);
 
           // Calculate stats
+          const thirtyDaysAgo = new Date();
+          thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+          
           const stats = {
             total: orders.length,
-            pending: orders.filter(order => order.status === 'pending').length,
-            inProgress: orders.filter(order => order.status === 'in-progress').length,
-            completed: orders.filter(order => order.status === 'completed').length
+            confinedSpaces: orders.filter(order => order.isConfinedSpace === true).length,
+            recentOrders: orders.filter(order => new Date(order.createdAt) >= thirtyDaysAgo).length
           };
           setStats(stats);
         }
@@ -192,8 +193,8 @@ const UserDashboard = () => {
           </div>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Essential Stats Cards - User Focused */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
           <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -209,11 +210,11 @@ const UserDashboard = () => {
           <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-slate-600 text-sm font-medium uppercase tracking-wide">Pending</p>
-                <p className="text-2xl font-bold text-slate-900 mt-1">{stats.pending}</p>
+                <p className="text-slate-600 text-sm font-medium uppercase tracking-wide">Confined Spaces</p>
+                <p className="text-2xl font-bold text-slate-900 mt-1">{stats.confinedSpaces}</p>
               </div>
-              <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center">
-                <AlertCircle className="h-6 w-6 text-amber-600" />
+              <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
+                <AlertCircle className="h-6 w-6 text-red-600" />
               </div>
             </div>
           </div>
@@ -221,23 +222,11 @@ const UserDashboard = () => {
           <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-slate-600 text-sm font-medium uppercase tracking-wide">In Progress</p>
-                <p className="text-2xl font-bold text-slate-900 mt-1">{stats.inProgress}</p>
+                <p className="text-slate-600 text-sm font-medium uppercase tracking-wide">Recent Orders</p>
+                <p className="text-2xl font-bold text-slate-900 mt-1">{stats.recentOrders}</p>
               </div>
               <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
                 <Clock className="h-6 w-6 text-blue-600" />
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-slate-600 text-sm font-medium uppercase tracking-wide">Completed</p>
-                <p className="text-2xl font-bold text-slate-900 mt-1">{stats.completed}</p>
-              </div>
-              <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
-                <CheckCircle className="h-6 w-6 text-emerald-600" />
               </div>
             </div>
           </div>

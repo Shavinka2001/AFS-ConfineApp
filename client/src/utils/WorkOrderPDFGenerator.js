@@ -126,17 +126,87 @@ const loadImageAsBase64 = (imageUrl) => {
   return new Promise((resolve, reject) => {
     // Validate input
     if (!imageUrl || typeof imageUrl !== 'string' || !imageUrl.trim()) {
+      console.error('❌ [loadImageAsBase64] Invalid or empty image URL');
       reject(new Error('Invalid or empty image URL'));
       return;
     }
     
-    const img = new Image();
-    img.crossOrigin = "anonymous";
+    console.log(`🔄 [loadImageAsBase64] Starting load for: ${imageUrl}`);
     
-    // Set timeout to prevent hanging
-    const timeout = setTimeout(() => {
-      reject(new Error(`Image load timeout (10s): ${imageUrl}`));
-    }, 10000);
+    // Try to fetch with authentication first (for protected images)
+    const tryFetchWithAuth = async () => {
+      try {
+        // Get authentication token from localStorage
+        const token = localStorage.getItem('token') || localStorage.getItem('authToken');
+        
+        console.log(`🔑 [loadImageAsBase64] Auth token ${token ? 'found' : 'not found'}`);
+        
+        const headers = {};
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`;
+        }
+        
+        console.log(`🌐 [loadImageAsBase64] Fetching with headers:`, Object.keys(headers));
+        
+        const response = await fetch(imageUrl, { 
+          method: 'GET',
+          headers,
+          credentials: 'include' // Include cookies for session-based auth
+        });
+        
+        console.log(`📡 [loadImageAsBase64] Fetch response status: ${response.status} ${response.statusText}`);
+        console.log(`📡 [loadImageAsBase64] Content-Type: ${response.headers.get('content-type')}`);
+        
+        if (!response.ok) {
+          const errorText = await response.text().catch(() => 'Unable to read error response');
+          console.error(`❌ [loadImageAsBase64] HTTP Error ${response.status}:`, errorText);
+          
+          if (response.status === 401) {
+            throw new Error(`Authentication required (401): ${imageUrl}`);
+          } else if (response.status === 404) {
+            throw new Error(`Image not found (404): ${imageUrl}`);
+          } else if (response.status === 403) {
+            throw new Error(`Access forbidden (403): ${imageUrl}`);
+          } else {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          }
+        }
+        
+        const blob = await response.blob();
+        console.log(`📦 [loadImageAsBase64] Blob received, size: ${blob.size} bytes, type: ${blob.type}`);
+        
+        return new Promise((res, rej) => {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            console.log(`✅ [loadImageAsBase64] Base64 conversion complete for ${imageUrl}`);
+            res(reader.result);
+          };
+          reader.onerror = (error) => {
+            console.error(`❌ [loadImageAsBase64] FileReader error:`, error);
+            rej(new Error(`FileReader failed: ${error.message}`));
+          };
+          reader.readAsDataURL(blob);
+        });
+      } catch (fetchError) {
+        console.warn(`⚠️ [loadImageAsBase64] Fetch failed, falling back to Image element:`, fetchError.message);
+        throw fetchError; // Propagate to try Image element fallback
+      }
+    };
+    
+    // Try fetch first, fallback to Image element
+    tryFetchWithAuth()
+      .then(resolve)
+      .catch((fetchError) => {
+        console.log(`🔄 [loadImageAsBase64] Attempting Image element fallback for: ${imageUrl}`);
+        
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        
+        // Set timeout to prevent hanging
+        const timeout = setTimeout(() => {
+          console.error(`❌ [loadImageAsBase64] Image load timeout (10s): ${imageUrl}`);
+          reject(new Error(`Image load timeout (10s): ${imageUrl}`));
+        }, 10000);
     
     img.onload = () => {
       clearTimeout(timeout);
@@ -163,23 +233,30 @@ const loadImageAsBase64 = (imageUrl) => {
       }
     };
     
-    img.onerror = (error) => {
-      clearTimeout(timeout);
-      console.error('Image load error for URL:', imageUrl, error);
-      reject(new Error(`CORS or network error loading image: ${imageUrl}`));
-    };
+        img.onerror = (error) => {
+          clearTimeout(timeout);
+          console.error(`❌ [loadImageAsBase64] Image element load error:`, {
+            url: imageUrl,
+            error: error,
+            originalFetchError: fetchError.message
+          });
+          reject(new Error(`Image load failed (CORS/Network): ${imageUrl}. Original fetch error: ${fetchError.message}`));
+        };
     
-    // Add timestamp to prevent caching issues
-    try {
-      const urlWithTimestamp = imageUrl.includes('?') 
-        ? `${imageUrl}&t=${Date.now()}`
-        : `${imageUrl}?t=${Date.now()}`;
-      
-      img.src = urlWithTimestamp;
-    } catch (error) {
-      clearTimeout(timeout);
-      reject(new Error(`Invalid image URL: ${imageUrl}`));
-    }
+        // Add timestamp to prevent caching issues
+        try {
+          const urlWithTimestamp = imageUrl.includes('?') 
+            ? `${imageUrl}&t=${Date.now()}`
+            : `${imageUrl}?t=${Date.now()}`;
+          
+          console.log(`🔄 [loadImageAsBase64] Setting Image src: ${urlWithTimestamp}`);
+          img.src = urlWithTimestamp;
+        } catch (error) {
+          clearTimeout(timeout);
+          console.error(`❌ [loadImageAsBase64] Failed to set Image src:`, error);
+          reject(new Error(`Invalid image URL: ${imageUrl}`));
+        }
+      });
   });
 };
 
@@ -351,31 +428,63 @@ export const handleDownloadFilteredPDF = async (orders = [], sortBy) => {
     const getImageUrl = (imgPath) => {
       // Validate input
       if (!imgPath || typeof imgPath !== 'string') {
-        console.warn('Invalid image path:', imgPath);
+        console.warn('🔍 [getImageUrl] Invalid image path:', imgPath);
         return '';
       }
       
       const trimmedPath = imgPath.trim();
-      if (!trimmedPath) return '';
+      if (!trimmedPath) {
+        console.warn('🔍 [getImageUrl] Empty image path after trim');
+        return '';
+      }
+      
+      console.log(`🔍 [getImageUrl] Processing path: "${trimmedPath}"`);
       
       // Already a complete URL
-      if (trimmedPath.startsWith('data:')) return trimmedPath;
-      if (trimmedPath.startsWith('http://') || trimmedPath.startsWith('https://')) return trimmedPath;
-      if (trimmedPath.startsWith('blob:')) return trimmedPath;
+      if (trimmedPath.startsWith('data:')) {
+        console.log('✅ [getImageUrl] Data URL detected');
+        return trimmedPath;
+      }
+      if (trimmedPath.startsWith('http://') || trimmedPath.startsWith('https://')) {
+        console.log(`✅ [getImageUrl] Full URL detected: ${trimmedPath}`);
+        return trimmedPath;
+      }
+      if (trimmedPath.startsWith('blob:')) {
+        console.log('✅ [getImageUrl] Blob URL detected');
+        return trimmedPath;
+      }
       
       // Handle object with path/url property
       if (typeof imgPath === 'object' && imgPath !== null) {
+        console.log('🔍 [getImageUrl] Object path detected:', imgPath);
         if (imgPath.path) return getImageUrl(imgPath.path);
         if (imgPath.url) return getImageUrl(imgPath.url);
         return '';
       }
       
-      // Local path - prepend origin
-      const API_BASE_URL = window.location.origin;
+      // Local path - need to construct full URL
+      // Check if we're in admin dashboard or regular view
+      const currentOrigin = window.location.origin;
+      const currentPath = window.location.pathname;
+      
+      console.log(`🔍 [getImageUrl] Current origin: ${currentOrigin}`);
+      console.log(`🔍 [getImageUrl] Current pathname: ${currentPath}`);
+      
+      // Determine backend base URL
+      // Option 1: Check for environment variable
+      const envBackendUrl = import.meta.env?.VITE_API_BASE_URL || import.meta.env?.VITE_BACKEND_URL;
+      
+      // Option 2: Use current origin (works for same-domain setup)
+      // Option 3: Detect if we're on admin subdomain and adjust
+      let API_BASE_URL = envBackendUrl || currentOrigin;
+      
+      // If path starts with /uploads/, it's likely a backend static file
       const cleanPath = trimmedPath.startsWith('/') ? trimmedPath : `/${trimmedPath}`;
       const fullUrl = `${API_BASE_URL}${cleanPath}`;
       
-      console.log(`Converting local path to URL: ${trimmedPath} -> ${fullUrl}`);
+      console.log(`✅ [getImageUrl] Constructed URL: ${trimmedPath} -> ${fullUrl}`);
+      console.log(`🔍 [getImageUrl] Using base URL: ${API_BASE_URL}`);
+      
       return fullUrl;
     };
 
@@ -436,7 +545,15 @@ export const handleDownloadFilteredPDF = async (orders = [], sortBy) => {
       }
 
       // COLLECT AND LOAD ALL IMAGES
-      console.log(`Loading images for entry ${i + 1}...`);
+      console.log(`\n${'='.repeat(60)}`);
+      console.log(`📸 Loading images for entry ${i + 1}/${consolidatedEntries.length}`);
+      console.log(`🔍 Current user role/context: ${window.location.pathname}`);
+      console.log(`🔍 Data source analysis:`);
+      console.log('   - pictures:', entry.pictures);
+      console.log('   - images:', entry.images);
+      console.log('   - photos:', entry.photos);
+      console.log('   - attachments:', entry.attachments);
+      console.log(`${'='.repeat(60)}\n`);
       
       // Helper to normalize image fields to array
       const normalizeImageField = (field) => {
@@ -776,8 +893,8 @@ ${entry.notes ? `Notes:\n${entry.notes}` : ''}
     
     const surveyorCount = allSurveyors.size > 0 ? allSurveyors.size : 1;
     const headerHeight = 35; // Header bar + spacing
-    const lineHeight = 20; // Space per surveyor signature line
-    const totalSectionHeight = headerHeight + (surveyorCount * lineHeight) + 20; // Extra bottom margin
+    const signatureBlockHeight = 55; // Height per surveyor (signature line + name + date + spacing)
+    const totalSectionHeight = headerHeight + (surveyorCount * signatureBlockHeight) + 20; // Extra bottom margin
     
     // 3. Add Buffer Space and check if we need new page
     let signatureStartY = tableEnd + 50;
@@ -804,33 +921,51 @@ ${entry.notes ? `Notes:\n${entry.notes}` : ''}
     
     currentY += 35; // Move below header bar with spacing
 
-    // 6. Render surveyor signature lines
+    // 6. Render surveyor signature blocks
     if (allSurveyors.size > 0) {
+      const signatureBlockHeight = 55; // Height for each signature block
+      const signatureLineLength = 250; // Length of signature line
+      
       Array.from(allSurveyors).forEach((surveyorName, idx) => {
-        doc.setFontSize(10);
-        doc.setFont('helvetica', 'normal');
-        
-        // Draw surveyor name with index
-        const nameText = `${idx + 1}. ${surveyorName}`;
-        doc.text(nameText, margin, currentY);
-        
-        // Calculate name width to position signature line correctly
-        const nameWidth = doc.getTextWidth(nameText);
-        const lineStartX = margin + nameWidth + 10; // 10pt gap after name
-        
-        // Draw signature line from end of name to right margin
-        doc.setDrawColor(100, 100, 100);
-        doc.setLineWidth(0.5);
-        doc.line(lineStartX, currentY + 1, pageWidth - margin, currentY + 1);
-        
-        currentY += lineHeight;
-        
-        // Page break check (should rarely trigger due to pre-calculation)
-        if (currentY + lineHeight > pageHeight - margin) {
+        // Check if we need a new page for this signature block
+        if (currentY + signatureBlockHeight > pageHeight - margin - 30) {
           doc.addPage();
           currentY = margin + 40;
-          console.log('⚠️ Unexpected page break during surveyor list');
+          
+          // Re-add section header on new page
+          doc.setFillColor(35, 34, 73);
+          doc.rect(0, margin, pageWidth, 20, 'F');
+          doc.setFontSize(12);
+          doc.setFont('helvetica', 'bold');
+          doc.setTextColor(255, 255, 255);
+          doc.text('Surveyor Acknowledgement (Continued)', margin, margin + 13);
+          doc.setTextColor(0, 0, 0);
+          currentY = margin + 50;
+          console.log('⚠️ Page break during surveyor list - added continuation header');
         }
+        
+        // Draw signature line
+        doc.setDrawColor(100, 100, 100);
+        doc.setLineWidth(0.5);
+        doc.line(margin, currentY, margin + signatureLineLength, currentY);
+        
+        currentY += 15; // Space below signature line
+        
+        // Print surveyor's name
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(0, 0, 0);
+        doc.text(`Name: ${surveyorName}`, margin, currentY);
+        
+        currentY += 15; // Space below name
+        
+        // Print date field
+        const dateFieldLength = 150;
+        doc.text('Date: ', margin, currentY);
+        const dateTextWidth = doc.getTextWidth('Date: ');
+        doc.line(margin + dateTextWidth, currentY + 1, margin + dateTextWidth + dateFieldLength, currentY + 1);
+        
+        currentY += 25; // Space before next surveyor block
       });
     } else {
       doc.setFontSize(10);

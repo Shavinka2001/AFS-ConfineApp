@@ -407,35 +407,66 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, closeMobileMen
           paddingBottom: 'env(safe-area-inset-bottom)'
         } : {}}
       >
-      {/* Header - Enhanced Mobile */}
-      <div className="p-4 sm:p-5 lg:p-6 border-b border-gray-100 bg-gradient-to-r from-[#232249] via-[#2a2a5e] to-[#232249]/95 shadow-lg">
-        <div className="flex items-center justify-between gap-3">
-          <AnimatePresence>
+      {/* Header - Professional & Mobile-Responsive */}
+      <div className="relative px-4 py-4 sm:px-5 sm:py-5 lg:px-6 lg:py-6 border-b border-white/10 bg-gradient-to-br from-[#1a1a3e] via-[#232249] to-[#2a2a5e] shadow-2xl overflow-hidden">
+        {/* Animated Background Pattern */}
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 via-purple-600/5 to-pink-600/5 opacity-50" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.1),transparent_50%)]" />
+        
+        {/* Content Container */}
+        <div className="relative flex items-center justify-between gap-4">
+          {/* Left Side: Logo & Brand */}
+          <AnimatePresence mode="wait">
             {!isCollapsed && (
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.2 }}
-                className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0"
+                transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+                className="flex items-center gap-3 flex-1 min-w-0"
               >
-                <div className="h-10 w-10 sm:h-11 sm:w-11 lg:h-12 lg:w-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center ring-2 ring-white/30 shadow-lg flex-shrink-0">
+                {/* Logo Container - Glass Morphism */}
+                <motion.div 
+                  className="relative h-12 w-12 sm:h-14 sm:w-14 bg-white/10 backdrop-blur-xl rounded-2xl flex items-center justify-center ring-2 ring-white/20 shadow-xl flex-shrink-0 overflow-hidden"
+                  whileHover={{ scale: 1.05, rotate: 5 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {/* Gradient Shine Effect */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent" />
                   <img 
                     src="/logo.jpg" 
-                    alt="Logo" 
-                    className="h-8 w-8 sm:h-9 sm:w-9 lg:h-10 lg:w-10 object-contain"
+                    alt="Confine Logo" 
+                    className="relative h-9 w-9 sm:h-10 sm:w-10 object-contain drop-shadow-lg z-10"
                   />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <h1 className="text-lg sm:text-xl font-bold text-white truncate">Confine</h1>
-                  <p className="text-xs text-white/80 font-medium truncate">Management System</p>
+                </motion.div>
+                
+                {/* Brand Text */}
+                <div className="flex-1 min-w-0">
+                  <motion.h1 
+                    className="text-xl sm:text-2xl font-extrabold text-white truncate tracking-tight leading-none"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.1 }}
+                  >
+                    Confine
+                  </motion.h1>
+                  <motion.p 
+                    className="text-xs sm:text-sm text-white/70 font-medium truncate mt-0.5"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.2 }}
+                  >
+                    Management System
+                  </motion.p>
                 </div>
               </motion.div>
             )}
           </AnimatePresence>
           
+          {/* Right Side: Action Buttons */}
           <div className="flex items-center gap-2 flex-shrink-0">
-            {isMobile && (
+            {isMobile ? (
+              /* Mobile: Close Button (X) */
               <motion.button
                 type="button"
                 onClick={() => {
@@ -449,30 +480,47 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, closeMobileMen
                     closeMobileMenu();
                   }
                 }}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                className="p-2.5 rounded-xl bg-white/10 hover:bg-white/20 active:bg-white/30 transition-all duration-300 backdrop-blur-sm lg:hidden touch-manipulation min-w-[44px] min-h-[44px] flex items-center justify-center ring-2 ring-white/20 shadow-lg"
-                aria-label="Close menu"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="group relative p-3 rounded-2xl bg-white/10 hover:bg-white/20 active:bg-white/25 backdrop-blur-xl transition-all duration-300 touch-manipulation min-w-[48px] min-h-[48px] flex items-center justify-center ring-2 ring-white/20 hover:ring-white/30 shadow-xl hover:shadow-2xl"
+                aria-label="Close navigation menu"
               >
+                {/* Button Glow Effect */}
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/20 via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                
+                {/* X Icon with Rotation Animation */}
                 <motion.div
-                  animate={{ rotate: [0, 90, 0] }}
-                  transition={{ duration: 0.3 }}
+                  whileHover={{ rotate: 90 }}
+                  transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
                 >
                   <X className="h-6 w-6 text-white drop-shadow-lg" strokeWidth={2.5} />
                 </motion.div>
               </motion.button>
-            )}
-            {!isMobile && (
-              <button
+            ) : (
+              /* Desktop: Collapse Toggle Button (Chevron) */
+              <motion.button
+                type="button"
                 onClick={() => setIsCollapsed(!isCollapsed)}
-                className="p-2.5 sm:p-2 rounded-xl hover:bg-white/20 transition-all duration-300 backdrop-blur-sm touch-manipulation min-w-[44px] min-h-[44px] flex items-center justify-center"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="group relative p-2.5 rounded-xl bg-white/10 hover:bg-white/20 active:bg-white/25 backdrop-blur-xl transition-all duration-300 min-w-[44px] min-h-[44px] flex items-center justify-center ring-1 ring-white/20 hover:ring-white/30 shadow-lg hover:shadow-xl"
+                aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
               >
-                {isCollapsed ? (
-                  <ChevronRight className="h-5 w-5 text-white" />
-                ) : (
-                  <ChevronLeft className="h-5 w-5 text-white" />
-                )}
-              </button>
+                {/* Button Glow Effect */}
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/20 via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                
+                {/* Chevron Icon with Smooth Transition */}
+                <motion.div
+                  animate={{ rotate: isCollapsed ? 0 : 180 }}
+                  transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+                >
+                  {isCollapsed ? (
+                    <ChevronRight className="h-5 w-5 text-white drop-shadow-md" strokeWidth={2.5} />
+                  ) : (
+                    <ChevronLeft className="h-5 w-5 text-white drop-shadow-md" strokeWidth={2.5} />
+                  )}
+                </motion.div>
+              </motion.button>
             )}
           </div>
         </div>

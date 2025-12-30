@@ -32,7 +32,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { technicianLocationService } from '../../services/technicianLocationService';
 import workOrderAPI from '../../services/workOrderAPI';
 
-const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, closeMobileMenu }) => {
+const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, isMobileMenuOpen = false, closeMobileMenu }) => {
   const { user, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
@@ -358,7 +358,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, closeMobileMen
     <>
       {/* Mobile Backdrop Overlay - Only show when sidebar is OPEN on mobile */}
       <AnimatePresence>
-        {isMobile && !isCollapsed && (
+        {isMobile && isMobileMenuOpen && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -397,11 +397,11 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, closeMobileMen
           stiffness: 350,
           damping: 35
         }}
-        drag={isMobile && !isCollapsed ? "x" : false}
+        drag={isMobile && isMobileMenuOpen ? "x" : false}
         dragConstraints={{ left: -300, right: 0 }}
         dragElastic={0.2}
         onDragEnd={(e, { offset, velocity }) => {
-          if (isMobile && !isCollapsed && (offset.x < -100 || velocity.x < -500)) {
+          if (isMobile && isMobileMenuOpen && (offset.x < -100 || velocity.x < -500)) {
             closeMobileMenu && closeMobileMenu();
           }
         }}
@@ -414,7 +414,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, closeMobileMen
         } : {}}
       >
       {/* Swipe Indicator - Mobile Only (when open) */}
-      {isMobile && !isCollapsed && (
+      {isMobile && isMobileMenuOpen && (
         <div className="absolute top-1/2 -translate-y-1/2 right-0 w-1 h-20 bg-gradient-to-b from-transparent via-gray-400/50 to-transparent rounded-l-full pointer-events-none">
           <motion.div
             className="absolute inset-0 bg-gradient-to-b from-transparent via-white to-transparent"

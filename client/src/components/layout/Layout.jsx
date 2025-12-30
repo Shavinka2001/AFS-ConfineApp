@@ -167,6 +167,7 @@ const Layout = ({ children }) => {
           isCollapsed={isMobile ? false : isCollapsed} 
           setIsCollapsed={setIsCollapsed}
           isMobile={isMobile}
+          isMobileMenuOpen={isMobileMenuOpen}
           closeMobileMenu={() => setIsMobileMenuOpen(false)}
         />
       </div>

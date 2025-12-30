@@ -174,6 +174,7 @@ class OrderController {
 
       const [orders, total] = await Promise.all([
         Order.find(query)
+          .select('+pictures +images +photos +attachments') // Explicitly include image fields
           .sort(sort)
           .skip(parseInt(skip))
           .limit(parseInt(limit))
@@ -243,7 +244,8 @@ class OrderController {
         query.userId = userId;
       }
 
-      const order = await Order.findOne(query);
+      const order = await Order.findOne(query)
+        .select('+pictures +images +photos +attachments'); // Explicitly include image fields
 
       if (!order) {
         return res.status(404).json({
@@ -425,7 +427,8 @@ class OrderController {
         };
       }
 
-      const order = await Order.findOne(query);
+      const order = await Order.findOne(query)
+        .select('+pictures +images +photos +attachments'); // Explicitly include image fields
 
       if (!order) {
         return res.status(404).json({
@@ -687,7 +690,8 @@ class OrderController {
         };
       }
       
-      const order = await Order.findOne(query);
+      const order = await Order.findOne(query)
+        .select('+pictures +images +photos +attachments'); // Explicitly include image fields
 
       if (!order) {
         return res.status(404).json({
@@ -763,7 +767,8 @@ class OrderController {
             { technician: { $regex: new RegExp(`${req.user.firstName}.*${req.user.lastName}`, 'i') } }
           ] : []) // Orders assigned to the technician
         ]
-      });
+      })
+        .select('+pictures +images +photos +attachments'); // Explicitly include image fields
 
       if (orders.length === 0) {
         return res.status(404).json({
@@ -1059,6 +1064,7 @@ class OrderController {
 
       // Fetch all matching orders
       const orders = await Order.find(query)
+        .select('+pictures +images +photos +attachments') // Explicitly include image fields
         .sort({ createdAt: -1 })
         .lean();
 

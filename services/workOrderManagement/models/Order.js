@@ -193,6 +193,20 @@ const OrderSchema = new mongoose.Schema({
     }
   }],
   
+  // Additional image fields for frontend compatibility
+  pictures: [{
+    type: String
+  }],
+  images: [{
+    type: String
+  }],
+  photos: [{
+    type: String
+  }],
+  attachments: [{
+    type: String
+  }],
+  
   // Workflow
   assignedTo: {
     type: String,

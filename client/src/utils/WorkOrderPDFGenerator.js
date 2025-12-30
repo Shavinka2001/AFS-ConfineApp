@@ -754,6 +754,14 @@ ${entry.notes ? `Notes:\n${entry.notes}` : ''}
   }
 };
 
+// Export aliases for compatibility with PDFDownloadButton.jsx and other components
+export const generateDetailedPDF = handleDownloadFilteredPDF;
+export const generateConsolidatedPDF = handleDownloadFilteredPDF;
+export const generateSummaryTablePDF = handleDownloadFilteredPDF;
+
 export default {
-  handleDownloadFilteredPDF
+  handleDownloadFilteredPDF,
+  generateDetailedPDF,
+  generateConsolidatedPDF,
+  generateSummaryTablePDF
 };

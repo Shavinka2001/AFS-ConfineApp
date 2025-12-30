@@ -124,6 +124,12 @@ const extractEntryPoints = (entry) => {
  */
 const loadImageAsBase64 = (imageUrl) => {
   return new Promise((resolve, reject) => {
+    // Validate input
+    if (!imageUrl || typeof imageUrl !== 'string' || !imageUrl.trim()) {
+      reject(new Error('Invalid or empty image URL'));
+      return;
+    }
+    
     const img = new Image();
     img.crossOrigin = "anonymous";
     
@@ -232,16 +238,28 @@ const consolidateGroup = (group) => {
     const out = [];
     const seen = new Set();
     sorted.forEach(e => {
-      const items = Array.isArray(e[field]) ? e[field] : e[field] ? [e[field]] : [];
+      let items = [];
+      
+      // Handle different field value types
+      if (Array.isArray(e[field])) {
+        items = e[field].filter(item => item && String(item).trim());
+      } else if (e[field] && typeof e[field] === 'string' && e[field].trim()) {
+        items = [e[field]];
+      } else if (e[field] && typeof e[field] === 'object') {
+        // Handle object with path property (some APIs return {path: '...'})
+        if (e[field].path) items = [e[field].path];
+        else if (e[field].url) items = [e[field].url];
+      }
+      
       items.forEach(i => {
-        const key = String(i);
-        if (!seen.has(key)) {
+        const key = String(i).trim();
+        if (key && !seen.has(key)) {
           seen.add(key);
           out.push(i);
         }
       });
     });
-    return out;
+    return out.length > 0 ? out : [];
   };
 
   const uniqueIds = uniq(
@@ -331,13 +349,34 @@ export const handleDownloadFilteredPDF = async (orders = [], sortBy) => {
     const imageMaxHeight = 150;
 
     const getImageUrl = (imgPath) => {
-      if (!imgPath) return '';
-      if (imgPath.startsWith('data:')) return imgPath;
-      if (imgPath.startsWith('http://') || imgPath.startsWith('https://')) return imgPath;
-      if (imgPath.startsWith('blob:')) return imgPath;
+      // Validate input
+      if (!imgPath || typeof imgPath !== 'string') {
+        console.warn('Invalid image path:', imgPath);
+        return '';
+      }
       
+      const trimmedPath = imgPath.trim();
+      if (!trimmedPath) return '';
+      
+      // Already a complete URL
+      if (trimmedPath.startsWith('data:')) return trimmedPath;
+      if (trimmedPath.startsWith('http://') || trimmedPath.startsWith('https://')) return trimmedPath;
+      if (trimmedPath.startsWith('blob:')) return trimmedPath;
+      
+      // Handle object with path/url property
+      if (typeof imgPath === 'object' && imgPath !== null) {
+        if (imgPath.path) return getImageUrl(imgPath.path);
+        if (imgPath.url) return getImageUrl(imgPath.url);
+        return '';
+      }
+      
+      // Local path - prepend origin
       const API_BASE_URL = window.location.origin;
-      return imgPath.startsWith('/') ? `${API_BASE_URL}${imgPath}` : `${API_BASE_URL}/${imgPath}`;
+      const cleanPath = trimmedPath.startsWith('/') ? trimmedPath : `/${trimmedPath}`;
+      const fullUrl = `${API_BASE_URL}${cleanPath}`;
+      
+      console.log(`Converting local path to URL: ${trimmedPath} -> ${fullUrl}`);
+      return fullUrl;
     };
 
     let currentY = margin;
@@ -398,12 +437,25 @@ export const handleDownloadFilteredPDF = async (orders = [], sortBy) => {
 
       // COLLECT AND LOAD ALL IMAGES
       console.log(`Loading images for entry ${i + 1}...`);
-      const picturesList = Array.isArray(entry.pictures) ? entry.pictures : (entry.pictures ? [entry.pictures] : []);
-      const imagesList = Array.isArray(entry.images) ? entry.images : (entry.images ? [entry.images] : []);
-      const photosList = Array.isArray(entry.photos) ? entry.photos : (entry.photos ? [entry.photos] : []);
-      const attachmentsList = Array.isArray(entry.attachments) ? entry.attachments : (entry.attachments ? [entry.attachments] : []);
       
-      const imagePaths = [...picturesList, ...imagesList, ...photosList, ...attachmentsList].filter(Boolean);
+      // Helper to normalize image fields to array
+      const normalizeImageField = (field) => {
+        if (!field) return [];
+        if (Array.isArray(field)) return field.filter(item => item && String(item).trim());
+        if (typeof field === 'string' && field.trim()) return [field];
+        if (typeof field === 'object' && (field.path || field.url)) return [field.path || field.url];
+        return [];
+      };
+      
+      const picturesList = normalizeImageField(entry.pictures);
+      const imagesList = normalizeImageField(entry.images);
+      const photosList = normalizeImageField(entry.photos);
+      const attachmentsList = normalizeImageField(entry.attachments);
+      
+      // Merge and deduplicate all image paths
+      const allImagePaths = [...picturesList, ...imagesList, ...photosList, ...attachmentsList];
+      const uniqueImagePaths = [...new Set(allImagePaths.map(p => String(p).trim()).filter(Boolean))];
+      const imagePaths = uniqueImagePaths;
       console.log(`Found ${imagePaths.length} images to load`);
 
       const loadedImages = [];
@@ -412,12 +464,24 @@ export const handleDownloadFilteredPDF = async (orders = [], sortBy) => {
       for (const imgPath of imagePaths) {
         try {
           const imageUrl = getImageUrl(imgPath);
+          
+          // Skip if URL is empty or invalid
+          if (!imageUrl || !imageUrl.trim()) {
+            console.warn('⚠️ Empty image URL after processing, skipping:', imgPath);
+            continue;
+          }
+          
           console.log(`[${i + 1}/${consolidatedEntries.length}] Loading image:`, imageUrl);
           
           // Wrap in try-catch to handle CORS and network errors
           let base64Data;
           try {
             base64Data = await loadImageAsBase64(imageUrl);
+            
+            // Validate base64 data
+            if (!base64Data || !base64Data.startsWith('data:')) {
+              throw new Error('Invalid base64 data returned');
+            }
           } catch (loadError) {
             console.warn('⚠️ CORS/Network error loading image, skipping:', imageUrl, loadError.message);
             continue; // Skip this image and continue with next
@@ -605,12 +669,27 @@ ${entry.notes ? `Notes:\n${entry.notes}` : ''}
               const padding = 10;
               const imgWidth = data.cell.width - padding * 2;
               
+              console.log(`Rendering ${loadedImages.length} images in PDF cell`);
+              
               loadedImages.forEach((img, idx) => {
+                // Validate image data
+                if (!img || !img.dataUrl || !img.width || !img.height) {
+                  console.error(`Invalid image data at index ${idx}:`, img);
+                  return;
+                }
+                
                 const row = idx; // Each image gets its own row
                 const col = 0; // Always first column since only 1 per row
                 
                 const x = data.cell.x + padding;
                 const y = data.cell.y + padding + row * (imageMaxHeight + gap);
+                
+                // Bounds check - ensure image fits within cell
+                const maxY = data.cell.y + data.cell.height;
+                if (y > maxY) {
+                  console.warn(`Image ${idx} would render outside cell bounds, skipping`);
+                  return;
+                }
                 
                 // Calculate aspect ratio
                 const imgAspectRatio = img.width / img.height;
@@ -625,12 +704,19 @@ ${entry.notes ? `Notes:\n${entry.notes}` : ''}
                   drawWidth = imageMaxHeight * imgAspectRatio;
                 }
                 
+                // Ensure minimum size
+                if (drawWidth < 10 || drawHeight < 10) {
+                  console.warn(`Image ${idx} too small (${drawWidth}x${drawHeight}), skipping`);
+                  return;
+                }
+                
                 // Center image in container
                 const offsetX = (imgWidth - drawWidth) / 2;
                 const offsetY = (imageMaxHeight - drawHeight) / 2;
                 
                 // Draw image (no border)
                 try {
+                  console.log(`Drawing image ${idx + 1} at (${x + offsetX}, ${y + offsetY}) size ${drawWidth}x${drawHeight}`);
                   doc.addImage(
                     img.dataUrl, 
                     'JPEG', 
@@ -640,7 +726,7 @@ ${entry.notes ? `Notes:\n${entry.notes}` : ''}
                     drawHeight
                   );
                 } catch (error) {
-                  console.error('Error adding image to PDF:', error);
+                  console.error(`Error adding image ${idx} to PDF:`, error);
                 }
               });
             }

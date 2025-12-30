@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
 import {
   LayoutDashboard,
   Users,
@@ -26,7 +26,8 @@ import {
   AlertTriangle,
   Map,
   Plus,
-  X
+  X,
+  Loader2
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { technicianLocationService } from '../../services/technicianLocationService';
@@ -36,6 +37,9 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, closeMobileMen
   const { user, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
+  const sidebarRef = useRef(null);
+  const touchStartX = useRef(0);
+  const touchStartY = useRef(0);
   
   // State for technician's assigned location and tasks
   const [assignedLocation, setAssignedLocation] = useState(null);
@@ -45,6 +49,14 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, closeMobileMen
   const [showTasksSection, setShowTasksSection] = useState(false);
   const [hoveredItem, setHoveredItem] = useState(null);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [touchFeedback, setTouchFeedback] = useState(null);
+
+  // Swipe gesture handling for mobile
+  const x = useMotionValue(0);
+  const xInput = [-100, 0];
+  const opacityOutput = [0, 1];
+  const opacity = useTransform(x, xInput, opacityOutput);
 
   // Fetch technician's location and tasks if user is a technician
   useEffect(() => {
@@ -101,14 +113,67 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, closeMobileMen
     }
   };
 
+  // Mobile swipe to close
+  useEffect(() => {
+    if (!isMobile || !sidebarRef.current) return;
+
+    const handleTouchStart = (e) => {
+      touchStartX.current = e.touches[0].clientX;
+      touchStartY.current = e.touches[0].clientY;
+    };
+
+    const handleTouchMove = (e) => {
+      if (!touchStartX.current) return;
+      
+      const touchEndX = e.touches[0].clientX;
+      const touchEndY = e.touches[0].clientY;
+      const diffX = touchStartX.current - touchEndX;
+      const diffY = touchStartY.current - touchEndY;
+      
+      // Only close if horizontal swipe is dominant
+      if (Math.abs(diffX) > Math.abs(diffY) && diffX > 50) {
+        closeMobileMenu();
+      }
+    };
+
+    const handleTouchEnd = () => {
+      touchStartX.current = 0;
+      touchStartY.current = 0;
+    };
+
+    const sidebar = sidebarRef.current;
+    sidebar.addEventListener('touchstart', handleTouchStart, { passive: true });
+    sidebar.addEventListener('touchmove', handleTouchMove, { passive: true });
+    sidebar.addEventListener('touchend', handleTouchEnd, { passive: true });
+
+    return () => {
+      sidebar.removeEventListener('touchstart', handleTouchStart);
+      sidebar.removeEventListener('touchmove', handleTouchMove);
+      sidebar.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [isMobile, closeMobileMenu]);
+
+  // Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    if (isMobile) {
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = 'unset';
+      };
+    }
+  }, [isMobile]);
+
   const handleLogout = async () => {
     try {
+      setIsLoggingOut(true);
       await logout();
       // No need to navigate here as logout function handles redirection
     } catch (error) {
       console.error('Logout failed:', error);
       // Force navigation as fallback
       navigate('/login');
+    } finally {
+      setIsLoggingOut(false);
     }
   };
 
@@ -231,14 +296,46 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, closeMobileMen
         return [
           ...baseItems,
           { icon: Users, label: 'User Management', path: '/manager/users' },
-          { icon: Wrench, label: 'Work Orders', path: '/manager/work-orders' },
-          { icon: Users, label: 'Team Management', path: '/manager/team' },
-          { icon: BarChart3, label: 'Reports', path: '/manager/reports' },
-          { icon: ClipboardList, label: 'Projects', path: '/manager/projects' },
-          { icon: Calendar, label: 'Schedule', path: '/manager/schedule' },
-          { icon: FileText, label: 'Documents', path: '/manager/documents' },
-          { icon: Settings, label: 'Settings', path: '/manager/settings' },
-        ];
+     >
+      {/* Mobile Backdrop Overlay */}
+      <AnimatePresence>
+        {isMobile && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={closeMobileMenu}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
+            style={{ 
+              WebkitTapHighlightColor: 'transparent',
+              touchAction: 'none'
+            }}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Sidebar Container */}
+      <motion.div
+        ref={sidebarRef}
+        initial={isMobile ? { x: -100, opacity: 0 } : false}
+        animate={isMobile ? { x: 0, opacity: 1 } : { width: isCollapsed ? 80 : 300 }}
+        exit={isMobile ? { x: -100, opacity: 0 } : undefined}
+        transition={{ 
+          duration: 0.3, 
+          ease: [0.4, 0, 0.2, 1],
+          opacity: { duration: 0.2 }
+        }}
+        className={`bg-white shadow-2xl h-screen flex flex-col ${
+          isMobile 
+            ? 'fixed left-0 top-0 z-50 w-[85vw] max-w-[320px] sm:w-80' 
+            : 'border-r border-gray-100'
+        }`}
+        style={{
+          WebkitTapHighlightColor: 'transparent',
+          WebkitOverflowScrolling: 'touch'
+        }}
+          ];
       case 'technician':
         return [
           ...technicianBaseItems,
@@ -260,148 +357,180 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, closeMobileMen
   const getRoleColor = () => {
     switch (user.role) {
       case 'admin':
-        return 'from-red-600 to-pink-600';
-      case 'manager':
-        return 'from-purple-600 to-indigo-600';
-      case 'technician':
-        return 'from-blue-600 to-cyan-600';
-      default:
-        return 'from-gray-600 to-gray-700';
-    }
-  };
-
-  const getRoleBadgeColor = () => {
-    switch (user.role) {
-      case 'admin':
-        return 'bg-red-100 text-red-800';
-      case 'manager':
-        return 'bg-purple-100 text-purple-800';
-      case 'technician':
-        return 'bg-blue-100 text-blue-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  return (
-    <motion.div
-      initial={false}
-      animate={{ width: isCollapsed ? 80 : (isMobile ? 280 : 300) }}
-      transition={{ duration: 0.3, ease: 'easeInOut' }}
-      className={`bg-white shadow-2xl border-r border-gray-100 h-screen flex flex-col ${
-        isMobile ? 'w-full sm:w-280 fixed left-0 top-0 z-40' : ''
-      }`}
-    >
-      {/* Header */}
-      <div className="p-4 sm:p-5 lg:p-6 border-b border-gray-100 bg-gradient-to-r from-[#232249] to-[#232249]/90">
+        return 'f- Enhanced Mobile */}
+      <div className="px-4 py-3 sm:p-5 border-b border-gray-100 bg-gradient-to-r from-[#232249] to-[#1a1a3a] flex-shrink-0">
         <div className="flex items-center justify-between gap-3">
-          <AnimatePresence>
+          <AnimatePresence mode="wait">
             {!isCollapsed && (
               <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ duration: 0.2 }}
-                className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0"
+                className="flex items-center gap-3 flex-1 min-w-0"
               >
-                <div className="h-10 w-10 sm:h-11 sm:w-11 lg:h-12 lg:w-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center ring-2 ring-white/30 shadow-lg flex-shrink-0">
+                <motion.div 
+                  className="h-11 w-11 sm:h-12 sm:w-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center ring-2 ring-white/30 shadow-lg flex-shrink-0"
+                  whileHover={{ scale: 1.05, rotate: 5 }}
+                  whileTap={{ scale: 0.95 }}
+                >
                   <img 
                     src="/logo.jpg" 
-                    alt="Logo" 
-                    className="h-8 w-8 sm:h-9 sm:w-9 lg:h-10 lg:w-10 object-contain"
+                    alt="Confine Logo" 
+                    className="h-9 w-9 sm:h-10 sm:w-10 object-contain"
+                    loading="lazy"
                   />
-                </div>
+                </motion.div>
                 <div className="min-w-0 flex-1">
-                  <h1 className="text-lg sm:text-xl font-bold text-white truncate">Confine</h1>
-                  <p className="text-xs text-white/80 font-medium truncate">Management System</p>
+                  <h1 className="text-lg sm:text-xl font-bold text-white tracking-tight truncate">
+                    Confine
+                  </h1>
+                  <p className="text-[10px] sm:text-xs text-white/70 font-medium truncate">
+                    Management System
+                  </p>
                 </div>
               </motion.div>
             )}
           </AnimatePresence>
           
-          <div className="flex items-center gap-2 flex-shrink-0">
-            {isMobile && (
-              <button
+          <div className="flex items-center gap-1 flex-shrink-0">
+            {isMobile ? (
+              <motion.button
                 onClick={closeMobileMenu}
-                className="p-2.5 sm:p-2 rounded-xl hover:bg-white/20 transition-all duration-300 backdrop-blur-sm lg:hidden touch-manipulation min-w-[44px] min-h-[44px] flex items-center justify-center"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="p-2.5 rounded-xl hover:bg-white/20 active:bg-white/30 transition-colors duration-200 touch-manipulation min-w-[44px] min-h-[44px] flex items-center justify-center"
+                aria-label="Close menu"
               >
-                <X className="h-5 w-5 sm:h-5 sm:w-5 text-white" />
-              </button>
-            )}
-            {!isMobile && (
-              <button
+                <X className="h-6 w-6 text-white" strokeWidth={2.5} />
+              </motion.button>
+            ) : (
+              <motion.button
                 onClick={() => setIsCollapsed(!isCollapsed)}
-                className="p-2.5 sm:p-2 rounded-xl hover:bg-white/20 transition-all duration-300 backdrop-blur-sm touch-manipulation min-w-[44px] min-h-[44px] flex items-center justify-center"
-              >
-                {isCollapsed ? (
-                  <ChevronRight className="h-5 w-5 text-white" />
-                ) : (
-                  <ChevronLeft className="h-5 w-5 text-white" />
-                )}
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* User Profile */}
-      <div className="p-4 sm:p-5 lg:p-6 border-b border-gray-100 bg-gradient-to-br from-gray-50 to-gray-100">
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                classNa- Enhanced Mobile */}
+      <div className="px-4 py-3 sm:p-5 border-b border-gray-100 bg-gradient-to-br from-gray-50 to-white flex-shrink-0">
         <div className="flex items-center gap-3">
-          <div className="h-12 w-12 sm:h-13 sm:w-13 lg:h-14 lg:w-14 bg-gradient-to-br from-[#232249] to-[#232249]/80 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg ring-2 ring-[#232249]/20">
-            <UserCog className="h-6 w-6 sm:h-6 sm:w-6 lg:h-7 lg:w-7 text-white" />
-          </div>
-          <AnimatePresence>
+          <motion.div 
+            className="h-12 w-12 sm:h-14 sm:w-14 bg-gradient-to-br from-[#232249] to-[#1a1a3a] rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg ring-2 ring-[#232249]/10"
+            whileHover={{ scale: 1.05, rotate: 5 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <UserCog className="h-6 w-6 sm:h-7 sm:w-7 text-white" strokeWidth={2} />
+          </motion.div>
+          <AnimatePresence mode="wait">
             {!isCollapsed && (
               <motion.div
-                initial={{ opacity: 0, x: -20 }}
+                initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
+                exit={{ opacity: 0, x: -10 }}
                 transition={{ duration: 0.2 }}
                 className="flex-1 min-w-0"
               >
-                <p className="text-sm sm:text-sm font-bold text-[#232249] truncate">
+                <p className="text-sm sm:text-base font-bold text-[#232249] truncate leading-tight">
                   {user.firstName} {user.lastName}
                 </p>
-                <div className="flex items-center gap-2 mt-1">
-                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-[#232249] text-white">
-                    {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
-                  </span>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </div>
-
-      {/* Enhanced Navigation Menu with Mobile Optimization */}
-      <nav className="flex-1 px-3 sm:px-3 lg:px-4 py-4 sm:py-5 lg:py-6 space-y-1.5 sm:space-y-2 overflow-y-auto swipeable-y">
-        {menuItems.map((item, index) => {
-          const isActive = location.pathname === item.path;
-          const Icon = item.icon;
-          
-          return (
-            <motion.div
-              key={item.path}
-              initial={{ opacity: 0, x: -30 }}
+                <div className="flex items-center gap-2 mt-1.5">
+                  <motion.span 
+                    className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] sm:text-xs font-bold bg-[#232249] text-white shadow-sm"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 0.1, type: "spring", stiffness: 200 }}
+                  >
+          Navigation Menu - Highly Optimized for Mobile */}
+      <nav 
+        className="flex-1 px-3 py-4 sm:py-5 space-y-1 overflow-y-auto overscroll-contain"
+        style={{
+          WebkitOverflowScrolling: 'touch',
+          scrollbarWidth: 'thin',
+          scrollbarColor: '#232249 transparent'
+        }}
+      
+            {isMobile && (20 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.05, duration: 0.3, ease: "easeOut" }}
-              onHoverStart={() => setHoveredItem(item.path)}
-              onHoverEnd={() => setHoveredItem(null)}
+              transition={{ 
+                delay: isMobile ? index * 0.03 : index * 0.05, 
+                duration: 0.2,
+                ease: [0.4, 0, 0.2, 1]
+              }}
+              onHoverStart={() => !isMobile && setHoveredItem(item.path)}
+              onHoverEnd={() => !isMobile && setHoveredItem(null)}
             >
               <Link
                 to={item.path}
-                onClick={() => {
+                onClick={(e) => {
                   if (isMobile) {
-                    setIsAnimating(true);
+                    setTouchFeedback(item.path);
                     setTimeout(() => {
+                      setTouchFeedback(null);
                       closeMobileMenu();
-                      setIsAnimating(false);
-                    }, 200);
+                    }, 150);
                   }
                 }}
-                className={`flex items-center gap-3 px-3 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl transition-all duration-300 group touch-manipulation relative overflow-hidden ${
+                className={`flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200 group relative overflow-hidden ${
                   isActive
-                    ? `bg-gradient-to-r from-[#232249] to-[#1a1a3a] text-white mobile-shadow-xl ${!isMobile ? 'transform scale-105' : ''}`
+                    ? 'bg-gradient-to-r from-[#232249] to-[#1a1a3a] text-white shadow-lg'
+                    : 'text-gray-700 hover:bg-gray-50 active:bg-gray-100'
+                } min-h-[52px] ${touchFeedback === item.path ? 'scale-95' : ''}`}
+                style={{
+                  WebkitTapHighlightColor: 'transparent',
+                  touchAction: 'manipulation'
+                }}
+                aria-label={item.label}
+                aria-current={isActive ? 'page' : undefined}
+              >
+                {/* Icon Container */}
+                <motion.div 
+                  className={`p-2 rounded-xl ${
+                    isActive 
+                      ? 'bg-white/20 shadow-md' 
+                      : 'bg-gray-100 group-hover:bg-[#232249]/10 group-active:bg-[#232249]/20'
+                  } transition-all duration-200 flex-shrink-0`}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  <Icon 
+                    className={`h-5 w-5 ${
+                      isActive ? 'text-white' : 'text-[#232249]'
+                    } transition-colors duration-200`}
+                    strokeWidth={2}
+                  />
+                </motion.div>
+                
+                {/* Label */}
+                <AnimatePresence mode="wait">
+                  {!isCollapsed && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.15 }}
+                      className="flex-1 min-w-0"
+                    >
+                      <span className={`text-[13px] sm:text-sm font-semibold truncate block ${
+                        isActive ? 'text-white' : 'text-gray-800'
+                      }`}>
+                        {item.label}
+                      </span>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+                
+                {/* Active Indicator */}
+                {isActive && (
+                  <motion.div
+                    className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-white rounded-l-full"
+                    initial={{ x: 10, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: 0.1 }}
+                  />
+                )}
+                
+                {/* Subtle hover effect */}
+                {!isActive && (
+                  <motion.div
+                    className="absolute inset-0 rounded-xl bg-gradient-to-r from-[#232249]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                    initial={false] text-white mobile-shadow-xl ${!isMobile ? 'transform scale-105' : ''}`
                     : 'text-gray-700 hover:bg-gradient-to-r hover:from-[#232249]/10 hover:to-[#232249]/5 hover:text-[#232249] hover:mobile-shadow-lg active:bg-[#232249]/20'
                 } min-h-[48px]`} // Consistent 48px min-height for mobile touch
               >
@@ -442,58 +571,68 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, closeMobileMen
                           transition={{ delay: 0.2, duration: 0.3 }}
                         />
                       )}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-                
-                {/* Hover ripple effect */}
-                {hoveredItem === item.path && !isActive && (
-                  <motion.div
-                    className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-r from-[#232249]/5 to-[#232249]/10"
-                    initial={{ scale: 0, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    exit={{ scale: 0, opacity: 0 }}
-                    transition={{ duration: 0.3 }}
-                  />
-                )}
-                
-                {/* Active background animation */}
-                {isActive && (
-                  <motion.div
-                    className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-r from-blue-500/10 to-purple-500/10"
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ duration: 0.5, ease: "easeOut" }}
-                  />
-                )}
-              </Link>
-            </motion.div>
-          );
-        })}
-      </nav>
-
-      {/* Technician Tasks Section removed: Assigned Location tab hidden for technicians */}
-
-      {/* Enhanced Logout Button with Mobile Optimization */}
-      <div className="p-3 sm:p-3 lg:p-4 border-t border-gray-100 bg-gradient-to-br from-gray-50 to-gray-100">
+          Logout Button - Mobile Optimized */}
+      <div className="px-3 py-3 sm:p-4 border-t border-gray-100 bg-gradient-to-br from-gray-50 to-white flex-shrink-0">
         <motion.button
           onClick={() => {
             handleLogout();
             if (isMobile) closeMobileMenu();
           }}
-          whileHover={{ scale: 1.02, y: -2 }}
-          whileTap={{ scale: 0.98 }}
-          className="flex items-center gap-3 w-full px-3 py-2.5 sm:py-3 text-red-600 hover:bg-gradient-to-r hover:from-red-50 hover:to-red-100 rounded-xl sm:rounded-2xl transition-all duration-300 group hover:mobile-shadow-lg touch-manipulation relative overflow-hidden min-h-[48px]"
+          disabled={isLoggingOut}
+          whileHover={!isMobile ? { scale: 1.02 } : {}}
+          whileTap={{ scale: 0.96 }}
+          className={`flex items-center gap-3 w-full px-3 py-3 text-red-600 hover:bg-gradient-to-r hover:from-red-50 hover:to-red-100 active:bg-red-100 rounded-xl transition-all duration-200 group relative overflow-hidden min-h-[52px] ${
+            isLoggingOut ? 'opacity-60 cursor-not-allowed' : ''
+          }`}
+          style={{
+            WebkitTapHighlightColor: 'transparent',
+            touchAction: 'manipulation'
+          }}
+          aria-label="Logout"
         >
-          {/* Icon container with enhanced effects */}
+          {/* Icon container */}
           <motion.div 
-            className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-red-100 group-hover:bg-red-200 transition-all duration-300 flex-shrink-0 relative overflow-hidden"
-            whileHover={{ scale: 1.1, rotate: -5 }}
+            className="p-2 rounded-xl bg-red-100 group-hover:bg-red-200 group-active:bg-red-300 transition-all duration-200 flex-shrink-0"
+            whileTap={{ rotate: -10 }}
           >
-            <LogOut className="h-5 w-5 transition-all duration-300" />
-            
-            {/* Icon glow effect */}
-            <div className="absolute inset-0 rounded-lg sm:rounded-xl bg-gradient-to-br from-red-400/20 to-pink-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            {isLoggingOut ? (
+              <Loader2 className="h-5 w-5 animate-spin" strokeWidth={2} />
+            ) : (
+              <LogOut className="h-5 w-5" strokeWidth={2} />
+            )}
+          </motion.div>
+          
+          {/* Label */}
+          <AnimatePresence mode="wait">
+            {!isCollapsed && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.15 }}
+                className="flex-1 min-w-0 text-left"
+              >
+                <span className="text-[13px] sm:text-sm font-semibold block text-red-600">
+                  {isLoggingOut ? 'Signing out...' : 'Logout'}
+                </span>
+                {!isLoggingOut && (
+                  <span className="text-[11px] text-red-500/70 group-hover:text-red-600 transition-colors duration-200">
+                    Sign out safely
+                  </span>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
+          
+          {/* Subtle hover effect */}
+          <motion.div
+            className="absolute inset-0 rounded-xl bg-gradient-to-r from-red-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+            initial={false}
+          />
+        </motion.button>
+      </div>
+      </motion.div>
+    </ className="absolute inset-0 rounded-lg sm:rounded-xl bg-gradient-to-br from-red-400/20 to-pink-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           </motion.div>
           
           {/* Label with enhanced animation */}

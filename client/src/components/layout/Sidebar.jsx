@@ -60,6 +60,42 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, closeMobileMen
     }
   }, [location.pathname, isMobile, closeMobileMenu]);
 
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (isMobile) {
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
+      document.body.style.height = '100%';
+    } else {
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+      document.body.style.height = '';
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+      document.body.style.height = '';
+    };
+  }, [isMobile]);
+
+  // Handle escape key to close mobile menu
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === 'Escape' && isMobile && closeMobileMenu) {
+        closeMobileMenu();
+      }
+    };
+
+    if (isMobile) {
+      document.addEventListener('keydown', handleEscape);
+      return () => document.removeEventListener('keydown', handleEscape);
+    }
+  }, [isMobile, closeMobileMenu]);
+
   const fetchTechnicianData = async () => {
     try {
       setTasksLoading(true);
@@ -300,9 +336,29 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, closeMobileMen
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            onClick={closeMobileMenu}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
-            style={{ touchAction: 'none' }}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              if (closeMobileMenu) {
+                closeMobileMenu();
+              }
+            }}
+            onTouchEnd={(e) => {
+              e.preventDefault();
+              if (closeMobileMenu) {
+                closeMobileMenu();
+              }
+            }}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
+            style={{ 
+              touchAction: 'none',
+              WebkitTapHighlightColor: 'transparent',
+              cursor: 'pointer',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0
+            }}
           />
         )}
       </AnimatePresence>
@@ -346,8 +402,22 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, closeMobileMen
           <div className="flex items-center gap-2 flex-shrink-0">
             {isMobile && (
               <button
-                onClick={closeMobileMenu}
-                className="p-2.5 sm:p-2 rounded-xl hover:bg-white/20 transition-all duration-300 backdrop-blur-sm lg:hidden touch-manipulation min-w-[44px] min-h-[44px] flex items-center justify-center"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  if (closeMobileMenu) {
+                    closeMobileMenu();
+                  }
+                }}
+                onTouchEnd={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  if (closeMobileMenu) {
+                    closeMobileMenu();
+                  }
+                }}
+                className="p-2.5 sm:p-2 rounded-xl hover:bg-white/20 active:bg-white/30 transition-all duration-300 backdrop-blur-sm lg:hidden touch-manipulation min-w-[44px] min-h-[44px] flex items-center justify-center"
+                aria-label="Close menu"
               >
                 <X className="h-5 w-5 sm:h-5 sm:w-5 text-white" />
               </button>
@@ -414,9 +484,12 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, closeMobileMen
             >
               <Link
                 to={item.path}
-                onClick={() => {
-                  if (isMobile) {
-                    closeMobileMenu();
+                onClick={(e) => {
+                  if (isMobile && closeMobileMenu) {
+                    // Small delay to allow navigation to start
+                    setTimeout(() => {
+                      closeMobileMenu();
+                    }, 100);
                   }
                 }}
                 className={`flex items-center gap-3 px-3 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl transition-all duration-300 group touch-manipulation relative overflow-hidden ${
@@ -497,9 +570,12 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, closeMobileMen
       {/* Enhanced Logout Button with Mobile Optimization */}
       <div className="p-3 sm:p-3 lg:p-4 border-t border-gray-100 bg-gradient-to-br from-gray-50 to-gray-100">
         <motion.button
-          onClick={() => {
+          onClick={(e) => {
+            e.preventDefault();
             handleLogout();
-            if (isMobile) closeMobileMenu();
+            if (isMobile && closeMobileMenu) {
+              closeMobileMenu();
+            }
           }}
           whileHover={{ scale: 1.02, y: -2 }}
           whileTap={{ scale: 0.98 }}

@@ -336,28 +336,21 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, closeMobileMen
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
+            onClick={() => {
               if (closeMobileMenu) {
                 closeMobileMenu();
               }
             }}
-            onTouchEnd={(e) => {
-              e.preventDefault();
+            onTouchStart={() => {
               if (closeMobileMenu) {
                 closeMobileMenu();
               }
             }}
             className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
             style={{ 
-              touchAction: 'none',
+              touchAction: 'auto',
               WebkitTapHighlightColor: 'transparent',
-              cursor: 'pointer',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0
+              cursor: 'pointer'
             }}
           />
         )}
@@ -402,15 +395,13 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, closeMobileMen
           <div className="flex items-center gap-2 flex-shrink-0">
             {isMobile && (
               <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
+                type="button"
+                onClick={() => {
                   if (closeMobileMenu) {
                     closeMobileMenu();
                   }
                 }}
-                onTouchEnd={(e) => {
-                  e.preventDefault();
+                onTouchStart={(e) => {
                   e.stopPropagation();
                   if (closeMobileMenu) {
                     closeMobileMenu();
@@ -484,12 +475,9 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, closeMobileMen
             >
               <Link
                 to={item.path}
-                onClick={(e) => {
+                onClick={() => {
                   if (isMobile && closeMobileMenu) {
-                    // Small delay to allow navigation to start
-                    setTimeout(() => {
-                      closeMobileMenu();
-                    }, 100);
+                    closeMobileMenu();
                   }
                 }}
                 className={`flex items-center gap-3 px-3 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl transition-all duration-300 group touch-manipulation relative overflow-hidden ${
@@ -570,8 +558,8 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, closeMobileMen
       {/* Enhanced Logout Button with Mobile Optimization */}
       <div className="p-3 sm:p-3 lg:p-4 border-t border-gray-100 bg-gradient-to-br from-gray-50 to-gray-100">
         <motion.button
-          onClick={(e) => {
-            e.preventDefault();
+          type="button"
+          onClick={() => {
             handleLogout();
             if (isMobile && closeMobileMenu) {
               closeMobileMenu();

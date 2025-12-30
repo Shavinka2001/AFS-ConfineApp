@@ -1057,7 +1057,8 @@ ${entry.notes ? `Notes:\n${entry.notes}` : ''}
     currentY += 35; // Move below header bar with spacing
 
     // 6. Render surveyor signature blocks
-    if (allSurveyors.LineLength = pageWidth - (margin * 2); // Full width signature line
+    if (allSurveyors.size > 0) {
+      const signatureLineLength = pageWidth - (margin * 2); // Full width signature line
       const currentDate = new Date().toLocaleDateString(); // Get current date
       const blockHeight = 45; // Height per signature block
       
@@ -1102,8 +1103,7 @@ ${entry.notes ? `Notes:\n${entry.notes}` : ''}
         currentY += 30; // Space before next surveyor block
       });
       
-      console.log(`✅ All signature blocks rendered. Final Y position: ${currentY}` currentY += 30; // Space before next surveyor block
-      });
+      console.log(`✅ All signature blocks rendered. Final Y position: ${currentY}`);
     } else {
       doc.setFontSize(10);
       doc.setFont('helvetica', 'italic');

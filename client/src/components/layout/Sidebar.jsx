@@ -356,7 +356,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, closeMobileMen
 
   return (
     <>
-      {/* Mobile Backdrop Overlay - Enhanced */}
+      {/* Mobile Backdrop Overlay - Fully Clickable */}
       <AnimatePresence>
         {isMobile && (
           <motion.div
@@ -364,42 +364,48 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, closeMobileMen
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
-            onClick={() => {
-              if (closeMobileMenu) {
-                closeMobileMenu();
-              }
+            onClick={(e) => {
+              e.stopPropagation();
+              closeMobileMenu && closeMobileMenu();
             }}
-            onTouchStart={() => {
-              if (closeMobileMenu) {
-                closeMobileMenu();
-              }
-            }}
-            className="fixed inset-0 bg-gradient-to-br from-black/70 via-black/60 to-black/70 backdrop-blur-md z-40"
+            className="fixed inset-0 bg-gradient-to-br from-black/80 via-black/70 to-black/80 backdrop-blur-md z-40"
             style={{ 
               touchAction: 'auto',
               WebkitTapHighlightColor: 'transparent',
-              cursor: 'pointer'
+              cursor: 'pointer',
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              width: '100vw',
+              height: '100vh'
             }}
           />
         )}
       </AnimatePresence>
 
-      {/* Sidebar Container - Enhanced Mobile */}
+      {/* Sidebar Container - Enhanced Mobile with Better Close */}
       <motion.div
         initial={isMobile ? { x: '-100%' } : false}
         animate={isMobile ? { x: 0 } : { width: isCollapsed ? 80 : 300 }}
         exit={isMobile ? { x: '-100%' } : undefined}
         transition={{ 
-          duration: 0.35, 
+          duration: 0.3, 
           ease: [0.4, 0, 0.2, 1],
           type: 'spring',
-          stiffness: 300,
-          damping: 30
+          stiffness: 350,
+          damping: 35
         }}
-        onTouchStart={isMobile ? handleTouchStart : undefined}
-        onTouchMove={isMobile ? handleTouchMove : undefined}
-        onTouchEnd={isMobile ? handleTouchEnd : undefined}
-        className={`bg-white shadow-2xl border-r border-gray-100 h-screen flex flex-col ${
+        drag={isMobile ? "x" : false}
+        dragConstraints={{ left: -300, right: 0 }}
+        dragElastic={0.2}
+        onDragEnd={(e, { offset, velocity }) => {
+          if (isMobile && (offset.x < -100 || velocity.x < -500)) {
+            closeMobileMenu && closeMobileMenu();
+          }
+        }}
+        className={`bg-white shadow-2xl border-r border-gray-100 h-screen flex flex-col relative ${
           isMobile ? 'w-[85vw] max-w-[320px] fixed left-0 top-0 z-50' : ''
         }`}
         style={isMobile ? {
@@ -407,6 +413,16 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, closeMobileMen
           paddingBottom: 'env(safe-area-inset-bottom)'
         } : {}}
       >
+      {/* Swipe Indicator - Mobile Only */}
+      {isMobile && (
+        <div className="absolute top-1/2 -translate-y-1/2 right-0 w-1 h-20 bg-gradient-to-b from-transparent via-gray-400/50 to-transparent rounded-l-full pointer-events-none">
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-b from-transparent via-white to-transparent"
+            animate={{ x: [0, -3, 0] }}
+            transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+          />
+        </div>
+      )}
       {/* Header - Professional & Mobile-Responsive */}
       <div className="relative px-4 py-4 sm:px-5 sm:py-5 lg:px-6 lg:py-6 border-b border-white/10 bg-gradient-to-br from-[#1a1a3e] via-[#232249] to-[#2a2a5e] shadow-2xl overflow-hidden">
         {/* Animated Background Pattern */}
@@ -466,35 +482,38 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, closeMobileMen
           {/* Right Side: Action Buttons */}
           <div className="flex items-center gap-2 flex-shrink-0">
             {isMobile ? (
-              /* Mobile: Close Button (X) */
+              /* Mobile: Large Close Button (X) - Enhanced */
               <motion.button
                 type="button"
-                onClick={() => {
-                  if (closeMobileMenu) {
-                    closeMobileMenu();
-                  }
-                }}
-                onTouchStart={(e) => {
+                onClick={(e) => {
+                  e.preventDefault();
                   e.stopPropagation();
-                  if (closeMobileMenu) {
-                    closeMobileMenu();
-                  }
+                  closeMobileMenu && closeMobileMenu();
                 }}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="group relative p-3 rounded-2xl bg-white/10 hover:bg-white/20 active:bg-white/25 backdrop-blur-xl transition-all duration-300 touch-manipulation min-w-[48px] min-h-[48px] flex items-center justify-center ring-2 ring-white/20 hover:ring-white/30 shadow-xl hover:shadow-2xl"
+                whileHover={{ scale: 1.08 }}
+                whileTap={{ scale: 0.92 }}
+                className="group relative p-4 rounded-2xl bg-red-500/20 hover:bg-red-500/30 active:bg-red-500/40 backdrop-blur-xl transition-all duration-200 touch-manipulation min-w-[52px] min-h-[52px] flex items-center justify-center ring-2 ring-red-400/40 hover:ring-red-400/60 shadow-2xl hover:shadow-red-500/50"
                 aria-label="Close navigation menu"
               >
-                {/* Button Glow Effect */}
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/20 via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                {/* Pulsing Background */}
+                <motion.div 
+                  className="absolute inset-0 rounded-2xl bg-red-500/30"
+                  animate={{ scale: [1, 1.1, 1], opacity: [0.5, 0.8, 0.5] }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                />
                 
-                {/* X Icon with Rotation Animation */}
+                {/* X Icon - Large & Bold */}
                 <motion.div
-                  whileHover={{ rotate: 90 }}
-                  transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+                  animate={{ rotate: [0, 180, 360] }}
+                  transition={{ duration: 0.5 }}
                 >
-                  <X className="h-6 w-6 text-white drop-shadow-lg" strokeWidth={2.5} />
+                  <X className="h-7 w-7 text-white drop-shadow-2xl" strokeWidth={3} />
                 </motion.div>
+                
+                {/* Close Text Hint */}
+                <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-black/90 text-white text-xs px-3 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none">
+                  Tap to close
+                </div>
               </motion.button>
             ) : (
               /* Desktop: Collapse Toggle Button (Chevron) */

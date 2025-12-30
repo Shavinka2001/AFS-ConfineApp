@@ -331,43 +331,183 @@ const ManagerWorkOrdersTable = ({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
         {/* Mobile-Responsive Header */}
-        <div className="bg-gradient-to-r from-[#232249] to-[#2d2d5f] rounded-2xl sm:rounded-3xl shadow-xl p-4 sm:p-6">
-          <div className="flex flex-col gap-4 sm:gap-0 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-3 sm:gap-4">
-              <div className="bg-white/15 backdrop-blur-sm rounded-xl p-2 sm:p-3 border border-white/20 shrink-0">
-                <FileText className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 text-white" />
+        <div className="bg-gradient-to-r from-[#232249] to-[#2d2d5f] rounded-2xl sm:rounded-3xl shadow-xl p-4 md:p-6">
+          <div className="flex flex-col gap-4 md:gap-0 md:flex-row md:items-center md:justify-between">
+            <div className="flex items-center gap-3 md:gap-4">
+              <div className="bg-white/15 backdrop-blur-sm rounded-xl p-2 md:p-3 border border-white/20 shrink-0">
+                <FileText className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 text-white" />
               </div>
               <div className="min-w-0">
-                <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-white mb-1 truncate">
+                <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-white mb-1 truncate">
                   Work Orders Management
                 </h2>
-                <p className="text-white/70 text-xs sm:text-sm">
+                <p className="text-white/70 text-sm md:text-base">
                   Manage confined space assessments
                 </p>
               </div>
             </div>
             
             {/* Mobile-Responsive Action Buttons */}
-            <div className="flex items-center gap-2 sm:gap-3 overflow-x-auto">
+            <div className="flex items-center gap-2 md:gap-3">
               <button
                 onClick={handleDeleteAllOrders}
-                className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 bg-red-600/80 text-white rounded-xl hover:bg-red-700 transition-all duration-200 border border-red-500/20 hover:border-red-400 touch-manipulation whitespace-nowrap"
+                className="flex items-center gap-2 px-4 py-3 min-h-[48px] bg-red-600/80 text-white rounded-xl hover:bg-red-700 active:scale-95 transition-all duration-200 border border-red-500/20 hover:border-red-400 touch-manipulation whitespace-nowrap shadow-sm hover:shadow-md"
                 title="Delete All Work Orders"
                 disabled={workOrders.length === 0}
               >
                 <Trash2 className="w-4 h-4 shrink-0" />
-                <span className="text-xs sm:text-sm font-medium">Delete All</span>
+                <span className="text-sm font-semibold">Delete All</span>
               </button>
             </div>
           </div>
         </div>
 
-      {/* Mobile-Responsive Table Container */}
-      <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
-        <div className="table-responsive overflow-x-auto -webkit-overflow-scrolling-touch">
-          <table className="w-full min-w-[800px]">
+      {/* Mobile Card View (< md screens) */}
+      <div className="block md:hidden space-y-4">
+        {workOrders.map((order, index) => (
+          <div
+            key={order.id || order._id}
+            className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
+          >
+            {/* Card Header */}
+            <div className="p-4 bg-gradient-to-r from-gray-50 to-white border-b border-gray-100">
+              <div className="flex items-start justify-between gap-3 mb-3">
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-base font-bold text-gray-900 mb-1">
+                    {order.workOrderId || order.uniqueId || `WO-${new Date(order.createdAt).getFullYear()}-${String(order.id || order._id).slice(-4)}`}
+                  </h3>
+                  <p className="text-sm text-gray-600 line-clamp-2">
+                    {order.building || 'Unknown Building'} - {order.spaceName || 'Unnamed Space'}
+                  </p>
+                </div>
+                <div className="relative flex-shrink-0">
+                  <button
+                    onClick={() => setActionMenuOpen(actionMenuOpen === (order.id || order._id) ? null : (order.id || order._id))}
+                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors touch-manipulation min-h-[44px] min-w-[44px] flex items-center justify-center active:scale-95"
+                  >
+                    <MoreVertical className="h-5 w-5 text-gray-600" />
+                  </button>
+                  {actionMenuOpen === (order.id || order._id) && (
+                    <>
+                      <div className="fixed inset-0 z-40" onClick={() => setActionMenuOpen(null)} />
+                      <div className="absolute right-0 top-12 z-50 bg-white rounded-xl shadow-xl border border-gray-200 py-2 min-w-[180px]">
+                        <button
+                          onClick={() => { onView && onView(order); setActionMenuOpen(null); }}
+                          className="w-full px-4 py-3 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3 transition-colors touch-manipulation"
+                        >
+                          <Eye className="h-4 w-4 text-blue-600" />
+                          <span>View Details</span>
+                        </button>
+                        <button
+                          onClick={() => { handleEditOrder(order); setActionMenuOpen(null); }}
+                          className="w-full px-4 py-3 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3 transition-colors touch-manipulation"
+                        >
+                          <Edit className="h-4 w-4 text-green-600" />
+                          <span>Edit</span>
+                        </button>
+                        <button
+                          onClick={() => { handleDeleteOrder(order.id || order._id); setActionMenuOpen(null); }}
+                          className="w-full px-4 py-3 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-3 transition-colors touch-manipulation"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                          <span>Delete</span>
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+              
+              {/* Status & Priority Badges */}
+              <div className="flex flex-wrap gap-2">
+                <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border ${getPriorityColor(order.priority)}`}>
+                  {order.priority || 'medium'}
+                </span>
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border bg-blue-100 text-blue-700 border-blue-200">
+                  {order.isConfinedSpace ? 'Confined Space' : 'Standard'}
+                </span>
+              </div>
+            </div>
+
+            {/* Card Body */}
+            <div className="p-4 space-y-3">
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <div>
+                  <p className="text-gray-500 text-xs font-medium mb-1">Technician</p>
+                  <p className="text-gray-900 font-medium truncate">{order.technician || 'Unknown'}</p>
+                </div>
+                <div>
+                  <p className="text-gray-500 text-xs font-medium mb-1">Survey Date</p>
+                  <p className="text-gray-900 font-medium">{formatDate(order.surveyDate || order.createdAt)}</p>
+                </div>
+              </div>
+              
+              {order.locationDescription && (
+                <div>
+                  <p className="text-gray-500 text-xs font-medium mb-1">Location</p>
+                  <p className="text-gray-700 text-sm line-clamp-2">{order.locationDescription}</p>
+                </div>
+              )}
+
+              {/* Expandable Details */}
+              <button
+                onClick={() => toggleExpand(order.id || order._id)}
+                className="w-full flex items-center justify-between px-4 py-2.5 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors touch-manipulation min-h-[44px]"
+              >
+                <span className="text-sm font-semibold text-gray-700">
+                  {expandedRows.has(order.id || order._id) ? 'Hide Details' : 'Show Details'}
+                </span>
+                {expandedRows.has(order.id || order._id) ? (
+                  <ChevronUp className="h-4 w-4 text-gray-600" />
+                ) : (
+                  <ChevronDown className="h-4 w-4 text-gray-600" />
+                )}
+              </button>
+
+              {/* Expanded Content */}
+              {expandedRows.has(order.id || order._id) && (
+                <div className="space-y-3 pt-3 border-t border-gray-200">
+                  <div className="grid grid-cols-2 gap-3 text-xs">
+                    <div className="bg-gray-50 rounded-lg p-3">
+                      <p className="text-gray-500 font-medium mb-1">Confined Space</p>
+                      <p className="text-gray-900 font-semibold">{order.isConfinedSpace ? 'Yes' : 'No'}</p>
+                    </div>
+                    <div className="bg-gray-50 rounded-lg p-3">
+                      <p className="text-gray-500 font-medium mb-1">Permit Required</p>
+                      <p className="text-gray-900 font-semibold">{order.permitRequired ? 'Yes' : 'No'}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div className="flex gap-2 pt-2">
+                <button
+                  onClick={() => onView && onView(order)}
+                  className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 min-h-[48px] bg-[#232249] text-white rounded-xl hover:bg-[#1a1a3e] active:scale-95 transition-all duration-200 shadow-sm hover:shadow-md touch-manipulation"
+                >
+                  <Eye className="h-4 w-4" />
+                  <span className="text-sm font-semibold">View</span>
+                </button>
+                <button
+                  onClick={() => handleEditOrder(order)}
+                  className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 min-h-[48px] bg-white text-gray-700 border-2 border-gray-200 rounded-xl hover:bg-gray-50 active:scale-95 transition-all duration-200 shadow-sm hover:shadow-md touch-manipulation"
+                >
+                  <Edit className="h-4 w-4" />
+                  <span className="text-sm font-semibold">Edit</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Desktop Table View (>= md screens) */}
+      <div className="hidden md:block bg-white rounded-2xl sm:rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full">
             <thead>
               <tr style={{ backgroundColor: '#232249' }}>
                 <th className="px-3 sm:px-4 py-3 sm:py-4 text-left text-xs font-bold text-white uppercase tracking-wider">

@@ -387,9 +387,8 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, isMobileMenuOp
 
       {/* Sidebar Container - Enhanced Mobile with Proper Open/Close States */}
       <motion.div
-        initial={isMobile ? { x: '-100%' } : false}
-        animate={isMobile ? { x: isMobileMenuOpen ? 0 : '-100%' } : { width: isCollapsed ? 80 : 300 }}
-        exit={isMobile ? { x: '-100%' } : undefined}
+        initial={isMobile ? false : false}
+        animate={isMobile ? {} : { width: isCollapsed ? 80 : 300 }}
         transition={{
           duration: 0.3,
           ease: [0.4, 0, 0.2, 1],
@@ -405,14 +404,16 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, isMobileMenuOp
             closeMobileMenu && closeMobileMenu();
           }
         }}
-        className={`bg-white shadow-2xl border-r border-gray-100 flex flex-col relative ${
-          isMobile ? 'fixed inset-y-0 left-0 z-50 h-full w-[85vw] max-w-[320px]' : ''
+        className={`bg-white shadow-2xl border-r border-gray-100 flex flex-col ${
+          isMobile 
+            ? `fixed inset-y-0 left-0 z-50 h-full w-[85vw] max-w-[320px] transition-transform duration-300 ease-in-out ${
+                isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+              }`
+            : 'relative'
         }`}
         style={isMobile ? {
           paddingTop: 'env(safe-area-inset-top)',
-          paddingBottom: 'env(safe-area-inset-bottom)',
-          transform: isMobileMenuOpen ? 'translateX(0)' : 'translateX(-100%)',
-          transition: 'transform 0.3s ease-in-out'
+          paddingBottom: 'env(safe-area-inset-bottom)'
         } : {}}
       >
       {/* Swipe Indicator - Mobile Only (when open) */}

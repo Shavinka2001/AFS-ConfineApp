@@ -148,11 +148,17 @@ const loadImageAsBase64 = (imageUrl) => {
         
         console.log(`🌐 [loadImageAsBase64] Fetching with headers:`, Object.keys(headers));
         
-        const response = await fetch(imageUrl, { 
+        const fetchOptions = { 
           method: 'GET',
           headers,
-          credentials: 'include' // Include cookies for session-based auth
-        });
+          credentials: 'include', // Include cookies for session-based auth
+          mode: 'cors', // Explicitly set CORS mode
+          cache: 'no-cache' // Prevent caching issues
+        };
+        
+        console.log(`🔧 [loadImageAsBase64] Fetch options:`, fetchOptions);
+        
+        const response = await fetch(imageUrl, fetchOptions);
         
         console.log(`📡 [loadImageAsBase64] Fetch response status: ${response.status} ${response.statusText}`);
         console.log(`📡 [loadImageAsBase64] Content-Type: ${response.headers.get('content-type')}`);
@@ -470,20 +476,55 @@ export const handleDownloadFilteredPDF = async (orders = [], sortBy) => {
       console.log(`🔍 [getImageUrl] Current origin: ${currentOrigin}`);
       console.log(`🔍 [getImageUrl] Current pathname: ${currentPath}`);
       
-      // Determine backend base URL
-      // Option 1: Check for environment variable
-      const envBackendUrl = import.meta.env?.VITE_API_BASE_URL || import.meta.env?.VITE_BACKEND_URL;
+      // Determine backend base URL with priority:
+      // 1. Environment variables (VITE_API_BASE_URL, VITE_BACKEND_URL)
+      // 2. Detect API port pattern (common patterns: :3000, :5000, :8080, etc.)
+      // 3. Use current origin as fallback
       
-      // Option 2: Use current origin (works for same-domain setup)
-      // Option 3: Detect if we're on admin subdomain and adjust
-      let API_BASE_URL = envBackendUrl || currentOrigin;
+      const envBackendUrl = import.meta.env?.VITE_API_BASE_URL || 
+                           import.meta.env?.VITE_BACKEND_URL ||
+                           import.meta.env?.VITE_API_URL;
+      
+      let API_BASE_URL;
+      
+      if (envBackendUrl) {
+        // Use environment variable if available
+        API_BASE_URL = envBackendUrl;
+        console.log(`✅ [getImageUrl] Using env backend URL: ${API_BASE_URL}`);
+      } else {
+        // Auto-detect backend URL
+        const currentPort = window.location.port;
+        const currentProtocol = window.location.protocol;
+        const currentHostname = window.location.hostname;
+        
+        console.log(`🔍 [getImageUrl] Auto-detecting backend - Protocol: ${currentProtocol}, Hostname: ${currentHostname}, Port: ${currentPort}`);
+        
+        // If frontend is on a specific port, backend might be on a different port
+        // Common patterns: frontend on 5173 (Vite), backend on 3000/5000/8080
+        if (currentPort && (currentPort === '5173' || currentPort === '3000' || currentPort === '4173')) {
+          // Assume backend is on port 5000 (common Node.js pattern)
+          const backendPort = '5000';
+          API_BASE_URL = `${currentProtocol}//${currentHostname}:${backendPort}`;
+          console.log(`🔧 [getImageUrl] Detected dev environment, assuming backend at: ${API_BASE_URL}`);
+        } else if (currentPath.includes('/admin') || currentPath.includes('/manager')) {
+          // In production, admin might be on subdomain or path
+          // Try to use same origin but log warning
+          API_BASE_URL = currentOrigin;
+          console.log(`⚠️ [getImageUrl] Admin context detected, using current origin: ${API_BASE_URL}`);
+          console.log(`⚠️ [getImageUrl] If images fail, set VITE_API_BASE_URL environment variable`);
+        } else {
+          // Default to current origin
+          API_BASE_URL = currentOrigin;
+          console.log(`🔍 [getImageUrl] Using current origin as backend: ${API_BASE_URL}`);
+        }
+      }
       
       // If path starts with /uploads/, it's likely a backend static file
       const cleanPath = trimmedPath.startsWith('/') ? trimmedPath : `/${trimmedPath}`;
       const fullUrl = `${API_BASE_URL}${cleanPath}`;
       
       console.log(`✅ [getImageUrl] Constructed URL: ${trimmedPath} -> ${fullUrl}`);
-      console.log(`🔍 [getImageUrl] Using base URL: ${API_BASE_URL}`);
+      console.log(`🔍 [getImageUrl] Final base URL used: ${API_BASE_URL}`);
       
       return fullUrl;
     };
@@ -548,11 +589,12 @@ export const handleDownloadFilteredPDF = async (orders = [], sortBy) => {
       console.log(`\n${'='.repeat(60)}`);
       console.log(`📸 Loading images for entry ${i + 1}/${consolidatedEntries.length}`);
       console.log(`🔍 Current user role/context: ${window.location.pathname}`);
+      console.log(`🔍 Full Entry Object:`, entry);
       console.log(`🔍 Data source analysis:`);
-      console.log('   - pictures:', entry.pictures);
-      console.log('   - images:', entry.images);
-      console.log('   - photos:', entry.photos);
-      console.log('   - attachments:', entry.attachments);
+      console.log('   - pictures:', entry.pictures, '(type:', typeof entry.pictures, ', isArray:', Array.isArray(entry.pictures), ')');
+      console.log('   - images:', entry.images, '(type:', typeof entry.images, ', isArray:', Array.isArray(entry.images), ')');
+      console.log('   - photos:', entry.photos, '(type:', typeof entry.photos, ', isArray:', Array.isArray(entry.photos), ')');
+      console.log('   - attachments:', entry.attachments, '(type:', typeof entry.attachments, ', isArray:', Array.isArray(entry.attachments), ')');
       console.log(`${'='.repeat(60)}\n`);
       
       // Helper to normalize image fields to array
@@ -569,11 +611,29 @@ export const handleDownloadFilteredPDF = async (orders = [], sortBy) => {
       const photosList = normalizeImageField(entry.photos);
       const attachmentsList = normalizeImageField(entry.attachments);
       
+      console.log(`🔍 [Normalized Results]`);
+      console.log('   - picturesList:', picturesList.length, 'items', picturesList);
+      console.log('   - imagesList:', imagesList.length, 'items', imagesList);
+      console.log('   - photosList:', photosList.length, 'items', photosList);
+      console.log('   - attachmentsList:', attachmentsList.length, 'items', attachmentsList);
+      
       // Merge and deduplicate all image paths
       const allImagePaths = [...picturesList, ...imagesList, ...photosList, ...attachmentsList];
       const uniqueImagePaths = [...new Set(allImagePaths.map(p => String(p).trim()).filter(Boolean))];
       const imagePaths = uniqueImagePaths;
+      
+      console.log(`📊 [Image Path Summary]`);
+      console.log('   - Total paths before dedup:', allImagePaths.length);
+      console.log('   - Unique paths after dedup:', imagePaths.length);
+      console.log('   - Final image paths:', imagePaths);
       console.log(`Found ${imagePaths.length} images to load`);
+      
+      if (imagePaths.length === 0) {
+        console.warn(`⚠️ [WARNING] No images found in entry ${i + 1}!`);
+        console.warn('   ❌ Check if Admin API response includes image fields.');
+        console.warn('   🔍 Compare with Technician API response structure.');
+        console.warn('   📦 Entry object:', entry);
+      }
 
       const loadedImages = [];
       
@@ -976,32 +1036,31 @@ ${entry.notes ? `Notes:\n${entry.notes}` : ''}
       currentY += 15;
     }
 
-    // FOOTER WITH PAGE NUMBERS
+    // FOOTER WITH PAGE NUMBERS - Professional styling
     const totalPages = doc.internal.getNumberOfPages();
+    const footerLineY = pageHeight - 25; // Position of separator line
+    const footerTextY = pageHeight - 12; // Position of footer text (13pt below line)
+    
     for (let i = 1; i <= totalPages; i++) {
       doc.setPage(i);
-      doc.setFontSize(9);
+      
+      // Draw thin, light gray horizontal separator line
+      doc.setDrawColor(220, 220, 220); // Light gray color
+      doc.setLineWidth(0.5); // Thin line
+      doc.line(margin, footerLineY, pageWidth - margin, footerLineY);
+      
+      // Set footer text styling
+      doc.setFontSize(8); // Smaller, elegant font size
       doc.setFont('helvetica', 'normal');
-      doc.setTextColor(100, 100, 100);
+      doc.setTextColor(120, 120, 120); // Neutral gray color
       
-      // Footer line
-      doc.setDrawColor(200, 200, 200);
-      doc.line(margin, pageHeight - 15, pageWidth - margin, pageHeight - 15);
+      // Generated timestamp - far left, below line
+      const generatedText = `Generated: ${new Date().toLocaleString()}`;
+      doc.text(generatedText, margin, footerTextY);
       
-      // Page number
-      doc.text(
-        `Page ${i} of ${totalPages}`, 
-        pageWidth / 2, 
-        pageHeight - 10, 
-        { align: 'center' }
-      );
-      
-      // Generation date
-      doc.text(
-        `Generated: ${new Date().toLocaleString()}`, 
-        margin, 
-        pageHeight - 10
-      );
+      // Page indicator - far right, below line
+      const pageText = `Page ${i} of ${totalPages}`;
+      doc.text(pageText, pageWidth - margin, footerTextY, { align: 'right' });
     }
 
     // Save PDF with dynamic filename

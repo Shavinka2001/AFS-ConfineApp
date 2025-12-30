@@ -1013,34 +1013,36 @@ ${entry.notes ? `Notes:\n${entry.notes}` : ''}
     }
 
     // SIGNATURE SECTION
-    // 1. Capture Table End with proper fallback
-    const tableEnd = doc.previousAutoTable?.finalY || doc.lastAutoTable?.finalY || currentY;
-    console.log(`Table ended at: ${tableEnd}`);
+    // 1. CRITICAL FIX: Explicitly capture the last table's final Y position
+    const tableEnd = doc.lastAutoTable?.finalY || doc.previousAutoTable?.finalY || currentY;
+    console.log(`📍 Last table ended at Y position: ${tableEnd}`);
     
-    // 2. Get unique surveyors to calculate section height
+    // 2. Get unique surveyors to calculate section height (use fullOrders to get fresh data)
     const allSurveyors = new Set();
-    orders.forEach(order => {
+    fullOrders.forEach(order => {
       const surveyors = extractSurveyors(order);
       surveyors.forEach(name => allSurveyors.add(name));
     });
+    console.log(`📋 Found ${allSurveyors.size} unique surveyor(s):`, Array.from(allSurveyors));
     
     const surveyorCount = allSurveyors.size > 0 ? allSurveyors.size : 1;
     const headerHeight = 35; // Header bar + spacing
-    const signatureBlockHeight = 55; // Height per surveyor (signature line + name + date + spacing)
+    const signatureBlockHeight = 45; // Height per surveyor (signature line + name + date + spacing)
     const totalSectionHeight = headerHeight + (surveyorCount * signatureBlockHeight) + 20; // Extra bottom margin
     
-    // 3. Add Buffer Space and check if we need new page
-    let signatureStartY = tableEnd + 50;
-    console.log(`Signature section will start at: ${signatureStartY}, needs ${totalSectionHeight}pt`);
+    // 3. CRITICAL FIX: Explicitly set currentY from table end + buffer
+    currentY = tableEnd + 50;
+    console.log(`📍 Setting signature section start at Y: ${currentY} (needs ${totalSectionHeight}pt total)`);
     
     // 4. Page Break Logic - ensure entire section fits on one page
-    if (signatureStartY + totalSectionHeight > pageHeight - margin) {
+    if (currentY + totalSectionHeight > pageHeight - margin - 30) {
+      console.log(`⚠️ Not enough space (${pageHeight - margin - currentY}pt available, ${totalSectionHeight}pt needed) - adding new page`);
       doc.addPage();
-      signatureStartY = margin + 40;
-      console.log('Created new page for Surveyor Acknowledgement section');
+      currentY = margin + 40;
+      console.log(`📄 New page created, signature section starts at Y: ${currentY}`);
+    } else {
+      console.log(`✅ Sufficient space available (${pageHeight - margin - currentY}pt), continuing on same page`);
     }
-    
-    currentY = signatureStartY;
     
     // 5. Header Styling - Full width blue bar with white text inside
     doc.setFillColor(35, 34, 73);
@@ -1055,14 +1057,14 @@ ${entry.notes ? `Notes:\n${entry.notes}` : ''}
     currentY += 35; // Move below header bar with spacing
 
     // 6. Render surveyor signature blocks
-    if (allSurveyors.size > 0) {
-      const signatureBlockHeight = 55; // Height for each signature block
-      const signatureLineLength = pageWidth - (margin * 2); // Full width signature line
+    if (allSurveyors.LineLength = pageWidth - (margin * 2); // Full width signature line
       const currentDate = new Date().toLocaleDateString(); // Get current date
+      const blockHeight = 45; // Height per signature block
       
       Array.from(allSurveyors).forEach((surveyorName, idx) => {
         // Check if we need a new page for this signature block
-        if (currentY + signatureBlockHeight > pageHeight - margin - 30) {
+        if (currentY + blockHeight > pageHeight - margin - 30) {
+          console.log(`⚠️ Surveyor ${idx + 1}: Page break needed at Y=${currentY}`);
           doc.addPage();
           currentY = margin + 40;
           
@@ -1075,8 +1077,10 @@ ${entry.notes ? `Notes:\n${entry.notes}` : ''}
           doc.text('Surveyor Acknowledgement (Continued)', margin, margin + 13);
           doc.setTextColor(0, 0, 0);
           currentY = margin + 50;
-          console.log('⚠️ Page break during surveyor list - added continuation header');
+          console.log(`📄 Continuation header added, Y reset to: ${currentY}`);
         }
+        
+        console.log(`✍️ Drawing signature block ${idx + 1}/${allSurveyors.size} for: ${surveyorName} at Y=${currentY}`);
         
         // Draw signature line
         doc.setDrawColor(100, 100, 100);
@@ -1096,6 +1100,9 @@ ${entry.notes ? `Notes:\n${entry.notes}` : ''}
         doc.text(`Date: ${currentDate}`, pageWidth - margin, currentY, { align: 'right' });
         
         currentY += 30; // Space before next surveyor block
+      });
+      
+      console.log(`✅ All signature blocks rendered. Final Y position: ${currentY}` currentY += 30; // Space before next surveyor block
       });
     } else {
       doc.setFontSize(10);

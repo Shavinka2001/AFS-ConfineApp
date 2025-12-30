@@ -96,7 +96,7 @@ const Layout = ({ children }) => {
   }
 
   return (
-    <div className="h-screen bg-gray-50 flex overflow-hidden">
+    <div className="h-screen bg-gray-50 relative overflow-hidden">
       {/* Enhanced Mobile Menu Button with Smooth Animations */}
       {isMobile && (
         <div className="lg:hidden fixed top-4 left-4 z-50">
@@ -155,31 +155,39 @@ const Layout = ({ children }) => {
         </motion.div>
       )}
 
-      {/* Sidebar */}
-      <div className={`sidebar-container flex-shrink-0 ${
-        isMobile 
-          ? `fixed inset-y-0 left-0 z-40 transform transition-transform duration-300 ease-in-out ${
-              isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
-            }`
-          : ''
-      }`}>
-        <Sidebar 
-          isCollapsed={isMobile ? false : isCollapsed} 
-          setIsCollapsed={setIsCollapsed}
-          isMobile={isMobile}
-          isMobileMenuOpen={isMobileMenuOpen}
-          closeMobileMenu={() => setIsMobileMenuOpen(false)}
-        />
-      </div>
+      {/* Sidebar - Fixed on Mobile, Flex Item on Desktop */}
+      {isMobile ? (
+        /* Mobile: Fixed positioning, completely outside layout flow */
+        <div className="fixed inset-y-0 left-0 z-40">
+          <Sidebar 
+            isCollapsed={false}
+            setIsCollapsed={setIsCollapsed}
+            isMobile={true}
+            isMobileMenuOpen={isMobileMenuOpen}
+            closeMobileMenu={() => setIsMobileMenuOpen(false)}
+          />
+        </div>
+      ) : (
+        /* Desktop: Part of flex layout */
+        <div className="sidebar-container flex-shrink-0 absolute inset-y-0 left-0 z-40">
+          <Sidebar 
+            isCollapsed={isCollapsed}
+            setIsCollapsed={setIsCollapsed}
+            isMobile={false}
+            isMobileMenuOpen={false}
+            closeMobileMenu={() => {}}
+          />
+        </div>
+      )}
       
-      {/* Enhanced Main Content with Smooth Mobile Animations */}
+      {/* Enhanced Main Content - Full Width on Mobile */}
       <motion.div
         initial={false}
         animate={{ 
-          width: isMobile ? '100%' : `calc(100% - ${isCollapsed ? 80 : 300}px)`
+          marginLeft: isMobile ? 0 : (isCollapsed ? 80 : 300)
         }}
         transition={{ duration: 0.4, ease: 'easeOut' }}
-        className="flex-1 h-screen overflow-y-auto overflow-x-hidden"
+        className="h-screen overflow-y-auto overflow-x-hidden w-full"
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}

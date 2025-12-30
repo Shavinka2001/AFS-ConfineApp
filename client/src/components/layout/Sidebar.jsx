@@ -284,14 +284,31 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, closeMobileMen
   };
 
   return (
-    <motion.div
-      initial={false}
-      animate={{ width: isCollapsed ? 80 : (isMobile ? 280 : 300) }}
-      transition={{ duration: 0.3, ease: 'easeInOut' }}
-      className={`bg-white shadow-2xl border-r border-gray-100 h-screen flex flex-col ${
-        isMobile ? 'w-full sm:w-280 fixed left-0 top-0 z-40' : ''
-      }`}
-    >
+    <>
+      {/* Mobile Backdrop Overlay */}
+      <AnimatePresence>
+        {isMobile && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={closeMobileMenu}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-30"
+            style={{ touchAction: 'none' }}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Sidebar Container */}
+      <motion.div
+        initial={false}
+        animate={{ width: isCollapsed ? 80 : (isMobile ? 280 : 300) }}
+        transition={{ duration: 0.3, ease: 'easeInOut' }}
+        className={`bg-white shadow-2xl border-r border-gray-100 h-screen flex flex-col ${
+          isMobile ? 'w-full sm:w-280 fixed left-0 top-0 z-40' : ''
+        }`}
+      >
       {/* Header */}
       <div className="p-4 sm:p-5 lg:p-6 border-b border-gray-100 bg-gradient-to-r from-[#232249] to-[#232249]/90">
         <div className="flex items-center justify-between gap-3">
@@ -392,11 +409,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, closeMobileMen
                 to={item.path}
                 onClick={() => {
                   if (isMobile) {
-                    setIsAnimating(true);
-                    setTimeout(() => {
-                      closeMobileMenu();
-                      setIsAnimating(false);
-                    }, 200);
+                    closeMobileMenu();
                   }
                 }}
                 className={`flex items-center gap-3 px-3 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl transition-all duration-300 group touch-manipulation relative overflow-hidden ${
@@ -525,7 +538,8 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, closeMobileMen
           />
         </motion.button>
       </div>
-    </motion.div>
+      </motion.div>
+    </>
   );
 };
 

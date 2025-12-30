@@ -678,56 +678,80 @@ ${entry.notes ? `Notes:\n${entry.notes}` : ''}
 
     // SIGNATURE SECTION
     // 1. Capture Table End with proper fallback
-    const tableEnd = doc.lastAutoTable ? doc.lastAutoTable.finalY : currentY + 400;
+    const tableEnd = doc.previousAutoTable?.finalY || doc.lastAutoTable?.finalY || currentY;
     console.log(`Table ended at: ${tableEnd}`);
     
-    // 2. Add Buffer Space
-    currentY = tableEnd + 50;
-    console.log(`Setting currentY to ${currentY} (tableEnd + 50)`);
-    
-    // 3. Page Break Logic
-    if (currentY > pageHeight - 120) {
-      doc.addPage();
-      currentY = 60;
-      console.log('Created new page for Surveyor Acknowledgement section');
-    }
-    
-    // 4. Header Styling - Full width blue bar with text inside
-    doc.setFillColor(35, 34, 73);
-    doc.rect(0, currentY, pageWidth, 12, 'F'); // Full width bar
-    doc.setFontSize(12);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(255, 255, 255);
-    doc.text('Surveyor Acknowledgement', margin + 5, currentY + 8);
-    doc.setTextColor(0, 0, 0);
-    currentY += 25; // Spacing after header bar
-
-    // Get unique surveyors from all orders
+    // 2. Get unique surveyors to calculate section height
     const allSurveyors = new Set();
     orders.forEach(order => {
       const surveyors = extractSurveyors(order);
       surveyors.forEach(name => allSurveyors.add(name));
     });
+    
+    const surveyorCount = allSurveyors.size > 0 ? allSurveyors.size : 1;
+    const headerHeight = 35; // Header bar + spacing
+    const lineHeight = 20; // Space per surveyor signature line
+    const totalSectionHeight = headerHeight + (surveyorCount * lineHeight) + 20; // Extra bottom margin
+    
+    // 3. Add Buffer Space and check if we need new page
+    let signatureStartY = tableEnd + 50;
+    console.log(`Signature section will start at: ${signatureStartY}, needs ${totalSectionHeight}pt`);
+    
+    // 4. Page Break Logic - ensure entire section fits on one page
+    if (signatureStartY + totalSectionHeight > pageHeight - margin) {
+      doc.addPage();
+      signatureStartY = margin + 40;
+      console.log('Created new page for Surveyor Acknowledgement section');
+    }
+    
+    currentY = signatureStartY;
+    
+    // 5. Header Styling - Full width blue bar with white text inside
+    doc.setFillColor(35, 34, 73);
+    doc.rect(0, currentY, pageWidth, 20, 'F'); // Full width bar (from x=0 to pageWidth)
+    
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(255, 255, 255);
+    doc.text('Surveyor Acknowledgement', margin, currentY + 13); // Text inside bar
+    doc.setTextColor(0, 0, 0); // Reset to black
+    
+    currentY += 35; // Move below header bar with spacing
 
+    // 6. Render surveyor signature lines
     if (allSurveyors.size > 0) {
       Array.from(allSurveyors).forEach((surveyorName, idx) => {
         doc.setFontSize(10);
         doc.setFont('helvetica', 'normal');
-        doc.text(`${idx + 1}. ${surveyorName}`, margin + 5, currentY);
-        doc.setDrawColor(100, 100, 100);
-        doc.line(margin + 80, currentY + 1, pageWidth - margin, currentY + 1);
-        currentY += 12;
         
-        // Page break check
-        if (currentY + 20 > pageHeight - margin) {
+        // Draw surveyor name with index
+        const nameText = `${idx + 1}. ${surveyorName}`;
+        doc.text(nameText, margin, currentY);
+        
+        // Calculate name width to position signature line correctly
+        const nameWidth = doc.getTextWidth(nameText);
+        const lineStartX = margin + nameWidth + 10; // 10pt gap after name
+        
+        // Draw signature line from end of name to right margin
+        doc.setDrawColor(100, 100, 100);
+        doc.setLineWidth(0.5);
+        doc.line(lineStartX, currentY + 1, pageWidth - margin, currentY + 1);
+        
+        currentY += lineHeight;
+        
+        // Page break check (should rarely trigger due to pre-calculation)
+        if (currentY + lineHeight > pageHeight - margin) {
           doc.addPage();
-          currentY = margin;
+          currentY = margin + 40;
+          console.log('⚠️ Unexpected page break during surveyor list');
         }
       });
     } else {
       doc.setFontSize(10);
       doc.setFont('helvetica', 'italic');
-      doc.text('No surveyors specified', margin + 5, currentY);
+      doc.setTextColor(120, 120, 120);
+      doc.text('No surveyors specified', margin, currentY);
+      doc.setTextColor(0, 0, 0);
       currentY += 15;
     }
 

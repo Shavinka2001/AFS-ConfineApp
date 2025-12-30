@@ -321,7 +321,10 @@ export const handleDownloadFilteredPDF = async (orders = [], sortBy) => {
           return order;
         }
         
-        const response = await fetch(`${API_BASE_URL}/api/work-orders/${orderId}`, {
+        const apiUrl = `${API_BASE_URL}/api/work-orders/${orderId}`;
+        console.log(`🔍 Fetching order details from: ${apiUrl}`);
+        
+        const response = await fetch(apiUrl, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
@@ -329,12 +332,32 @@ export const handleDownloadFilteredPDF = async (orders = [], sortBy) => {
           credentials: 'include'
         });
         
+        console.log(`📡 Response status: ${response.status} ${response.statusText}`);
+        console.log(`📡 Content-Type: ${response.headers.get('content-type')}`);
+        
         if (!response.ok) {
           console.warn(`⚠️ Failed to fetch order ${orderId} (${response.status}), using original data`);
           return order;
         }
         
-        const result = await response.json();
+        // Check if response is JSON before parsing
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          const textPreview = await response.text();
+          console.error(`❌ Expected JSON but got ${contentType}:`, textPreview.substring(0, 200));
+          console.warn(`⚠️ Backend returned non-JSON response for order ${orderId}, using original data`);
+          return order;
+        }
+        
+        let result;
+        try {
+          result = await response.json();
+        } catch (parseError) {
+          console.error(`❌ JSON parse error for order ${orderId}:`, parseError);
+          console.warn(`⚠️ Failed to parse response, using original data`);
+          return order;
+        }
+        
         const fullOrder = result.data || result;
         
         const imageCount = [
@@ -351,7 +374,8 @@ export const handleDownloadFilteredPDF = async (orders = [], sortBy) => {
         
         return fullOrder;
       } catch (error) {
-        console.error(`❌ Error fetching order details:`, error);
+        console.error(`❌ Error fetching order details for ${order._id || order.id || order.uniqueId}:`, error.message);
+        console.warn(`⚠️ Using original order data (fallback)`);
         return order;
       }
     };

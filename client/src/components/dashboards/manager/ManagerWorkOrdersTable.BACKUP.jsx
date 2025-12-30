@@ -1,29 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import {
-  Eye,
-  Edit,
-  Download,
   Calendar,
   Clock,
-  User,
-  MapPin,
-  Building,
-  AlertTriangle,
-  Shield,
-  FileText,
-  ImageIcon,
-  MoreVertical,
   ChevronDown,
   ChevronUp,
+  MoreVertical,
+  Eye,
+  Edit,
+  FileText,
+  Download,
   Trash2,
-  XCircle,
+  AlertTriangle,
+  User,
+  Building,
+  Shield,
   Check,
   X
 } from 'lucide-react';
-
-// Import the Manager edit form
+import { handleError, handleSuccess } from '../../../utils/errorHandler';
 import ManagerEditWorkOrderForm from './ManagerEditWorkOrderForm';
-import PDFDownloadButton from '../../ui/PDFDownloadButton';
 
 // Consolidated PDF Generator - Groups similar confined spaces into single reports
 const consolidateEntries = (entries) => {
@@ -32,7 +28,7 @@ const consolidateEntries = (entries) => {
 
   // Group entries by building, location description, and confined space description
   entries.forEach((entry, index) => {
-    const groupKey = `${entry.building || 'N/A'}|||${entry.locationDescription || 'N/A'}|||${entry.spaceName || entry.confinedSpaceDescription || 'N/A'}`;
+    const groupKey = `${entry.building || entry.buildingName || 'N/A'}|||${entry.locationDescription || entry.location || 'N/A'}|||${entry.spaceName || entry.confinedSpaceDescription || 'N/A'}`;
     
     if (!groupMap.has(groupKey)) {
       groupMap.set(groupKey, []);
@@ -43,14 +39,11 @@ const consolidateEntries = (entries) => {
   // Process each group
   groupMap.forEach((group) => {
     if (group.length === 1) {
-      // Single entry - use as is but clean up the originalIndex property
-      const singleEntry = { ...group[0] };
-      delete singleEntry.originalIndex; // Remove the temporary property
-      consolidated.push(singleEntry);
+      // Don't consolidate single items
+      consolidated.push({ ...group[0] });
     } else {
-      // Multiple entries - consolidate them
-      const consolidatedEntry = consolidateGroup(group);
-      consolidated.push(consolidatedEntry);
+      // Consolidate multiple items into one entry
+      consolidated.push(consolidateGroup(group));
     }
   });
 
@@ -68,18 +61,17 @@ const consolidateGroup = (group) => {
   // Consolidate arrays and combine unique values
   const consolidateArrayField = (fieldName) => {
     const allValues = group.flatMap(entry => entry[fieldName] || []);
-    return [...new Set(allValues)];
+    return [...new Set(allValues)]; // Remove duplicates
   };
 
   // Consolidate text fields by combining unique non-empty values
   const consolidateTextField = (fieldName) => {
     const allValues = group.map(entry => entry[fieldName])
       .filter(val => {
-        // Check if value exists and is not null/undefined
-        if (val === null || val === undefined) return false;
-        // Convert to string and check if it's meaningful
-        const stringVal = String(val);
-        return stringVal && stringVal !== 'N/A' && stringVal.trim() !== '';
+        if (!val) return false;
+        if (typeof val === 'string') return val.trim() !== '';
+        if (typeof val === 'number') return !isNaN(val);
+        return true;
       })
       .map(val => String(val)); // Ensure all values are strings
     
@@ -168,6 +160,7 @@ const consolidateGroup = (group) => {
 const ManagerWorkOrdersTable = ({ 
   workOrders = [], 
   onView, 
+  onDownloadPDF,
   onUpdateOrder,
   onDeleteOrder,
   onDeleteAllOrders
@@ -186,6 +179,7 @@ const ManagerWorkOrdersTable = ({
       const timer = setTimeout(() => {
         setNotification(null);
       }, 6000);
+      
       return () => clearTimeout(timer);
     }
   }, [notification]);
@@ -207,6 +201,7 @@ const ManagerWorkOrdersTable = ({
       'low': 'bg-green-100 text-green-800 border-green-200',
       'medium': 'bg-yellow-100 text-yellow-800 border-yellow-200',
       'high': 'bg-orange-100 text-orange-800 border-orange-200',
+      'urgent': 'bg-red-100 text-red-800 border-red-200',
       'critical': 'bg-red-100 text-red-800 border-red-200'
     };
     return colors[priority] || 'bg-gray-100 text-gray-800 border-gray-200';
@@ -229,11 +224,9 @@ const ManagerWorkOrdersTable = ({
       setEditingOrder(order);
     } else {
       console.warn('No onUpdateOrder handler provided');
-      alert('Edit functionality not implemented yet');
     }
   };
 
-  // Handle Save Edit
   // Handle Cancel Edit
   const handleCancelEdit = () => {
     setEditingOrder(null);
@@ -245,7 +238,6 @@ const ManagerWorkOrdersTable = ({
       setDeleteConfirmId(orderId);
     } else {
       console.warn('No onDeleteOrder handler provided');
-      alert('Delete functionality not implemented yet');
     }
   };
 
@@ -294,36 +286,59 @@ const ManagerWorkOrdersTable = ({
     }
   };
 
+  // Normalize data structure to ensure consistent property names
+  const normalizedWorkOrders = React.useMemo(() => {
+    if (!workOrders || !Array.isArray(workOrders) || workOrders.length === 0) {
+      return [];
+    }
+    
+    return workOrders.map(order => {
+      return {
+        ...order,
+        _id: order._id || order.id,
+        id: order.id || order._id,
+        buildingName: order.building || order.buildingName,
+        building: order.building || order.buildingName,
+        location: order.locationDescription || order.location,
+        locationDescription: order.locationDescription || order.location,
+        spaceName: order.spaceName || order.confinedSpaceNameOrId,
+        confinedSpaceNameOrId: order.confinedSpaceNameOrId || order.spaceName,
+        dateOfSurvey: order.dateOfSurvey || order.surveyDate,
+        surveyDate: order.surveyDate || order.dateOfSurvey
+      };
+    });
+  }, [workOrders]);
+
   if (!workOrders || workOrders.length === 0) {
     return (
-      <div className="space-y-4 sm:space-y-6">
-        {/* Mobile-Responsive Header */}
-        <div className="bg-gradient-to-r from-[#232249] to-[#2d2d5f] rounded-2xl sm:rounded-3xl shadow-xl p-4 sm:p-6">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-0">
-            <div className="flex items-center gap-3 sm:gap-4">
-              <div className="bg-white/15 backdrop-blur-sm rounded-xl p-2 sm:p-3 border border-white/20 shrink-0">
-                <FileText className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 text-white" />
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-[#232249] to-[#2d2d5f] rounded-2xl shadow-lg p-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="bg-white/15 backdrop-blur-sm rounded-xl p-3 border border-white/20">
+                <FileText className="w-7 h-7 text-white" />
               </div>
-              <div className="min-w-0">
-                <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-white mb-1 truncate">
-                  Work Orders Management
+              <div>
+                <h2 className="text-2xl font-bold text-white mb-1">
+                  Manager Work Orders
                 </h2>
-                <p className="text-white/70 text-xs sm:text-sm">
-                  Manage confined space assessments
+                <p className="text-white/70 text-sm">
+                  Manage and oversee confined space work orders
                 </p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Mobile-Responsive Empty State */}
-        <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl border border-gray-100 p-6 sm:p-8 lg:p-12 text-center">
-          <div className="bg-gradient-to-br from-[#232249]/5 to-[#232249]/10 rounded-full p-6 sm:p-8 w-20 h-20 sm:w-24 sm:h-24 lg:w-32 lg:h-32 mx-auto mb-6 sm:mb-8 flex items-center justify-center">
-            <FileText className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16 text-[#232249]" />
+        {/* Empty state */}
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-12 text-center">
+          <div className="mx-auto w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+            <FileText className="h-8 w-8 text-gray-400" />
           </div>
-          <h3 className="text-xl sm:text-2xl font-bold text-[#232249] mb-3 sm:mb-4">No Work Orders Found</h3>
-          <p className="text-gray-500 max-w-lg mx-auto leading-relaxed text-sm sm:text-base">
-            No confined space assessments have been submitted yet. Work orders will appear here once technicians submit their assessments.
+          <h3 className="text-lg font-semibold text-gray-800 mb-2">No Work Orders Found</h3>
+          <p className="text-gray-500">
+            There are no work orders available to display. Check your filters or try again later.
           </p>
         </div>
       </div>
@@ -332,90 +347,92 @@ const ManagerWorkOrdersTable = ({
 
   return (
     <div className="space-y-6">
-        {/* Mobile-Responsive Header */}
-        <div className="bg-gradient-to-r from-[#232249] to-[#2d2d5f] rounded-2xl sm:rounded-3xl shadow-xl p-4 sm:p-6">
-          <div className="flex flex-col gap-4 sm:gap-0 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-3 sm:gap-4">
-              <div className="bg-white/15 backdrop-blur-sm rounded-xl p-2 sm:p-3 border border-white/20 shrink-0">
-                <FileText className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 text-white" />
+        {/* Header */}
+        <div className="bg-gradient-to-r from-[#232249] to-[#2d2d5f] rounded-2xl shadow-lg p-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="bg-white/15 backdrop-blur-sm rounded-xl p-3 border border-white/20">
+                <FileText className="w-7 h-7 text-white" />
               </div>
-              <div className="min-w-0">
-                <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-white mb-1 truncate">
-                  Work Orders Management
+              <div>
+                <h2 className="text-2xl font-bold text-white mb-1">
+                  Manager Work Orders
                 </h2>
-                <p className="text-white/70 text-xs sm:text-sm">
-                  Manage confined space assessments
+                <p className="text-white/70 text-sm">
+                  Manage and oversee confined space work orders
                 </p>
               </div>
             </div>
             
-            {/* Mobile-Responsive Action Buttons */}
-            <div className="flex items-center gap-2 sm:gap-3 overflow-x-auto">
+            {/* Action Buttons */}
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => {
+                  // Handle consolidated PDF download functionality
+                  console.log('Download consolidated PDF for manager');
+                }}
+                className="flex items-center gap-2 px-4 py-2 bg-white/10 text-white rounded-xl hover:bg-white/20 transition-all duration-200 border border-white/20 hover:border-white/40"
+                title="Download Consolidated PDF"
+              >
+                <Download className="w-4 h-4" />
+                <span className="text-sm font-medium">PDF Report</span>
+              </button>
+              
               <button
                 onClick={handleDeleteAllOrders}
-                className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 bg-red-600/80 text-white rounded-xl hover:bg-red-700 transition-all duration-200 border border-red-500/20 hover:border-red-400 touch-manipulation whitespace-nowrap"
+                className="flex items-center gap-2 px-4 py-2 bg-red-600/80 text-white rounded-xl hover:bg-red-700 transition-all duration-200 border border-red-500/20 hover:border-red-400"
                 title="Delete All Work Orders"
                 disabled={workOrders.length === 0}
               >
-                <Trash2 className="w-4 h-4 shrink-0" />
-                <span className="text-xs sm:text-sm font-medium">Delete All</span>
+                <Trash2 className="w-4 h-4" />
+                <span className="text-sm font-medium">Delete All</span>
               </button>
             </div>
           </div>
         </div>
 
-      {/* Mobile-Responsive Table Container */}
-      <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
-        <div className="table-responsive overflow-x-auto -webkit-overflow-scrolling-touch">
-          <table className="w-full min-w-[800px]">
+      {/* Table */}
+      <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full">
             <thead>
               <tr style={{ backgroundColor: '#232249' }}>
-                <th className="px-3 sm:px-4 py-3 sm:py-4 text-left text-xs font-bold text-white uppercase tracking-wider">
-                  <span className="flex items-center gap-2 whitespace-nowrap">
-                    <FileText className="h-4 w-4 shrink-0" />
-                    <span className="hidden sm:inline">Work Order</span>
-                    <span className="sm:hidden">Order</span>
+                <th className="px-3 py-2 text-left text-xs font-semibold text-white uppercase tracking-wider">
+                  <span className="flex items-center gap-2">
+                    <FileText className="h-4 w-4" />
+                    Work Order
                   </span>
                 </th>
-                <th className="px-3 sm:px-4 py-3 sm:py-4 text-left text-xs font-bold text-white uppercase tracking-wider">
-                  <span className="flex items-center gap-2 whitespace-nowrap">
-                    <Calendar className="h-4 w-4 shrink-0" />
-                    <span className="hidden sm:inline">Survey Date</span>
-                    <span className="sm:hidden">Date</span>
+
+                <th className="px-3 py-2 text-left text-xs font-semibold text-white uppercase tracking-wider">
+                  <span className="flex items-center gap-2">
+                    <User className="h-4 w-4" />
+                    Technician
                   </span>
                 </th>
-                <th className="px-3 sm:px-4 py-3 sm:py-4 text-left text-xs font-bold text-white uppercase tracking-wider">
-                  <span className="flex items-center gap-2 whitespace-nowrap">
-                    <User className="h-4 w-4 shrink-0" />
-                    <span className="hidden sm:inline">Technician</span>
-                    <span className="sm:hidden">Tech</span>
+                <th className="px-3 py-2 text-left text-xs font-semibold text-white uppercase tracking-wider">
+                  <span className="flex items-center gap-2">
+                    <Building className="h-4 w-4" />
+                    Building
                   </span>
                 </th>
-                <th className="px-3 sm:px-4 py-3 sm:py-4 text-left text-xs font-bold text-white uppercase tracking-wider">
-                  <span className="flex items-center gap-2 whitespace-nowrap">
-                    <Building className="h-4 w-4 shrink-0" />
-                    <span className="hidden sm:inline">Building</span>
-                    <span className="sm:hidden">Bldg</span>
-                  </span>
+                <th className="px-3 py-2 text-left text-xs font-semibold text-white uppercase tracking-wider">
+                  Priority
                 </th>
-                <th className="px-3 sm:px-4 py-3 sm:py-4 text-left text-xs font-bold text-white uppercase tracking-wider">
-                  <span className="whitespace-nowrap">Priority</span>
-                </th>
-                <th className="px-3 sm:px-4 py-3 sm:py-4 text-center text-xs font-bold text-white uppercase tracking-wider">
-                  <span className="whitespace-nowrap">Actions</span>
+                <th className="px-3 py-2 text-center text-xs font-semibold text-white uppercase tracking-wider">
+                  Actions
                 </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {workOrders.map((order) => (
+              {normalizedWorkOrders.map((order) => (
                 <React.Fragment key={order.id || order._id}>
-                  <tr className="hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-50/50 transition-all duration-200 group touch-manipulation">
-                    {/* Work Order Column */}
-                    <td className="px-3 sm:px-4 py-3 sm:py-4">
-                      <div className="flex items-center gap-2 sm:gap-3">
+                  <tr className="hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-50/50 transition-all duration-200 group">
+                    <td className="px-3 py-3">
+                      <div className="flex items-center gap-2">
                         <button
                           onClick={() => toggleExpand(order.id || order._id)}
-                          className="p-1 sm:p-2 hover:bg-[#232249]/10 rounded-lg transition-all duration-200 touch-manipulation shrink-0"
+                          className="p-1 hover:bg-[#232249]/10 rounded-lg transition-all duration-200"
                         >
                           {expandedRows.has(order.id || order._id) ? (
                             <ChevronUp className="h-4 w-4 text-[#232249]" />
@@ -424,7 +441,7 @@ const ManagerWorkOrdersTable = ({
                           )}
                         </button>
                         <div className="min-w-0 flex-1">
-                          <p className="font-bold text-[#232249] text-xs sm:text-sm mb-1 truncate">
+                          <p className="font-semibold text-[#232249] text-sm mb-1">
                             {order.workOrderId || order.uniqueId || `WO-${new Date(order.createdAt).getFullYear()}-${String(order.id || order._id).slice(-4)}`}
                           </p>
                           <p className="text-xs text-gray-600 truncate">
@@ -433,96 +450,91 @@ const ManagerWorkOrdersTable = ({
                         </div>
                       </div>
                     </td>
-                    
-                    {/* Survey Date Column */}
-                    <td className="px-3 sm:px-4 py-3 sm:py-4">
-                      <div className="text-xs sm:text-sm text-[#232249] font-medium whitespace-nowrap">
+                    <td className="px-3 py-3">
+                      <div className="text-xs text-[#232249] font-medium">
                         {formatDate(order.surveyDate || order.createdAt)}
                       </div>
                     </td>
-                    
-                    {/* Technician Column */}
-                    <td className="px-3 sm:px-4 py-3 sm:py-4">
-                      <div className="min-w-0">
-                        <p className="font-medium text-[#232249] text-xs sm:text-sm mb-1 truncate">{order.technician || 'Unknown'}</p>
-                        <p className="text-xs text-gray-500 truncate">
+                    <td className="px-3 py-3">
+                      <div>
+                        <p className="font-medium text-[#232249] text-sm mb-1">{order.technician || 'Unknown'}</p>
+                        <p className="text-xs text-gray-500">
                           {formatDate(order.createdAt)}
                         </p>
                       </div>
                     </td>
-                    
-                    {/* Building Column */}
-                    <td className="px-3 sm:px-4 py-3 sm:py-4">
+                    <td className="px-3 py-3">
                       <div className="min-w-0">
-                        <p className="text-xs sm:text-sm font-medium text-[#232249] mb-1 truncate">
-                          {order.building || 'Unknown Building'}
+                        <p className="text-sm font-medium text-[#232249] mb-1 truncate">
+                          {order.building || order.buildingName || 'Unknown Building'}
                         </p>
                         <p className="text-xs text-gray-500 truncate">
                           {order.locationDescription || order.location || 'No description'}
                         </p>
                       </div>
                     </td>
-                    
-                    {/* Priority Column */}
-                    <td className="px-3 sm:px-4 py-3 sm:py-4">
-                      <span className={`inline-flex items-center px-2 py-1 rounded-lg text-xs font-bold border-2 ${getPriorityColor(order.priority)} whitespace-nowrap`}>
+                    <td className="px-3 py-3">
+                      <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium border ${getPriorityColor(order.priority)}`}>
                         {order.priority || 'medium'}
                       </span>
                     </td>
-                    
-                    {/* Actions Column - Mobile Optimized */}
-                    <td className="px-3 sm:px-4 py-3 sm:py-4">
-                      <div className="flex items-center justify-center gap-1 sm:gap-2">
+                    <td className="px-3 py-3">
+                      <div className="flex items-center justify-center gap-1">
                         <button
                           onClick={() => onView && onView(order)}
-                          className="p-1.5 sm:p-2 text-gray-400 hover:text-[#232249] hover:bg-[#232249]/10 rounded-lg transition-all duration-200 touch-manipulation"
+                          className="p-2 text-gray-400 hover:text-[#232249] hover:bg-[#232249]/10 rounded-lg transition-all duration-200"
                           title="View Details"
                         >
-                          <Eye className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                          <Eye className="h-4 w-4" />
                         </button>
                         
                         <button
                           onClick={() => handleEditOrder(order)}
-                          className="p-1.5 sm:p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 touch-manipulation"
+                          className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200"
                           title="Edit Order"
                         >
-                          <Edit className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                          <Edit className="h-4 w-4" />
                         </button>
                         
-                        <PDFDownloadButton
-                          workOrder={order}
-                          type="single"
-                          size="small"
-                          className="!p-1.5 sm:!p-2"
-                        />
+                        {onDownloadPDF && (
+                          <button
+                            onClick={() => onDownloadPDF(order)}
+                            className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-all duration-200"
+                            title="Download PDF"
+                          >
+                            <Download className="h-4 w-4" />
+                          </button>
+                        )}
                         
                         <button
                           onClick={() => handleDeleteOrder(order.id || order._id)}
-                          className="p-1.5 sm:p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200 touch-manipulation"
+                          className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200"
                           title="Delete Order"
                         >
-                          <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                          <Trash2 className="h-4 w-4" />
                         </button>
                         
                         <div className="relative">
                           <button
                             onClick={() => setActionMenuOpen(actionMenuOpen === (order.id || order._id) ? null : (order.id || order._id))}
-                            className="p-1.5 sm:p-2 text-gray-400 hover:text-[#232249] hover:bg-[#232249]/10 rounded-lg transition-all duration-200 touch-manipulation"
+                            className="p-2 text-gray-400 hover:text-[#232249] hover:bg-[#232249]/10 rounded-lg transition-all duration-200"
                             title="More Actions"
                           >
-                            <MoreVertical className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                            <MoreVertical className="h-4 w-4" />
                           </button>
+                          
+
                         </div>
                       </div>
                     </td>
                   </tr>
                   
-                  {/* Expanded Row Details */}
+                  {/* Expanded Row */}
                   {expandedRows.has(order.id || order._id) && (
                     <tr>
                       <td colSpan="5" className="px-3 py-4 bg-gray-50">
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                          {/* Left Column - Space Information */}
+                          {/* Left Column */}
                           <div className="space-y-3">
                             <h4 className="font-semibold text-[#232249] flex items-center gap-2 text-sm pb-2 border-b border-gray-200">
                               <Building className="h-4 w-4" />
@@ -536,11 +548,11 @@ const ManagerWorkOrdersTable = ({
                                 </div>
                                 <div>
                                   <span className="font-medium text-[#232249] block mb-1">Building</span>
-                                  <p className="text-gray-700 bg-gray-50 rounded px-2 py-1 text-xs">{order.building || 'N/A'}</p>
+                                  <p className="text-gray-700 bg-gray-50 rounded px-2 py-1 text-xs">{order.building || order.buildingName || 'N/A'}</p>
                                 </div>
                                 <div className="col-span-2">
                                   <span className="font-medium text-[#232249] block mb-1">Description</span>
-                                  <p className="text-gray-700 bg-gray-50 rounded px-2 py-1 text-xs">{order.locationDescription || 'N/A'}</p>
+                                  <p className="text-gray-700 bg-gray-50 rounded px-2 py-1 text-xs">{order.locationDescription || order.location || 'N/A'}</p>
                                 </div>
                                 <div>
                                   <span className="font-medium text-[#232249] block mb-1">Confined Space</span>
@@ -554,7 +566,7 @@ const ManagerWorkOrdersTable = ({
                             </div>
                           </div>
 
-                          {/* Right Column - Safety & Requirements */}
+                          {/* Right Column */}
                           <div className="space-y-3">
                             <h4 className="font-semibold text-[#232249] flex items-center gap-2 text-sm pb-2 border-b border-gray-200">
                               <Shield className="h-4 w-4" />
@@ -594,7 +606,7 @@ const ManagerWorkOrdersTable = ({
         </div>
       </div>
 
-      {/* Delete Confirmation Modal */}
+      {/* Delete Confirmation Dialog */}
       {deleteConfirmId && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6">
@@ -699,27 +711,26 @@ const ManagerWorkOrdersTable = ({
         </div>
       )}
 
-      {/* Comprehensive Manager Edit Work Order Form */}
+      {/* Edit Modal */}
       <ManagerEditWorkOrderForm
         showEditModal={editingOrder !== null}
         editingOrder={editingOrder}
         setEditingOrder={setEditingOrder}
         closeEditModal={handleCancelEdit}
         handleUpdateForm={async () => {
-          if (onUpdateOrder && editingOrder) {
-            try {
-              await onUpdateOrder(editingOrder._id || editingOrder.id, editingOrder);
+          try {
+            if (onUpdateOrder && editingOrder) {
+              await onUpdateOrder(editingOrder);
               setEditingOrder(null);
-            } catch (error) {
-              console.error('Error updating work order:', error);
-              throw error; // Re-throw to let the form handle the error display
             }
+          } catch (error) {
+            console.error('Failed to update order:', error);
           }
         }}
         formatDate={formatDate}
       />
 
-      {/* Modern Success/Error Notification */}
+      {/* Notification */}
       {notification && (
         <div className="fixed inset-0 flex items-start justify-center z-50 pointer-events-none pt-20">
           <div className={`
@@ -734,7 +745,7 @@ const ManagerWorkOrdersTable = ({
               }
             `}>
               {notification.type === 'success' ? (
-                // Success Notification
+                /* Success notification */
                 <div className="p-6">
                   {/* Header */}
                   <div className="flex items-center gap-4 mb-4">
@@ -757,46 +768,50 @@ const ManagerWorkOrdersTable = ({
                     </button>
                   </div>
                   
-                  {/* Statistics Cards */}
-                  <div className="grid grid-cols-2 gap-3 mb-4">
-                    <div className="bg-gradient-to-br from-[#232249] to-[#2d2d5f] rounded-xl p-3 text-white">
-                      <div className="text-2xl font-bold">{notification.stats.consolidated}</div>
-                      <div className="text-xs opacity-80">Final Entries</div>
-                    </div>
-                    <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-3 text-white">
-                      <div className="text-2xl font-bold">{notification.stats.efficiency}%</div>
-                      <div className="text-xs opacity-80">Efficiency Gain</div>
-                    </div>
-                  </div>
-                  
-                  {/* Details */}
-                  <div className="bg-gray-50 rounded-xl p-3">
-                    <div className="flex justify-between items-center text-sm">
-                      <span className="text-gray-600">Original Reports:</span>
-                      <span className="font-semibold text-[#232249]">{notification.stats.original}</span>
-                    </div>
-                    <div className="flex justify-between items-center text-sm mt-1">
-                      <span className="text-gray-600">Duplicates Eliminated:</span>
-                      <span className="font-semibold text-green-600">{notification.stats.saved}</span>
-                    </div>
-                  </div>
-                  
-                  {/* Progress Bar */}
-                  <div className="mt-4">
-                    <div className="flex justify-between text-xs text-gray-500 mb-1">
-                      <span>Consolidation Progress</span>
-                      <span>{notification.stats.efficiency}% Complete</span>
-                    </div>
-                    <div className="bg-gray-200 rounded-full h-2">
-                      <div 
-                        className="bg-gradient-to-r from-green-500 to-green-600 rounded-full h-2 transition-all duration-1000 ease-out"
-                        style={{ width: `${notification.stats.efficiency}%` }}
-                      ></div>
-                    </div>
-                  </div>
+                  {/* Stats */}
+                  {notification.stats && (
+                    <>
+                      <div className="grid grid-cols-2 gap-3 mb-4">
+                        <div className="bg-gradient-to-br from-[#232249] to-[#2d2d5f] rounded-xl p-3 text-white">
+                          <div className="text-2xl font-bold">{notification.stats.consolidated}</div>
+                          <div className="text-xs opacity-80">Final Entries</div>
+                        </div>
+                        <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-3 text-white">
+                          <div className="text-2xl font-bold">{notification.stats.efficiency}%</div>
+                          <div className="text-xs opacity-80">Efficiency Gain</div>
+                        </div>
+                      </div>
+                      
+                      {/* Details */}
+                      <div className="bg-gray-50 rounded-xl p-3">
+                        <div className="flex justify-between items-center text-sm">
+                          <span className="text-gray-600">Original Reports:</span>
+                          <span className="font-semibold text-[#232249]">{notification.stats.original}</span>
+                        </div>
+                        <div className="flex justify-between items-center text-sm mt-1">
+                          <span className="text-gray-600">Duplicates Eliminated:</span>
+                          <span className="font-semibold text-green-600">{notification.stats.saved}</span>
+                        </div>
+                      </div>
+                      
+                      {/* Progress bar */}
+                      <div className="mt-4">
+                        <div className="flex justify-between text-xs text-gray-500 mb-1">
+                          <span>Consolidation Progress</span>
+                          <span>{notification.stats.efficiency}% Complete</span>
+                        </div>
+                        <div className="bg-gray-200 rounded-full h-2">
+                          <div 
+                            className="bg-gradient-to-r from-green-500 to-green-600 rounded-full h-2 transition-all duration-1000 ease-out"
+                            style={{ width: `${notification.stats.efficiency}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </div>
               ) : (
-                // Error Notification
+                /* Error notification */
                 <div className="p-6">
                   <div className="flex items-center gap-4 mb-4">
                     <div className="bg-red-100 rounded-full p-3">

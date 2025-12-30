@@ -356,9 +356,9 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, closeMobileMen
 
   return (
     <>
-      {/* Mobile Backdrop Overlay - Fully Clickable */}
+      {/* Mobile Backdrop Overlay - Only show when sidebar is OPEN on mobile */}
       <AnimatePresence>
-        {isMobile && (
+        {isMobile && !isCollapsed && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -385,10 +385,10 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, closeMobileMen
         )}
       </AnimatePresence>
 
-      {/* Sidebar Container - Enhanced Mobile with Better Close */}
+      {/* Sidebar Container - Enhanced Mobile with Proper Open/Close States */}
       <motion.div
         initial={isMobile ? { x: '-100%' } : false}
-        animate={isMobile ? { x: 0 } : { width: isCollapsed ? 80 : 300 }}
+        animate={isMobile ? { x: isCollapsed ? '-100%' : 0 } : { width: isCollapsed ? 80 : 300 }}
         exit={isMobile ? { x: '-100%' } : undefined}
         transition={{ 
           duration: 0.3, 
@@ -397,11 +397,11 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, closeMobileMen
           stiffness: 350,
           damping: 35
         }}
-        drag={isMobile ? "x" : false}
+        drag={isMobile && !isCollapsed ? "x" : false}
         dragConstraints={{ left: -300, right: 0 }}
         dragElastic={0.2}
         onDragEnd={(e, { offset, velocity }) => {
-          if (isMobile && (offset.x < -100 || velocity.x < -500)) {
+          if (isMobile && !isCollapsed && (offset.x < -100 || velocity.x < -500)) {
             closeMobileMenu && closeMobileMenu();
           }
         }}
@@ -413,8 +413,8 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, closeMobileMen
           paddingBottom: 'env(safe-area-inset-bottom)'
         } : {}}
       >
-      {/* Swipe Indicator - Mobile Only */}
-      {isMobile && (
+      {/* Swipe Indicator - Mobile Only (when open) */}
+      {isMobile && !isCollapsed && (
         <div className="absolute top-1/2 -translate-y-1/2 right-0 w-1 h-20 bg-gradient-to-b from-transparent via-gray-400/50 to-transparent rounded-l-full pointer-events-none">
           <motion.div
             className="absolute inset-0 bg-gradient-to-b from-transparent via-white to-transparent"

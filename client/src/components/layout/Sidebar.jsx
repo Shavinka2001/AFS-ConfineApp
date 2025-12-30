@@ -53,6 +53,13 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, closeMobileMen
     }
   }, [user]);
 
+  // Auto-close mobile menu when route changes
+  useEffect(() => {
+    if (isMobile && closeMobileMenu) {
+      closeMobileMenu();
+    }
+  }, [location.pathname, isMobile, closeMobileMenu]);
+
   const fetchTechnicianData = async () => {
     try {
       setTasksLoading(true);
@@ -294,7 +301,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, closeMobileMen
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             onClick={closeMobileMenu}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-30"
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
             style={{ touchAction: 'none' }}
           />
         )}
@@ -306,7 +313,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, closeMobileMen
         animate={{ width: isCollapsed ? 80 : (isMobile ? 280 : 300) }}
         transition={{ duration: 0.3, ease: 'easeInOut' }}
         className={`bg-white shadow-2xl border-r border-gray-100 h-screen flex flex-col ${
-          isMobile ? 'w-full sm:w-280 fixed left-0 top-0 z-40' : ''
+          isMobile ? 'w-full sm:w-280 fixed left-0 top-0 z-50' : ''
         }`}
       >
       {/* Header */}

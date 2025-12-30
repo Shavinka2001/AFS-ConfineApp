@@ -6,121 +6,7 @@ import autoTable from "jspdf-autotable";
 // ============================
 
 /**
- * Debug logger for incoming data
- */
-const debugLogData = (entry, index) => {
-  console.group(`PDF Data Debug - Entry ${index + 1}`);
-  console.log('Full Entry Object:', entry);
-  console.log('Date Fields:', {
-    dateOfSurvey: entry.dateOfSurvey,
-    surveyDate: entry.surveyDate,
-    createdAt: entry.createdAt
-  });
-  console.log('Surveyor Fields:', {
-    surveyors: entry.surveyors,
-    surveyorName: entry.surveyorName,
-    technician: entry.technician,
-    createdBy: entry.createdBy
-  });
-  console.log('Space Fields:', {
-    confinedSpaceNameOrId: entry.confinedSpaceNameOrId,
-    spaceName: entry.spaceName,
-    spaceId: entry.spaceId
-  });
-  console.log('Entry Points:', {
-    numberOfEntryPoints: entry.numberOfEntryPoints,
-    entryPoints: entry.entryPoints
-  });
-  console.log('Image Fields:', {
-    pictures: entry.pictures,
-    images: entry.images,
-    photos: entry.photos,
-    attachments: entry.attachments
-  });
-  console.groupEnd();
-};
-
-/**
- * Extract date from multiple possible fields
- */
-const extractDate = (entry) => {
-  const dateFields = ['dateOfSurvey', 'surveyDate', 'date', 'createdAt'];
-  for (const field of dateFields) {
-    if (entry[field]) {
-      try {
-        const date = new Date(entry[field]);
-        if (!isNaN(date.getTime())) {
-          return date.toISOString().slice(0, 10);
-        }
-      } catch (e) {
-        console.warn(`Invalid date format in ${field}:`, entry[field]);
-      }
-    }
-  }
-  return null;
-};
-
-/**
- * Extract surveyors from multiple possible fields
- */
-const extractSurveyors = (entry) => {
-  // Check array field first
-  if (Array.isArray(entry.surveyors) && entry.surveyors.length > 0) {
-    return entry.surveyors;
-  }
-  
-  // Check string surveyors field
-  if (entry.surveyors && typeof entry.surveyors === 'string') {
-    return [entry.surveyors];
-  }
-  
-  // Check alternative fields
-  const nameFields = ['surveyorName', 'technician', 'createdBy', 'assignedTechnician'];
-  for (const field of nameFields) {
-    if (entry[field]) {
-      if (Array.isArray(entry[field])) {
-        return entry[field];
-      }
-      if (typeof entry[field] === 'string') {
-        return [entry[field]];
-      }
-      if (entry[field].name || entry[field].fullName) {
-        return [entry[field].name || entry[field].fullName];
-      }
-    }
-  }
-  
-  return [];
-};
-
-/**
- * Extract space name/ID from multiple possible fields
- */
-const extractSpaceNameOrId = (entry) => {
-  const nameFields = ['confinedSpaceNameOrId', 'spaceName', 'spaceId', 'spaceNumber'];
-  for (const field of nameFields) {
-    if (entry[field] && String(entry[field]).trim()) {
-      return String(entry[field]).trim();
-    }
-  }
-  return null;
-};
-
-/**
- * Extract entry points from multiple possible fields
- */
-const extractEntryPoints = (entry) => {
-  const entryFields = ['numberOfEntryPoints', 'entryPoints', 'entryPointCount'];
-  for (const field of entryFields) {
-    if (entry[field]) {
-      return String(entry[field]);
-    }
-  }
-  return null;
-};
-
-/**
- * Convert image URL to base64 with CORS handling
+ * Convert image URL to base64 with CORS and authentication handling
  */
 const loadImageAsBase64 = (imageUrl) => {
   return new Promise((resolve, reject) => {
@@ -146,45 +32,29 @@ const loadImageAsBase64 = (imageUrl) => {
           headers['Authorization'] = `Bearer ${token}`;
         }
         
-        console.log(`🌐 [loadImageAsBase64] Fetching with headers:`, Object.keys(headers));
-        
         const fetchOptions = { 
           method: 'GET',
           headers,
-          credentials: 'include', // Include cookies for session-based auth
-          mode: 'cors', // Explicitly set CORS mode
-          cache: 'no-cache' // Prevent caching issues
+          credentials: 'include',
+          mode: 'cors',
+          cache: 'no-cache'
         };
-        
-        console.log(`🔧 [loadImageAsBase64] Fetch options:`, fetchOptions);
         
         const response = await fetch(imageUrl, fetchOptions);
         
-        console.log(`📡 [loadImageAsBase64] Fetch response status: ${response.status} ${response.statusText}`);
-        console.log(`📡 [loadImageAsBase64] Content-Type: ${response.headers.get('content-type')}`);
+        console.log(`📡 [loadImageAsBase64] Fetch response status: ${response.status}`);
         
         if (!response.ok) {
-          const errorText = await response.text().catch(() => 'Unable to read error response');
-          console.error(`❌ [loadImageAsBase64] HTTP Error ${response.status}:`, errorText);
-          
-          if (response.status === 401) {
-            throw new Error(`Authentication required (401): ${imageUrl}`);
-          } else if (response.status === 404) {
-            throw new Error(`Image not found (404): ${imageUrl}`);
-          } else if (response.status === 403) {
-            throw new Error(`Access forbidden (403): ${imageUrl}`);
-          } else {
-            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-          }
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
         
         const blob = await response.blob();
-        console.log(`📦 [loadImageAsBase64] Blob received, size: ${blob.size} bytes, type: ${blob.type}`);
+        console.log(`📦 [loadImageAsBase64] Blob received, size: ${blob.size} bytes`);
         
         return new Promise((res, rej) => {
           const reader = new FileReader();
           reader.onloadend = () => {
-            console.log(`✅ [loadImageAsBase64] Base64 conversion complete for ${imageUrl}`);
+            console.log(`✅ [loadImageAsBase64] Base64 conversion complete`);
             res(reader.result);
           };
           reader.onerror = (error) => {
@@ -195,7 +65,7 @@ const loadImageAsBase64 = (imageUrl) => {
         });
       } catch (fetchError) {
         console.warn(`⚠️ [loadImageAsBase64] Fetch failed, falling back to Image element:`, fetchError.message);
-        throw fetchError; // Propagate to try Image element fallback
+        throw fetchError;
       }
     };
     
@@ -218,35 +88,34 @@ const loadImageAsBase64 = (imageUrl) => {
           reject(new Error(`Image load timeout (10s): ${imageUrl}`));
         }, 10000);
     
-    img.onload = () => {
-      clearTimeout(timeout);
-      console.log(`✅ [loadImageAsBase64] Image loaded successfully: ${imageUrl}`);
-      console.log(`   → Dimensions: ${img.width}x${img.height}`);
-      console.log(`   → Converting to base64 for PDF...`);
-      
-      try {
-        const canvas = document.createElement('canvas');
-        // Use higher resolution for better quality
-        canvas.width = img.width;
-        canvas.height = img.height;
-        
-        const ctx = canvas.getContext('2d');
-        if (!ctx) {
-          throw new Error('Failed to get canvas context');
-        }
-        
-        ctx.imageSmoothingEnabled = true;
-        ctx.imageSmoothingQuality = "high";
-        ctx.drawImage(img, 0, 0);
-        
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
-        console.log(`✅ [loadImageAsBase64] Base64 conversion complete (${Math.round(dataUrl.length / 1024)}KB)`);
-        resolve(dataUrl);
-      } catch (error) {
-        console.error('❌ [loadImageAsBase64] Canvas conversion error:', error);
-        reject(new Error(`Canvas conversion failed: ${error.message}`));
-      }
-    };
+        img.onload = () => {
+          clearTimeout(timeout);
+          console.log(`✅ [loadImageAsBase64] Image loaded successfully: ${imageUrl}`);
+          console.log(`   → Dimensions: ${img.width}x${img.height}`);
+          console.log(`   → Converting to base64 for PDF...`);
+          
+          try {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            
+            const ctx = canvas.getContext('2d');
+            if (!ctx) {
+              throw new Error('Failed to get canvas context');
+            }
+            
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = "high";
+            ctx.drawImage(img, 0, 0);
+            
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
+            console.log(`✅ [loadImageAsBase64] Base64 conversion complete (${Math.round(dataUrl.length / 1024)}KB)`);
+            resolve(dataUrl);
+          } catch (error) {
+            console.error('❌ [loadImageAsBase64] Canvas conversion error:', error);
+            reject(new Error(`Canvas conversion failed: ${error.message}`));
+          }
+        };
     
         img.onerror = (error) => {
           clearTimeout(timeout);
@@ -255,7 +124,7 @@ const loadImageAsBase64 = (imageUrl) => {
             error: error,
             originalFetchError: fetchError.message
           });
-          reject(new Error(`Image load failed (CORS/Network): ${imageUrl}. Original fetch error: ${fetchError.message}`));
+          reject(new Error(`Image load failed (CORS/Network): ${imageUrl}`));
         };
     
         // Add timestamp to prevent caching issues
@@ -285,9 +154,6 @@ const consolidateEntries = (entries = []) => {
   const groupMap = new Map();
 
   entries.forEach((entry, index) => {
-    // Debug log each entry
-    debugLogData(entry, index);
-    
     // Create case-insensitive, trimmed grouping key
     const building = (entry.building || 'N/A').toString().trim().toLowerCase();
     const location = (entry.locationDescription || 'N/A').toString().trim().toLowerCase();
@@ -337,13 +203,11 @@ const consolidateGroup = (group) => {
     sorted.forEach(e => {
       let items = [];
       
-      // Handle different field value types
       if (Array.isArray(e[field])) {
         items = e[field].filter(item => item && String(item).trim());
       } else if (e[field] && typeof e[field] === 'string' && e[field].trim()) {
         items = [e[field]];
       } else if (e[field] && typeof e[field] === 'object') {
-        // Handle object with path property (some APIs return {path: '...'})
         if (e[field].path) items = [e[field].path];
         else if (e[field].url) items = [e[field].url];
       }
@@ -363,7 +227,19 @@ const consolidateGroup = (group) => {
     group.map(e => e.uniqueId || e.workOrderId || e._id?.slice(-4).padStart(4, '0'))
   );
 
-  // Extract surveyors from all entries
+  const extractSurveyors = (entry) => {
+    if (Array.isArray(entry.surveyors) && entry.surveyors.length > 0) return entry.surveyors;
+    if (entry.surveyors && typeof entry.surveyors === 'string') return [entry.surveyors];
+    const nameFields = ['surveyorName', 'technician', 'createdBy'];
+    for (const field of nameFields) {
+      if (entry[field]) {
+        if (Array.isArray(entry[field])) return entry[field];
+        if (typeof entry[field] === 'string') return [entry[field]];
+      }
+    }
+    return [];
+  };
+
   const allSurveyors = [];
   group.forEach(entry => {
     const surveyors = extractSurveyors(entry);
@@ -376,10 +252,8 @@ const consolidateGroup = (group) => {
 
   return {
     ...base,
-
     uniqueId: uniqueIds.join(', '),
-    confinedSpaceNameOrId: uniq(group.map(e => extractSpaceNameOrId(e)).filter(Boolean)).join(', ') || null,
-
+    confinedSpaceNameOrId: uniq(group.map(e => e.confinedSpaceNameOrId).filter(Boolean)).join(', ') || null,
     dateOfSurvey: date('dateOfSurvey') || date('surveyDate') || date('createdAt'),
     surveyors: allSurveyors.length > 0 ? allSurveyors : null,
 
@@ -405,7 +279,7 @@ const consolidateGroup = (group) => {
     canOthersSeeIntoSpace: bool('canOthersSeeIntoSpace'),
     contractorsEnterSpace: bool('contractorsEnterSpace'),
 
-    numberOfEntryPoints: uniq(group.map(e => extractEntryPoints(e)).filter(Boolean)).join(', ') || null,
+    numberOfEntryPoints: uniq(group.map(e => e.numberOfEntryPoints).filter(Boolean)).join(', ') || null,
 
     pictures: orderedMedia('pictures'),
     images: orderedMedia('images'),
@@ -432,7 +306,7 @@ export const handleDownloadFilteredPDF = async (orders = [], sortBy) => {
   try {
     console.log('Starting PDF generation for', orders.length, 'orders');
     
-    // Fetch full order details to ensure we have all image data
+    // CRITICAL: Fetch full order details to ensure we have all image data
     console.log('📡 Fetching fresh order details with images...');
     const token = localStorage.getItem('token') || localStorage.getItem('authToken');
     const API_BASE_URL = import.meta.env?.VITE_API_BASE_URL || 
@@ -463,7 +337,6 @@ export const handleDownloadFilteredPDF = async (orders = [], sortBy) => {
         const result = await response.json();
         const fullOrder = result.data || result;
         
-        // Log image URLs for debugging
         const imageCount = [
           ...(fullOrder.pictures || []),
           ...(fullOrder.images || []),
@@ -479,7 +352,7 @@ export const handleDownloadFilteredPDF = async (orders = [], sortBy) => {
         return fullOrder;
       } catch (error) {
         console.error(`❌ Error fetching order details:`, error);
-        return order; // Fallback to original order
+        return order;
       }
     };
     
@@ -487,10 +360,7 @@ export const handleDownloadFilteredPDF = async (orders = [], sortBy) => {
     const fullOrders = await Promise.all(orders.map(fetchOrderDetails));
     console.log(`✅ Fetched ${fullOrders.length} complete orders with image data`);
     
-    // Sort orders if needed
-    const sortedOrders = fullOrders;
-
-    const consolidatedEntries = consolidateEntries(sortedOrders);
+    const consolidatedEntries = consolidateEntries(fullOrders);
     console.log('Consolidated into', consolidatedEntries.length, 'entries');
 
     const doc = new jsPDF({ unit: 'pt', format: 'a4' });
@@ -501,31 +371,26 @@ export const handleDownloadFilteredPDF = async (orders = [], sortBy) => {
     const imageMaxHeight = 150;
 
     const getImageUrl = (imgPath) => {
-      // Validate input
       if (!imgPath || typeof imgPath !== 'string') {
         console.warn('🔍 [getImageUrl] Invalid image path:', imgPath);
         return '';
       }
       
       const trimmedPath = imgPath.trim();
-      if (!trimmedPath) {
-        console.warn('🔍 [getImageUrl] Empty image path after trim');
-        return '';
-      }
+      if (!trimmedPath) return '';
       
       console.log(`🔍 [getImageUrl] Processing path: "${trimmedPath}"`);
       
-      // Already a complete URL (Blob Storage: Azure/S3/Cloudinary or data URLs)
+      // Blob Storage URLs (Azure/S3/Cloudinary) - return as-is
       if (trimmedPath.startsWith('data:')) {
         console.log('✅ [getImageUrl] Data URL detected');
         return trimmedPath;
       }
       
-      // Blob Storage URLs (Azure Blob, AWS S3, Cloudinary, etc.) - return as-is
       if (trimmedPath.startsWith('http://') || trimmedPath.startsWith('https://')) {
         console.log(`✅ [getImageUrl] Blob Storage URL detected (external): ${trimmedPath}`);
         console.log('   → Returning as-is (no API base URL prepended)');
-        return trimmedPath; // Do NOT prepend local API URL
+        return trimmedPath;
       }
       
       if (trimmedPath.startsWith('blob:')) {
@@ -533,81 +398,23 @@ export const handleDownloadFilteredPDF = async (orders = [], sortBy) => {
         return trimmedPath;
       }
       
-      // Handle object with path/url property
-      if (typeof imgPath === 'object' && imgPath !== null) {
-        console.log('🔍 [getImageUrl] Object path detected:', imgPath);
-        if (imgPath.path) return getImageUrl(imgPath.path);
-        if (imgPath.url) return getImageUrl(imgPath.url);
-        return '';
-      }
-      
-      // Local path - need to construct full URL
-      // Check if we're in admin dashboard or regular view
-      const currentOrigin = window.location.origin;
-      const currentPath = window.location.pathname;
-      
-      console.log(`🔍 [getImageUrl] Current origin: ${currentOrigin}`);
-      console.log(`🔍 [getImageUrl] Current pathname: ${currentPath}`);
-      
-      // Determine backend base URL with priority:
-      // 1. Environment variables (VITE_API_BASE_URL, VITE_BACKEND_URL)
-      // 2. Detect API port pattern (common patterns: :3000, :5000, :8080, etc.)
-      // 3. Use current origin as fallback
-      
+      // Local path - construct full URL
       const envBackendUrl = import.meta.env?.VITE_API_BASE_URL || 
                            import.meta.env?.VITE_BACKEND_URL ||
                            import.meta.env?.VITE_API_URL;
       
-      let API_BASE_URL;
+      let backendURL = envBackendUrl || API_BASE_URL;
       
-      if (envBackendUrl) {
-        // Use environment variable if available
-        API_BASE_URL = envBackendUrl;
-        console.log(`✅ [getImageUrl] Using env backend URL: ${API_BASE_URL}`);
-      } else {
-        // Auto-detect backend URL
-        const currentPort = window.location.port;
-        const currentProtocol = window.location.protocol;
-        const currentHostname = window.location.hostname;
-        
-        console.log(`🔍 [getImageUrl] Auto-detecting backend - Protocol: ${currentProtocol}, Hostname: ${currentHostname}, Port: ${currentPort}`);
-        
-        // If frontend is on a specific port, backend might be on a different port
-        // Common patterns: frontend on 5173 (Vite), backend on 3000/5000/8080
-        if (currentPort && (currentPort === '5173' || currentPort === '3000' || currentPort === '4173')) {
-          // Assume backend is on port 5000 (common Node.js pattern)
-          const backendPort = '5000';
-          API_BASE_URL = `${currentProtocol}//${currentHostname}:${backendPort}`;
-          console.log(`🔧 [getImageUrl] Detected dev environment, assuming backend at: ${API_BASE_URL}`);
-        } else if (currentPath.includes('/admin') || currentPath.includes('/manager')) {
-          // In production, admin might be on subdomain or path
-          // Try to use same origin but log warning
-          API_BASE_URL = currentOrigin;
-          console.log(`⚠️ [getImageUrl] Admin context detected, using current origin: ${API_BASE_URL}`);
-          console.log(`⚠️ [getImageUrl] If images fail, set VITE_API_BASE_URL environment variable`);
-        } else {
-          // Default to current origin
-          API_BASE_URL = currentOrigin;
-          console.log(`🔍 [getImageUrl] Using current origin as backend: ${API_BASE_URL}`);
-        }
-      }
-      
-      // If path starts with /uploads/, it's likely a backend static file
       const cleanPath = trimmedPath.startsWith('/') ? trimmedPath : `/${trimmedPath}`;
-      const fullUrl = `${API_BASE_URL}${cleanPath}`;
+      const fullUrl = `${backendURL}${cleanPath}`;
       
       console.log(`✅ [getImageUrl] Constructed URL: ${trimmedPath} -> ${fullUrl}`);
-      console.log(`🔍 [getImageUrl] Final base URL used: ${API_BASE_URL}`);
       
       return fullUrl;
     };
 
     let currentY = margin;
     let pageNumber = 1;
-    const totalGroups = consolidatedEntries.length;
-
-    // Show loading indicator (you would integrate this with your UI)
-    console.log('Processing images and generating PDF...');
 
     for (let i = 0; i < consolidatedEntries.length; i++) {
       const entry = consolidatedEntries[i];
@@ -659,23 +466,10 @@ export const handleDownloadFilteredPDF = async (orders = [], sortBy) => {
       }
 
       // COLLECT AND LOAD ALL IMAGES
-      console.log(`\n${'='.repeat(60)}`);
-      console.log(`📸 Loading images for entry ${i + 1}/${consolidatedEntries.length}`);
-      console.log(`🔍 Current user role/context: ${window.location.pathname}`);
-      console.log(`🔍 Full Entry Object:`, entry);
-      console.log(`🔍 Data source analysis:`);
-      console.log('   - pictures:', entry.pictures, '(type:', typeof entry.pictures, ', isArray:', Array.isArray(entry.pictures), ')');
-      console.log('   - images:', entry.images, '(type:', typeof entry.images, ', isArray:', Array.isArray(entry.images), ')');
-      console.log('   - photos:', entry.photos, '(type:', typeof entry.photos, ', isArray:', Array.isArray(entry.photos), ')');
-      console.log('   - attachments:', entry.attachments, '(type:', typeof entry.attachments, ', isArray:', Array.isArray(entry.attachments), ')');
-      console.log(`${'='.repeat(60)}\n`);
-      
-      // Helper to normalize image fields to array
       const normalizeImageField = (field) => {
         if (!field) return [];
         if (Array.isArray(field)) return field.filter(item => item && String(item).trim());
         if (typeof field === 'string' && field.trim()) return [field];
-        if (typeof field === 'object' && (field.path || field.url)) return [field.path || field.url];
         return [];
       };
       
@@ -684,60 +478,32 @@ export const handleDownloadFilteredPDF = async (orders = [], sortBy) => {
       const photosList = normalizeImageField(entry.photos);
       const attachmentsList = normalizeImageField(entry.attachments);
       
-      console.log(`🔍 [Normalized Results]`);
-      console.log('   - picturesList:', picturesList.length, 'items', picturesList);
-      console.log('   - imagesList:', imagesList.length, 'items', imagesList);
-      console.log('   - photosList:', photosList.length, 'items', photosList);
-      console.log('   - attachmentsList:', attachmentsList.length, 'items', attachmentsList);
-      
-      // Merge and deduplicate all image paths
       const allImagePaths = [...picturesList, ...imagesList, ...photosList, ...attachmentsList];
       const uniqueImagePaths = [...new Set(allImagePaths.map(p => String(p).trim()).filter(Boolean))];
       const imagePaths = uniqueImagePaths;
       
-      console.log(`📊 [Image Path Summary]`);
-      console.log('   - Total paths before dedup:', allImagePaths.length);
-      console.log('   - Unique paths after dedup:', imagePaths.length);
-      console.log('   - Final image paths:', imagePaths);
       console.log(`Found ${imagePaths.length} images to load`);
-      
-      if (imagePaths.length === 0) {
-        console.warn(`⚠️ [WARNING] No images found in entry ${i + 1}!`);
-        console.warn('   ❌ Check if Admin API response includes image fields.');
-        console.warn('   🔍 Compare with Technician API response structure.');
-        console.warn('   📦 Entry object:', entry);
-      }
 
       const loadedImages = [];
       
-      // Pre-load all images with base64 conversion (with comprehensive error handling)
       for (const imgPath of imagePaths) {
         try {
           const imageUrl = getImageUrl(imgPath);
+          if (!imageUrl || !imageUrl.trim()) continue;
           
-          // Skip if URL is empty or invalid
-          if (!imageUrl || !imageUrl.trim()) {
-            console.warn('⚠️ Empty image URL after processing, skipping:', imgPath);
-            continue;
-          }
+          console.log(`Loading image:`, imageUrl);
           
-          console.log(`[${i + 1}/${consolidatedEntries.length}] Loading image:`, imageUrl);
-          
-          // Wrap in try-catch to handle CORS and network errors
           let base64Data;
           try {
             base64Data = await loadImageAsBase64(imageUrl);
-            
-            // Validate base64 data
             if (!base64Data || !base64Data.startsWith('data:')) {
               throw new Error('Invalid base64 data returned');
             }
           } catch (loadError) {
-            console.warn('⚠️ CORS/Network error loading image, skipping:', imageUrl, loadError.message);
-            continue; // Skip this image and continue with next
+            console.warn('⚠️ CORS/Network error loading image, skipping:', imageUrl);
+            continue;
           }
           
-          // Get image dimensions with timeout protection
           const img = new Image();
           try {
             await Promise.race([
@@ -760,29 +526,19 @@ export const handleDownloadFilteredPDF = async (orders = [], sortBy) => {
           const height = img.height * ratio;
           
           loadedImages.push({ dataUrl: base64Data, width, height });
-          console.log('✅ Image loaded successfully:', imageUrl);
+          console.log('✅ Image loaded successfully');
         } catch (error) {
-          console.error('❌ Unexpected error loading image:', imgPath, error);
-          // Continue with other images - don't let one failure stop the PDF
+          console.error('❌ Unexpected error loading image:', error);
         }
       }
 
       console.log(`Successfully loaded ${loadedImages.length}/${imagePaths.length} images`);
 
-      console.log(`Successfully loaded ${loadedImages.length}/${imagePaths.length} images`);
-
-      // Extract data with proper fallbacks
-      const surveyDate = extractDate(entry) || 'Not Specified';
-      const surveyors = extractSurveyors(entry);
-      const surveyorNames = surveyors.length > 0 ? surveyors.join(", ") : 'Not Specified';
-      const spaceNameOrId = extractSpaceNameOrId(entry) || 'Not Specified';
-      const entryPoints = extractEntryPoints(entry) || 'Not Specified';
-
       // DETAILS TABLE
       const detailsText = `
-Date of Survey: ${surveyDate}
-Surveyors: ${surveyorNames}
-Space Name/ID: ${spaceNameOrId}
+Date of Survey: ${entry.dateOfSurvey ? new Date(entry.dateOfSurvey).toISOString().slice(0, 10) : 'Not Specified'}
+Surveyors: ${Array.isArray(entry.surveyors) ? entry.surveyors.join(", ") : entry.surveyors || 'Not Specified'}
+Space Name/ID: ${entry.confinedSpaceNameOrId || 'Not Specified'}
 
 CLASSIFICATION:
 • Confined Space: ${entry.confinedSpace ? 'Yes' : 'No'}
@@ -803,14 +559,7 @@ SAFETY MEASURES:
 • PPE Required: ${entry.ppeRequired ? 'Yes' : 'No'}
 • PPE List: ${entry.ppeList || 'None Specified'}
 • Forced Air Ventilation: ${entry.forcedAirVentilationSufficient ? 'Sufficient' : 'Requires Assessment'}
-• Continuous Air Monitor: ${entry.dedicatedContinuousAirMonitor ? 'Yes' : 'No'}
-• Warning Sign Posted: ${entry.warningSignPosted ? 'Yes' : 'No'}
-• Entry Points: ${entryPoints}
-
-ADDITIONAL INFORMATION:
-• Other People Working Nearby: ${entry.otherPeopleWorkingNearSpace ? 'Yes' : 'No'}
-• Visibility into Space: ${entry.canOthersSeeIntoSpace ? 'Yes' : 'No'}
-• Contractors Enter Space: ${entry.contractorsEnterSpace ? 'Yes' : 'No'}
+• Entry Points: ${entry.numberOfEntryPoints || 'Not Specified'}
 
 ${entry.notes ? `Notes:\n${entry.notes}` : ''}
       `.trim();
@@ -829,8 +578,8 @@ ${entry.notes ? `Notes:\n${entry.notes}` : ''}
           { content: 'Assessment Details', styles: { fontStyle: 'bold', fillColor: [245, 245, 245], fontSize: 11 } },
           { 
             content: loadedImages.length > 0 
-              ? `Photographic Documentation (${loadedImages.length}/${imagePaths.length} Images Loaded)` 
-              : `Photographic Documentation (${imagePaths.length > 0 ? imagePaths.length + ' Images - Load Failed' : 'No Images'})`,
+              ? `Photographic Documentation (${loadedImages.length}/${imagePaths.length} Images)` 
+              : 'Photographic Documentation',
             styles: { fontStyle: 'bold', halign: 'center', fillColor: [245, 245, 245], fontSize: 11 } 
           }
         ],
@@ -840,236 +589,96 @@ ${entry.notes ? `Notes:\n${entry.notes}` : ''}
         ]
       ];
 
-      try {
-        autoTable(doc, {
-          body: tableData,
-          startY: currentY,
-          theme: 'grid',
-          styles: { 
-            fontSize: 10, 
-            cellPadding: 6,
-            lineColor: [200, 200, 200],
-            lineWidth: 0.5
-          },
-          columnStyles: { 
-            0: { cellWidth: pageWidth * 0.5 - margin }, 
-            1: { cellWidth: pageWidth * 0.5 - margin } 
-          },
-          didParseCell: (data) => {
-            if (data.row.index === 2 && data.column.index === 1 && loadedImages.length > 0) {
-              const imagesPerRow = 1; // Vertical stacking - one image per row
-              const gap = 10;
-              const padding = 10;
-              const imgWidth = data.cell.width - padding * 2;
-              const rows = loadedImages.length; // One row per image
-              const requiredHeight = rows * (imageMaxHeight + gap) - gap + padding * 2;
-              if (requiredHeight > (data.cell.styles.minCellHeight || 0)) {
-                data.cell.styles.minCellHeight = requiredHeight;
-              }
-            }
-          },
-          didDrawCell: (data) => {
-            if (data.row.index === 2 && data.column.index === 1) {
-              if (loadedImages.length === 0) {
-                // Draw placeholder box and text when no images loaded
-                const boxPadding = 20;
-                const boxX = data.cell.x + boxPadding;
-                const boxY = data.cell.y + boxPadding;
-                const boxWidth = data.cell.width - boxPadding * 2;
-                const boxHeight = data.cell.height - boxPadding * 2;
-                
-                // Draw dashed border box
-                doc.setDrawColor(200, 200, 200);
-                doc.setLineDash([3, 3]);
-                doc.setLineWidth(1);
-                doc.rect(boxX, boxY, boxWidth, boxHeight);
-                doc.setLineDash([]); // Reset to solid line
-                
-                // Draw warning text
-                doc.setFontSize(11);
-                doc.setFont('helvetica', 'bold');
-                doc.setTextColor(200, 100, 100);
-                const warningTitle = imagePaths.length > 0 ? '⚠️ IMAGE LOAD FAILED' : 'ℹ️ NO IMAGES';
-                doc.text(
-                  warningTitle,
-                  data.cell.x + data.cell.width / 2,
-                  data.cell.y + data.cell.height / 2 - 10,
-                  { align: 'center', baseline: 'middle' }
-                );
-                
-                doc.setFontSize(9);
-                doc.setFont('helvetica', 'italic');
-                doc.setTextColor(150, 150, 150);
-                const detailText = imagePaths.length > 0 
-                  ? `${imagePaths.length} image(s) blocked by CORS restrictions`
-                  : 'No photographic documentation available';
-                doc.text(
-                  detailText,
-                  data.cell.x + data.cell.width / 2,
-                  data.cell.y + data.cell.height / 2 + 10,
-                  { align: 'center', baseline: 'middle' }
-                );
-                
-                doc.setTextColor(0, 0, 0);
-                return;
-              }
-              
-              const imagesPerRow = 1; // Vertical stacking
-              const gap = 10;
-              const padding = 10;
-              const imgWidth = data.cell.width - padding * 2;
-              
-              console.log(`Rendering ${loadedImages.length} images in PDF cell`);
-              
-              loadedImages.forEach((img, idx) => {
-                // Validate image data
-                if (!img || !img.dataUrl || !img.width || !img.height) {
-                  console.error(`Invalid image data at index ${idx}:`, img);
-                  return;
-                }
-                
-                const row = idx; // Each image gets its own row
-                const col = 0; // Always first column since only 1 per row
-                
-                const x = data.cell.x + padding;
-                const y = data.cell.y + padding + row * (imageMaxHeight + gap);
-                
-                // Bounds check - ensure image fits within cell
-                const maxY = data.cell.y + data.cell.height;
-                if (y > maxY) {
-                  console.warn(`Image ${idx} would render outside cell bounds, skipping`);
-                  return;
-                }
-                
-                // Calculate aspect ratio
-                const imgAspectRatio = img.width / img.height;
-                const containerAspectRatio = imgWidth / imageMaxHeight;
-                
-                let drawWidth, drawHeight;
-                if (imgAspectRatio > containerAspectRatio) {
-                  drawWidth = imgWidth;
-                  drawHeight = imgWidth / imgAspectRatio;
-                } else {
-                  drawHeight = imageMaxHeight;
-                  drawWidth = imageMaxHeight * imgAspectRatio;
-                }
-                
-                // Ensure minimum size
-                if (drawWidth < 10 || drawHeight < 10) {
-                  console.warn(`Image ${idx} too small (${drawWidth}x${drawHeight}), skipping`);
-                  return;
-                }
-                
-                // Center image in container
-                const offsetX = (imgWidth - drawWidth) / 2;
-                const offsetY = (imageMaxHeight - drawHeight) / 2;
-                
-                // Draw image (no border)
-                try {
-                  console.log(`Drawing image ${idx + 1} at (${x + offsetX}, ${y + offsetY}) size ${drawWidth}x${drawHeight}`);
-                  doc.addImage(
-                    img.dataUrl, 
-                    'JPEG', 
-                    x + offsetX, 
-                    y + offsetY, 
-                    drawWidth, 
-                    drawHeight
-                  );
-                } catch (error) {
-                  console.error(`Error adding image ${idx} to PDF:`, error);
-                }
-              });
+      autoTable(doc, {
+        body: tableData,
+        startY: currentY,
+        theme: 'grid',
+        styles: { 
+          fontSize: 10, 
+          cellPadding: 6,
+          lineColor: [200, 200, 200],
+          lineWidth: 0.5
+        },
+        columnStyles: { 
+          0: { cellWidth: pageWidth * 0.5 - margin }, 
+          1: { cellWidth: pageWidth * 0.5 - margin } 
+        },
+        didParseCell: (data) => {
+          if (data.row.index === 2 && data.column.index === 1 && loadedImages.length > 0) {
+            const gap = 10;
+            const requiredHeight = loadedImages.length * (imageMaxHeight + gap) + 20;
+            if (requiredHeight > (data.cell.styles.minCellHeight || 0)) {
+              data.cell.styles.minCellHeight = requiredHeight;
             }
           }
-        });
-      } catch (tableError) {
-        console.error('⚠️ Error rendering autoTable:', tableError);
-        // Continue with PDF generation even if table fails
-      }
+        },
+        didDrawCell: (data) => {
+          if (data.row.index === 2 && data.column.index === 1 && loadedImages.length > 0) {
+            let imgY = data.cell.y + 10;
+            const centerX = data.cell.x + 10;
 
-      // Safely get the table's final Y position with null check
-      if (doc.previousAutoTable && doc.previousAutoTable.finalY) {
-        currentY = doc.previousAutoTable.finalY + 15;
-      } else {
-        console.warn('⚠️ autoTable did not complete properly, using estimated position');
-        currentY += 250; // Estimate based on typical table height
-      }
+            loadedImages.forEach((img) => {
+              if (imgY + img.height < pageHeight) {
+                doc.addImage(img.dataUrl, 'JPEG', centerX, imgY, img.width, img.height);
+                imgY += img.height + 10;
+              }
+            });
+          }
+        }
+      });
 
-      // PAGE BREAK IF NEEDED
-      if (currentY + 40 > pageHeight - margin) {
-        doc.addPage();
-        currentY = margin + 25;
-        
-        // Re-add header on new page
-        doc.setFillColor(35, 34, 73);
-        doc.rect(0, 0, pageWidth, 20, 'F');
-        doc.setFontSize(16);
-        doc.setFont('helvetica', 'bold');
-        doc.setTextColor(255, 255, 255);
-        doc.text('Confined Space Assessment Report (Continued)', pageWidth / 2, 13, { align: 'center' });
-        doc.setTextColor(0, 0, 0);
-        currentY = margin + 25;
-      }
+      currentY = doc.lastAutoTable?.finalY || currentY + 250;
+      
+      pageNumber++;
     }
 
     // SIGNATURE SECTION
-    // 1. CRITICAL FIX: Explicitly capture the last table's final Y position
-    const tableEnd = doc.lastAutoTable?.finalY || doc.previousAutoTable?.finalY || currentY;
+    const tableEnd = doc.lastAutoTable?.finalY || currentY;
     console.log(`📍 Last table ended at Y position: ${tableEnd}`);
     
-    // 2. Get unique surveyors to calculate section height (use fullOrders to get fresh data)
     const allSurveyors = new Set();
     fullOrders.forEach(order => {
-      const surveyors = extractSurveyors(order);
+      const surveyors = Array.isArray(order.surveyors) ? order.surveyors : 
+                       order.surveyors ? [order.surveyors] : [];
       surveyors.forEach(name => allSurveyors.add(name));
     });
-    console.log(`📋 Found ${allSurveyors.size} unique surveyor(s):`, Array.from(allSurveyors));
+    console.log(`📋 Found ${allSurveyors.size} unique surveyor(s)`);
     
     const surveyorCount = allSurveyors.size > 0 ? allSurveyors.size : 1;
-    const headerHeight = 35; // Header bar + spacing
-    const signatureBlockHeight = 45; // Height per surveyor (signature line + name + date + spacing)
-    const totalSectionHeight = headerHeight + (surveyorCount * signatureBlockHeight) + 20; // Extra bottom margin
+    const headerHeight = 35;
+    const signatureBlockHeight = 45;
+    const totalSectionHeight = headerHeight + (surveyorCount * signatureBlockHeight) + 20;
     
-    // 3. CRITICAL FIX: Explicitly set currentY from table end + buffer
     currentY = tableEnd + 50;
-    console.log(`📍 Setting signature section start at Y: ${currentY} (needs ${totalSectionHeight}pt total)`);
+    console.log(`📍 Setting signature section start at Y: ${currentY}`);
     
-    // 4. Page Break Logic - ensure entire section fits on one page
     if (currentY + totalSectionHeight > pageHeight - margin - 30) {
-      console.log(`⚠️ Not enough space (${pageHeight - margin - currentY}pt available, ${totalSectionHeight}pt needed) - adding new page`);
+      console.log(`⚠️ Not enough space - adding new page`);
       doc.addPage();
       currentY = margin + 40;
-      console.log(`📄 New page created, signature section starts at Y: ${currentY}`);
-    } else {
-      console.log(`✅ Sufficient space available (${pageHeight - margin - currentY}pt), continuing on same page`);
     }
     
-    // 5. Header Styling - Full width blue bar with white text inside
     doc.setFillColor(35, 34, 73);
-    doc.rect(0, currentY, pageWidth, 20, 'F'); // Full width bar (from x=0 to pageWidth)
+    doc.rect(0, currentY, pageWidth, 20, 'F');
     
     doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(255, 255, 255);
-    doc.text('Surveyor Acknowledgement', margin, currentY + 13); // Text inside bar
-    doc.setTextColor(0, 0, 0); // Reset to black
+    doc.text('Surveyor Acknowledgement', margin, currentY + 13);
+    doc.setTextColor(0, 0, 0);
     
-    currentY += 35; // Move below header bar with spacing
+    currentY += 35;
 
-    // 6. Render surveyor signature blocks
     if (allSurveyors.size > 0) {
-      const signatureLineLength = pageWidth - (margin * 2); // Full width signature line
-      const currentDate = new Date().toLocaleDateString(); // Get current date
-      const blockHeight = 45; // Height per signature block
+      const signatureLineLength = pageWidth - (margin * 2);
+      const currentDate = new Date().toLocaleDateString();
+      const blockHeight = 45;
       
       Array.from(allSurveyors).forEach((surveyorName, idx) => {
-        // Check if we need a new page for this signature block
         if (currentY + blockHeight > pageHeight - margin - 30) {
-          console.log(`⚠️ Surveyor ${idx + 1}: Page break needed at Y=${currentY}`);
           doc.addPage();
           currentY = margin + 40;
           
-          // Re-add section header on new page
           doc.setFillColor(35, 34, 73);
           doc.rect(0, margin, pageWidth, 20, 'F');
           doc.setFontSize(12);
@@ -1078,32 +687,26 @@ ${entry.notes ? `Notes:\n${entry.notes}` : ''}
           doc.text('Surveyor Acknowledgement (Continued)', margin, margin + 13);
           doc.setTextColor(0, 0, 0);
           currentY = margin + 50;
-          console.log(`📄 Continuation header added, Y reset to: ${currentY}`);
         }
         
-        console.log(`✍️ Drawing signature block ${idx + 1}/${allSurveyors.size} for: ${surveyorName} at Y=${currentY}`);
-        
-        // Draw signature line
         doc.setDrawColor(100, 100, 100);
         doc.setLineWidth(0.5);
         doc.line(margin, currentY, margin + signatureLineLength, currentY);
         
-        currentY += 15; // Space below signature line
+        currentY += 15;
         
-        // Print surveyor's name (BOLD) on the left and date on the right on same line
         doc.setFontSize(10);
         doc.setFont('helvetica', 'bold');
         doc.setTextColor(0, 0, 0);
         doc.text(`Name: ${surveyorName}`, margin, currentY);
         
-        // Print date on the far right (same line)
         doc.setFont('helvetica', 'normal');
         doc.text(`Date: ${currentDate}`, pageWidth - margin, currentY, { align: 'right' });
         
-        currentY += 30; // Space before next surveyor block
+        currentY += 30;
       });
       
-      console.log(`✅ All signature blocks rendered. Final Y position: ${currentY}`);
+      console.log(`✅ All signature blocks rendered`);
     } else {
       doc.setFontSize(10);
       doc.setFont('helvetica', 'italic');
@@ -1113,47 +716,31 @@ ${entry.notes ? `Notes:\n${entry.notes}` : ''}
       currentY += 15;
     }
 
-    // FOOTER WITH PAGE NUMBERS - Professional styling
+    // FOOTER WITH PAGE NUMBERS
     const totalPages = doc.internal.getNumberOfPages();
-    const footerLineY = pageHeight - 25; // Position of separator line
-    const footerTextY = pageHeight - 12; // Position of footer text (13pt below line)
+    const footerLineY = pageHeight - 25;
+    const footerTextY = pageHeight - 12;
     
     for (let i = 1; i <= totalPages; i++) {
       doc.setPage(i);
       
-      // Draw thin, light gray horizontal separator line
-      doc.setDrawColor(220, 220, 220); // Light gray color
-      doc.setLineWidth(0.5); // Thin line
+      doc.setDrawColor(220, 220, 220);
+      doc.setLineWidth(0.5);
       doc.line(margin, footerLineY, pageWidth - margin, footerLineY);
       
-      // Set footer text styling
-      doc.setFontSize(8); // Smaller, elegant font size
+      doc.setFontSize(8);
       doc.setFont('helvetica', 'normal');
-      doc.setTextColor(120, 120, 120); // Neutral gray color
+      doc.setTextColor(120, 120, 120);
       
-      // Generated timestamp - far left, below line
       const generatedText = `Generated: ${new Date().toLocaleString()}`;
       doc.text(generatedText, margin, footerTextY);
       
-      // Page indicator - far right, below line
       const pageText = `Page ${i} of ${totalPages}`;
       doc.text(pageText, pageWidth - margin, footerTextY, { align: 'right' });
     }
 
-    // Save PDF with dynamic filename
     const currentDate = new Date().toISOString().slice(0, 10);
-    let filename;
-    
-    if (consolidatedEntries.length === 1 && !consolidatedEntries[0]._consolidated) {
-      // Single work order - use specific naming
-      const entry = consolidatedEntries[0];
-      const workOrderId = (entry.uniqueId || entry.workOrderId || 'UnknownID').replace(/[^a-zA-Z0-9-_]/g, '_');
-      const building = (entry.building || 'UnknownBuilding').replace(/[^a-zA-Z0-9-_]/g, '_');
-      filename = `Assessment_${workOrderId}_${building}_${currentDate}.pdf`;
-    } else {
-      // Multiple or consolidated orders
-      filename = `Consolidated_Report_${currentDate}_${Date.now()}.pdf`;
-    }
+    const filename = `Consolidated_Report_${currentDate}_${Date.now()}.pdf`;
     
     console.log(`Saving PDF: ${filename}`);
     doc.save(filename);
@@ -1167,31 +754,6 @@ ${entry.notes ? `Notes:\n${entry.notes}` : ''}
   }
 };
 
-// ============================
-// EXPORT ALIASES FOR COMPATIBILITY
-// ============================
-
-export const generateConsolidatedPDF = async (workOrders, options = {}) => {
-  const { filename = 'work-orders-consolidated.pdf' } = options;
-  await handleDownloadFilteredPDF(workOrders);
-};
-
-export const generateDetailedPDF = async (workOrders, options = {}) => {
-  const { filename = 'work-orders-detailed.pdf' } = options;
-  await handleDownloadFilteredPDF(workOrders);
-};
-
-export const generateSummaryTablePDF = async (workOrders, options = {}) => {
-  const { filename = 'work-orders-summary.pdf' } = options;
-  await handleDownloadFilteredPDF(workOrders);
-};
-
-export const consolidateWorkOrderData = consolidateEntries;
-
 export default {
-  generateConsolidatedPDF,
-  generateDetailedPDF,
-  generateSummaryTablePDF,
-  consolidateWorkOrderData,
   handleDownloadFilteredPDF
 };

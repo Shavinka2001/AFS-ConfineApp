@@ -317,66 +317,54 @@ export const handleDownloadFilteredPDF = async (orders = [], sortBy) => {
       try {
         const orderId = order._id || order.id || order.uniqueId;
         if (!orderId) {
-          console.warn('⚠️ Order missing ID, using original data:', order);
+          return order; // Silently use original data
+        }
+        
+        // Try /api/workorders first (most common), then /api/work-orders as fallback
+        const endpoints = [
+          `${API_BASE_URL}/api/workorders/${orderId}`,
+          `${API_BASE_URL}/api/work-orders/${orderId}`
+        ];
+        
+        let fullOrder = null;
+        
+        for (const apiUrl of endpoints) {
+          try {
+            const response = await fetch(apiUrl, {
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              },
+              credentials: 'include'
+            });
+            
+            // Check if response is valid JSON
+            const contentType = response.headers.get('content-type');
+            if (response.ok && contentType && contentType.includes('application/json')) {
+              const result = await response.json();
+              fullOrder = result.data || result;
+              break; // Success! Use this endpoint
+            }
+          } catch (err) {
+            continue; // Try next endpoint
+          }
+        }
+        
+        // If we got fresh data, use it; otherwise fall back to original
+        if (fullOrder) {
+          return fullOrder;
+        } else {
+          // Only log warning once to avoid console spam
+          if (!window.__pdfOrderFetchWarned) {
+            console.warn(`⚠️ PDF Generator: Unable to fetch fresh order data - using cached data`);
+            console.warn(`   This may happen if the workOrderManagement service is not running`);
+            console.warn(`   PDF will still generate using available order information`);
+            window.__pdfOrderFetchWarned = true;
+          }
           return order;
         }
-        
-        const apiUrl = `${API_BASE_URL}/api/work-orders/${orderId}`;
-        console.log(`🔍 Fetching order details from: ${apiUrl}`);
-        
-        const response = await fetch(apiUrl, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          },
-          credentials: 'include'
-        });
-        
-        console.log(`📡 Response status: ${response.status} ${response.statusText}`);
-        console.log(`📡 Content-Type: ${response.headers.get('content-type')}`);
-        
-        if (!response.ok) {
-          console.warn(`⚠️ Failed to fetch order ${orderId} (${response.status}), using original data`);
-          return order;
-        }
-        
-        // Check if response is JSON before parsing
-        const contentType = response.headers.get('content-type');
-        if (!contentType || !contentType.includes('application/json')) {
-          const textPreview = await response.text();
-          console.error(`❌ Expected JSON but got ${contentType}:`, textPreview.substring(0, 200));
-          console.warn(`⚠️ Backend returned non-JSON response for order ${orderId}, using original data`);
-          return order;
-        }
-        
-        let result;
-        try {
-          result = await response.json();
-        } catch (parseError) {
-          console.error(`❌ JSON parse error for order ${orderId}:`, parseError);
-          console.warn(`⚠️ Failed to parse response, using original data`);
-          return order;
-        }
-        
-        const fullOrder = result.data || result;
-        
-        const imageCount = [
-          ...(fullOrder.pictures || []),
-          ...(fullOrder.images || []),
-          ...(fullOrder.photos || []),
-          ...(fullOrder.attachments || [])
-        ].length;
-        
-        console.log(`✅ Fetched full details for order ${orderId} - ${imageCount} image(s) found`);
-        if (imageCount > 0) {
-          console.log('   → Sample image URL:', (fullOrder.pictures || fullOrder.images || fullOrder.photos || fullOrder.attachments || [])[0]);
-        }
-        
-        return fullOrder;
       } catch (error) {
-        console.error(`❌ Error fetching order details for ${order._id || order.id || order.uniqueId}:`, error.message);
-        console.warn(`⚠️ Using original order data (fallback)`);
-        return order;
+        return order; // Silently fall back on any error
       }
     };
     

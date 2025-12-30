@@ -206,7 +206,11 @@ const loadImageAsBase64 = (imageUrl) => {
         console.log(`🔄 [loadImageAsBase64] Attempting Image element fallback for: ${imageUrl}`);
         
         const img = new Image();
+        
+        // CRITICAL: Set crossOrigin to "anonymous" BEFORE setting src
+        // This allows loading Blob Storage images (Azure/S3/Cloudinary) without CORS tainting
         img.crossOrigin = "anonymous";
+        console.log('🔓 [loadImageAsBase64] CORS mode set to anonymous for Blob Storage compatibility');
         
         // Set timeout to prevent hanging
         const timeout = setTimeout(() => {
@@ -216,6 +220,10 @@ const loadImageAsBase64 = (imageUrl) => {
     
     img.onload = () => {
       clearTimeout(timeout);
+      console.log(`✅ [loadImageAsBase64] Image loaded successfully: ${imageUrl}`);
+      console.log(`   → Dimensions: ${img.width}x${img.height}`);
+      console.log(`   → Converting to base64 for PDF...`);
+      
       try {
         const canvas = document.createElement('canvas');
         // Use higher resolution for better quality
@@ -232,9 +240,10 @@ const loadImageAsBase64 = (imageUrl) => {
         ctx.drawImage(img, 0, 0);
         
         const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
+        console.log(`✅ [loadImageAsBase64] Base64 conversion complete (${Math.round(dataUrl.length / 1024)}KB)`);
         resolve(dataUrl);
       } catch (error) {
-        console.error('Canvas conversion error:', error);
+        console.error('❌ [loadImageAsBase64] Canvas conversion error:', error);
         reject(new Error(`Canvas conversion failed: ${error.message}`));
       }
     };
@@ -279,7 +288,12 @@ const consolidateEntries = (entries = []) => {
     // Debug log each entry
     debugLogData(entry, index);
     
-    const key = `${entry.building || 'N/A'}|||${entry.locationDescription || 'N/A'}|||${entry.confinedSpaceDescription || 'N/A'}`;
+    // Create case-insensitive, trimmed grouping key
+    const building = (entry.building || 'N/A').toString().trim().toLowerCase();
+    const location = (entry.locationDescription || 'N/A').toString().trim().toLowerCase();
+    const space = (entry.confinedSpaceDescription || 'N/A').toString().trim().toLowerCase();
+    const key = `${building}|||${location}|||${space}`;
+    
     if (!groupMap.has(key)) groupMap.set(key, []);
     groupMap.get(key).push({ ...entry, originalIndex: index });
   });
@@ -418,8 +432,63 @@ export const handleDownloadFilteredPDF = async (orders = [], sortBy) => {
   try {
     console.log('Starting PDF generation for', orders.length, 'orders');
     
+    // Fetch full order details to ensure we have all image data
+    console.log('📡 Fetching fresh order details with images...');
+    const token = localStorage.getItem('token') || localStorage.getItem('authToken');
+    const API_BASE_URL = import.meta.env?.VITE_API_BASE_URL || 
+                        import.meta.env?.VITE_BACKEND_URL ||
+                        window.location.origin.replace(':5173', ':5000');
+    
+    const fetchOrderDetails = async (order) => {
+      try {
+        const orderId = order._id || order.id || order.uniqueId;
+        if (!orderId) {
+          console.warn('⚠️ Order missing ID, using original data:', order);
+          return order;
+        }
+        
+        const response = await fetch(`${API_BASE_URL}/api/work-orders/${orderId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include'
+        });
+        
+        if (!response.ok) {
+          console.warn(`⚠️ Failed to fetch order ${orderId} (${response.status}), using original data`);
+          return order;
+        }
+        
+        const result = await response.json();
+        const fullOrder = result.data || result;
+        
+        // Log image URLs for debugging
+        const imageCount = [
+          ...(fullOrder.pictures || []),
+          ...(fullOrder.images || []),
+          ...(fullOrder.photos || []),
+          ...(fullOrder.attachments || [])
+        ].length;
+        
+        console.log(`✅ Fetched full details for order ${orderId} - ${imageCount} image(s) found`);
+        if (imageCount > 0) {
+          console.log('   → Sample image URL:', (fullOrder.pictures || fullOrder.images || fullOrder.photos || fullOrder.attachments || [])[0]);
+        }
+        
+        return fullOrder;
+      } catch (error) {
+        console.error(`❌ Error fetching order details:`, error);
+        return order; // Fallback to original order
+      }
+    };
+    
+    // Fetch all orders in parallel
+    const fullOrders = await Promise.all(orders.map(fetchOrderDetails));
+    console.log(`✅ Fetched ${fullOrders.length} complete orders with image data`);
+    
     // Sort orders if needed
-    const sortedOrders = orders;
+    const sortedOrders = fullOrders;
 
     const consolidatedEntries = consolidateEntries(sortedOrders);
     console.log('Consolidated into', consolidatedEntries.length, 'entries');
@@ -446,15 +515,19 @@ export const handleDownloadFilteredPDF = async (orders = [], sortBy) => {
       
       console.log(`🔍 [getImageUrl] Processing path: "${trimmedPath}"`);
       
-      // Already a complete URL
+      // Already a complete URL (Blob Storage: Azure/S3/Cloudinary or data URLs)
       if (trimmedPath.startsWith('data:')) {
         console.log('✅ [getImageUrl] Data URL detected');
         return trimmedPath;
       }
+      
+      // Blob Storage URLs (Azure Blob, AWS S3, Cloudinary, etc.) - return as-is
       if (trimmedPath.startsWith('http://') || trimmedPath.startsWith('https://')) {
-        console.log(`✅ [getImageUrl] Full URL detected: ${trimmedPath}`);
-        return trimmedPath;
+        console.log(`✅ [getImageUrl] Blob Storage URL detected (external): ${trimmedPath}`);
+        console.log('   → Returning as-is (no API base URL prepended)');
+        return trimmedPath; // Do NOT prepend local API URL
       }
+      
       if (trimmedPath.startsWith('blob:')) {
         console.log('✅ [getImageUrl] Blob URL detected');
         return trimmedPath;
@@ -984,7 +1057,8 @@ ${entry.notes ? `Notes:\n${entry.notes}` : ''}
     // 6. Render surveyor signature blocks
     if (allSurveyors.size > 0) {
       const signatureBlockHeight = 55; // Height for each signature block
-      const signatureLineLength = 250; // Length of signature line
+      const signatureLineLength = pageWidth - (margin * 2); // Full width signature line
+      const currentDate = new Date().toLocaleDateString(); // Get current date
       
       Array.from(allSurveyors).forEach((surveyorName, idx) => {
         // Check if we need a new page for this signature block
@@ -1011,21 +1085,17 @@ ${entry.notes ? `Notes:\n${entry.notes}` : ''}
         
         currentY += 15; // Space below signature line
         
-        // Print surveyor's name
+        // Print surveyor's name (BOLD) on the left and date on the right on same line
         doc.setFontSize(10);
-        doc.setFont('helvetica', 'normal');
+        doc.setFont('helvetica', 'bold');
         doc.setTextColor(0, 0, 0);
         doc.text(`Name: ${surveyorName}`, margin, currentY);
         
-        currentY += 15; // Space below name
+        // Print date on the far right (same line)
+        doc.setFont('helvetica', 'normal');
+        doc.text(`Date: ${currentDate}`, pageWidth - margin, currentY, { align: 'right' });
         
-        // Print date field
-        const dateFieldLength = 150;
-        doc.text('Date: ', margin, currentY);
-        const dateTextWidth = doc.getTextWidth('Date: ');
-        doc.line(margin + dateTextWidth, currentY + 1, margin + dateTextWidth + dateFieldLength, currentY + 1);
-        
-        currentY += 25; // Space before next surveyor block
+        currentY += 30; // Space before next surveyor block
       });
     } else {
       doc.setFontSize(10);

@@ -96,10 +96,10 @@ const Layout = ({ children }) => {
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
-                console.log('[Layout] Hamburger clicked, opening menu');
-                setIsMobileMenuOpen(!isMobileMenuOpen);
+                console.log('[Layout] Hamburger clicked, forcing open menu');
+                setIsMobileMenuOpen(true);
               }}
-              className="mobile-menu-btn p-4 bg-gradient-to-br from-gray-50 to-white rounded-xl shadow-md border border-gray-200/50 touch-manipulation overflow-hidden relative z-50 min-w-[56px] min-h-[56px] cursor-pointer"
+              className="mobile-menu-btn p-4 bg-gradient-to-br from-gray-50 to-white rounded-xl shadow-md border border-gray-200/50 touch-manipulation overflow-hidden z-50 min-w-[56px] min-h-[56px] cursor-pointer"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               initial={{ opacity: 0, x: -20 }}
@@ -172,9 +172,9 @@ const Layout = ({ children }) => {
             <Sidebar 
               isCollapsed={isCollapsed}
               setIsCollapsed={setIsCollapsed}
-              isMobile={false}
-              isMobileMenuOpen={false}
-              closeMobileMenu={() => {}}
+              isMobile={isMobile}
+              isMobileMenuOpen={isMobileMenuOpen}
+              closeMobileMenu={() => setIsMobileMenuOpen(false)}
             />
           </div>
         )}

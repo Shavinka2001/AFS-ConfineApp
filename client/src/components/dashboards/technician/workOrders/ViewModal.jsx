@@ -28,10 +28,10 @@ const ViewModal = ({
   if (!showDetailModal || !selectedForm) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-2 md:p-4 z-50">
-      <div className="bg-white rounded-2xl md:rounded-3xl shadow-2xl w-full max-w-6xl max-h-[95vh] overflow-hidden border border-gray-200 transform scale-100 transition-all duration-300">
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-0 md:p-4 z-50">
+      <div className="bg-white rounded-none md:rounded-2xl lg:rounded-3xl shadow-2xl w-full h-full md:h-auto md:max-w-6xl md:max-h-[95vh] overflow-hidden border-0 md:border md:border-gray-200 flex flex-col">
         {/* Ultra Modern Header */}
-        <div className="relative bg-gradient-to-br from-[#232249] via-[#2a2a5c] to-[#1a1b3a] p-4 md:p-8 overflow-hidden">
+        <div className="relative bg-gradient-to-br from-[#232249] via-[#2a2a5c] to-[#1a1b3a] p-4 md:p-6 lg:p-8 overflow-hidden flex-shrink-0">
           <div className="absolute inset-0 opacity-10">
             <div className="absolute inset-0" style={{
               backgroundImage: 'radial-gradient(circle at 25% 25%, rgba(255,255,255,0.1) 1px, transparent 1px)',
@@ -41,35 +41,35 @@ const ViewModal = ({
           <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-white/10 to-transparent rounded-bl-full"></div>
           <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-white/5 to-transparent rounded-tr-full"></div>
           
-          <div className="relative flex items-center justify-between text-white">
-            <div className="flex items-center space-x-3 md:space-x-6">
-              <div className="p-2 md:p-4 bg-white/15 rounded-xl md:rounded-2xl backdrop-blur-sm border border-white/20 shadow-lg">
-                <FileText className="h-6 w-6 md:h-10 md:w-10 text-white" />
+          <div className="relative flex flex-col md:flex-row items-start md:items-center justify-between text-white gap-3 md:gap-0">
+            <div className="flex items-center space-x-3 md:space-x-6 flex-1 min-w-0">
+              <div className="p-2 md:p-3 lg:p-4 bg-white/15 rounded-xl md:rounded-2xl backdrop-blur-sm border border-white/20 shadow-lg flex-shrink-0">
+                <FileText className="h-6 w-6 md:h-8 md:w-8 lg:h-10 lg:w-10 text-white" />
               </div>
-              <div>
-                <h2 className="text-2xl md:text-4xl font-bold bg-gradient-to-r from-white to-white/90 bg-clip-text text-transparent mb-1 md:mb-2">
+              <div className="flex-1 min-w-0">
+                <h2 className="text-xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-white to-white/90 bg-clip-text text-transparent mb-1 md:mb-2">
                   Inspection Details
                 </h2>
                 <div className="flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-4">
-                  <p className="text-white/80 text-sm md:text-lg font-medium">
+                  <p className="text-white/80 text-xs md:text-sm lg:text-lg font-medium truncate">
                     {selectedForm.workOrderId || `WO-${new Date(selectedForm.submittedAt || selectedForm.createdAt).getFullYear()}-${String(selectedForm.id).padStart(4, '0')}`}
                   </p>
-                  <div className="hidden sm:block w-2 h-2 bg-white/60 rounded-full"></div>
-                  <p className="text-white/80 text-sm md:text-lg">{formatDate(selectedForm.submittedAt)}</p>
+                  <div className="hidden sm:block w-2 h-2 bg-white/60 rounded-full flex-shrink-0"></div>
+                  <p className="text-white/80 text-xs md:text-sm lg:text-lg truncate">{formatDate(selectedForm.submittedAt)}</p>
                 </div>
               </div>
             </div>
             <button
               onClick={closeDetailModal}
-              className="p-3 md:p-4 hover:bg-white/20 rounded-xl md:rounded-2xl transition-all duration-300 group border border-white/20"
+              className="p-3 md:p-4 hover:bg-white/20 rounded-xl md:rounded-2xl transition-all duration-300 group border border-white/20 touch-manipulation min-h-[48px] min-w-[48px] flex items-center justify-center flex-shrink-0"
             >
-              <XCircle className="h-6 w-6 md:h-8 md:w-8 group-hover:scale-110 transition-transform text-white" />
+              <XCircle className="h-6 w-6 md:h-7 md:w-7 lg:h-8 lg:w-8 group-hover:scale-110 transition-transform text-white" />
             </button>
           </div>
         </div>
 
         {/* Modal Content */}
-        <div className="p-4 md:p-8 space-y-6 md:space-y-8 overflow-y-auto max-h-[70vh] bg-gradient-to-br from-gray-50/50 to-white">
+        <div className="flex-1 p-4 md:p-6 lg:p-8 space-y-4 md:space-y-6 lg:space-y-8 overflow-y-auto bg-gradient-to-br from-gray-50/50 to-white">
           {/* Status Banner */}
           <div className="flex items-center justify-between p-6 bg-gradient-to-r from-[#232249]/5 to-[#232249]/10 rounded-2xl border border-[#232249]/20">
             <div className="flex items-center space-x-4">
@@ -96,16 +96,16 @@ const ViewModal = ({
           </div>
 
           {/* Basic Information */}
-          <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300">
-            <div className="flex items-center mb-6">
-              <div className="p-3 bg-gradient-to-br from-[#232249] to-[#2a2a5c] rounded-xl mr-4 shadow-lg">
-                <FileText className="h-6 w-6 text-white" />
+          <div className="bg-white rounded-xl md:rounded-2xl p-4 md:p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300">
+            <div className="flex items-center mb-4 md:mb-6">
+              <div className="p-2 md:p-3 bg-gradient-to-br from-[#232249] to-[#2a2a5c] rounded-lg md:rounded-xl mr-3 md:mr-4 shadow-lg flex-shrink-0">
+                <FileText className="h-5 w-5 md:h-6 md:w-6 text-white" />
               </div>
-              <h3 className="text-2xl font-bold text-gray-900">Basic Information</h3>
+              <h3 className="text-lg md:text-xl lg:text-2xl font-bold text-gray-900">Basic Information</h3>
             </div>
             
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-3 md:space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                 <div className="group">
                   <label className="block text-sm font-semibold text-gray-600 mb-1 uppercase tracking-wide">Space Name</label>
                   <div className="p-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200 group-hover:border-[#232249]/30 transition-all">
@@ -396,19 +396,19 @@ const ViewModal = ({
         </div>
 
         {/* Modal Footer */}
-        <div className="bg-gradient-to-r from-gray-50 to-gray-100 px-8 py-6 border-t border-gray-200">
-          <div className="flex justify-between items-center">
-            <div className="text-sm text-gray-600">
-              <div className="flex items-center space-x-4">
+        <div className="bg-gradient-to-r from-gray-50 to-gray-100 px-4 md:px-6 lg:px-8 py-4 md:py-6 border-t border-gray-200 flex-shrink-0">
+          <div className="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-3 md:gap-0">
+            <div className="text-xs md:text-sm text-gray-600 order-2 md:order-1">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-1 sm:space-y-0">
                 <span>📅 Submitted: {formatDate(selectedForm.submittedAt)}</span>
                 <span>🔄 Modified: {formatDate(selectedForm.lastModified)}</span>
               </div>
             </div>
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-2 md:gap-3 order-1 md:order-2">
               <button
                 onClick={() => downloadPDF(selectedForm)}
                 disabled={downloadingPdf === selectedForm.id}
-                className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#232249] to-[#2a2a5c] text-white rounded-xl hover:shadow-lg transition-all duration-300 disabled:opacity-50 transform hover:-translate-y-0.5"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 md:px-6 py-3.5 md:py-4 min-h-[48px] bg-gradient-to-r from-[#232249] to-[#2a2a5c] text-white rounded-lg md:rounded-xl hover:shadow-lg transition-all duration-300 disabled:opacity-50 transform hover:-translate-y-0.5 font-semibold text-sm md:text-base touch-manipulation"
               >
                 {downloadingPdf === selectedForm.id ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
@@ -419,7 +419,7 @@ const ViewModal = ({
               </button>
               <button
                 onClick={closeDetailModal}
-                className="px-6 py-3 bg-gray-200 text-gray-700 rounded-xl hover:bg-gray-300 transition-all duration-300 font-medium transform hover:-translate-y-0.5"
+                className="w-full sm:w-auto px-5 md:px-6 py-3.5 md:py-4 min-h-[48px] bg-gray-200 text-gray-700 rounded-lg md:rounded-xl hover:bg-gray-300 transition-all duration-300 font-semibold text-sm md:text-base transform hover:-translate-y-0.5 touch-manipulation"
               >
                 Close
               </button>

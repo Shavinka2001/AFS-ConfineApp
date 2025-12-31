@@ -179,23 +179,23 @@ const EditModal = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-2 md:p-4 z-50">
-      <div className="bg-white rounded-2xl md:rounded-3xl shadow-2xl max-w-6xl max-h-[95vh] overflow-hidden w-full border border-gray-200 flex flex-col">
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-0 md:p-4 z-50">
+      <div className="bg-white rounded-none md:rounded-2xl lg:rounded-3xl shadow-2xl w-full h-full md:h-auto md:max-w-6xl md:max-h-[95vh] overflow-hidden border-0 md:border md:border-gray-200 flex flex-col">
         {/* Header */}
-        <div className="relative bg-gradient-to-br from-[#232249] via-[#2a2a5c] to-[#1a1b3a] p-4 md:p-8">
-          <div className="flex items-center justify-between text-white">
-            <div className="flex items-center space-x-3 md:space-x-6">
-              <div className="p-2 md:p-4 bg-white/15 rounded-xl md:rounded-2xl backdrop-blur-sm border border-white/20 shadow-lg">
-                <FileText className="h-6 w-6 md:h-10 md:w-10 text-white" />
+        <div className="relative bg-gradient-to-br from-[#232249] via-[#2a2a5c] to-[#1a1b3a] p-4 md:p-6 lg:p-8 flex-shrink-0">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between text-white gap-3 md:gap-0">
+            <div className="flex items-center space-x-3 md:space-x-6 flex-1 min-w-0">
+              <div className="p-2 md:p-3 lg:p-4 bg-white/15 rounded-xl md:rounded-2xl backdrop-blur-sm border border-white/20 shadow-lg flex-shrink-0">
+                <FileText className="h-6 w-6 md:h-8 md:w-8 lg:h-10 lg:w-10 text-white" />
               </div>
-              <div>
-                <h2 className="text-2xl md:text-4xl font-bold mb-1 md:mb-2">Edit Work Order</h2>
-                <p className="text-white/80 text-sm md:text-lg">
+              <div className="flex-1 min-w-0">
+                <h2 className="text-xl md:text-3xl lg:text-4xl font-bold mb-1 md:mb-2 truncate">Edit Work Order</h2>
+                <p className="text-white/80 text-xs md:text-base lg:text-lg truncate">
                   {editingForm.workOrderId || `WO-${new Date(editingForm.submittedAt || editingForm.createdAt).getFullYear()}-${String(editingForm.id).padStart(4, '0')}`}
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-2 md:gap-4">
+            <div className="flex items-center gap-2 md:gap-4 flex-shrink-0">
               {/* PDF Download Button */}
               <PDFDownloadButton 
                 workOrder={editingForm} 
@@ -205,17 +205,17 @@ const EditModal = ({
               
               <button
                 onClick={closeEditModal}
-                className="p-4 hover:bg-white/20 rounded-2xl transition-all duration-300 group border border-white/20"
+                className="p-3 md:p-4 hover:bg-white/20 rounded-xl md:rounded-2xl transition-all duration-300 group border border-white/20 touch-manipulation min-h-[48px] min-w-[48px] flex items-center justify-center"
               >
-                <XCircle className="h-8 w-8 group-hover:scale-110 transition-transform text-white" />
+                <XCircle className="h-6 w-6 md:h-7 md:w-7 lg:h-8 lg:w-8 group-hover:scale-110 transition-transform text-white" />
               </button>
             </div>
           </div>
         </div>
 
         {/* Navigation Tabs */}
-        <div className="bg-white border-b border-gray-200 flex-shrink-0">
-          <div className="flex overflow-x-auto scrollbar-hide">
+        <div className="bg-white border-b border-gray-200 flex-shrink-0 overflow-x-auto">
+          <div className="flex min-w-max md:min-w-0">
             {sections.map((section) => {
               const Icon = section.icon;
               const isActive = activeSection === section.id;
@@ -224,14 +224,14 @@ const EditModal = ({
                 <button
                   key={section.id}
                   onClick={() => setActiveSection(section.id)}
-                  className={`flex-1 min-w-0 flex items-center justify-center p-3 border-b-2 transition-colors duration-200 whitespace-nowrap ${
+                  className={`flex-1 min-w-[120px] md:min-w-0 flex items-center justify-center p-3.5 md:p-3 min-h-[48px] border-b-2 transition-colors duration-200 whitespace-nowrap touch-manipulation ${
                     isActive 
                       ? 'border-[#232249] bg-blue-50 text-[#232249]' 
                       : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50'
                   }`}
                 >
                   <Icon className="w-4 h-4 mr-2 flex-shrink-0" />
-                  <span className="font-medium text-xs sm:text-sm">{section.title}</span>
+                  <span className="font-medium text-sm">{section.title}</span>
                 </button>
               );
             })}
@@ -239,16 +239,16 @@ const EditModal = ({
         </div>
 
         {/* Modal Content */}
-        <div className="flex-1 p-6 space-y-6 overflow-y-auto">
+        <div className="flex-1 p-4 md:p-6 space-y-4 md:space-y-6 overflow-y-auto">
           {/* Basic Information Section */}
           {activeSection === 'basic' && (
-            <div className="space-y-6">
-              <h3 className="text-xl font-bold text-[#232249] mb-4 flex items-center">
-                <FileText className="w-6 h-6 mr-2" />
+            <div className="space-y-4 md:space-y-6">
+              <h3 className="text-lg md:text-xl font-bold text-[#232249] mb-3 md:mb-4 flex items-center">
+                <FileText className="w-5 h-5 md:w-6 md:h-6 mr-2 flex-shrink-0" />
                 Basic Information
               </h3>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     <Calendar className="inline w-4 h-4 mr-1" />
@@ -258,7 +258,7 @@ const EditModal = ({
                     type="date"
                     value={editingForm.surveyDate ? new Date(editingForm.surveyDate).toISOString().split('T')[0] : ''}
                     onChange={(e) => handleInputChange('surveyDate', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-transparent"
+                    className="w-full px-3 py-3 min-h-[48px] border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-transparent text-base"
                   />
                 </div>
 
@@ -271,7 +271,7 @@ const EditModal = ({
                     type="text"
                     value={editingForm.technician || ''}
                     onChange={(e) => handleInputChange('technician', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-transparent"
+                    className="w-full px-3 py-3 min-h-[48px] border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-transparent text-base"
                     placeholder="Enter technician name"
                   />
                 </div>
@@ -283,7 +283,7 @@ const EditModal = ({
                   <select
                     value={editingForm.priority || 'medium'}
                     onChange={(e) => handleInputChange('priority', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-transparent"
+                    className="w-full px-3 py-3 min-h-[48px] border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-transparent text-base"
                   >
                     <option value="low">Low</option>
                     <option value="medium">Medium</option>
@@ -299,7 +299,7 @@ const EditModal = ({
                   <select
                     value={editingForm.status || 'pending'}
                     onChange={(e) => handleInputChange('status', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-transparent"
+                    className="w-full px-3 py-3 min-h-[48px] border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-transparent text-base"
                   >
                     <option value="draft">Draft</option>
                     <option value="pending">Pending</option>
@@ -316,14 +316,14 @@ const EditModal = ({
 
           {/* Space Information Section */}
           {activeSection === 'space' && (
-            <div className="space-y-6">
-              <h3 className="text-xl font-bold text-[#232249] mb-4 flex items-center">
-                <Building className="w-6 h-6 mr-2" />
+            <div className="space-y-4 md:space-y-6">
+              <h3 className="text-lg md:text-xl font-bold text-[#232249] mb-3 md:mb-4 flex items-center">
+                <Building className="w-5 h-5 md:w-6 md:h-6 mr-2 flex-shrink-0" />
                 Space Information
               </h3>
               
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4 md:space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       <MapPin className="inline w-4 h-4 mr-1" />
@@ -474,13 +474,13 @@ const EditModal = ({
 
           {/* Hazard Assessment Section */}
           {activeSection === 'hazards' && (
-            <div className="space-y-6">
-              <h3 className="text-xl font-bold text-[#232249] mb-4 flex items-center">
-                <AlertTriangle className="w-6 h-6 mr-2" />
+            <div className="space-y-4 md:space-y-6">
+              <h3 className="text-lg md:text-xl font-bold text-[#232249] mb-3 md:mb-4 flex items-center">
+                <AlertTriangle className="w-5 h-5 md:w-6 md:h-6 mr-2 flex-shrink-0" />
                 Hazard Assessment
               </h3>
               
-              <div className="space-y-6">
+              <div className="space-y-4 md:space-y-6">
                 {/* Atmospheric Hazard */}
                 <div className="border-b pb-6">
                   <label className="block text-sm font-medium text-gray-700 mb-3">

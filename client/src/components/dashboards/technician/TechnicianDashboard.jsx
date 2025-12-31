@@ -141,20 +141,20 @@ const TechnicianDashboard = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      <div className="p-8 space-y-8">
+      <div className="w-full p-4 md:p-6 lg:p-8 space-y-4 md:space-y-6 lg:space-y-8 max-w-7xl mx-auto">
           {/* Header */}
-      <div className="flex items-center justify-between bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
-        <div className="flex items-center space-x-6">
-          <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-[#232249] to-[#232249]/80 bg-clip-text text-transparent">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between bg-white rounded-xl md:rounded-2xl shadow-xl p-4 md:p-6 border border-gray-100 gap-4 md:gap-0">
+        <div className="flex items-center space-x-3 md:space-x-6">
+          <div className="flex-1">
+            <h1 className="text-xl md:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-[#232249] to-[#232249]/80 bg-clip-text text-transparent">
               Technician Dashboard
             </h1>
-            <p className="text-gray-600 mt-1 font-medium">
-              Welcome back, <span className="text-[#232249] font-semibold">{user.firstName}</span>! Here are your assignments.
+            <p className="text-sm md:text-base text-gray-600 mt-1 font-medium">
+              Welcome back, <span className="text-[#232249] font-semibold">{user.firstName}</span>!
             </p>
           </div>
         </div>
-        <div className="flex flex-col items-end space-y-1">
+        <div className="flex flex-col items-end md:items-end space-y-1 flex-shrink-0">
           <div className="relative bg-gradient-to-r from-[#232249] to-[#232249]/90 text-white px-4 py-2 rounded-lg shadow-lg border border-[#232249]/30 overflow-hidden">
             {/* Decorative elements */}
             <div className="absolute top-0 right-0 w-8 h-8 bg-white/10 rounded-full -translate-y-4 translate-x-4"></div>
@@ -183,7 +183,7 @@ const TechnicianDashboard = () => {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 lg:gap-6">
         <StatCard
           icon={ClipboardList}
           title="Open Work Orders"
@@ -219,15 +219,15 @@ const TechnicianDashboard = () => {
       </div>
 
       {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
         {/* Active Work Orders */}
-        <div className="lg:col-span-2 bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center space-x-3">
-              <div className="p-2 bg-gradient-to-br from-[#232249]/10 to-[#232249]/20 rounded-lg">
-                <Wrench className="h-6 w-6 text-[#232249]" />
+        <div className="lg:col-span-2 bg-white rounded-xl md:rounded-2xl shadow-xl p-4 md:p-6 border border-gray-100">
+          <div className="flex items-center justify-between mb-4 md:mb-6">
+            <div className="flex items-center space-x-2 md:space-x-3">
+              <div className="p-2 bg-gradient-to-br from-[#232249]/10 to-[#232249]/20 rounded-lg flex-shrink-0">
+                <Wrench className="h-5 w-5 md:h-6 md:w-6 text-[#232249]" />
               </div>
-              <h3 className="text-xl font-bold text-[#232249]">Active Work Orders</h3>
+              <h3 className="text-lg md:text-xl font-bold text-[#232249]">Active Work Orders</h3>
             </div>
           </div>
           <div className="space-y-4">
@@ -262,7 +262,7 @@ const TechnicianDashboard = () => {
         </div>
 
         {/* Tools and Equipment */}
-        <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
+        <div className="bg-white rounded-xl md:rounded-2xl shadow-xl p-4 md:p-6 border border-gray-100">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-3">
               <div className="p-2 bg-gradient-to-br from-[#232249]/10 to-[#232249]/20 rounded-lg">
@@ -308,9 +308,9 @@ const TechnicianDashboard = () => {
       </div>
 
       {/* Today's Tasks and Schedule */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
         {/* Today's Tasks */}
-        <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
+        <div className="bg-white rounded-xl md:rounded-2xl shadow-xl p-4 md:p-6 border border-gray-100">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-3">
               <div className="p-2 bg-gradient-to-br from-[#232249]/10 to-[#232249]/20 rounded-lg">
@@ -352,7 +352,7 @@ const TechnicianDashboard = () => {
         </div>
 
         {/* Schedule */}
-        <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
+        <div className="bg-white rounded-xl md:rounded-2xl shadow-xl p-4 md:p-6 border border-gray-100">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-3">
               <div className="p-2 bg-gradient-to-br from-[#232249]/10 to-[#232249]/20 rounded-lg">

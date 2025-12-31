@@ -179,23 +179,23 @@ const EditModal = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-3xl shadow-2xl max-w-6xl max-h-[90vh] overflow-hidden w-full border border-gray-200 flex flex-col">
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-2 md:p-4 z-50">
+      <div className="bg-white rounded-2xl md:rounded-3xl shadow-2xl max-w-6xl max-h-[95vh] overflow-hidden w-full border border-gray-200 flex flex-col">
         {/* Header */}
-        <div className="relative bg-gradient-to-br from-[#232249] via-[#2a2a5c] to-[#1a1b3a] p-8">
+        <div className="relative bg-gradient-to-br from-[#232249] via-[#2a2a5c] to-[#1a1b3a] p-4 md:p-8">
           <div className="flex items-center justify-between text-white">
-            <div className="flex items-center space-x-6">
-              <div className="p-4 bg-white/15 rounded-2xl backdrop-blur-sm border border-white/20 shadow-lg">
-                <FileText className="h-10 w-10 text-white" />
+            <div className="flex items-center space-x-3 md:space-x-6">
+              <div className="p-2 md:p-4 bg-white/15 rounded-xl md:rounded-2xl backdrop-blur-sm border border-white/20 shadow-lg">
+                <FileText className="h-6 w-6 md:h-10 md:w-10 text-white" />
               </div>
               <div>
-                <h2 className="text-4xl font-bold mb-2">Edit Work Order</h2>
-                <p className="text-white/80 text-lg">
+                <h2 className="text-2xl md:text-4xl font-bold mb-1 md:mb-2">Edit Work Order</h2>
+                <p className="text-white/80 text-sm md:text-lg">
                   {editingForm.workOrderId || `WO-${new Date(editingForm.submittedAt || editingForm.createdAt).getFullYear()}-${String(editingForm.id).padStart(4, '0')}`}
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 md:gap-4">
               {/* PDF Download Button */}
               <PDFDownloadButton 
                 workOrder={editingForm} 

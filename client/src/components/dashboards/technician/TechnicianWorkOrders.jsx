@@ -413,8 +413,8 @@ const TechnicianWorkOrders = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="w-full flex-1">
+    <div className="min-h-screen bg-gray-50 p-4 md:p-8">
+      <div className="w-full max-w-7xl mx-auto flex-1">
         {/* Enhanced Professional Header */}
         <div className="relative bg-gradient-to-r from-[#232249] via-[#2a2a5a] to-[#232249] rounded-xl shadow-2xl mb-8 overflow-hidden">
           {/* Background Pattern */}
@@ -425,16 +425,16 @@ const TechnicianWorkOrders = () => {
           </div>
           
           {/* Header Content */}
-          <div className="relative z-10 p-8">
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+          <div className="relative z-10 p-4 md:p-8">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between">
               {/* Left Side - Title and Description */}
-              <div className="flex-1">
+              <div className="flex-1 mb-6 md:mb-0">
                 <div className="flex items-center mb-4">
-                  <div className="bg-white/20 backdrop-blur-sm rounded-lg p-3 mr-4">
-                    <Package className="w-8 h-8 text-white" />
+                  <div className="bg-white/20 backdrop-blur-sm rounded-lg p-2 md:p-3 mr-3 md:mr-4">
+                    <Package className="w-6 h-6 md:w-8 md:h-8 text-white" />
                   </div>
                   <div>
-                    <h1 className="text-3xl lg:text-4xl font-bold text-white mb-2">
+                    <h1 className="text-2xl md:text-4xl font-bold text-white mb-2">
                       Work Orders Management
                     </h1>
                     <div className="flex items-center text-blue-100">
@@ -447,14 +447,14 @@ const TechnicianWorkOrders = () => {
               </div>
 
               {/* Right Side - Time Display */}
-              <div className="mt-6 lg:mt-0 lg:ml-8">
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+              <div className="md:ml-8">
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 md:p-6 border border-white/20">
                   <div className="text-center">
                     <div className="flex items-center justify-center mb-3">
                       <Clock className="w-5 h-5 text-blue-200 mr-2" />
                       <span className="text-blue-200 text-sm font-medium">Current Time</span>
                     </div>
-                    <div className="text-2xl font-bold text-white mb-1">
+                    <div className="text-xl md:text-2xl font-bold text-white mb-1">
                       {formatTime(currentTime)}
                     </div>
                     <div className="text-blue-200 text-sm">
@@ -468,7 +468,7 @@ const TechnicianWorkOrders = () => {
         </div>
 
       {/* Essential Statistics Cards - Technician Focused */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 max-w-4xl mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-8 md:mb-10 max-w-4xl mx-auto">
         <StatCard
           title="Total Forms"
           value={stats.total}
@@ -488,14 +488,14 @@ const TechnicianWorkOrders = () => {
 
       {/* Search and Filters */}
       <div className="mb-6">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
-          <h2 className="text-xl font-bold text-gray-800">Assessment Records</h2>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+          <h2 className="text-lg md:text-xl font-bold text-gray-800">Assessment Records</h2>
           
           {/* Export to Excel Button */}
           <button
             onClick={handleExportToExcel}
             disabled={exportingExcel || filteredForms.length === 0}
-            className="flex items-center px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-200 font-semibold shadow-md hover:shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed"
+            className="w-full sm:w-auto flex items-center justify-center px-4 py-3 md:px-6 md:py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-200 font-semibold shadow-md hover:shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed text-sm md:text-base"
           >
             {exportingExcel ? (
               <>

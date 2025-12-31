@@ -82,7 +82,88 @@ const WorkOrderTable = ({
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-      <div className="overflow-x-auto">
+      {/* Mobile Cards View */}
+      <div className="block md:hidden">
+        {workOrders.length === 0 ? (
+          <div className="text-center py-12">
+            <FileText className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 mb-2">No work orders found</h3>
+            <p className="text-gray-500">Get started by creating your first work order.</p>
+          </div>
+        ) : (
+          <div className="divide-y divide-gray-200">
+            {workOrders.map((form) => (
+              <div key={form.id} className="p-4 hover:bg-gray-50 transition-colors">
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <FileText className="h-4 w-4 text-gray-400" />
+                      <p className="font-semibold text-gray-900 text-sm">
+                        {form.workOrderId || `WO-${new Date(form.submittedAt || form.createdAt).getFullYear()}-${String(form.id).padStart(4, '0')}`}
+                      </p>
+                    </div>
+                    <p className="text-sm text-gray-600 mb-2 line-clamp-2">
+                      {form.spaceName || form.description || 'No description'}
+                    </p>
+                    <div className="flex items-center gap-2 mb-2">
+                      <Calendar className="h-3 w-3 text-gray-400" />
+                      <span className="text-xs text-gray-500">
+                        {new Date(form.submittedAt || form.createdAt).toLocaleDateString()}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-end gap-2">
+                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(form.status)}`}>
+                      {form.status}
+                    </span>
+                    {form.priority && (
+                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(form.priority)}`}>
+                        {form.priority}
+                      </span>
+                    )}
+                  </div>
+                </div>
+                
+                <div className="flex items-center justify-between text-xs text-gray-500 mb-3">
+                  <div className="flex items-center gap-1">
+                    <User className="h-3 w-3" />
+                    <span>{form.entrySupervisor || form.customerName || 'N/A'}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <MapPin className="h-3 w-3" />
+                    <span className="truncate max-w-24">{form.building || 'N/A'}</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => onView(form)}
+                    className="flex-1 flex items-center justify-center py-3 px-3 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors text-sm font-medium"
+                  >
+                    <Eye className="h-4 w-4 mr-2" />
+                    View
+                  </button>
+                  <button
+                    onClick={() => onEdit(form)}
+                    className="flex-1 flex items-center justify-center py-3 px-3 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition-colors text-sm font-medium"
+                  >
+                    <Edit className="h-4 w-4 mr-2" />
+                    Edit
+                  </button>
+                  <PDFDownloadButton 
+                    workOrder={form} 
+                    size="small"
+                    className="flex items-center justify-center py-3 px-3 bg-gray-50 text-gray-600 rounded-lg hover:bg-gray-100 transition-colors"
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Desktop Table View */}
+      <div className="hidden md:block overflow-x-auto">
         <table className="w-full">
           <thead>
             <tr style={{ backgroundColor: '#232249' }}>

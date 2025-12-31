@@ -738,8 +738,8 @@ const TechnicianForm = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-3 md:p-6">
-      <div className="w-full flex-1">
+    <div className="min-h-screen bg-gray-50 p-4 md:p-8">
+      <div className="w-full max-w-7xl mx-auto">
         {/* Simple Professional Header */}
         <div className="bg-[#232249] rounded-lg shadow-md mb-4 md:mb-6">
           <div className="p-4 md:p-6">
@@ -750,7 +750,7 @@ const TechnicianForm = () => {
                   <Shield className="w-6 h-6 md:w-7 md:h-7 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-xl md:text-2xl font-bold text-white">
+                  <h1 className="text-2xl md:text-4xl font-bold text-white">
                     Confined Space Assessment
                   </h1>
                   <p className="text-white/80 text-xs md:text-sm mt-0.5">
@@ -827,12 +827,12 @@ const TechnicianForm = () => {
                   <FileText className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-lg md:text-xl font-bold text-gray-900">Basic Information</h3>
+                  <h3 className="text-2xl md:text-4xl font-bold text-gray-900">Basic Information</h3>
                   <p className="text-xs md:text-sm text-gray-600 mt-0.5">Essential assessment details</p>
                 </div>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
+              <div className="grid grid-cols-1 gap-4 md:gap-5">
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
                     Survey Date <span className="text-red-500">*</span>
@@ -841,7 +841,7 @@ const TechnicianForm = () => {
                     type="date"
                     value={formData.surveyDate}
                     onChange={(e) => handleInputChange('surveyDate', e.target.value)}
-                    className="w-full px-3 md:px-4 py-2.5 md:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-[#232249] bg-white text-gray-900"
+                    className="w-full px-3 md:px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-[#232249] bg-white text-gray-900 text-base"
                     required
                   />
                 </div>
@@ -854,7 +854,7 @@ const TechnicianForm = () => {
                     type="text"
                     value={formData.technician}
                     onChange={(e) => handleInputChange('technician', e.target.value)}
-                    className="w-full px-3 md:px-4 py-2.5 md:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-[#232249] bg-white text-gray-900"
+                    className="w-full px-3 md:px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-[#232249] bg-white text-gray-900 text-base"
                     placeholder="Enter your full name"
                     required
                   />
@@ -871,13 +871,13 @@ const TechnicianForm = () => {
                   <Building className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-lg md:text-xl font-bold text-gray-900">Space Information</h3>
+                  <h3 className="text-2xl md:text-4xl font-bold text-gray-900">Space Information</h3>
                   <p className="text-xs md:text-sm text-gray-600 mt-0.5">Location and space details</p>
                 </div>
               </div>
               
               <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 gap-6">
                   <div className="space-y-2">
                     <label className="flex items-center text-sm font-bold text-gray-800 mb-2">
                       <div className="p-1.5 bg-blue-100 rounded-lg mr-2">
@@ -890,7 +890,7 @@ const TechnicianForm = () => {
                       type="text"
                       value={formData.spaceName}
                       onChange={(e) => handleInputChange('spaceName', e.target.value)}
-                      className="w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white hover:border-gray-400 text-gray-900"
+                      className="w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white hover:border-gray-400 text-gray-900 text-base"
                       placeholder="Enter space identifier"
                       required
                     />
@@ -907,7 +907,7 @@ const TechnicianForm = () => {
                     <select
                       value={formData.buildingId}
                       onChange={(e) => handleBuildingSelect(e.target.value)}
-                      className="w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white hover:border-gray-400 appearance-none cursor-pointer text-gray-900 font-medium"
+                      className="w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white hover:border-gray-400 appearance-none cursor-pointer text-gray-900 font-medium text-base"
                       style={{ backgroundImage: "url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23232249%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E')", backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '0.65em auto' }}
                       required
                       disabled={!selectedLocation}
@@ -955,7 +955,7 @@ const TechnicianForm = () => {
                     type="number"
                     value={formData.numberOfEntryPoints}
                     onChange={(e) => handleInputChange('numberOfEntryPoints', e.target.value)}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-[#232249] transition-all duration-200 bg-white hover:border-gray-300 shadow-sm"
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-[#232249] transition-all duration-200 bg-white hover:border-gray-300 shadow-sm text-base"
                     placeholder="Enter number of entry points"
                     min="1"
                   />
@@ -967,7 +967,7 @@ const TechnicianForm = () => {
                     <div className="p-2 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg mr-3">
                       <CheckCircle className="w-5 h-5 text-white" />
                     </div>
-                    <h4 className="text-xl font-bold text-gray-900">Space Classification</h4>
+                    <h4 className="text-2xl md:text-4xl font-bold text-gray-900">Space Classification</h4>
                   </div>
                   
                   <div className="space-y-6">
@@ -978,7 +978,7 @@ const TechnicianForm = () => {
                         <span className="text-red-500 ml-2">*</span>
                       </label>
                       <div className="flex gap-3">
-                        <label className="flex items-center justify-center px-6 py-3 bg-white border-2 border-gray-300 rounded-xl cursor-pointer hover:border-[#232249] hover:shadow-md transition-all has-[:checked]:border-[#232249] has-[:checked]:bg-[#232249] has-[:checked]:text-white flex-1 group">
+                        <label className="flex items-center justify-center px-6 py-4 bg-white border-2 border-gray-300 rounded-xl cursor-pointer hover:border-[#232249] hover:shadow-md transition-all has-[:checked]:border-[#232249] has-[:checked]:bg-[#232249] has-[:checked]:text-white flex-1 group">
                           <input
                             type="radio"
                             name="isConfinedSpace"
@@ -989,7 +989,7 @@ const TechnicianForm = () => {
                           />
                           <span className="font-bold text-center">Yes</span>
                         </label>
-                        <label className="flex items-center justify-center px-6 py-3 bg-white border-2 border-gray-300 rounded-xl cursor-pointer hover:border-[#232249] hover:shadow-md transition-all has-[:checked]:border-[#232249] has-[:checked]:bg-[#232249] has-[:checked]:text-white flex-1 group">
+                        <label className="flex items-center justify-center px-6 py-4 bg-white border-2 border-gray-300 rounded-xl cursor-pointer hover:border-[#232249] hover:shadow-md transition-all has-[:checked]:border-[#232249] has-[:checked]:bg-[#232249] has-[:checked]:text-white flex-1 group">
                           <input
                             type="radio"
                             name="isConfinedSpace"
@@ -1010,7 +1010,7 @@ const TechnicianForm = () => {
                         <span className="text-red-500 ml-2">*</span>
                       </label>
                       <div className="flex gap-3">
-                        <label className="flex items-center justify-center px-6 py-3 bg-white border-2 border-gray-300 rounded-xl cursor-pointer hover:border-[#232249] hover:shadow-md transition-all has-[:checked]:border-[#232249] has-[:checked]:bg-[#232249] has-[:checked]:text-white flex-1 group">
+                        <label className="flex items-center justify-center px-6 py-4 bg-white border-2 border-gray-300 rounded-xl cursor-pointer hover:border-[#232249] hover:shadow-md transition-all has-[:checked]:border-[#232249] has-[:checked]:bg-[#232249] has-[:checked]:text-white flex-1 group">
                           <input
                             type="radio"
                             name="permitRequired"
@@ -1021,7 +1021,7 @@ const TechnicianForm = () => {
                           />
                           <span className="font-bold text-center">Yes</span>
                         </label>
-                        <label className="flex items-center justify-center px-6 py-3 bg-white border-2 border-gray-300 rounded-xl cursor-pointer hover:border-[#232249] hover:shadow-md transition-all has-[:checked]:border-[#232249] has-[:checked]:bg-[#232249] has-[:checked]:text-white flex-1 group">
+                        <label className="flex items-center justify-center px-6 py-4 bg-white border-2 border-gray-300 rounded-xl cursor-pointer hover:border-[#232249] hover:shadow-md transition-all has-[:checked]:border-[#232249] has-[:checked]:bg-[#232249] has-[:checked]:text-white flex-1 group">
                           <input
                             type="radio"
                             name="permitRequired"
@@ -1045,7 +1045,7 @@ const TechnicianForm = () => {
                       <textarea
                         value={formData.entryRequirements}
                         onChange={(e) => handleInputChange('entryRequirements', e.target.value)}
-                        className="w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white hover:border-gray-400 resize-none text-gray-900"
+                        className="w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white hover:border-gray-400 resize-none text-gray-900 text-base"
                         rows="3"
                         placeholder="Describe specific entry requirements or procedures"
                       />
@@ -1064,7 +1064,7 @@ const TechnicianForm = () => {
                   <AlertTriangle className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-lg md:text-xl font-bold text-gray-900">Hazard Assessment</h3>
+                  <h3 className="text-2xl md:text-4xl font-bold text-gray-900">Hazard Assessment</h3>
                   <p className="text-xs md:text-sm text-gray-600 mt-0.5">Identify potential hazards</p>
                 </div>
               </div>
@@ -1080,7 +1080,7 @@ const TechnicianForm = () => {
                     <span className="text-red-500 ml-2">*</span>
                   </label>
                   <div className="flex gap-4 mb-4">
-                    <label className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
+                    <label className="flex items-center px-4 py-4 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
                       <input
                         type="radio"
                         name="atmosphericHazard"
@@ -1091,7 +1091,7 @@ const TechnicianForm = () => {
                       />
                       <span className="font-semibold text-center flex-1">✔️ Yes</span>
                     </label>
-                    <label className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
+                    <label className="flex items-center px-4 py-4 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
                       <input
                         type="radio"
                         name="atmosphericHazard"
@@ -1106,7 +1106,7 @@ const TechnicianForm = () => {
                   <textarea
                     value={formData.atmosphericHazardDescription}
                     onChange={(e) => handleInputChange('atmosphericHazardDescription', e.target.value)}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-[#232249] transition-all duration-200 bg-white hover:border-gray-300 shadow-sm resize-none"
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-[#232249] transition-all duration-200 bg-white hover:border-gray-300 shadow-sm resize-none text-base"
                     rows="2"
                     placeholder="Describe atmospheric hazards if present (e.g., oxygen deficiency, toxic gases)"
                   />
@@ -1122,7 +1122,7 @@ const TechnicianForm = () => {
                     <span className="text-red-500 ml-2">*</span>
                   </label>
                   <div className="flex gap-4 mb-4">
-                    <label className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
+                    <label className="flex items-center px-4 py-4 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
                       <input
                         type="radio"
                         name="engulfmentHazard"
@@ -1133,7 +1133,7 @@ const TechnicianForm = () => {
                       />
                       <span className="font-semibold text-center flex-1">✔️ Yes</span>
                     </label>
-                    <label className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
+                    <label className="flex items-center px-4 py-4 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
                       <input
                         type="radio"
                         name="engulfmentHazard"
@@ -1148,7 +1148,7 @@ const TechnicianForm = () => {
                   <textarea
                     value={formData.engulfmentHazardDescription}
                     onChange={(e) => handleInputChange('engulfmentHazardDescription', e.target.value)}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-[#232249] transition-all duration-200 bg-white hover:border-gray-300 shadow-sm resize-none"
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-[#232249] transition-all duration-200 bg-white hover:border-gray-300 shadow-sm resize-none text-base"
                     rows="2"
                     placeholder="Describe engulfment hazards if present (e.g., liquids, flowing solids)"
                   />
@@ -1164,7 +1164,7 @@ const TechnicianForm = () => {
                     <span className="text-red-500 ml-2">*</span>
                   </label>
                   <div className="flex gap-4 mb-4">
-                    <label className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
+                    <label className="flex items-center px-4 py-4 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
                       <input
                         type="radio"
                         name="configurationHazard"
@@ -1175,7 +1175,7 @@ const TechnicianForm = () => {
                       />
                       <span className="font-semibold text-center flex-1">✔️ Yes</span>
                     </label>
-                    <label className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
+                    <label className="flex items-center px-4 py-4 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
                       <input
                         type="radio"
                         name="configurationHazard"
@@ -1190,7 +1190,7 @@ const TechnicianForm = () => {
                   <textarea
                     value={formData.configurationHazardDescription}
                     onChange={(e) => handleInputChange('configurationHazardDescription', e.target.value)}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-[#232249] transition-all duration-200 bg-white hover:border-gray-300 shadow-sm resize-none"
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-[#232249] transition-all duration-200 bg-white hover:border-gray-300 shadow-sm resize-none text-base"
                     rows="2"
                     placeholder="Describe configuration hazards if present (e.g., internal design, obstructions)"
                   />
@@ -1206,7 +1206,7 @@ const TechnicianForm = () => {
                     <span className="text-red-500 ml-2">*</span>
                   </label>
                   <div className="flex gap-4 mb-4">
-                    <label className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
+                    <label className="flex items-center px-4 py-4 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
                       <input
                         type="radio"
                         name="otherRecognizedHazards"
@@ -1217,7 +1217,7 @@ const TechnicianForm = () => {
                       />
                       <span className="font-semibold text-center flex-1">✔️ Yes</span>
                     </label>
-                    <label className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
+                    <label className="flex items-center px-4 py-4 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
                       <input
                         type="radio"
                         name="otherRecognizedHazards"
@@ -1232,7 +1232,7 @@ const TechnicianForm = () => {
                   <textarea
                     value={formData.otherHazardsDescription}
                     onChange={(e) => handleInputChange('otherHazardsDescription', e.target.value)}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-[#232249] transition-all duration-200 bg-white hover:border-gray-300 shadow-sm resize-none"
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-[#232249] transition-all duration-200 bg-white hover:border-gray-300 shadow-sm resize-none text-base"
                     rows="2"
                     placeholder="Describe other hazards if present (e.g., electrical, mechanical, thermal)"
                   />
@@ -1249,7 +1249,7 @@ const TechnicianForm = () => {
                   <Shield className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-lg md:text-xl font-bold text-gray-900">Safety Requirements</h3>
+                  <h3 className="text-2xl md:text-4xl font-bold text-gray-900">Safety Requirements</h3>
                   <p className="text-xs md:text-sm text-gray-600 mt-0.5">Safety measures and equipment</p>
                 </div>
               </div>
@@ -1263,7 +1263,7 @@ const TechnicianForm = () => {
                     <span className="text-red-500 ml-2">*</span>
                   </label>
                   <div className="flex gap-4 mb-4">
-                    <label className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
+                    <label className="flex items-center px-4 py-4 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
                       <input
                         type="radio"
                         name="ppeRequired"
@@ -1274,7 +1274,7 @@ const TechnicianForm = () => {
                       />
                       <span className="font-semibold text-center flex-1">✔️ Yes</span>
                     </label>
-                    <label className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
+                    <label className="flex items-center px-4 py-4 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
                       <input
                         type="radio"
                         name="ppeRequired"
@@ -1289,7 +1289,7 @@ const TechnicianForm = () => {
                   <textarea
                     value={formData.ppeList}
                     onChange={(e) => handleInputChange('ppeList', e.target.value)}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-[#232249] transition-all duration-200 bg-white hover:border-gray-300 shadow-sm resize-none"
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-[#232249] transition-all duration-200 bg-white hover:border-gray-300 shadow-sm resize-none text-base"
                     rows="2"
                     placeholder="List required PPE (e.g., hard hat, gloves, respirator, safety harness)"
                   />
@@ -1305,7 +1305,7 @@ const TechnicianForm = () => {
                     <span className="text-red-500 ml-2">*</span>
                   </label>
                   <div className="flex gap-4">
-                    <label className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
+                    <label className="flex items-center px-4 py-4 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
                       <input
                         type="radio"
                         name="forcedAirVentilationSufficient"
@@ -1316,7 +1316,7 @@ const TechnicianForm = () => {
                       />
                       <span className="font-semibold text-center flex-1">✔️ Yes</span>
                     </label>
-                    <label className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
+                    <label className="flex items-center px-4 py-4 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
                       <input
                         type="radio"
                         name="forcedAirVentilationSufficient"
@@ -1340,7 +1340,7 @@ const TechnicianForm = () => {
                     <span className="text-red-500 ml-2">*</span>
                   </label>
                   <div className="flex gap-4">
-                    <label className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
+                    <label className="flex items-center px-4 py-4 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
                       <input
                         type="radio"
                         name="dedicatedAirMonitor"
@@ -1351,7 +1351,7 @@ const TechnicianForm = () => {
                       />
                       <span className="font-semibold text-center flex-1">✔️ Yes</span>
                     </label>
-                    <label className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
+                    <label className="flex items-center px-4 py-4 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
                       <input
                         type="radio"
                         name="dedicatedAirMonitor"
@@ -1373,7 +1373,7 @@ const TechnicianForm = () => {
                     <span className="text-red-500 ml-2">*</span>
                   </label>
                   <div className="flex gap-4">
-                    <label className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
+                    <label className="flex items-center px-4 py-4 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
                       <input
                         type="radio"
                         name="warningSignPosted"
@@ -1384,7 +1384,7 @@ const TechnicianForm = () => {
                       />
                       <span className="font-semibold text-center flex-1">✔️ Yes</span>
                     </label>
-                    <label className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
+                    <label className="flex items-center px-4 py-4 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
                       <input
                         type="radio"
                         name="warningSignPosted"
@@ -1409,7 +1409,7 @@ const TechnicianForm = () => {
                   <Users className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-lg md:text-xl font-bold text-gray-900">Personnel & Access</h3>
+                  <h3 className="text-2xl md:text-4xl font-bold text-gray-900">Personnel & Access</h3>
                   <p className="text-xs md:text-sm text-gray-600 mt-0.5">Personnel activities and visibility</p>
                 </div>
               </div>
@@ -1425,7 +1425,7 @@ const TechnicianForm = () => {
                     <span className="text-red-500 ml-2">*</span>
                   </label>
                   <div className="flex gap-4">
-                    <label className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
+                    <label className="flex items-center px-4 py-4 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
                       <input
                         type="radio"
                         name="otherPeopleWorkingNearSpace"
@@ -1436,7 +1436,7 @@ const TechnicianForm = () => {
                       />
                       <span className="font-semibold text-center flex-1">✔️ Yes</span>
                     </label>
-                    <label className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
+                    <label className="flex items-center px-4 py-4 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
                       <input
                         type="radio"
                         name="otherPeopleWorkingNearSpace"
@@ -1458,7 +1458,7 @@ const TechnicianForm = () => {
                     <span className="text-red-500 ml-2">*</span>
                   </label>
                   <div className="flex gap-4">
-                    <label className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
+                    <label className="flex items-center px-4 py-4 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
                       <input
                         type="radio"
                         name="canOthersSeeIntoSpace"
@@ -1469,7 +1469,7 @@ const TechnicianForm = () => {
                       />
                       <span className="font-semibold text-center flex-1">✔️ Yes</span>
                     </label>
-                    <label className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
+                    <label className="flex items-center px-4 py-4 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
                       <input
                         type="radio"
                         name="canOthersSeeIntoSpace"
@@ -1491,7 +1491,7 @@ const TechnicianForm = () => {
                     <span className="text-red-500 ml-2">*</span>
                   </label>
                   <div className="flex gap-4">
-                    <label className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
+                    <label className="flex items-center px-4 py-4 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
                       <input
                         type="radio"
                         name="contractorsEnterSpace"
@@ -1502,7 +1502,7 @@ const TechnicianForm = () => {
                       />
                       <span className="font-semibold text-center flex-1">✔️ Yes</span>
                     </label>
-                    <label className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
+                    <label className="flex items-center px-4 py-4 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 flex-1">
                       <input
                         type="radio"
                         name="contractorsEnterSpace"
@@ -1527,7 +1527,7 @@ const TechnicianForm = () => {
                   <textarea
                     value={formData.notes}
                     onChange={(e) => handleInputChange('notes', e.target.value)}
-                    className="w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white hover:border-gray-400 resize-none text-gray-900"
+                    className="w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white hover:border-gray-400 resize-none text-gray-900 text-base"
                     rows="4"
                     placeholder="Any additional observations, concerns, or notes about the confined space assessment"
                   />
@@ -1544,7 +1544,7 @@ const TechnicianForm = () => {
                   <ImageIcon className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-lg md:text-xl font-bold text-gray-900">Photos & Documentation</h3>
+                  <h3 className="text-2xl md:text-4xl font-bold text-gray-900">Photos & Documentation</h3>
                   <p className="text-xs md:text-sm text-gray-600 mt-0.5">Upload visual documentation</p>
                 </div>
               </div>
@@ -1766,7 +1766,7 @@ const TechnicianForm = () => {
               <CheckCircle className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h3 className="text-lg md:text-xl font-bold text-gray-900">Submit Assessment</h3>
+              <h3 className="text-2xl md:text-4xl font-bold text-gray-900">Submit Assessment</h3>
               <p className="text-xs md:text-sm text-gray-600 mt-0.5">Review and submit your assessment</p>
             </div>
           </div>

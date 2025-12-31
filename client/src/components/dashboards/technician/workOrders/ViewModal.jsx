@@ -27,10 +27,10 @@ const ViewModal = ({
   if (!showDetailModal || !selectedForm) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-3xl shadow-2xl max-w-6xl max-h-[95vh] overflow-hidden w-full border border-gray-200 transform scale-100 transition-all duration-300">
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-2 md:p-4 z-50">
+      <div className="bg-white rounded-2xl md:rounded-3xl shadow-2xl max-w-6xl max-h-[95vh] overflow-hidden w-full border border-gray-200 transform scale-100 transition-all duration-300">
         {/* Ultra Modern Header */}
-        <div className="relative bg-gradient-to-br from-[#232249] via-[#2a2a5c] to-[#1a1b3a] p-8 overflow-hidden">
+        <div className="relative bg-gradient-to-br from-[#232249] via-[#2a2a5c] to-[#1a1b3a] p-4 md:p-8 overflow-hidden">
           <div className="absolute inset-0 opacity-10">
             <div className="absolute inset-0" style={{
               backgroundImage: 'radial-gradient(circle at 25% 25%, rgba(255,255,255,0.1) 1px, transparent 1px)',
@@ -41,34 +41,34 @@ const ViewModal = ({
           <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-white/5 to-transparent rounded-tr-full"></div>
           
           <div className="relative flex items-center justify-between text-white">
-            <div className="flex items-center space-x-6">
-              <div className="p-4 bg-white/15 rounded-2xl backdrop-blur-sm border border-white/20 shadow-lg">
-                <FileText className="h-10 w-10 text-white" />
+            <div className="flex items-center space-x-3 md:space-x-6">
+              <div className="p-2 md:p-4 bg-white/15 rounded-xl md:rounded-2xl backdrop-blur-sm border border-white/20 shadow-lg">
+                <FileText className="h-6 w-6 md:h-10 md:w-10 text-white" />
               </div>
               <div>
-                <h2 className="text-4xl font-bold bg-gradient-to-r from-white to-white/90 bg-clip-text text-transparent mb-2">
+                <h2 className="text-2xl md:text-4xl font-bold bg-gradient-to-r from-white to-white/90 bg-clip-text text-transparent mb-1 md:mb-2">
                   Inspection Details
                 </h2>
-                <div className="flex items-center space-x-4">
-                  <p className="text-white/80 text-lg font-medium">
+                <div className="flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-4">
+                  <p className="text-white/80 text-sm md:text-lg font-medium">
                     {selectedForm.workOrderId || `WO-${new Date(selectedForm.submittedAt || selectedForm.createdAt).getFullYear()}-${String(selectedForm.id).padStart(4, '0')}`}
                   </p>
-                  <div className="w-2 h-2 bg-white/60 rounded-full"></div>
-                  <p className="text-white/80 text-lg">{formatDate(selectedForm.submittedAt)}</p>
+                  <div className="hidden sm:block w-2 h-2 bg-white/60 rounded-full"></div>
+                  <p className="text-white/80 text-sm md:text-lg">{formatDate(selectedForm.submittedAt)}</p>
                 </div>
               </div>
             </div>
             <button
               onClick={closeDetailModal}
-              className="p-4 hover:bg-white/20 rounded-2xl transition-all duration-300 group border border-white/20"
+              className="p-3 md:p-4 hover:bg-white/20 rounded-xl md:rounded-2xl transition-all duration-300 group border border-white/20"
             >
-              <XCircle className="h-8 w-8 group-hover:scale-110 transition-transform text-white" />
+              <XCircle className="h-6 w-6 md:h-8 md:w-8 group-hover:scale-110 transition-transform text-white" />
             </button>
           </div>
         </div>
 
         {/* Modal Content */}
-        <div className="p-8 space-y-8 overflow-y-auto max-h-[70vh] bg-gradient-to-br from-gray-50/50 to-white">
+        <div className="p-4 md:p-8 space-y-6 md:space-y-8 overflow-y-auto max-h-[70vh] bg-gradient-to-br from-gray-50/50 to-white">
           {/* Status Banner */}
           <div className="flex items-center justify-between p-6 bg-gradient-to-r from-[#232249]/5 to-[#232249]/10 rounded-2xl border border-[#232249]/20">
             <div className="flex items-center space-x-4">

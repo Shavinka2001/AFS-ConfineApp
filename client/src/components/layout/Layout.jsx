@@ -150,22 +150,17 @@ const Layout = ({ children }) => {
       <div className={`h-full ${isMobile ? 'pt-[73px]' : 'flex'}`}>
         {/* Sidebar - Different positioning for Mobile vs Desktop */}
         {isMobile ? (
-          /* Mobile: Fixed positioning, always rendered but hidden with translate-x */
-          <div 
-            className="fixed inset-0 z-50" 
-            style={{ pointerEvents: isMobileMenuOpen ? 'auto' : 'none' }}
-          >
-            <Sidebar
-              isCollapsed={false}
-              setIsCollapsed={setIsCollapsed}
-              isMobile={true}
-              isMobileMenuOpen={isMobileMenuOpen}
-              closeMobileMenu={() => {
-                console.log('[Layout] Closing mobile menu');
-                setIsMobileMenuOpen(false);
-              }}
-            />
-          </div>
+          /* Mobile: Fixed positioning handled by Sidebar component */
+          <Sidebar
+            isCollapsed={false}
+            setIsCollapsed={setIsCollapsed}
+            isMobile={true}
+            isMobileMenuOpen={isMobileMenuOpen}
+            closeMobileMenu={() => {
+              console.log('[Layout] Closing mobile menu');
+              setIsMobileMenuOpen(false);
+            }}
+          />
         ) : (
           /* Desktop: Flex item in layout */
           <div className="flex-shrink-0 h-full">

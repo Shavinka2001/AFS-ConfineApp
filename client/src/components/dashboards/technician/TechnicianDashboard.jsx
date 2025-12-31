@@ -141,7 +141,7 @@ const TechnicianDashboard = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      <div className="w-full p-4 md:p-6 lg:p-8 space-y-4 md:space-y-6 lg:space-y-8 max-w-7xl mx-auto">
+      <div className="w-full flex-1 p-6 space-y-4 md:space-y-6 lg:space-y-8">
           {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between bg-white rounded-xl md:rounded-2xl shadow-xl p-4 md:p-6 border border-gray-100 gap-4 md:gap-0">
         <div className="flex items-center space-x-3 md:space-x-6">

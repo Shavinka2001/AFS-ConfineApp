@@ -322,14 +322,16 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, isMobileMenuOp
         ];
       case 'technician':
         return [
-          ...technicianBaseItems,
+          { icon: LayoutDashboard, label: 'Dashboard', path: `/${user.role}/dashboard` },
+          { icon: ClipboardList, label: 'Tasks', path: '/technician/tasks' },
           { icon: Wrench, label: 'Work Orders', path: '/technician/work-orders' },
           { icon: FileText, label: 'Inspection Forms', path: '/technician/inspection-forms' },
-          { icon: ClipboardList, label: 'Tasks', path: '/technician/tasks' },
+          { icon: Settings, label: 'Settings', path: '/technician/settings' },
           { icon: Calendar, label: 'Schedule', path: '/technician/schedule' },
           { icon: MessageSquare, label: 'Messages', path: '/technician/messages' },
           { icon: BarChart3, label: 'Reports', path: '/technician/reports' },
-          { icon: Settings, label: 'Settings', path: '/technician/settings' },
+          { icon: Activity, label: 'Activity', path: `/${user.role}/activity` },
+          { icon: Bell, label: 'Notifications', path: `/${user.role}/notifications` },
         ];
       default:
         return baseItems;

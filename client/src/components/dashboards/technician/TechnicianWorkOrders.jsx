@@ -414,8 +414,7 @@ const TechnicianWorkOrders = () => {
 
   return (
     <div className="h-auto bg-gray-50">
-      <div className="w-full px-4 md:px-8">
-        <div className="w-full md:max-w-7xl md:mx-auto">
+      <div className="w-full flex-1 p-6">
         {/* Enhanced Professional Header */}
         <div className="relative bg-gradient-to-r from-[#232249] via-[#2a2a5a] to-[#232249] rounded-xl shadow-2xl mb-6 md:mb-8 overflow-hidden">
           {/* Background Pattern */}
@@ -569,7 +568,6 @@ const TechnicianWorkOrders = () => {
         downloadingPdf={downloadingPdf}
       />
 
-      {/* Edit Modal */}
       <EditModal
         showEditModal={showEditModal}
         editingForm={editingForm}
@@ -578,7 +576,6 @@ const TechnicianWorkOrders = () => {
         handleUpdateForm={handleUpdateForm}
         formatDate={formatDate}
       />
-        </div>
       </div>
     </div>
   );

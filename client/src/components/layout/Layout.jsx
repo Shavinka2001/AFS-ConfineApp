@@ -96,106 +96,120 @@ const Layout = ({ children }) => {
   }
 
   return (
-    <div className="h-screen bg-gray-50 relative overflow-hidden">
-      {/* Enhanced Mobile Menu Button with Smooth Animations */}
+    <div className="h-screen bg-gray-50 overflow-hidden">
+      {/* Mobile Top Navbar with Hamburger Menu */}
       {isMobile && (
-        <div className="lg:hidden fixed top-4 left-4 z-50">
-          <motion.button
-            onClick={toggleMobileMenu}
-            disabled={isAnimating}
-            className="mobile-menu-btn p-3 bg-gradient-to-br from-white to-gray-50 rounded-2xl mobile-shadow-xl border border-gray-200/50 touch-manipulation overflow-hidden relative"
-            whileHover={{ scale: 1.05, y: -2 }}
-            whileTap={{ scale: 0.95 }}
-            initial={{ opacity: 0, scale: 0.8, y: -20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ duration: 0.4, ease: "easeOut" }}
-          >
-            <motion.div
-              animate={{ rotate: isMobileMenuOpen ? 180 : 0 }}
+        <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 shadow-sm">
+          <div className="flex items-center justify-between px-4 py-3">
+            {/* Hamburger Menu Button */}
+            <motion.button
+              onClick={toggleMobileMenu}
+              disabled={isAnimating}
+              className="mobile-menu-btn p-2.5 bg-gradient-to-br from-gray-50 to-white rounded-xl shadow-md border border-gray-200/50 touch-manipulation overflow-hidden relative"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.3, ease: "easeOut" }}
             >
-              {isMobileMenuOpen ? (
-                <X className="h-6 w-6 text-gray-700" />
-              ) : (
-                <Menu className="h-6 w-6 text-gray-700" />
+              <motion.div
+                animate={{ rotate: isMobileMenuOpen ? 180 : 0 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+              >
+                {isMobileMenuOpen ? (
+                  <X className="h-6 w-6 text-gray-700" />
+                ) : (
+                  <Menu className="h-6 w-6 text-gray-700" />
+                )}
+              </motion.div>
+              
+              {/* Pulse indicator for first time users */}
+              {showMenuHint && !isMobileMenuOpen && (
+                <div className="absolute -inset-1 rounded-xl border-2 border-blue-400/30 animate-pulse"></div>
               )}
+            </motion.button>
+
+            {/* App Title/Logo */}
+            <motion.div 
+              className="flex items-center gap-2"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+            >
+              <img 
+                src="/logo.jpg" 
+                alt="Confine Logo" 
+                className="h-8 w-8 object-contain"
+              />
+              <h1 className="text-lg font-bold text-gray-800">Confine</h1>
             </motion.div>
-            
-            {/* Ripple effect */}
-            <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-400/10 to-purple-400/10 opacity-0 hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-            
-            {/* Pulse indicator for first time users */}
-            {showMenuHint && !isMobileMenuOpen && (
-              <div className="absolute -inset-2 rounded-2xl border-2 border-blue-400/30 animate-pulse"></div>
-            )}
-          </motion.button>
+
+            {/* Spacer for balance */}
+            <div className="w-10"></div>
+          </div>
         </div>
       )}
 
-      {/* Enhanced Mobile Overlay with Smooth Animations */}
+      {/* Mobile Backdrop Overlay */}
       {isMobile && (
-        <motion.div
-          className="fixed inset-0 z-30 lg:hidden pointer-events-none"
-          initial={false}
-          animate={{
-            opacity: isMobileMenuOpen ? 1 : 0,
-            backdropFilter: isMobileMenuOpen ? 'blur(8px)' : 'blur(0px)'
-          }}
-          transition={{ duration: 0.3, ease: "easeOut" }}
-          style={{
-            background: isMobileMenuOpen 
-              ? 'linear-gradient(45deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.4) 100%)'
-              : 'transparent',
-            pointerEvents: isMobileMenuOpen ? 'auto' : 'none'
-          }}
-          onClick={() => setIsMobileMenuOpen(false)}
-        >
-          {/* Animated gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 to-purple-900/20 opacity-20"></div>
-        </motion.div>
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.div
+              className="fixed inset-0 z-30 lg:hidden"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              style={{
+                background: 'linear-gradient(45deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.4) 100%)',
+                backdropFilter: 'blur(8px)'
+              }}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 to-purple-900/20 opacity-20"></div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       )}
 
-      {/* Sidebar - Fixed on Mobile, Flex Item on Desktop */}
-      {isMobile ? (
-        /* Mobile: Fixed positioning, completely outside layout flow */
-        <div className="fixed inset-y-0 left-0 z-40">
-          <Sidebar 
-            isCollapsed={false}
-            setIsCollapsed={setIsCollapsed}
-            isMobile={true}
-            isMobileMenuOpen={isMobileMenuOpen}
-            closeMobileMenu={() => setIsMobileMenuOpen(false)}
-          />
-        </div>
-      ) : (
-        /* Desktop: Part of flex layout */
-        <div className="sidebar-container flex-shrink-0 absolute inset-y-0 left-0 z-40">
-          <Sidebar 
-            isCollapsed={isCollapsed}
-            setIsCollapsed={setIsCollapsed}
-            isMobile={false}
-            isMobileMenuOpen={false}
-            closeMobileMenu={() => {}}
-          />
-        </div>
-      )}
-      
-      {/* Enhanced Main Content - Full Width on Mobile */}
-      <motion.div
-        initial={false}
-        animate={{ 
-          marginLeft: isMobile ? 0 : (isCollapsed ? 80 : 300)
-        }}
-        transition={{ duration: 0.4, ease: 'easeOut' }}
-        className="h-screen overflow-y-auto overflow-x-hidden w-full"
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-      >
-        <main className={`min-h-full w-full relative ${
-          isMobile ? 'pt-20' : '' // Add top padding on mobile for menu button
-        }`}>
-          <div className="w-full max-w-full relative">
+      {/* Main Layout Container */}
+      <div className={`h-full ${isMobile ? 'pt-[60px]' : 'flex'}`}>
+        {/* Sidebar - Different positioning for Mobile vs Desktop */}
+        {isMobile ? (
+          /* Mobile: Fixed positioning, completely outside layout flow */
+          <div className="fixed inset-y-0 left-0 z-40 pt-[60px]">
+            <Sidebar 
+              isCollapsed={false}
+              setIsCollapsed={setIsCollapsed}
+              isMobile={true}
+              isMobileMenuOpen={isMobileMenuOpen}
+              closeMobileMenu={() => setIsMobileMenuOpen(false)}
+            />
+          </div>
+        ) : (
+          /* Desktop: Flex item in layout */
+          <div className="flex-shrink-0">
+            <Sidebar 
+              isCollapsed={isCollapsed}
+              setIsCollapsed={setIsCollapsed}
+              isMobile={false}
+              isMobileMenuOpen={false}
+              closeMobileMenu={() => {}}
+            />
+          </div>
+        )}
+        
+        {/* Main Content Area - Full Width on Mobile, Flex-1 on Desktop */}
+        <motion.div
+          initial={false}
+          className={`h-full overflow-y-auto overflow-x-hidden ${
+            isMobile ? 'w-full' : 'flex-1'
+          }`}
+          onTouchStart={isMobile ? handleTouchStart : undefined}
+          onTouchMove={isMobile ? handleTouchMove : undefined}
+          onTouchEnd={isMobile ? handleTouchEnd : undefined}
+        >
+          <main className="min-h-full w-full">
             {/* Content with smooth fade in animation */}
             <motion.div
               key={children?.key || 'main-content'}
@@ -206,7 +220,7 @@ const Layout = ({ children }) => {
             >
               {children}
             </motion.div>
-          </div>
+          </main>
           
           {/* Mobile Navigation Hint */}
           {isMobile && showMenuHint && !isMobileMenuOpen && (
@@ -217,16 +231,16 @@ const Layout = ({ children }) => {
               exit={{ opacity: 0, y: 20 }}
               transition={{ delay: 1, duration: 0.5 }}
             >
-              <div className="bg-white/90 backdrop-blur-sm rounded-full px-4 py-2 mobile-shadow-lg border border-gray-200/50 flex items-center gap-2">
+              <div className="bg-white/90 backdrop-blur-sm rounded-full px-4 py-2 shadow-lg border border-gray-200/50 flex items-center gap-2">
                 <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
                 <span className="text-xs text-gray-600 font-medium">
-                  Swipe right to open menu →
+                  Tap menu to get started →
                 </span>
               </div>
             </motion.div>
           )}
-        </main>
-      </motion.div>
+        </motion.div>
+      </div>
     </div>
   );
 };

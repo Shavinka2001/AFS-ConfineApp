@@ -424,8 +424,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, isMobileMenuOp
         style={isMobile ? {
           paddingTop: 'calc(env(safe-area-inset-top) + 73px)',
           paddingBottom: 'env(safe-area-inset-bottom)',
-          pointerEvents: 'auto',
-          visibility: isMobileMenuOpen ? 'visible' : 'hidden'
+          pointerEvents: 'auto'
         } : { pointerEvents: 'auto' }}
       >
       {/* Swipe Indicator - Mobile Only (when open) */}

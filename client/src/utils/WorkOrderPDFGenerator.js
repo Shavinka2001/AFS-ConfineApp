@@ -465,6 +465,20 @@ export const handleDownloadFilteredPDF = async (orders = [], sortBy) => {
       doc.text(`Space Description: ${entry.confinedSpaceDescription || 'N/A'}`, margin, currentY);
       currentY += 15;
 
+      // Display surveyor information
+      const surveyorNames = Array.isArray(entry.surveyors) && entry.surveyors.length > 0
+        ? entry.surveyors.join(', ')
+        : entry.surveyors || entry.technician || entry.surveyorName || entry.createdBy || 'N/A';
+      
+      doc.text(`Surveyor(s): ${surveyorNames}`, margin, currentY);
+      currentY += 15;
+
+      const surveyDate = entry.dateOfSurvey || entry.surveyDate || entry.createdAt;
+      if (surveyDate) {
+        doc.text(`Survey Date: ${new Date(surveyDate).toLocaleDateString()}`, margin, currentY);
+        currentY += 15;
+      }
+
       if (entry._consolidated) {
         doc.setFont('helvetica', 'bold');
         doc.text(`Consolidated Report (${entry._originalEntryCount} Spaces)`, margin, currentY);

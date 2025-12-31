@@ -58,8 +58,9 @@ export const generateInspectionFormPDF = async (form, includeImages = true) => {
     const spaceData = [
       ['Space Name:', form.spaceName || 'N/A'],
       ['Building:', form.building || 'N/A'],
-      ['Location:', form.location || 'N/A'],
-      ['Inspection Date:', form.date || 'N/A']
+      ['Location:', form.location || form.locationDescription || 'N/A'],
+      ['Inspection Date:', form.date || form.surveyDate || form.createdAt ? new Date(form.date || form.surveyDate || form.createdAt).toLocaleDateString() : 'N/A'],
+      ['Surveyor:', form.technician || form.surveyorName || form.createdBy || 'N/A']
     ];
     
     yPosition = addDataTable(doc, spaceData, yPosition);
@@ -247,17 +248,49 @@ async function addImages(doc, images, yPosition) {
     try {
       let imgData;
       
-      if (image.url && image.url.startsWith('blob:')) {
-        // Handle blob URLs (from file uploads)
-        imgData = await convertBlobToBase64(image.url);
+      // Handle different image formats
+      if (typeof image === 'string') {
+        // Handle direct URLs (blob storage, http/https URLs, or base64)
+        if (image.startsWith('data:')) {
+          // Already base64 encoded
+          imgData = image;
+        } else if (image.startsWith('http://') || image.startsWith('https://')) {
+          // Blob storage URL (Azure, S3, Cloudinary, etc.)
+          console.log(`Loading blob storage image: ${image}`);
+          imgData = await loadImageAsBase64(image);
+        } else if (image.startsWith('blob:')) {
+          // Local blob URL from file upload
+          imgData = await convertBlobToBase64(image);
+        } else {
+          // Relative path - construct full URL
+          const API_BASE_URL = import.meta.env?.VITE_API_BASE_URL || 
+                              import.meta.env?.VITE_BACKEND_URL ||
+                              window.location.origin.replace(':5173', ':5000');
+          const cleanPath = image.startsWith('/') ? image : `/${image}`;
+          const fullUrl = `${API_BASE_URL}${cleanPath}`;
+          console.log(`Loading image from API: ${fullUrl}`);
+          imgData = await loadImageAsBase64(fullUrl);
+        }
+      } else if (image.url) {
+        // Handle object with url property
+        if (image.url.startsWith('blob:')) {
+          imgData = await convertBlobToBase64(image.url);
+        } else if (image.url.startsWith('http://') || image.url.startsWith('https://')) {
+          imgData = await loadImageAsBase64(image.url);
+        } else {
+          imgData = image.url;
+        }
       } else if (image.file) {
         // Handle file objects
         imgData = await convertFileToBase64(image.file);
-      } else if (typeof image === 'string') {
-        // Handle direct image URLs
-        imgData = image;
       } else {
+        console.warn('Unsupported image format, skipping:', image);
         continue; // Skip invalid images
+      }
+      
+      if (!imgData || !imgData.startsWith('data:')) {
+        console.warn('Invalid image data, skipping');
+        continue;
       }
       
       // Add image with border
@@ -291,6 +324,99 @@ async function addImages(doc, images, yPosition) {
   }
   
   return currentY + (imagesInRow > 0 ? maxImageHeight + 20 : 0);
+}
+
+// Helper function to load image from URL and convert to base64 (supports blob storage)
+function loadImageAsBase64(imageUrl) {
+  return new Promise((resolve, reject) => {
+    if (!imageUrl || typeof imageUrl !== 'string' || !imageUrl.trim()) {
+      reject(new Error('Invalid image URL'));
+      return;
+    }
+    
+    console.log(`Loading image: ${imageUrl}`);
+    
+    // Try to fetch with authentication first (for protected images)
+    const tryFetchWithAuth = async () => {
+      try {
+        const token = localStorage.getItem('token') || localStorage.getItem('authToken');
+        
+        const headers = {};
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`;
+        }
+        
+        const response = await fetch(imageUrl, {
+          method: 'GET',
+          headers,
+          credentials: 'include',
+          mode: 'cors',
+          cache: 'no-cache'
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+        
+        const blob = await response.blob();
+        
+        return new Promise((res, rej) => {
+          const reader = new FileReader();
+          reader.onloadend = () => res(reader.result);
+          reader.onerror = (error) => rej(new Error(`FileReader failed: ${error.message}`));
+          reader.readAsDataURL(blob);
+        });
+      } catch (fetchError) {
+        throw fetchError;
+      }
+    };
+    
+    // Try fetch first, fallback to Image element
+    tryFetchWithAuth()
+      .then(resolve)
+      .catch(() => {
+        const img = new Image();
+        img.crossOrigin = "anonymous"; // Allow CORS for blob storage
+        
+        const timeout = setTimeout(() => {
+          reject(new Error(`Image load timeout: ${imageUrl}`));
+        }, 10000);
+        
+        img.onload = () => {
+          clearTimeout(timeout);
+          try {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            
+            const ctx = canvas.getContext('2d');
+            if (!ctx) {
+              throw new Error('Failed to get canvas context');
+            }
+            
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = "high";
+            ctx.drawImage(img, 0, 0);
+            
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
+            resolve(dataUrl);
+          } catch (error) {
+            reject(new Error(`Canvas conversion failed: ${error.message}`));
+          }
+        };
+        
+        img.onerror = () => {
+          clearTimeout(timeout);
+          reject(new Error(`Image load failed: ${imageUrl}`));
+        };
+        
+        const urlWithTimestamp = imageUrl.includes('?') 
+          ? `${imageUrl}&t=${Date.now()}`
+          : `${imageUrl}?t=${Date.now()}`;
+        
+        img.src = urlWithTimestamp;
+      });
+  });
 }
 
 // Helper function to convert blob URL to base64

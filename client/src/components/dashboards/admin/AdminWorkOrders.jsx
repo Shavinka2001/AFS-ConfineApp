@@ -35,6 +35,7 @@ import { useAuth } from '../../../contexts/AuthContext';
 import AdminWorkOrdersTable from './AdminWorkOrdersTable';
 import workOrderAPI from '../../../services/workOrderAPI';
 import errorHandler from '../../../utils/errorHandler';
+import { getImageUrl } from '../../../utils/imageUtils';
 import { Toaster } from 'react-hot-toast';
 import CSVImportModal from '../../ui/CSVImportModal';
 import * as XLSX from 'xlsx';
@@ -1034,7 +1035,7 @@ const AdminWorkOrders = () => {
                               <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
                               <div className="relative bg-white rounded-2xl p-3 border-2 border-gray-200 group-hover:border-blue-300 transition-all duration-300 shadow-lg group-hover:shadow-xl">
                                 <img
-                                  src={url}
+                                  src={getImageUrl(url)}
                                   alt={`Assessment ${index + 1}`}
                                   className="w-full h-32 object-cover rounded-xl"
                                 />

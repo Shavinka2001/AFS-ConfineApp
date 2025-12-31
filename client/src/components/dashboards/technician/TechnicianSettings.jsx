@@ -126,13 +126,13 @@ const TechnicianSettings = () => {
   const TabButton = ({ id, label, icon: Icon }) => (
     <button
       onClick={() => setActiveTab(id)}
-      className={`flex items-center space-x-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${
+      className={`flex items-center justify-center space-x-2 px-4 py-3 md:px-6 rounded-xl font-semibold transition-all duration-200 text-sm md:text-base ${
         activeTab === id
           ? 'bg-[#232249] text-white shadow-lg'
           : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
       }`}
     >
-      <Icon className="h-5 w-5" />
+      <Icon className="h-4 w-4 md:h-5 md:w-5" />
       <span>{label}</span>
     </button>
   );
@@ -145,7 +145,7 @@ const TechnicianSettings = () => {
       </label>
       <input
         {...props}
-        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white"
+        className="w-full px-3 py-3 md:px-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white text-sm md:text-base"
       />
     </div>
   );
@@ -160,68 +160,68 @@ const TechnicianSettings = () => {
         <input
           {...props}
           type={showPassword ? 'text' : 'password'}
-          className="w-full px-4 py-3 pr-12 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white"
+          className="w-full px-3 py-3 pr-12 md:px-4 md:pr-12 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white text-sm md:text-base"
         />
         <button
           type="button"
           onClick={() => setShowPassword(!showPassword)}
-          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-[#232249] transition-colors"
+          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-[#232249] transition-colors p-1"
         >
-          {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+          {showPassword ? <EyeOff className="h-4 w-4 md:h-5 md:w-5" /> : <Eye className="h-4 w-4 md:h-5 md:w-5" />}
         </button>
       </div>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-8 space-y-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 md:p-8 space-y-4 md:space-y-8">
       {/* Header */}
-      <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-[#232249] to-[#232249]/80 bg-clip-text text-transparent">
+      <div className="bg-white rounded-2xl shadow-xl p-4 md:p-6 border border-gray-100">
+        <h1 className="text-xl md:text-3xl font-bold bg-gradient-to-r from-[#232249] to-[#232249]/80 bg-clip-text text-transparent">
           Account Settings
         </h1>
-        <p className="text-gray-600 mt-1 font-medium">
+        <p className="text-[#232249]/60 mt-1 font-medium text-sm md:text-base">
           Manage your profile information and security settings
         </p>
       </div>
 
       {/* Message Alert */}
       {message.text && (
-        <div className={`p-4 rounded-xl border ${
+        <div className={`p-3 md:p-4 rounded-xl border ${
           message.type === 'success' 
             ? 'bg-green-50 border-green-200 text-green-800' 
             : 'bg-red-50 border-red-200 text-red-800'
-        } flex items-center space-x-2`}>
+        } flex items-center space-x-2 md:space-x-3`}>
           {message.type === 'success' ? (
-            <CheckCircle className="h-5 w-5" />
+            <CheckCircle className="h-4 w-4 md:h-5 md:w-5 flex-shrink-0" />
           ) : (
-            <AlertCircle className="h-5 w-5" />
+            <AlertCircle className="h-4 w-4 md:h-5 md:w-5 flex-shrink-0" />
           )}
-          <span className="font-medium">{message.text}</span>
+          <span className="font-medium text-sm md:text-base">{message.text}</span>
         </div>
       )}
 
       {/* Tabs */}
-      <div className="flex space-x-4">
+      <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
         <TabButton id="profile" label="Profile Information" icon={User} />
         <TabButton id="security" label="Security & Password" icon={Shield} />
       </div>
 
       {/* Profile Tab */}
       {activeTab === 'profile' && (
-        <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-          <div className="flex items-center space-x-4 mb-8">
-            <div className="h-16 w-16 bg-gradient-to-br from-[#232249] to-[#232249]/80 rounded-2xl flex items-center justify-center">
-              <User className="h-8 w-8 text-white" />
+        <div className="bg-white rounded-2xl shadow-xl p-4 md:p-8 border border-gray-100">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-3 sm:space-y-0 sm:space-x-4 mb-6 md:mb-8">
+            <div className="h-12 w-12 md:h-16 md:w-16 bg-gradient-to-br from-[#232249] to-[#232249]/80 rounded-2xl flex items-center justify-center flex-shrink-0">
+              <User className="h-6 w-6 md:h-8 md:w-8 text-white" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-[#232249]">Profile Information</h2>
-              <p className="text-gray-600">Update your personal details and contact information</p>
+              <h2 className="text-xl md:text-2xl font-bold text-[#232249]">Profile Information</h2>
+              <p className="text-gray-600 text-sm md:text-base">Update your personal details and contact information</p>
             </div>
           </div>
 
-          <form onSubmit={handleProfileSubmit} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <form onSubmit={handleProfileSubmit} className="space-y-4 md:space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
               <InputField
                 label="First Name"
                 icon={User}
@@ -281,7 +281,7 @@ const TechnicianSettings = () => {
               placeholder="Your current address"
             />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-gray-700 flex items-center space-x-2">
                   <CheckCircle className="h-4 w-4 text-[#232249]" />
@@ -292,7 +292,7 @@ const TechnicianSettings = () => {
                   onChange={(e) => setProfileData({...profileData, specializations: e.target.value})}
                   placeholder="HVAC, Electrical, Plumbing, etc."
                   rows={3}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white resize-none"
+                  className="w-full px-3 py-3 md:px-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white resize-none text-sm md:text-base"
                 />
               </div>
 
@@ -306,18 +306,18 @@ const TechnicianSettings = () => {
                   onChange={(e) => setProfileData({...profileData, certifications: e.target.value})}
                   placeholder="List your professional certifications"
                   rows={3}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white resize-none"
+                  className="w-full px-3 py-3 md:px-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white resize-none text-sm md:text-base"
                 />
               </div>
             </div>
 
-            <div className="flex justify-end pt-6">
+            <div className="flex justify-end pt-4 md:pt-6">
               <button
                 type="submit"
                 disabled={loading}
-                className="flex items-center space-x-2 bg-gradient-to-r from-[#232249] to-[#232249]/90 text-white px-8 py-3 rounded-xl font-semibold hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center justify-center space-x-2 bg-gradient-to-r from-[#232249] to-[#232249]/90 text-white px-6 py-3 md:px-8 rounded-xl font-semibold hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base"
               >
-                <Save className="h-5 w-5" />
+                <Save className="h-4 w-4 md:h-5 md:w-5" />
                 <span>{loading ? 'Updating...' : 'Update Profile'}</span>
               </button>
             </div>
@@ -327,18 +327,18 @@ const TechnicianSettings = () => {
 
       {/* Security Tab */}
       {activeTab === 'security' && (
-        <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-          <div className="flex items-center space-x-4 mb-8">
-            <div className="h-16 w-16 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center">
-              <Shield className="h-8 w-8 text-white" />
+        <div className="bg-white rounded-2xl shadow-xl p-4 md:p-8 border border-gray-100">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-3 sm:space-y-0 sm:space-x-4 mb-6 md:mb-8">
+            <div className="h-12 w-12 md:h-16 md:w-16 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center flex-shrink-0">
+              <Shield className="h-6 w-6 md:h-8 md:w-8 text-white" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-[#232249]">Security Settings</h2>
-              <p className="text-gray-600">Update your password and security preferences</p>
+              <h2 className="text-xl md:text-2xl font-bold text-[#232249]">Security Settings</h2>
+              <p className="text-gray-600 text-sm md:text-base">Update your password and security preferences</p>
             </div>
           </div>
 
-          <form onSubmit={handlePasswordSubmit} className="space-y-6 max-w-md">
+          <form onSubmit={handlePasswordSubmit} className="space-y-4 md:space-y-6 max-w-md">
             <PasswordField
               label="Current Password"
               icon={Lock}
@@ -373,8 +373,8 @@ const TechnicianSettings = () => {
               placeholder="Confirm your new password"
             />
 
-            <div className="bg-blue-50 p-4 rounded-xl border border-blue-200">
-              <h4 className="font-semibold text-blue-800 mb-2">Password Requirements:</h4>
+            <div className="bg-blue-50 p-3 md:p-4 rounded-xl border border-blue-200">
+              <h4 className="font-semibold text-blue-800 mb-2 text-sm md:text-base">Password Requirements:</h4>
               <ul className="text-sm text-blue-700 space-y-1">
                 <li>• At least 6 characters long</li>
                 <li>• Mix of uppercase and lowercase letters (recommended)</li>
@@ -383,13 +383,13 @@ const TechnicianSettings = () => {
               </ul>
             </div>
 
-            <div className="flex justify-end pt-6">
+            <div className="flex justify-end pt-4 md:pt-6">
               <button
                 type="submit"
                 disabled={loading}
-                className="flex items-center space-x-2 bg-gradient-to-r from-red-500 to-red-600 text-white px-8 py-3 rounded-xl font-semibold hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center justify-center space-x-2 bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-3 md:px-8 rounded-xl font-semibold hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base"
               >
-                <Lock className="h-5 w-5" />
+                <Lock className="h-4 w-4 md:h-5 md:w-5" />
                 <span>{loading ? 'Changing...' : 'Change Password'}</span>
               </button>
             </div>

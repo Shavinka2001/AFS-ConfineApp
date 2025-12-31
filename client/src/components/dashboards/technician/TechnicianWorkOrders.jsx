@@ -391,7 +391,7 @@ const TechnicianWorkOrders = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="h-auto bg-white flex items-center justify-center p-8">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#232249] mx-auto"></div>
           <p className="mt-4 text-gray-600">Loading inspection forms...</p>
@@ -402,7 +402,7 @@ const TechnicianWorkOrders = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="h-auto bg-white flex items-center justify-center p-8">
         <div className="text-center p-8">
           <AlertTriangle className="h-12 w-12 text-red-500 mx-auto mb-4" />
           <h2 className="text-xl font-bold text-[#232249] mb-2">Error Loading Data</h2>
@@ -413,10 +413,11 @@ const TechnicianWorkOrders = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-8">
-      <div className="w-full max-w-7xl mx-auto flex-1">
+    <div className="h-auto bg-gray-50">
+      <div className="w-full px-4 md:px-8">
+        <div className="w-full md:max-w-7xl md:mx-auto">
         {/* Enhanced Professional Header */}
-        <div className="relative bg-gradient-to-r from-[#232249] via-[#2a2a5a] to-[#232249] rounded-xl shadow-2xl mb-8 overflow-hidden">
+        <div className="relative bg-gradient-to-r from-[#232249] via-[#2a2a5a] to-[#232249] rounded-xl shadow-2xl mb-6 md:mb-8 overflow-hidden">
           {/* Background Pattern */}
           <div className="absolute inset-0 opacity-10">
             <div className="absolute inset-0" style={{
@@ -467,49 +468,49 @@ const TechnicianWorkOrders = () => {
           </div>
         </div>
 
-      {/* Essential Statistics Cards - Technician Focused */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-8 md:mb-10 max-w-4xl mx-auto">
-        <StatCard
-          title="Total Forms"
-          value={stats.total}
-          icon={Package}
-        />
-        <StatCard
-          title="Confined Spaces"
-          value={stats.confinedSpaces}
-          icon={AlertTriangle}
-        />
-        <StatCard
-          title="High Priority"
-          value={stats.highPriority}
-          icon={FileText}
-        />
-      </div>
-
-      {/* Search and Filters */}
-      <div className="mb-6">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
-          <h2 className="text-lg md:text-xl font-bold text-gray-800">Assessment Records</h2>
-          
-          {/* Export to Excel Button */}
-          <button
-            onClick={handleExportToExcel}
-            disabled={exportingExcel || filteredForms.length === 0}
-            className="w-full sm:w-auto flex items-center justify-center px-4 py-3 md:px-6 md:py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-200 font-semibold shadow-md hover:shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed text-sm md:text-base"
-          >
-            {exportingExcel ? (
-              <>
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                Exporting...
-              </>
-            ) : (
-              <>
-                <Download className="w-5 h-5 mr-2" />
-                Export to Excel ({filteredForms.length})
-              </>
-            )}
-          </button>
+        {/* Essential Statistics Cards - Technician Focused */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-10 md:max-w-4xl md:mx-auto">
+          <StatCard
+            title="Total Forms"
+            value={stats.total}
+            icon={Package}
+          />
+          <StatCard
+            title="Confined Spaces"
+            value={stats.confinedSpaces}
+            icon={AlertTriangle}
+          />
+          <StatCard
+            title="High Priority"
+            value={stats.highPriority}
+            icon={FileText}
+          />
         </div>
+
+        {/* Search and Filters */}
+        <div className="mb-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-start sm:items-center mb-4">
+            <h2 className="text-lg md:text-xl font-bold text-gray-800">Assessment Records</h2>
+            
+            {/* Export to Excel Button */}
+            <button
+              onClick={handleExportToExcel}
+              disabled={exportingExcel || filteredForms.length === 0}
+              className="w-full sm:w-auto flex items-center justify-center px-4 py-3 min-h-[48px] bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-200 font-semibold shadow-md hover:shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed text-sm md:text-base"
+            >
+              {exportingExcel ? (
+                <>
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                  Exporting...
+                </>
+              ) : (
+                <>
+                  <Download className="w-5 h-5 mr-2" />
+                  Export to Excel ({filteredForms.length})
+                </>
+              )}
+            </button>
+          </div>
         
         <SearchAndFilters
           searchTerm={searchTerm}
@@ -577,6 +578,7 @@ const TechnicianWorkOrders = () => {
         handleUpdateForm={handleUpdateForm}
         formatDate={formatDate}
       />
+        </div>
       </div>
     </div>
   );

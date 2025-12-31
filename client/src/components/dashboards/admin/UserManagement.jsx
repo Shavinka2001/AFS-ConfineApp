@@ -258,26 +258,26 @@ const UserManagement = () => {
   
   if (!token || currentUser.role !== 'admin') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-8">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 md:p-8">
         <div className="max-w-md mx-auto">
-          <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100 text-center">
-            <div className="mx-auto h-20 w-20 bg-gradient-to-br from-red-50 to-pink-100 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
-              <Shield className="h-10 w-10 text-red-600" />
+          <div className="bg-white rounded-xl md:rounded-2xl shadow-lg md:shadow-xl p-4 md:p-8 border border-gray-100 text-center">
+            <div className="mx-auto h-16 h-16 md:h-20 md:w-20 bg-gradient-to-br from-red-50 to-pink-100 rounded-xl md:rounded-2xl mb-4 md:mb-6 flex items-center justify-center shadow-lg">
+              <Shield className="h-8 w-8 md:h-10 md:w-10 text-red-600" />
             </div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-4">Access Denied</h1>
-            <p className="text-gray-600 mb-8 font-medium">You need to be logged in as an administrator to access this page.</p>
-            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6 mb-6">
-              <h4 className="font-bold text-blue-800 mb-3">Demo Admin Account:</h4>
-              <div className="space-y-2">
-                <p className="text-sm text-blue-700 font-medium">Email: admin@confine.com</p>
-                <p className="text-sm text-blue-700 font-medium">Password: Admin123!</p>
+            <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-4">Access Denied</h1>
+            <p className="text-gray-600 mb-6 md:mb-8 font-medium text-sm md:text-base">You need to be logged in as an administrator to access this page.</p>
+            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-lg md:rounded-xl p-3 md:p-6 mb-4 md:mb-6">
+              <h4 className="font-bold text-blue-800 mb-2 md:mb-3 text-sm md:text-base">Demo Admin Account:</h4>
+              <div className="space-y-1 md:space-y-2">
+                <p className="text-xs md:text-sm text-blue-700 font-medium">Email: admin@confine.com</p>
+                <p className="text-xs md:text-sm text-blue-700 font-medium">Password: Admin123!</p>
               </div>
             </div>
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => window.location.href = '/login'}
-              className="bg-gradient-to-r from-[#232249] to-[#232249]/90 text-white px-8 py-4 rounded-xl font-bold hover:shadow-xl transition-all duration-300"
+              className="bg-gradient-to-r from-slate-800 to-slate-900 text-white px-6 md:px-8 py-3 md:py-4 rounded-lg md:rounded-xl font-bold hover:shadow-xl transition-all duration-300 w-full min-h-[48px] flex items-center justify-center"
             >
               Go to Login
             </motion.button>
@@ -288,46 +288,49 @@ const UserManagement = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-8 space-y-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 md:p-8 space-y-4 md:space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
-        <div className="flex items-center space-x-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-white rounded-xl md:rounded-2xl shadow-lg md:shadow-xl p-4 md:p-6 border border-gray-100 space-y-4 sm:space-y-0">
+        <div className="flex items-center space-x-4 md:space-x-6">
+          <div className="p-2 bg-gradient-to-br from-slate-600 to-slate-800 rounded-lg">
+            <Users className="h-5 w-5 md:h-6 md:w-6 text-white" />
+          </div>
           <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-[#232249] to-[#232249]/80 bg-clip-text text-transparent">
+            <h1 className="text-xl md:text-3xl font-bold bg-gradient-to-r from-slate-800 to-slate-900 bg-clip-text text-transparent">
               User Management
             </h1>
-            <p className="text-gray-600 mt-1 font-medium">
+            <p className="text-gray-600 mt-1 font-medium text-sm md:text-base">
               Manage users, roles, and permissions across your system
             </p>
           </div>
         </div>
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-3 md:space-x-4 w-full sm:w-auto">
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setShowAddModal(true)}
-            className="bg-gradient-to-r from-[#232249] to-[#232249]/90 text-white px-6 py-3 rounded-xl font-semibold hover:shadow-xl transition-all duration-300 flex items-center space-x-2"
+            className="bg-gradient-to-r from-slate-800 to-slate-900 text-white px-4 md:px-6 py-3 rounded-lg md:rounded-xl font-semibold hover:shadow-xl transition-all duration-300 flex items-center space-x-2 min-h-[48px] flex-1 sm:flex-none justify-center"
           >
-            <Plus className="h-5 w-5" />
-            <span>Add User</span>
+            <Plus className="h-4 w-4 md:h-5 md:w-5" />
+            <span className="text-sm md:text-base">Add User</span>
           </motion.button>
         </div>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100 hover:shadow-2xl transition-all duration-300 hover:scale-105"
+          className="bg-white rounded-xl md:rounded-2xl shadow-lg md:shadow-xl p-3 md:p-6 border border-gray-100 hover:shadow-xl md:hover:shadow-2xl transition-all duration-300 hover:scale-105"
         >
-          <div className="flex items-center space-x-4">
-            <div className="p-4 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-xl shadow-lg">
-              <Users className="h-7 w-7 text-[#232249]" />
+          <div className="flex items-center space-x-3 md:space-x-4">
+            <div className="p-2 md:p-4 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-lg md:rounded-xl shadow-sm md:shadow-lg">
+              <Users className="h-4 w-4 md:h-7 md:w-7 text-slate-800" />
             </div>
-            <div>
-              <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Total Users</p>
-              <p className="text-3xl font-bold text-[#232249] mt-1">{Array.isArray(users) ? users.length : 0}</p>
+            <div className="min-w-0 flex-1">
+              <p className="text-xs md:text-sm font-semibold text-gray-500 uppercase tracking-wide">Total Users</p>
+              <p className="text-lg md:text-3xl font-bold text-slate-800 mt-1">{Array.isArray(users) ? users.length : 0}</p>
             </div>
           </div>
         </motion.div>
@@ -336,15 +339,15 @@ const UserManagement = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100 hover:shadow-2xl transition-all duration-300 hover:scale-105"
+          className="bg-white rounded-xl md:rounded-2xl shadow-lg md:shadow-xl p-3 md:p-6 border border-gray-100 hover:shadow-xl md:hover:shadow-2xl transition-all duration-300 hover:scale-105"
         >
-          <div className="flex items-center space-x-4">
-            <div className="p-4 bg-gradient-to-br from-emerald-50 to-green-100 rounded-xl shadow-lg">
-              <UserCheck className="h-7 w-7 text-[#232249]" />
+          <div className="flex items-center space-x-3 md:space-x-4">
+            <div className="p-2 md:p-4 bg-gradient-to-br from-emerald-50 to-green-100 rounded-lg md:rounded-xl shadow-sm md:shadow-lg">
+              <UserCheck className="h-4 w-4 md:h-7 md:w-7 text-slate-800" />
             </div>
-            <div>
-              <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Active Users</p>
-              <p className="text-3xl font-bold text-[#232249] mt-1">{Array.isArray(users) ? users.filter(u => u.isActive).length : 0}</p>
+            <div className="min-w-0 flex-1">
+              <p className="text-xs md:text-sm font-semibold text-gray-500 uppercase tracking-wide">Active Users</p>
+              <p className="text-lg md:text-3xl font-bold text-slate-800 mt-1">{Array.isArray(users) ? users.filter(u => u.isActive).length : 0}</p>
             </div>
           </div>
         </motion.div>
@@ -353,15 +356,15 @@ const UserManagement = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100 hover:shadow-2xl transition-all duration-300 hover:scale-105"
+          className="bg-white rounded-xl md:rounded-2xl shadow-lg md:shadow-xl p-3 md:p-6 border border-gray-100 hover:shadow-xl md:hover:shadow-2xl transition-all duration-300 hover:scale-105"
         >
-          <div className="flex items-center space-x-4">
-            <div className="p-4 bg-gradient-to-br from-red-50 to-pink-100 rounded-xl shadow-lg">
-              <Crown className="h-7 w-7 text-[#232249]" />
+          <div className="flex items-center space-x-3 md:space-x-4">
+            <div className="p-2 md:p-4 bg-gradient-to-br from-red-50 to-pink-100 rounded-lg md:rounded-xl shadow-sm md:shadow-lg">
+              <Crown className="h-4 w-4 md:h-7 md:w-7 text-slate-800" />
             </div>
-            <div>
-              <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Admins</p>
-              <p className="text-3xl font-bold text-[#232249] mt-1">{Array.isArray(users) ? users.filter(u => u.role === 'admin').length : 0}</p>
+            <div className="min-w-0 flex-1">
+              <p className="text-xs md:text-sm font-semibold text-gray-500 uppercase tracking-wide">Admins</p>
+              <p className="text-lg md:text-3xl font-bold text-slate-800 mt-1">{Array.isArray(users) ? users.filter(u => u.role === 'admin').length : 0}</p>
             </div>
           </div>
         </motion.div>
@@ -370,15 +373,15 @@ const UserManagement = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100 hover:shadow-2xl transition-all duration-300 hover:scale-105"
+          className="bg-white rounded-xl md:rounded-2xl shadow-lg md:shadow-xl p-3 md:p-6 border border-gray-100 hover:shadow-xl md:hover:shadow-2xl transition-all duration-300 hover:scale-105"
         >
-          <div className="flex items-center space-x-4">
-            <div className="p-4 bg-gradient-to-br from-amber-50 to-orange-100 rounded-xl shadow-lg">
-              <UserX className="h-7 w-7 text-[#232249]" />
+          <div className="flex items-center space-x-3 md:space-x-4">
+            <div className="p-2 md:p-4 bg-gradient-to-br from-amber-50 to-orange-100 rounded-lg md:rounded-xl shadow-sm md:shadow-lg">
+              <UserX className="h-4 w-4 md:h-7 md:w-7 text-slate-800" />
             </div>
-            <div>
-              <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Inactive Users</p>
-              <p className="text-3xl font-bold text-[#232249] mt-1">{Array.isArray(users) ? users.filter(u => !u.isActive).length : 0}</p>
+            <div className="min-w-0 flex-1">
+              <p className="text-xs md:text-sm font-semibold text-gray-500 uppercase tracking-wide">Inactive Users</p>
+              <p className="text-lg md:text-3xl font-bold text-slate-800 mt-1">{Array.isArray(users) ? users.filter(u => !u.isActive).length : 0}</p>
             </div>
           </div>
         </motion.div>
@@ -389,81 +392,84 @@ const UserManagement = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
-        className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100"
+        className="bg-white rounded-xl md:rounded-2xl shadow-lg md:shadow-xl p-4 md:p-8 border border-gray-100"
       >
-        <div className="flex items-center space-x-3 mb-6">
-          <div className="p-2 bg-gradient-to-br from-[#232249]/10 to-[#232249]/20 rounded-lg">
-            <Search className="h-6 w-6 text-[#232249]" />
+        <div className="flex items-center space-x-2 md:space-x-3 mb-4 md:mb-6">
+          <div className="p-2 bg-gradient-to-br from-slate-600/10 to-slate-800/20 rounded-lg">
+            <Search className="h-4 w-4 md:h-6 md:w-6 text-slate-800" />
           </div>
-          <h3 className="text-xl font-bold text-[#232249]">Search & Filter Users</h3>
+          <h3 className="text-lg md:text-xl font-bold text-slate-800">Search & Filter Users</h3>
         </div>
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0 lg:space-x-6">
+        <div className="flex flex-col space-y-4 md:space-y-0 md:flex-row md:items-center md:justify-between md:space-x-6">
           {/* Search */}
-          <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+          <div className="relative flex-1 max-w-full md:max-w-md">
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-4 w-4 md:h-5 md:w-5 text-gray-400" />
             <input
               type="text"
               placeholder="Search users by name or email..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-4 py-4 bg-gray-50/50 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-[#232249]/10 focus:border-[#232249] transition-all duration-300 placeholder-gray-400 font-medium"
+              className="w-full pl-10 md:pl-12 pr-4 py-3 md:py-4 bg-gray-50/50 border-2 border-gray-200 rounded-lg md:rounded-xl focus:ring-4 focus:ring-slate-800/10 focus:border-slate-800 transition-all duration-300 placeholder-gray-400 font-medium text-sm md:text-base min-h-[48px]"
             />
           </div>
 
           {/* Filters */}
-          <div className="flex items-center space-x-4">
-            <div className="relative">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-3 sm:space-y-0 sm:space-x-4">
+            <div className="relative flex-1 sm:flex-none">
               <select
                 value={filterRole}
                 onChange={(e) => setFilterRole(e.target.value)}
-                className="appearance-none bg-gray-50/50 border-2 border-gray-200 px-6 py-4 pr-10 rounded-xl focus:ring-4 focus:ring-[#232249]/10 focus:border-[#232249] transition-all duration-300 font-semibold text-gray-700"
+                className="appearance-none bg-gray-50/50 border-2 border-gray-200 px-4 md:px-6 py-3 md:py-4 pr-8 md:pr-10 rounded-lg md:rounded-xl focus:ring-4 focus:ring-slate-800/10 focus:border-slate-800 transition-all duration-300 font-semibold text-gray-700 w-full min-h-[48px] text-sm md:text-base"
               >
                 <option value="all">All Roles</option>
                 <option value="admin">Admin</option>
                 <option value="manager">Manager</option>
                 <option value="technician">Technician</option>
               </select>
-              <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
+              <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 md:h-5 md:w-5 text-gray-400 pointer-events-none" />
             </div>
 
-            <div className="relative">
+            <div className="relative flex-1 sm:flex-none">
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="appearance-none bg-gray-50/50 border-2 border-gray-200 px-6 py-4 pr-10 rounded-xl focus:ring-4 focus:ring-[#232249]/10 focus:border-[#232249] transition-all duration-300 font-semibold text-gray-700"
+                className="appearance-none bg-gray-50/50 border-2 border-gray-200 px-4 md:px-6 py-3 md:py-4 pr-8 md:pr-10 rounded-lg md:rounded-xl focus:ring-4 focus:ring-slate-800/10 focus:border-slate-800 transition-all duration-300 font-semibold text-gray-700 w-full min-h-[48px] text-sm md:text-base"
               >
                 <option value="all">All Status</option>
                 <option value="active">Active</option>
                 <option value="inactive">Inactive</option>
               </select>
-              <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
+              <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 md:h-5 md:w-5 text-gray-400 pointer-events-none" />
             </div>
           </div>
         </div>
       </motion.div>
 
-      {/* Users Table */}
+      {/* Users Table/Cards */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5 }}
-        className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden"
+        className="bg-white rounded-xl md:rounded-2xl shadow-lg md:shadow-xl border border-gray-100 overflow-hidden"
       >
-        <div className="p-6 border-b border-gray-100">
-          <div className="flex items-center space-x-3">
-            <div className="p-2 bg-gradient-to-br from-[#232249]/10 to-[#232249]/20 rounded-lg">
-              <Users className="h-6 w-6 text-[#232249]" />
+        <div className="p-4 md:p-6 border-b border-gray-100">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-2 sm:space-y-0">
+            <div className="flex items-center space-x-2 md:space-x-3">
+              <div className="p-2 bg-gradient-to-br from-slate-600/10 to-slate-800/20 rounded-lg">
+                <Users className="h-4 w-4 md:h-6 md:w-6 text-slate-800" />
+              </div>
+              <h3 className="text-lg md:text-xl font-bold text-slate-800">User Directory</h3>
             </div>
-            <h3 className="text-xl font-bold text-[#232249]">User Directory</h3>
-            <div className="flex-1"></div>
-            <div className="text-sm text-gray-500 bg-gray-50 px-3 py-1 rounded-full font-medium">
+            <div className="text-xs md:text-sm text-gray-500 bg-gray-50 px-3 py-1 rounded-full font-medium">
               {filteredUsers.length} {filteredUsers.length === 1 ? 'user' : 'users'} found
             </div>
           </div>
         </div>
-        <div className="overflow-x-auto">
+
+        {/* Desktop Table - Hidden on Mobile */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gradient-to-r from-[#232249] to-[#232249]/90">
+            <thead className="bg-gradient-to-r from-slate-800 to-slate-900">
               <tr>
                 <th className="text-left py-3 px-4 text-white font-bold text-xs uppercase tracking-wide">User</th>
                 <th className="text-left py-3 px-4 text-white font-bold text-xs uppercase tracking-wide">Role</th>
@@ -479,11 +485,11 @@ const UserManagement = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.05 }}
-                  className="hover:bg-gradient-to-r hover:from-[#232249]/5 hover:to-transparent transition-all duration-300 group"
+                  className="hover:bg-gradient-to-r hover:from-slate-800/5 hover:to-transparent transition-all duration-300 group"
                 >
                   <td className="py-3 px-4">
                     <div className="flex items-center space-x-3">
-                      <div className="h-8 w-8 bg-gradient-to-br from-[#232249] to-[#232249]/80 rounded-xl flex items-center justify-center shadow-md group-hover:shadow-lg transition-all duration-300">
+                      <div className="h-8 w-8 bg-gradient-to-br from-slate-600 to-slate-800 rounded-xl flex items-center justify-center shadow-md group-hover:shadow-lg transition-all duration-300">
                         <span className="text-white font-bold text-sm">
                           {user.firstName.charAt(0)}{user.lastName.charAt(0)}
                         </span>
@@ -502,8 +508,8 @@ const UserManagement = () => {
                   </td>
                   <td className="py-3 px-4">
                     <span className={`inline-flex items-center px-2 py-1 rounded-lg text-xs font-bold shadow-sm ${
-                      user.isActive 
-                        ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' 
+                      user.isActive
+                        ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
                         : 'bg-red-100 text-red-800 border border-red-200'
                     }`}>
                       {user.isActive ? 'Active' : 'Inactive'}
@@ -521,7 +527,7 @@ const UserManagement = () => {
                           setSelectedUser(user);
                           setShowDetailsModal(true);
                         }}
-                        className="p-2 text-gray-600 hover:text-[#232249] hover:bg-[#232249]/10 rounded-lg transition-all duration-200 group"
+                        className="p-2 text-gray-600 hover:text-slate-800 hover:bg-slate-800/10 rounded-lg transition-all duration-200 group"
                         title="View Details"
                       >
                         <Eye className="h-4 w-4" />
@@ -533,7 +539,7 @@ const UserManagement = () => {
                           setSelectedUser(user);
                           setShowEditModal(true);
                         }}
-                        className="p-2 text-gray-600 hover:text-[#232249] hover:bg-[#232249]/10 rounded-lg transition-all duration-200"
+                        className="p-2 text-gray-600 hover:text-slate-800 hover:bg-slate-800/10 rounded-lg transition-all duration-200"
                         title="Edit User"
                       >
                         <Edit className="h-4 w-4" />
@@ -558,13 +564,108 @@ const UserManagement = () => {
           </table>
         </div>
 
+        {/* Mobile Card View - Hidden on Desktop */}
+        <div className="md:hidden space-y-3 p-4">
+          {filteredUsers.map((user, index) => (
+            <motion.div
+              key={user._id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.05 }}
+              className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-200"
+            >
+              {/* User Header */}
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex items-center space-x-3 flex-1 min-w-0">
+                  <div className="h-10 w-10 bg-gradient-to-br from-slate-600 to-slate-800 rounded-xl flex items-center justify-center shadow-sm flex-shrink-0">
+                    <span className="text-white font-semibold text-sm">
+                      {user.firstName.charAt(0)}{user.lastName.charAt(0)}
+                    </span>
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-semibold text-gray-900 truncate">
+                      {user.firstName} {user.lastName}
+                    </p>
+                    <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                  </div>
+                </div>
+                <div className="flex flex-col items-end space-y-1">
+                  <span className={`inline-flex items-center space-x-1 px-2 py-1 rounded-lg text-xs font-semibold ${getRoleColor(user.role)}`}>
+                    {getRoleIcon(user.role)}
+                    <span className="capitalize">{user.role}</span>
+                  </span>
+                  <span className={`inline-flex items-center px-2 py-1 rounded-lg text-xs font-semibold ${
+                    user.isActive
+                      ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                      : 'bg-red-100 text-red-800 border border-red-200'
+                  }`}>
+                    {user.isActive ? 'Active' : 'Inactive'}
+                  </span>
+                </div>
+              </div>
+
+              {/* User Details */}
+              <div className="space-y-2 mb-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-gray-500">Last Login:</span>
+                  <span className="text-sm text-gray-900">
+                    {user.lastLogin ? new Date(user.lastLogin).toLocaleDateString() : 'Never'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex items-center justify-center space-x-2 pt-3 border-t border-gray-100">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => {
+                    setSelectedUser(user);
+                    setShowDetailsModal(true);
+                  }}
+                  className="flex items-center space-x-2 px-3 py-2 bg-gray-100 text-gray-700 hover:bg-gray-200 rounded-lg transition-all duration-200 min-h-[44px] flex-1 justify-center"
+                >
+                  <Eye className="h-4 w-4" />
+                  <span className="text-sm font-medium">View</span>
+                </motion.button>
+
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => {
+                    setSelectedUser(user);
+                    setShowEditModal(true);
+                  }}
+                  className="flex items-center space-x-2 px-3 py-2 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-lg transition-all duration-200 min-h-[44px] flex-1 justify-center"
+                >
+                  <Edit className="h-4 w-4" />
+                  <span className="text-sm font-medium">Edit</span>
+                </motion.button>
+
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => {
+                    setSelectedUser(user);
+                    setShowDeleteModal(true);
+                  }}
+                  className="flex items-center space-x-2 px-3 py-2 bg-red-100 text-red-700 hover:bg-red-200 rounded-lg transition-all duration-200 min-h-[44px] flex-1 justify-center"
+                >
+                  <Trash2 className="h-4 w-4" />
+                  <span className="text-sm font-medium">Delete</span>
+                </motion.button>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
         {filteredUsers.length === 0 && (
-          <div className="text-center py-16">
-            <div className="p-6 bg-gradient-to-br from-[#232249]/10 to-[#232249]/20 rounded-2xl w-24 h-24 mx-auto mb-6 flex items-center justify-center">
-              <Users className="h-12 w-12 text-[#232249]" />
+          <div className="text-center py-8 md:py-16 px-4">
+            <div className="p-4 md:p-6 bg-gradient-to-br from-slate-600/10 to-slate-800/20 rounded-xl md:rounded-2xl w-16 h-16 md:w-24 md:h-24 mx-auto mb-4 md:mb-6 flex items-center justify-center">
+              <Users className="h-8 w-8 md:h-12 md:w-12 text-slate-800" />
             </div>
-            <p className="text-gray-500 text-xl font-bold mb-2">No users found</p>
-            <p className="text-gray-400 font-medium">Try adjusting your search criteria or filters</p>
+            <p className="text-gray-500 text-lg md:text-xl font-bold mb-2">No users found</p>
+            <p className="text-gray-400 font-medium text-sm md:text-base">Try adjusting your search criteria or filters</p>
           </div>
         )}
       </motion.div>

@@ -40,6 +40,7 @@ import CSVImportModal from '../../ui/CSVImportModal';
 import * as XLSX from 'xlsx';
 import { exportWorkOrdersToExcel } from '../../../utils/excelExport';
 import PDFDownloadButton from '../../ui/PDFDownloadButton';
+import { getImageUrl } from '../../../utils/imageUtils';
 
 // Utility functions
 const formatDate = (dateString) => {
@@ -446,25 +447,25 @@ const ManagerWorkOrders = () => {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
       <Toaster position="top-right" />
       
-      <div className="w-full flex-1 px-4 sm:px-6 lg:px-8 py-8">
+      <div className="w-full px-4 md:px-6 lg:px-8 py-4 md:py-8">
         {/* Header Section */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-6">
+        <div className="mb-4 md:mb-8">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-4 sm:space-y-0">
             <div>
-              <h1 className="text-4xl font-black text-[#232249] mb-2">
+              <h1 className="text-2xl md:text-4xl font-black text-slate-800 mb-2">
                 Work Orders Management
               </h1>
-              <p className="text-gray-600 text-lg">
+              <p className="text-gray-600 text-sm md:text-lg">
                 Manager Dashboard - {currentTime.toLocaleTimeString()}
               </p>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center space-x-2 md:space-x-3">
               <button
                 onClick={handleRefresh}
-                className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-gray-200 rounded-lg hover:border-[#232249] transition-colors"
+                className="flex items-center space-x-2 px-3 md:px-4 py-3 min-h-[48px] bg-white border-2 border-gray-200 rounded-lg md:rounded-xl hover:border-slate-800 transition-colors"
               >
-                <RefreshCw className="w-4 h-4" />
-                Refresh
+                <RefreshCw className="h-4 w-4 md:h-5 md:w-5" />
+                <span className="text-sm md:text-base">Refresh</span>
               </button>
             </div>
           </div>
@@ -596,20 +597,22 @@ const ManagerWorkOrders = () => {
               <span className="font-medium">Results:</span>
               <span className="font-semibold text-[#232249]">{filteredOrders.length}</span>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-2 md:gap-3">
               <button
                 onClick={() => setShowCSVImportModal(true)}
-                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-700 hover:bg-blue-50 rounded-lg transition-colors border border-blue-200"
+                className="flex items-center gap-2 px-3 md:px-4 py-3 min-h-[48px] text-sm font-medium text-blue-700 hover:bg-blue-50 rounded-lg transition-colors border border-blue-200"
               >
-                <Upload className="w-4 h-4" />
-                Import CSV
+                <Upload className="w-4 h-4 md:w-5 md:h-5" />
+                <span className="hidden sm:inline">Import CSV</span>
+                <span className="sm:hidden">Import</span>
               </button>
               <button
                 onClick={handleExportToExcel}
-                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors border border-emerald-200"
+                className="flex items-center gap-2 px-3 md:px-4 py-3 min-h-[48px] text-sm font-medium text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors border border-emerald-200"
               >
-                <FileSpreadsheet className="w-4 h-4" />
-                Export Excel
+                <FileSpreadsheet className="w-4 h-4 md:w-5 md:h-5" />
+                <span className="hidden sm:inline">Export Excel</span>
+                <span className="sm:hidden">Export</span>
               </button>
               <PDFDownloadButton
                 workOrders={filteredOrders}
@@ -617,14 +620,15 @@ const ManagerWorkOrders = () => {
                 size="default"
                 label="Download PDF"
                 groupBy="building"
-                className="border border-blue-200"
+                className="border border-blue-200 min-h-[48px] py-3"
               />
               <button
                 onClick={handleRefresh}
-                className="flex items-center gap-2 px-4 py-2 bg-[#232249] text-white rounded-lg hover:bg-[#1a1a3a] transition-colors text-sm font-medium"
+                className="flex items-center gap-2 px-3 md:px-4 py-3 min-h-[48px] bg-slate-800 text-white rounded-lg hover:bg-slate-900 transition-colors text-sm font-medium"
               >
-                <RefreshCw className="w-4 h-4" />
-                Refresh
+                <RefreshCw className="w-4 h-4 md:w-5 md:h-5" />
+                <span className="hidden sm:inline">Refresh</span>
+                <span className="sm:hidden">Refresh</span>
               </button>
             </div>
           </div>
@@ -822,7 +826,7 @@ const ManagerWorkOrders = () => {
                               <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
                               <div className="relative bg-white rounded-2xl p-3 border-2 border-gray-200 group-hover:border-blue-300 transition-all duration-300 shadow-lg group-hover:shadow-xl">
                                 <img
-                                  src={url}
+                                  src={getImageUrl(url)}
                                   alt={`Assessment ${index + 1}`}
                                   className="w-full h-32 object-cover rounded-xl"
                                 />

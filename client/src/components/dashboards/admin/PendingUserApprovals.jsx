@@ -109,12 +109,12 @@ const PendingUserApprovals = () => {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+      <div className="bg-white rounded-xl md:rounded-2xl shadow-lg md:shadow-xl p-4 md:p-6 border border-gray-100">
         <div className="animate-pulse">
-          <div className="h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
+          <div className="h-5 md:h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
           <div className="space-y-3">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="h-16 bg-gray-100 rounded-xl"></div>
+              <div key={i} className="h-12 md:h-16 bg-gray-100 rounded-xl"></div>
             ))}
           </div>
         </div>
@@ -123,122 +123,214 @@ const PendingUserApprovals = () => {
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+    <div className="bg-white rounded-xl md:rounded-2xl shadow-lg md:shadow-xl border border-gray-100 overflow-hidden">
       {/* Compact Header */}
-      <div className="bg-gradient-to-r from-slate-800 to-slate-900 px-6 py-4">
-        <div className="flex items-center justify-between">
+      <div className="bg-gradient-to-r from-slate-800 to-slate-900 px-4 md:px-6 py-3 md:py-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-2 sm:space-y-0">
           <div className="flex items-center space-x-3">
             <div className="p-2 bg-white/10 rounded-lg">
-              <Clock className="h-5 w-5 text-white" />
+              <Clock className="h-4 w-4 md:h-5 md:w-5 text-white" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-white">Pending Approvals</h3>
-              <p className="text-white/70 text-sm">
+              <h3 className="text-base md:text-lg font-semibold text-white">Pending Approvals</h3>
+              <p className="text-white/70 text-xs md:text-sm">
                 {pendingUsers.length} {pendingUsers.length === 1 ? 'user' : 'users'} awaiting review
               </p>
             </div>
           </div>
           <div className="px-3 py-1 bg-white/10 rounded-lg">
-            <span className="text-white text-sm font-medium">Today</span>
+            <span className="text-white text-xs md:text-sm font-medium">Today</span>
           </div>
         </div>
       </div>
 
       {/* Content */}
-      <div className="p-6">
+      <div className="p-4 md:p-6">
         {pendingUsers.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="w-20 h-20 bg-emerald-100 rounded-2xl mx-auto mb-4 flex items-center justify-center">
-              <UserCheck className="h-10 w-10 text-emerald-600" />
+          <div className="text-center py-8 md:py-12">
+            <div className="w-16 h-16 md:w-20 md:h-20 bg-emerald-100 rounded-xl md:rounded-2xl mx-auto mb-4 flex items-center justify-center">
+              <UserCheck className="h-8 w-8 md:h-10 md:w-10 text-emerald-600" />
             </div>
-            <h4 className="text-xl font-semibold text-gray-900 mb-2">All Set!</h4>
-            <p className="text-gray-600">No pending approvals at the moment.</p>
+            <h4 className="text-lg md:text-xl font-semibold text-gray-900 mb-2">All Set!</h4>
+            <p className="text-gray-600 text-sm md:text-base">No pending approvals at the moment.</p>
           </div>
         ) : (
-          <div className="overflow-hidden rounded-xl border border-gray-200">
-            {/* Table Header */}
-            <div className="bg-gray-50 border-b border-gray-200">
-              <div className="grid grid-cols-12 gap-4 px-6 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wide">
-                <div className="col-span-4">User</div>
-                <div className="col-span-2">Role</div>
-                <div className="col-span-3">Contact</div>
-                <div className="col-span-2">Date</div>
-                <div className="col-span-1">Actions</div>
+          <>
+            {/* Desktop Table - Hidden on Mobile */}
+            <div className="hidden md:block overflow-hidden rounded-xl border border-gray-200">
+              {/* Table Header */}
+              <div className="bg-gray-50 border-b border-gray-200">
+                <div className="grid grid-cols-12 gap-4 px-6 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wide">
+                  <div className="col-span-4">User</div>
+                  <div className="col-span-2">Role</div>
+                  <div className="col-span-3">Contact</div>
+                  <div className="col-span-2">Date</div>
+                  <div className="col-span-1">Actions</div>
+                </div>
+              </div>
+
+              {/* Table Body */}
+              <div className="divide-y divide-gray-200 bg-white">
+                {pendingUsers.map((user, index) => (
+                  <motion.div
+                    key={user._id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.05, duration: 0.3 }}
+                    className="grid grid-cols-12 gap-4 px-6 py-4 hover:bg-gray-50 transition-colors duration-200"
+                  >
+                    {/* User Info */}
+                    <div className="col-span-4 flex items-center space-x-3">
+                      <div className="h-10 w-10 bg-gradient-to-br from-slate-600 to-slate-800 rounded-xl flex items-center justify-center shadow-sm">
+                        <span className="text-white font-semibold text-sm">
+                          {user.firstName.charAt(0)}{user.lastName.charAt(0)}
+                        </span>
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-semibold text-gray-900 truncate">
+                          {user.firstName} {user.lastName}
+                        </p>
+                        {user.department && (
+                          <p className="text-xs text-gray-500 truncate">{user.department}</p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Role */}
+                    <div className="col-span-2 flex items-center">
+                      <span className={`inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg text-xs font-semibold ${getRoleColor(user.role)}`}>
+                        {getRoleIcon(user.role)}
+                        <span className="capitalize">{user.role}</span>
+                      </span>
+                    </div>
+
+                    {/* Contact */}
+                    <div className="col-span-3 flex items-center">
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm text-gray-900 truncate">{user.email}</p>
+                        <div className="flex items-center space-x-1 mt-1">
+                          <Mail className="h-3 w-3 text-gray-400" />
+                          <span className="text-xs text-gray-500">Email</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Date */}
+                    <div className="col-span-2 flex items-center">
+                      <div>
+                        <p className="text-sm text-gray-900">{new Date(user.createdAt).toLocaleDateString()}</p>
+                        <div className="flex items-center space-x-1 mt-1">
+                          <Calendar className="h-3 w-3 text-gray-400" />
+                          <span className="text-xs text-gray-500">Registered</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="col-span-1 flex items-center justify-end space-x-2">
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => handleApprove(user._id)}
+                        disabled={actionLoading === user._id}
+                        className="p-2 bg-emerald-100 text-emerald-700 hover:bg-emerald-200 rounded-lg transition-all duration-200 disabled:opacity-50"
+                        title="Approve"
+                      >
+                        {actionLoading === user._id ? (
+                          <div className="w-4 h-4 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
+                        ) : (
+                          <CheckCircle className="h-4 w-4" />
+                        )}
+                      </motion.button>
+                      
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => {
+                          setSelectedUser(user);
+                          setShowRejectModal(true);
+                        }}
+                        disabled={actionLoading === user._id}
+                        className="p-2 bg-red-100 text-red-700 hover:bg-red-200 rounded-lg transition-all duration-200 disabled:opacity-50"
+                        title="Reject"
+                      >
+                        <XCircle className="h-4 w-4" />
+                      </motion.button>
+
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="p-2 bg-gray-100 text-gray-600 hover:bg-gray-200 rounded-lg transition-all duration-200"
+                        title="View Details"
+                      >
+                        <Eye className="h-4 w-4" />
+                      </motion.button>
+                    </div>
+                  </motion.div>
+                ))}
               </div>
             </div>
 
-            {/* Table Body */}
-            <div className="divide-y divide-gray-200 bg-white">
+            {/* Mobile Card View - Hidden on Desktop */}
+            <div className="md:hidden space-y-3">
               {pendingUsers.map((user, index) => (
                 <motion.div
                   key={user._id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.05, duration: 0.3 }}
-                  className="grid grid-cols-12 gap-4 px-6 py-4 hover:bg-gray-50 transition-colors duration-200"
+                  className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-200"
                 >
-                  {/* User Info */}
-                  <div className="col-span-4 flex items-center space-x-3">
-                    <div className="h-10 w-10 bg-gradient-to-br from-slate-600 to-slate-800 rounded-xl flex items-center justify-center shadow-sm">
-                      <span className="text-white font-semibold text-sm">
-                        {user.firstName.charAt(0)}{user.lastName.charAt(0)}
-                      </span>
+                  {/* User Header */}
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-center space-x-3 flex-1 min-w-0">
+                      <div className="h-10 w-10 bg-gradient-to-br from-slate-600 to-slate-800 rounded-xl flex items-center justify-center shadow-sm flex-shrink-0">
+                        <span className="text-white font-semibold text-sm">
+                          {user.firstName.charAt(0)}{user.lastName.charAt(0)}
+                        </span>
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-semibold text-gray-900 truncate">
+                          {user.firstName} {user.lastName}
+                        </p>
+                        {user.department && (
+                          <p className="text-xs text-gray-500 truncate">{user.department}</p>
+                        )}
+                      </div>
                     </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-semibold text-gray-900 truncate">
-                        {user.firstName} {user.lastName}
-                      </p>
-                      {user.department && (
-                        <p className="text-xs text-gray-500 truncate">{user.department}</p>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Role */}
-                  <div className="col-span-2 flex items-center">
-                    <span className={`inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg text-xs font-semibold ${getRoleColor(user.role)}`}>
+                    <span className={`inline-flex items-center space-x-1 px-2 py-1 rounded-lg text-xs font-semibold ${getRoleColor(user.role)}`}>
                       {getRoleIcon(user.role)}
                       <span className="capitalize">{user.role}</span>
                     </span>
                   </div>
 
-                  {/* Contact */}
-                  <div className="col-span-3 flex items-center">
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm text-gray-900 truncate">{user.email}</p>
-                      <div className="flex items-center space-x-1 mt-1">
-                        <Mail className="h-3 w-3 text-gray-400" />
-                        <span className="text-xs text-gray-500">Email</span>
-                      </div>
+                  {/* User Details */}
+                  <div className="space-y-2 mb-4">
+                    <div className="flex items-center space-x-2">
+                      <Mail className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                      <span className="text-sm text-gray-900 truncate">{user.email}</span>
                     </div>
-                  </div>
-
-                  {/* Date */}
-                  <div className="col-span-2 flex items-center">
-                    <div>
-                      <p className="text-sm text-gray-900">{new Date(user.createdAt).toLocaleDateString()}</p>
-                      <div className="flex items-center space-x-1 mt-1">
-                        <Calendar className="h-3 w-3 text-gray-400" />
-                        <span className="text-xs text-gray-500">Registered</span>
-                      </div>
+                    <div className="flex items-center space-x-2">
+                      <Calendar className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                      <span className="text-sm text-gray-600">{new Date(user.createdAt).toLocaleDateString()}</span>
                     </div>
                   </div>
 
                   {/* Actions */}
-                  <div className="col-span-1 flex items-center justify-end space-x-2">
+                  <div className="flex items-center justify-end space-x-2">
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={() => handleApprove(user._id)}
                       disabled={actionLoading === user._id}
-                      className="p-2 bg-emerald-100 text-emerald-700 hover:bg-emerald-200 rounded-lg transition-all duration-200 disabled:opacity-50"
-                      title="Approve"
+                      className="flex items-center space-x-2 px-4 py-2 bg-emerald-100 text-emerald-700 hover:bg-emerald-200 rounded-lg transition-all duration-200 disabled:opacity-50 min-h-[44px]"
                     >
                       {actionLoading === user._id ? (
                         <div className="w-4 h-4 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
                       ) : (
                         <CheckCircle className="h-4 w-4" />
                       )}
+                      <span className="text-sm font-medium">Approve</span>
                     </motion.button>
                     
                     <motion.button
@@ -249,25 +341,16 @@ const PendingUserApprovals = () => {
                         setShowRejectModal(true);
                       }}
                       disabled={actionLoading === user._id}
-                      className="p-2 bg-red-100 text-red-700 hover:bg-red-200 rounded-lg transition-all duration-200 disabled:opacity-50"
-                      title="Reject"
+                      className="flex items-center space-x-2 px-4 py-2 bg-red-100 text-red-700 hover:bg-red-200 rounded-lg transition-all duration-200 disabled:opacity-50 min-h-[44px]"
                     >
                       <XCircle className="h-4 w-4" />
-                    </motion.button>
-
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="p-2 bg-gray-100 text-gray-600 hover:bg-gray-200 rounded-lg transition-all duration-200"
-                      title="View Details"
-                    >
-                      <Eye className="h-4 w-4" />
+                      <span className="text-sm font-medium">Reject</span>
                     </motion.button>
                   </div>
                 </motion.div>
               ))}
             </div>
-          </div>
+          </>
         )}
       </div>
 
@@ -285,18 +368,18 @@ const PendingUserApprovals = () => {
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              className="bg-white rounded-2xl shadow-xl w-full max-w-md border border-gray-200"
+              className="bg-white rounded-xl md:rounded-2xl shadow-xl w-full max-w-md border border-gray-200 mx-4"
             >
               {/* Compact Header */}
-              <div className="bg-gradient-to-r from-red-500 to-red-600 px-6 py-4 rounded-t-2xl">
+              <div className="bg-gradient-to-r from-red-500 to-red-600 px-4 md:px-6 py-3 md:py-4 rounded-t-xl md:rounded-t-2xl">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <div className="p-2 bg-white/20 rounded-lg">
-                      <UserX className="h-5 w-5 text-white" />
+                      <UserX className="h-4 w-4 md:h-5 md:w-5 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold text-white">Reject Application</h3>
-                      <p className="text-white/80 text-sm">Provide a reason for rejection</p>
+                      <h3 className="text-base md:text-lg font-semibold text-white">Reject Application</h3>
+                      <p className="text-white/80 text-xs md:text-sm">Provide a reason for rejection</p>
                     </div>
                   </div>
                   <motion.button
@@ -307,7 +390,7 @@ const PendingUserApprovals = () => {
                       setSelectedUser(null);
                       setRejectionReason('');
                     }}
-                    className="p-2 hover:bg-white/20 rounded-lg transition-colors duration-200"
+                    className="p-2 hover:bg-white/20 rounded-lg transition-colors duration-200 min-h-[44px] min-w-[44px] flex items-center justify-center"
                   >
                     <X className="h-4 w-4 text-white" />
                   </motion.button>
@@ -315,18 +398,20 @@ const PendingUserApprovals = () => {
               </div>
 
               {/* Compact Content */}
-              <div className="p-6 space-y-4">
+              <div className="p-4 md:p-6 space-y-4">
                 {/* User Info */}
-                <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+                <div className="bg-red-50 border border-red-200 rounded-xl p-3 md:p-4">
                   <div className="flex items-center space-x-3">
-                    <div className="h-10 w-10 bg-gradient-to-br from-slate-600 to-slate-800 rounded-lg flex items-center justify-center">
+                    <div className="h-10 w-10 bg-gradient-to-br from-slate-600 to-slate-800 rounded-lg flex items-center justify-center flex-shrink-0">
                       <span className="text-white font-semibold text-sm">
                         {selectedUser.firstName.charAt(0)}{selectedUser.lastName.charAt(0)}
                       </span>
                     </div>
-                    <div className="flex-1">
-                      <p className="font-semibold text-gray-900">{selectedUser.firstName} {selectedUser.lastName}</p>
-                      <p className="text-sm text-gray-600">{selectedUser.email}</p>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-gray-900 text-sm md:text-base truncate">
+                        {selectedUser.firstName} {selectedUser.lastName}
+                      </p>
+                      <p className="text-xs md:text-sm text-gray-600 truncate">{selectedUser.email}</p>
                     </div>
                   </div>
                 </div>
@@ -341,7 +426,7 @@ const PendingUserApprovals = () => {
                     onChange={(e) => setRejectionReason(e.target.value)}
                     placeholder="Please provide a clear reason for rejecting this application..."
                     rows={3}
-                    className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200 placeholder-gray-400 resize-none text-sm"
+                    className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200 placeholder-gray-400 resize-none text-sm md:text-base min-h-[80px]"
                   />
                   <p className="text-xs text-gray-500">This reason will be recorded in the system.</p>
                 </div>
@@ -361,7 +446,7 @@ const PendingUserApprovals = () => {
               </div>
 
               {/* Compact Actions */}
-              <div className="bg-gray-50 px-6 py-4 rounded-b-2xl flex space-x-3">
+              <div className="bg-gray-50 px-4 md:px-6 py-3 md:py-4 rounded-b-xl md:rounded-b-2xl flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
@@ -370,7 +455,7 @@ const PendingUserApprovals = () => {
                     setSelectedUser(null);
                     setRejectionReason('');
                   }}
-                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-white transition-colors duration-200 font-medium"
+                  className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-white transition-colors duration-200 font-medium min-h-[48px] flex items-center justify-center"
                 >
                   Cancel
                 </motion.button>
@@ -379,7 +464,7 @@ const PendingUserApprovals = () => {
                   whileTap={{ scale: 0.98 }}
                   onClick={handleReject}
                   disabled={!rejectionReason.trim() || actionLoading}
-                  className="flex-1 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                  className="flex-1 bg-red-600 text-white px-4 py-3 rounded-lg hover:bg-red-700 transition-colors duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 min-h-[48px]"
                 >
                   {actionLoading ? (
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>

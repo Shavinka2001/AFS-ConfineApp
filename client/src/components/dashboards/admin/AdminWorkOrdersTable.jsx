@@ -331,16 +331,16 @@ const AdminWorkOrdersTable = ({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
         {/* Mobile-Responsive Header */}
-        <div className="bg-gradient-to-r from-[#232249] to-[#2d2d5f] rounded-2xl sm:rounded-3xl shadow-xl p-4 sm:p-6">
+        <div className="bg-gradient-to-r from-[#232249] to-[#2d2d5f] rounded-2xl shadow-xl p-4 md:p-6">
           <div className="flex flex-col gap-4 sm:gap-0 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-3 sm:gap-4">
               <div className="bg-white/15 backdrop-blur-sm rounded-xl p-2 sm:p-3 border border-white/20 shrink-0">
-                <FileText className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 text-white" />
+                <FileText className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               </div>
               <div className="min-w-0">
-                <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-white mb-1 truncate">
+                <h2 className="text-lg sm:text-xl font-bold text-white mb-1 truncate">
                   Work Orders Management
                 </h2>
                 <p className="text-white/70 text-xs sm:text-sm">
@@ -348,25 +348,145 @@ const AdminWorkOrdersTable = ({
                 </p>
               </div>
             </div>
-            
+
             {/* Mobile-Responsive Action Buttons */}
             <div className="flex items-center gap-2 sm:gap-3 overflow-x-auto">
               <button
                 onClick={handleDeleteAllOrders}
-                className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 bg-red-600/80 text-white rounded-xl hover:bg-red-700 transition-all duration-200 border border-red-500/20 hover:border-red-400 touch-manipulation whitespace-nowrap"
+                className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 bg-red-600/80 text-white rounded-xl hover:bg-red-700 transition-all duration-200 border border-red-500/20 hover:border-red-400 touch-manipulation whitespace-nowrap text-sm"
                 title="Delete All Work Orders"
                 disabled={workOrders.length === 0}
               >
                 <Trash2 className="w-4 h-4 shrink-0" />
-                <span className="text-xs sm:text-sm font-medium">Delete All</span>
+                <span className="font-medium">Delete All</span>
               </button>
             </div>
           </div>
         </div>
 
-      {/* Mobile-Responsive Table Container */}
-      <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
-        <div className="table-responsive overflow-x-auto -webkit-overflow-scrolling-touch">
+      {/* Mobile Card View */}
+      <div className="block md:hidden space-y-4">
+        {workOrders.length === 0 ? (
+          <div className="bg-white rounded-2xl shadow-xl p-8 text-center border border-gray-100">
+            <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">No Work Orders Found</h3>
+            <p className="text-gray-600">There are no work orders to display at this time.</p>
+          </div>
+        ) : (
+          workOrders.map((order) => (
+            <div key={order.id || order._id} className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+              {/* Card Header */}
+              <div className="p-4 border-b border-gray-100">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => toggleExpand(order.id || order._id)}
+                      className="p-2 hover:bg-[#232249]/10 rounded-lg transition-all duration-200 touch-manipulation"
+                    >
+                      {expandedRows.has(order.id || order._id) ? (
+                        <ChevronUp className="h-4 w-4 text-[#232249]" />
+                      ) : (
+                        <ChevronDown className="h-4 w-4 text-[#232249]" />
+                      )}
+                    </button>
+                    <div>
+                      <h3 className="font-bold text-[#232249] text-sm">
+                        {order.workOrderId || order.uniqueId || `WO-${new Date(order.createdAt).getFullYear()}-${String(order.id || order._id).slice(-4)}`}
+                      </h3>
+                      <p className="text-xs text-gray-600">{order.spaceName || 'Unnamed Space'}</p>
+                    </div>
+                  </div>
+                  <span className={`inline-flex items-center px-2 py-1 rounded-lg text-xs font-bold border-2 ${getPriorityColor(order.priority)}`}>
+                    {order.priority || 'medium'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Card Content */}
+              <div className="p-4 space-y-3">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="flex items-center gap-2">
+                    <Calendar className="h-4 w-4 text-[#232249]/60" />
+                    <div>
+                      <p className="text-xs text-gray-500">Survey Date</p>
+                      <p className="text-sm font-medium text-[#232249]">{formatDate(order.surveyDate || order.createdAt)}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <User className="h-4 w-4 text-[#232249]/60" />
+                    <div>
+                      <p className="text-xs text-gray-500">Technician</p>
+                      <p className="text-sm font-medium text-[#232249] truncate">{order.technician || 'Unknown'}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Building className="h-4 w-4 text-[#232249]/60" />
+                    <div>
+                      <p className="text-xs text-gray-500">Building</p>
+                      <p className="text-sm font-medium text-[#232249] truncate">{order.building || 'Unknown'}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-4 w-4 text-[#232249]/60" />
+                    <div>
+                      <p className="text-xs text-gray-500">Created</p>
+                      <p className="text-sm font-medium text-[#232249]">{formatDate(order.createdAt)}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div className="flex items-center justify-center gap-2 pt-2 border-t border-gray-100">
+                  <button
+                    onClick={() => onView && onView(order)}
+                    className="flex items-center justify-center gap-2 px-3 py-2 text-gray-600 hover:text-[#232249] hover:bg-[#232249]/10 rounded-lg transition-all duration-200 touch-manipulation text-sm"
+                  >
+                    <Eye className="h-4 w-4" />
+                    <span>View</span>
+                  </button>
+
+                  <button
+                    onClick={() => handleEditOrder(order)}
+                    className="flex items-center justify-center gap-2 px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 touch-manipulation text-sm"
+                  >
+                    <Edit className="h-4 w-4" />
+                    <span>Edit</span>
+                  </button>
+
+                  <PDFDownloadButton
+                    workOrder={order}
+                    type="single"
+                    size="small"
+                    className="!px-3 !py-2"
+                  />
+
+                  <button
+                    onClick={() => handleDeleteOrder(order.id || order._id)}
+                    className="flex items-center justify-center gap-2 px-3 py-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200 touch-manipulation text-sm"
+                    title="Delete Order"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Expanded Details */}
+              {expandedRows.has(order.id || order._id) && (
+                <div className="px-4 pb-4 border-t border-gray-100">
+                  <div className="pt-3 space-y-2">
+                    <div className="text-xs text-gray-500">Location Description</div>
+                    <p className="text-sm text-[#232249]">{order.locationDescription || order.location || 'No description available'}</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* Desktop Table View */}
+      <div className="hidden md:block bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+        <div className="overflow-x-auto">
           <table className="w-full min-w-[800px]">
             <thead>
               <tr style={{ backgroundColor: '#232249' }}>

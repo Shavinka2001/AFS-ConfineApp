@@ -20,6 +20,7 @@ import {
   Trash2,
   Clock
 } from 'lucide-react';
+import { getImageUrl } from '../../../utils/imageUtils';
 
 const AdminEditWorkOrderForm = ({
   showEditModal,
@@ -962,7 +963,7 @@ const AdminEditWorkOrderForm = ({
                         <div key={`image-${index}`} className="relative group">
                           <div className="aspect-square rounded-xl overflow-hidden bg-gray-100 shadow-lg border border-gray-200">
                             <img
-                              src={imageUrl}
+                              src={getImageUrl(imageUrl)}
                               alt={`Image ${index + 1}`}
                               className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                               onError={(e) => {

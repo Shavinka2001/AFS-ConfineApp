@@ -33,6 +33,479 @@ import { userAPI } from '../../../services/api';
 import { handleError, handleSuccess } from '../../../utils/errorHandler';
 import { Toaster } from 'react-hot-toast';
 
+// User Modal Component
+const UserModal = ({ isOpen, onClose, onSubmit, title, mode, user }) => {
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    role: 'technician',
+    isActive: true,
+    password: ''
+  });
+
+  const [showPassword, setShowPassword] = useState(false);
+
+  useEffect(() => {
+    if (mode === 'edit' && user) {
+      setFormData({
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        email: user.email || '',
+        role: user.role || 'technician',
+        isActive: user.isActive !== undefined ? user.isActive : true,
+        password: ''
+      });
+    } else if (mode === 'add') {
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        role: 'technician',
+        isActive: true,
+        password: ''
+      });
+    }
+  }, [mode, user, isOpen]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSubmit(formData);
+  };
+
+  const getRoleInfo = (role) => {
+    switch (role) {
+      case 'manager':
+        return { icon: Shield, color: 'text-purple-600', description: 'Can manage users and oversee operations' };
+      case 'technician':
+        return { icon: UserCog, color: 'text-blue-600', description: 'Can handle technical tasks and maintenance' };
+      default:
+        return { icon: Users, color: 'text-gray-600', description: 'Standard user with basic access' };
+    }
+  };
+
+  if (!isOpen) return null;
+
+  const currentRoleInfo = getRoleInfo(formData.role);
+  const IconComponent = currentRoleInfo.icon;
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+      >
+        <motion.div
+          initial={{ scale: 0.9, opacity: 0, y: 20 }}
+          animate={{ scale: 1, opacity: 1, y: 0 }}
+          exit={{ scale: 0.9, opacity: 0, y: 20 }}
+          className="bg-white rounded-3xl shadow-2xl w-full max-w-lg border border-gray-100 overflow-hidden max-h-[90vh] flex flex-col"
+        >
+          {/* Header */}
+          <div className="relative bg-gradient-to-r from-[#232249] via-[#232249]/95 to-[#232249]/90 p-8">
+            <div className="absolute inset-0 bg-white/5 backdrop-blur-sm"></div>
+            <div className="relative flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div className="h-12 w-12 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
+                  <IconComponent className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold text-white">{title}</h3>
+                  <p className="text-white/80 text-sm">{mode === 'add' ? 'Create a new user account' : 'Modify user information'}</p>
+                </div>
+              </div>
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={onClose}
+                className="p-2 hover:bg-white/20 rounded-xl transition-all duration-200"
+              >
+                <X className="h-6 w-6 text-white" />
+              </motion.button>
+            </div>
+          </div>
+
+          <form onSubmit={handleSubmit} id="user-form" className="p-8 space-y-6 flex-1 overflow-y-auto">
+            {/* Personal Information */}
+            <div className="space-y-4">
+              <div className="flex items-center space-x-2 mb-4">
+                <div className="h-2 w-2 bg-[#232249] rounded-full"></div>
+                <h4 className="text-lg font-semibold text-[#232249]">Personal Information</h4>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="block text-sm font-semibold text-gray-700">First Name</label>
+                  <motion.input
+                    whileFocus={{ scale: 1.02 }}
+                    type="text"
+                    required
+                    value={formData.firstName}
+                    onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                    className="w-full px-4 py-3 bg-gray-50/50 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-[#232249]/10 focus:border-[#232249] transition-all duration-300 placeholder-gray-400"
+                    placeholder="Enter first name"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="block text-sm font-semibold text-gray-700">Last Name</label>
+                  <motion.input
+                    whileFocus={{ scale: 1.02 }}
+                    type="text"
+                    required
+                    value={formData.lastName}
+                    onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                    className="w-full px-4 py-3 bg-gray-50/50 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-[#232249]/10 focus:border-[#232249] transition-all duration-300 placeholder-gray-400"
+                    placeholder="Enter last name"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-gray-700">Email Address</label>
+                <motion.input
+                  whileFocus={{ scale: 1.02 }}
+                  type="email"
+                  required
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  className="w-full px-4 py-3 bg-gray-50/50 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-[#232249]/10 focus:border-[#232249] transition-all duration-300 placeholder-gray-400"
+                  placeholder="user@company.com"
+                />
+              </div>
+            </div>
+
+            {/* Security */}
+            <div className="space-y-4">
+              <div className="flex items-center space-x-2 mb-4">
+                <div className="h-2 w-2 bg-[#232249] rounded-full"></div>
+                <h4 className="text-lg font-semibold text-[#232249]">Security</h4>
+              </div>
+
+              {(mode === 'add' || mode === 'edit') && (
+                <div className="space-y-2">
+                  <label className="block text-sm font-semibold text-gray-700">
+                    {mode === 'add' ? 'Password' : 'New Password (leave blank to keep current)'}
+                  </label>
+                  <div className="relative">
+                    <motion.input
+                      whileFocus={{ scale: 1.02 }}
+                      type={showPassword ? 'text' : 'password'}
+                      required={mode === 'add'}
+                      value={formData.password}
+                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                      className="w-full px-4 py-3 pr-12 bg-gray-50/50 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-[#232249]/10 focus:border-[#232249] transition-all duration-300 placeholder-gray-400"
+                      placeholder={mode === 'add' ? 'Enter secure password' : 'Leave blank to keep current'}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 text-gray-400 hover:text-[#232249] transition-colors"
+                    >
+                      {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Role & Permissions */}
+            <div className="space-y-4">
+              <div className="flex items-center space-x-2 mb-4">
+                <div className="h-2 w-2 bg-[#232249] rounded-full"></div>
+                <h4 className="text-lg font-semibold text-[#232249]">Role & Permissions</h4>
+              </div>
+
+              <div className="space-y-3">
+                <label className="block text-sm font-semibold text-gray-700">User Role</label>
+                <div className="grid grid-cols-3 gap-3">
+                  {['technician', 'manager', 'user'].map((role) => {
+                    const roleInfo = getRoleInfo(role);
+                    const RoleIcon = roleInfo.icon;
+                    return (
+                      <motion.button
+                        key={role}
+                        type="button"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => setFormData({ ...formData, role })}
+                        className={`p-4 border-2 rounded-xl transition-all duration-300 ${
+                          formData.role === role
+                            ? 'border-[#232249] bg-[#232249]/10'
+                            : 'border-gray-200 hover:border-gray-300'
+                        }`}
+                      >
+                        <RoleIcon className={`h-6 w-6 mx-auto mb-2 ${roleInfo.color}`} />
+                        <p className="text-sm font-semibold capitalize">{role}</p>
+                      </motion.button>
+                    );
+                  })}
+                </div>
+                <div className={`p-4 rounded-xl ${currentRoleInfo.color} border border-current/20`}>
+                  <p className="text-sm font-medium">{currentRoleInfo.description}</p>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                <div className="flex items-center space-x-3">
+                  <div className={`p-2 rounded-lg ${formData.isActive ? 'bg-green-100' : 'bg-red-100'}`}>
+                    {formData.isActive ? 
+                      <UserCheck className="h-5 w-5 text-green-600" /> : 
+                      <UserX className="h-5 w-5 text-red-600" />
+                    }
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-gray-700">Account Status</p>
+                    <p className="text-xs text-gray-500">
+                      {formData.isActive ? 'User can access the system' : 'User access is disabled'}
+                    </p>
+                  </div>
+                </div>
+                <motion.button
+                  type="button"
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setFormData({ ...formData, isActive: !formData.isActive })}
+                  className={`relative w-14 h-8 rounded-full transition-all duration-300 ${
+                    formData.isActive ? 'bg-green-500' : 'bg-gray-300'
+                  }`}
+                >
+                  <motion.div
+                    animate={{ x: formData.isActive ? 24 : 4 }}
+                    transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                    className="absolute top-1 w-6 h-6 bg-white rounded-full shadow-lg"
+                  />
+                </motion.button>
+              </div>
+            </div>
+          </form>
+
+          {/* Footer */}
+          <div className="bg-white border-t border-gray-100 p-6 flex-shrink-0">
+            <div className="flex space-x-4">
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                type="button"
+                onClick={onClose}
+                className="flex-1 px-6 py-4 border-2 border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all duration-300 font-semibold"
+              >
+                Cancel
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                type="submit"
+                form="user-form"
+                className="flex-1 bg-gradient-to-r from-[#232249] to-[#232249]/90 text-white px-6 py-4 rounded-xl hover:shadow-2xl hover:shadow-[#232249]/25 transition-all duration-300 font-semibold flex items-center justify-center space-x-2"
+              >
+                <Save className="h-5 w-5" />
+                <span>{mode === 'add' ? 'Create User' : 'Save Changes'}</span>
+              </motion.button>
+            </div>
+          </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+};
+
+// User Details Modal Component
+const UserDetailsModal = ({ isOpen, onClose, user }) => {
+  if (!isOpen || !user) return null;
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+      >
+        <motion.div
+          initial={{ scale: 0.9, opacity: 0, y: 20 }}
+          animate={{ scale: 1, opacity: 1, y: 0 }}
+          exit={{ scale: 0.9, opacity: 0, y: 20 }}
+          className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl border border-gray-100 overflow-hidden max-h-[90vh] flex flex-col"
+        >
+          {/* Header */}
+          <div className="relative bg-gradient-to-r from-[#232249] via-[#232249]/95 to-[#232249]/90 p-8">
+            <div className="absolute inset-0 bg-white/5 backdrop-blur-sm"></div>
+            <div className="relative flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div className="h-16 w-16 bg-white/20 rounded-2xl flex items-center justify-center">
+                  <User className="h-8 w-8 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold text-white">{user.firstName} {user.lastName}</h3>
+                  <p className="text-[#232249]/80 text-sm font-medium">User Details</p>
+                </div>
+              </div>
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={onClose}
+                className="h-12 w-12 bg-white/20 hover:bg-white/30 rounded-xl flex items-center justify-center transition-all duration-300"
+              >
+                <X className="h-6 w-6 text-white" />
+              </motion.button>
+            </div>
+          </div>
+
+          {/* Content */}
+          <div className="flex-1 overflow-y-auto p-8 space-y-6">
+            {/* Basic Info */}
+            <div className="space-y-4">
+              <h4 className="text-lg font-semibold text-[#232249] border-b border-gray-200 pb-2">Basic Information</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-600">First Name</label>
+                  <div className="bg-gray-50 rounded-xl p-4">
+                    <p className="text-gray-900 font-medium">{user.firstName}</p>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-600">Last Name</label>
+                  <div className="bg-gray-50 rounded-xl p-4">
+                    <p className="text-gray-900 font-medium">{user.lastName}</p>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-600">Email</label>
+                  <div className="bg-gray-50 rounded-xl p-4">
+                    <p className="text-gray-900 font-medium">{user.email}</p>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-600">Phone</label>
+                  <div className="bg-gray-50 rounded-xl p-4">
+                    <p className="text-gray-900 font-medium">{user.phone || 'Not provided'}</p>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-600">Role</label>
+                  <div className="bg-gray-50 rounded-xl p-4">
+                    <span className={`inline-flex px-3 py-1 rounded-full text-sm font-semibold ${
+                      user.role === 'admin' ? 'bg-red-100 text-red-800' :
+                      user.role === 'manager' ? 'bg-purple-100 text-purple-800' :
+                      user.role === 'technician' ? 'bg-blue-100 text-blue-800' :
+                      'bg-gray-100 text-gray-800'
+                    }`}>
+                      {user.role?.charAt(0).toUpperCase() + user.role?.slice(1)}
+                    </span>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-600">Status</label>
+                  <div className="bg-gray-50 rounded-xl p-4">
+                    <div className="flex items-center space-x-3">
+                      {user.isActive ? <CheckCircle className="h-5 w-5 text-green-500" /> : <UserX className="h-5 w-5 text-red-500" />}
+                      <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                        user.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                      }`}>
+                        {user.isActive ? 'Active' : 'Inactive'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Activity */}
+            <div className="space-y-4">
+              <h4 className="text-lg font-semibold text-[#232249] border-b border-gray-200 pb-2">Activity</h4>
+              <div className="bg-gray-50 rounded-xl p-4">
+                <div className="flex items-center space-x-3">
+                  <Clock className="h-5 w-5 text-gray-400" />
+                  <span className="text-gray-700 font-medium">
+                    Last Login: {user.lastLogin ? new Date(user.lastLogin).toLocaleDateString() : 'Never'}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div className="bg-gray-50 border-t border-gray-200 p-6">
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={onClose}
+              className="w-full bg-gradient-to-r from-[#232249] to-[#232249]/90 text-white px-6 py-4 rounded-xl hover:shadow-xl transition-all duration-300 font-semibold"
+            >
+              Close
+            </motion.button>
+          </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+};
+
+// Delete Confirmation Modal Component
+const DeleteConfirmModal = ({ isOpen, onClose, onConfirm, user }) => {
+  if (!isOpen || !user) return null;
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+      >
+        <motion.div
+          initial={{ scale: 0.9, opacity: 0, y: 20 }}
+          animate={{ scale: 1, opacity: 1, y: 0 }}
+          exit={{ scale: 0.9, opacity: 0, y: 20 }}
+          className="bg-white rounded-3xl shadow-2xl w-full max-w-md border border-gray-100 overflow-hidden"
+        >
+          {/* Header */}
+          <div className="bg-gradient-to-r from-red-500 to-red-600 p-6">
+            <div className="flex items-center space-x-3">
+              <div className="h-12 w-12 bg-white/20 rounded-xl flex items-center justify-center">
+                <AlertTriangle className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-white">Delete User</h3>
+                <p className="text-red-100 text-sm">This action cannot be undone</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Content */}
+          <div className="p-6">
+            <p className="text-gray-700 text-center">
+              Are you sure you want to delete <strong>{user.firstName} {user.lastName}</strong>?
+              All associated data will be permanently removed.
+            </p>
+          </div>
+
+          {/* Footer */}
+          <div className="bg-gray-50 border-t border-gray-200 p-6 flex space-x-4">
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={onClose}
+              className="flex-1 px-6 py-3 border-2 border-gray-200 text-gray-700 rounded-xl hover:bg-gray-100 transition-all duration-300 font-semibold"
+            >
+              Cancel
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={onConfirm}
+              className="flex-1 bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-3 rounded-xl hover:shadow-xl transition-all duration-300 font-semibold"
+            >
+              Delete
+            </motion.button>
+          </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+};
+
 const ManagerUserManagement = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -1022,30 +1495,31 @@ const ManagerUserManagement = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-8 space-y-8">
-      <Toaster />
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+      <div className="w-full px-4 md:px-6 lg:px-8 py-4 md:py-8 space-y-4 md:space-y-8">
+        <Toaster />
       
       {/* Header */}
-      <div className="flex items-center justify-between bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
-        <div className="flex items-center space-x-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-white rounded-xl md:rounded-2xl shadow-xl p-4 md:p-6 border border-gray-100 space-y-4 sm:space-y-0">
+        <div className="flex items-center space-x-4 md:space-x-6">
           <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-[#232249] to-[#232249]/80 bg-clip-text text-transparent">
+            <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-[#232249] to-[#232249]/80 bg-clip-text text-transparent">
               User Management
             </h1>
-            <p className="text-gray-600 mt-1 font-medium">
+            <p className="text-gray-600 mt-1 font-medium text-sm md:text-base">
               Manage users, roles, and permissions across your system
             </p>
           </div>
         </div>
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-3 md:space-x-4">
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setShowAddModal(true)}
-            className="bg-gradient-to-r from-[#232249] to-[#232249]/90 text-white px-6 py-3 rounded-xl font-semibold hover:shadow-xl transition-all duration-300 flex items-center space-x-2"
+            className="bg-gradient-to-r from-[#232249] to-[#232249]/90 text-white px-4 md:px-6 py-3 min-h-[48px] rounded-xl font-semibold hover:shadow-xl transition-all duration-300 flex items-center space-x-2"
           >
-            <Plus className="h-5 w-5" />
-            <span>Add User</span>
+            <Plus className="h-4 w-4 md:h-5 md:w-5" />
+            <span className="text-sm md:text-base">Add User</span>
           </motion.button>
         </div>
       </div>
@@ -1345,468 +1819,7 @@ const ManagerUserManagement = () => {
         user={selectedUser}
       />
     </div>
-  );
-};
-
-// User Modal Component
-const UserModal = ({ isOpen, onClose, onSubmit, title, mode, user }) => {
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    role: 'technician',
-    isActive: true,
-    password: ''
-  });
-
-  const [showPassword, setShowPassword] = useState(false);
-
-  useEffect(() => {
-    if (mode === 'edit' && user) {
-      setFormData({
-        firstName: user.firstName || '',
-        lastName: user.lastName || '',
-        email: user.email || '',
-        role: user.role || 'technician',
-        isActive: user.isActive !== undefined ? user.isActive : true,
-        password: ''
-      });
-    } else if (mode === 'add') {
-      setFormData({
-        firstName: '',
-        lastName: '',
-        email: '',
-        role: 'technician',
-        isActive: true,
-        password: ''
-      });
-    }
-  }, [mode, user, isOpen]);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onSubmit(formData);
-  };
-
-  const getRoleInfo = (role) => {
-    switch (role) {
-      case 'manager':
-        return { icon: Shield, color: 'text-purple-600', description: 'Can manage users and oversee operations' };
-      case 'technician':
-        return { icon: UserCog, color: 'text-blue-600', description: 'Can handle technical tasks and maintenance' };
-      default:
-        return { icon: Users, color: 'text-gray-600', description: 'Standard user with basic access' };
-    }
-  };
-
-  if (!isOpen) return null;
-
-  const currentRoleInfo = getRoleInfo(formData.role);
-  const IconComponent = currentRoleInfo.icon;
-
-  return (
-    <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-      >
-        <motion.div
-          initial={{ scale: 0.9, opacity: 0, y: 20 }}
-          animate={{ scale: 1, opacity: 1, y: 0 }}
-          exit={{ scale: 0.9, opacity: 0, y: 20 }}
-          className="bg-white rounded-3xl shadow-2xl w-full max-w-lg border border-gray-100 overflow-hidden max-h-[90vh] flex flex-col"
-        >
-          {/* Header */}
-          <div className="relative bg-gradient-to-r from-[#232249] via-[#232249]/95 to-[#232249]/90 p-8">
-            <div className="absolute inset-0 bg-white/5 backdrop-blur-sm"></div>
-            <div className="relative flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <div className="h-12 w-12 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-                  <IconComponent className="h-6 w-6 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-2xl font-bold text-white">{title}</h3>
-                  <p className="text-white/80 text-sm">{mode === 'add' ? 'Create a new user account' : 'Modify user information'}</p>
-                </div>
-              </div>
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={onClose}
-                className="p-2 hover:bg-white/20 rounded-xl transition-all duration-200"
-              >
-                <X className="h-6 w-6 text-white" />
-              </motion.button>
-            </div>
-          </div>
-
-          <form onSubmit={handleSubmit} id="user-form" className="p-8 space-y-6 flex-1 overflow-y-auto">
-            {/* Personal Information */}
-            <div className="space-y-4">
-              <div className="flex items-center space-x-2 mb-4">
-                <div className="h-2 w-2 bg-[#232249] rounded-full"></div>
-                <h4 className="text-lg font-semibold text-[#232249]">Personal Information</h4>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="block text-sm font-semibold text-gray-700">First Name</label>
-                  <motion.input
-                    whileFocus={{ scale: 1.02 }}
-                    type="text"
-                    required
-                    value={formData.firstName}
-                    onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                    className="w-full px-4 py-3 bg-gray-50/50 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-[#232249]/10 focus:border-[#232249] transition-all duration-300 placeholder-gray-400"
-                    placeholder="Enter first name"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="block text-sm font-semibold text-gray-700">Last Name</label>
-                  <motion.input
-                    whileFocus={{ scale: 1.02 }}
-                    type="text"
-                    required
-                    value={formData.lastName}
-                    onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                    className="w-full px-4 py-3 bg-gray-50/50 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-[#232249]/10 focus:border-[#232249] transition-all duration-300 placeholder-gray-400"
-                    placeholder="Enter last name"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="block text-sm font-semibold text-gray-700">Email Address</label>
-                <motion.input
-                  whileFocus={{ scale: 1.02 }}
-                  type="email"
-                  required
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-4 py-3 bg-gray-50/50 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-[#232249]/10 focus:border-[#232249] transition-all duration-300 placeholder-gray-400"
-                  placeholder="user@company.com"
-                />
-              </div>
-            </div>
-
-            {/* Security */}
-            <div className="space-y-4">
-              <div className="flex items-center space-x-2 mb-4">
-                <div className="h-2 w-2 bg-[#232249] rounded-full"></div>
-                <h4 className="text-lg font-semibold text-[#232249]">Security</h4>
-              </div>
-
-              {(mode === 'add' || mode === 'edit') && (
-                <div className="space-y-2">
-                  <label className="block text-sm font-semibold text-gray-700">
-                    {mode === 'add' ? 'Password' : 'New Password (leave blank to keep current)'}
-                  </label>
-                  <div className="relative">
-                    <motion.input
-                      whileFocus={{ scale: 1.02 }}
-                      type={showPassword ? 'text' : 'password'}
-                      required={mode === 'add'}
-                      value={formData.password}
-                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                      className="w-full px-4 py-3 pr-12 bg-gray-50/50 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-[#232249]/10 focus:border-[#232249] transition-all duration-300 placeholder-gray-400"
-                      placeholder={mode === 'add' ? 'Enter secure password' : 'Leave blank to keep current'}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 text-gray-400 hover:text-[#232249] transition-colors"
-                    >
-                      {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Role & Permissions */}
-            <div className="space-y-4">
-              <div className="flex items-center space-x-2 mb-4">
-                <div className="h-2 w-2 bg-[#232249] rounded-full"></div>
-                <h4 className="text-lg font-semibold text-[#232249]">Role & Permissions</h4>
-              </div>
-
-              <div className="space-y-3">
-                <label className="block text-sm font-semibold text-gray-700">User Role</label>
-                <div className="grid grid-cols-3 gap-3">
-                  {['technician', 'manager', 'user'].map((role) => {
-                    const roleInfo = getRoleInfo(role);
-                    const RoleIcon = roleInfo.icon;
-                    return (
-                      <motion.button
-                        key={role}
-                        type="button"
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => setFormData({ ...formData, role })}
-                        className={`p-4 border-2 rounded-xl transition-all duration-300 ${
-                          formData.role === role
-                            ? 'border-[#232249] bg-[#232249]/10'
-                            : 'border-gray-200 hover:border-gray-300'
-                        }`}
-                      >
-                        <RoleIcon className={`h-6 w-6 mx-auto mb-2 ${roleInfo.color}`} />
-                        <p className="text-sm font-semibold capitalize">{role}</p>
-                      </motion.button>
-                    );
-                  })}
-                </div>
-                <div className={`p-4 rounded-xl ${currentRoleInfo.color} border border-current/20`}>
-                  <p className="text-sm font-medium">{currentRoleInfo.description}</p>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-                <div className="flex items-center space-x-3">
-                  <div className={`p-2 rounded-lg ${formData.isActive ? 'bg-green-100' : 'bg-red-100'}`}>
-                    {formData.isActive ? 
-                      <UserCheck className="h-5 w-5 text-green-600" /> : 
-                      <UserX className="h-5 w-5 text-red-600" />
-                    }
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-gray-700">Account Status</p>
-                    <p className="text-xs text-gray-500">
-                      {formData.isActive ? 'User can access the system' : 'User access is disabled'}
-                    </p>
-                  </div>
-                </div>
-                <motion.button
-                  type="button"
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setFormData({ ...formData, isActive: !formData.isActive })}
-                  className={`relative w-14 h-8 rounded-full transition-all duration-300 ${
-                    formData.isActive ? 'bg-green-500' : 'bg-gray-300'
-                  }`}
-                >
-                  <motion.div
-                    animate={{ x: formData.isActive ? 24 : 4 }}
-                    transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                    className="absolute top-1 w-6 h-6 bg-white rounded-full shadow-lg"
-                  />
-                </motion.button>
-              </div>
-            </div>
-          </form>
-
-          {/* Footer */}
-          <div className="bg-white border-t border-gray-100 p-6 flex-shrink-0">
-            <div className="flex space-x-4">
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                type="button"
-                onClick={onClose}
-                className="flex-1 px-6 py-4 border-2 border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all duration-300 font-semibold"
-              >
-                Cancel
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                type="submit"
-                form="user-form"
-                className="flex-1 bg-gradient-to-r from-[#232249] to-[#232249]/90 text-white px-6 py-4 rounded-xl hover:shadow-2xl hover:shadow-[#232249]/25 transition-all duration-300 font-semibold flex items-center justify-center space-x-2"
-              >
-                <Save className="h-5 w-5" />
-                <span>{mode === 'add' ? 'Create User' : 'Save Changes'}</span>
-              </motion.button>
-            </div>
-          </div>
-        </motion.div>
-      </motion.div>
-    </AnimatePresence>
-  );
-};
-
-// User Details Modal Component
-const UserDetailsModal = ({ isOpen, onClose, user }) => {
-  if (!isOpen || !user) return null;
-
-  return (
-    <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-      >
-        <motion.div
-          initial={{ scale: 0.9, opacity: 0, y: 20 }}
-          animate={{ scale: 1, opacity: 1, y: 0 }}
-          exit={{ scale: 0.9, opacity: 0, y: 20 }}
-          className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl border border-gray-100 overflow-hidden max-h-[90vh] flex flex-col"
-        >
-          {/* Header */}
-          <div className="relative bg-gradient-to-r from-[#232249] via-[#232249]/95 to-[#232249]/90 p-8">
-            <div className="absolute inset-0 bg-white/5 backdrop-blur-sm"></div>
-            <div className="relative flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <div className="h-16 w-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-                  <span className="text-white font-bold text-xl">
-                    {user.firstName?.charAt(0) || 'U'}{user.lastName?.charAt(0) || 'N'}
-                  </span>
-                </div>
-                <div>
-                  <h3 className="text-2xl font-bold text-white">{user.firstName} {user.lastName}</h3>
-                  <p className="text-white/80 text-sm">{user.email}</p>
-                </div>
-              </div>
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={onClose}
-                className="p-2 hover:bg-white/20 rounded-xl transition-all duration-200"
-              >
-                <X className="h-6 w-6 text-white" />
-              </motion.button>
-            </div>
-          </div>
-
-          {/* Content */}
-          <div className="p-8 space-y-6 flex-1 overflow-y-auto">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* User Information */}
-              <div className="space-y-4">
-                <h4 className="text-lg font-semibold text-[#232249] border-b border-gray-200 pb-2">User Information</h4>
-                <div className="space-y-3">
-                  <div className="flex items-center space-x-3">
-                    <Mail className="h-5 w-5 text-gray-400" />
-                    <span className="text-gray-700 font-medium">{user.email}</span>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <Calendar className="h-5 w-5 text-gray-400" />
-                    <span className="text-gray-700 font-medium">
-                      Joined {new Date(user.createdAt).toLocaleDateString()}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Role & Status */}
-              <div className="space-y-4">
-                <h4 className="text-lg font-semibold text-[#232249] border-b border-gray-200 pb-2">Role & Status</h4>
-                <div className="space-y-3">
-                  <div className="flex items-center space-x-3">
-                    <Shield className="h-5 w-5 text-gray-400" />
-                    <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                      user.role === 'manager' ? 'bg-purple-100 text-purple-800' :
-                      user.role === 'technician' ? 'bg-blue-100 text-blue-800' :
-                      'bg-gray-100 text-gray-800'
-                    }`}>
-                      {user.role?.charAt(0).toUpperCase() + user.role?.slice(1)}
-                    </span>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    {user.isActive ? <CheckCircle className="h-5 w-5 text-green-500" /> : <UserX className="h-5 w-5 text-red-500" />}
-                    <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                      user.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                    }`}>
-                      {user.isActive ? 'Active' : 'Inactive'}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Activity */}
-            <div className="space-y-4">
-              <h4 className="text-lg font-semibold text-[#232249] border-b border-gray-200 pb-2">Activity</h4>
-              <div className="bg-gray-50 rounded-xl p-4">
-                <div className="flex items-center space-x-3">
-                  <Clock className="h-5 w-5 text-gray-400" />
-                  <span className="text-gray-700 font-medium">
-                    Last Login: {user.lastLogin ? new Date(user.lastLogin).toLocaleDateString() : 'Never'}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Footer */}
-          <div className="bg-gray-50 border-t border-gray-200 p-6">
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={onClose}
-              className="w-full bg-gradient-to-r from-[#232249] to-[#232249]/90 text-white px-6 py-4 rounded-xl hover:shadow-xl transition-all duration-300 font-semibold"
-            >
-              Close
-            </motion.button>
-          </div>
-        </motion.div>
-      </motion.div>
-    </AnimatePresence>
-  );
-};
-
-// Delete Confirmation Modal Component
-const DeleteConfirmModal = ({ isOpen, onClose, onConfirm, user }) => {
-  if (!isOpen || !user) return null;
-
-  return (
-    <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-      >
-        <motion.div
-          initial={{ scale: 0.9, opacity: 0, y: 20 }}
-          animate={{ scale: 1, opacity: 1, y: 0 }}
-          exit={{ scale: 0.9, opacity: 0, y: 20 }}
-          className="bg-white rounded-3xl shadow-2xl w-full max-w-md border border-gray-100 overflow-hidden"
-        >
-          {/* Header */}
-          <div className="bg-gradient-to-r from-red-500 to-red-600 p-6">
-            <div className="flex items-center space-x-3">
-              <div className="h-12 w-12 bg-white/20 rounded-xl flex items-center justify-center">
-                <AlertTriangle className="h-6 w-6 text-white" />
-              </div>
-              <div>
-                <h3 className="text-xl font-bold text-white">Delete User</h3>
-                <p className="text-red-100 text-sm">This action cannot be undone</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Content */}
-          <div className="p-6">
-            <p className="text-gray-700 text-center">
-              Are you sure you want to delete <strong>{user.firstName} {user.lastName}</strong>?
-              All associated data will be permanently removed.
-            </p>
-          </div>
-
-          {/* Footer */}
-          <div className="bg-gray-50 border-t border-gray-200 p-6 flex space-x-4">
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={onClose}
-              className="flex-1 px-6 py-3 border-2 border-gray-200 text-gray-700 rounded-xl hover:bg-gray-100 transition-all duration-300 font-semibold"
-            >
-              Cancel
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={onConfirm}
-              className="flex-1 bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-3 rounded-xl hover:shadow-xl transition-all duration-300 font-semibold"
-            >
-              Delete
-            </motion.button>
-          </div>
-        </motion.div>
-      </motion.div>
-    </AnimatePresence>
+  </div>
   );
 };
 

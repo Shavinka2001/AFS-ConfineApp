@@ -187,21 +187,21 @@ const ManagerEditWorkOrderForm = ({
         className="bg-white rounded-xl shadow-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden flex flex-col"
       >
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-6 text-white flex justify-between items-center">
+        <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-4 md:px-6 py-4 md:py-6 text-white flex justify-between items-center">
           <div className="flex items-center space-x-3">
             <div className="p-2 bg-white/20 backdrop-blur-sm rounded-lg">
-              <FileText className="h-6 w-6" />
+              <FileText className="h-5 w-5 md:h-6 md:w-6" />
             </div>
             <div>
-              <h3 className="text-xl font-bold">Edit Work Order #{editingOrder.workOrderId || editingOrder.uniqueId}</h3>
-              <p className="text-blue-100 text-sm">Last modified: {formatDate(editingOrder.updatedAt || editingOrder.createdAt)}</p>
+              <h3 className="text-lg md:text-xl font-bold">Edit Work Order #{editingOrder.workOrderId || editingOrder.uniqueId}</h3>
+              <p className="text-blue-100 text-xs md:text-sm">Last modified: {formatDate(editingOrder.updatedAt || editingOrder.createdAt)}</p>
             </div>
           </div>
           <button 
-            className="p-2 hover:bg-white/20 rounded-full transition-colors"
+            className="p-3 min-h-[48px] hover:bg-white/20 rounded-full transition-colors"
             onClick={closeEditModal}
           >
-            <X className="h-6 w-6" />
+            <X className="h-5 w-5 md:h-6 md:w-6" />
           </button>
         </div>
 
@@ -253,7 +253,7 @@ const ManagerEditWorkOrderForm = ({
                   Basic Information
                 </h3>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Location/Department
@@ -262,7 +262,7 @@ const ManagerEditWorkOrderForm = ({
                       type="text"
                       value={editingOrder.location || ''}
                       onChange={(e) => handleInputChange('location', e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-4 py-3 min-h-[48px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="Enter location or department"
                     />
                   </div>
@@ -275,7 +275,7 @@ const ManagerEditWorkOrderForm = ({
                       type="date"
                       value={editingOrder.dateOfSurvey || editingOrder.surveyDate || ''}
                       onChange={(e) => handleInputChange('dateOfSurvey', e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-4 py-3 min-h-[48px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
                   </div>
 
@@ -287,7 +287,7 @@ const ManagerEditWorkOrderForm = ({
                       type="text"
                       value={editingOrder.technician || ''}
                       onChange={(e) => handleInputChange('technician', e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-4 py-3 min-h-[48px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="Enter technician name"
                     />
                   </div>
@@ -299,7 +299,7 @@ const ManagerEditWorkOrderForm = ({
                     <select
                       value={editingOrder.priority || 'medium'}
                       onChange={(e) => handleInputChange('priority', e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-4 py-3 min-h-[48px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     >
                       <option value="low">Low</option>
                       <option value="medium">Medium</option>
@@ -315,7 +315,7 @@ const ManagerEditWorkOrderForm = ({
                     <select
                       value={editingOrder.status || 'pending'}
                       onChange={(e) => handleInputChange('status', e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-4 py-3 min-h-[48px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     >
                       <option value="pending">Pending</option>
                       <option value="approved">Approved</option>
@@ -333,7 +333,7 @@ const ManagerEditWorkOrderForm = ({
                       value={editingOrder.description || ''}
                       onChange={(e) => handleInputChange('description', e.target.value)}
                       rows={3}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-4 py-3 min-h-[48px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="Enter work description"
                     />
                   </div>
@@ -352,7 +352,7 @@ const ManagerEditWorkOrderForm = ({
                   Space Information
                 </h3>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Building Name
@@ -361,7 +361,7 @@ const ManagerEditWorkOrderForm = ({
                       type="text"
                       value={editingOrder.buildingName || ''}
                       onChange={(e) => handleInputChange('buildingName', e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-4 py-3 min-h-[48px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="Enter building name"
                     />
                   </div>
@@ -377,7 +377,7 @@ const ManagerEditWorkOrderForm = ({
                         handleInputChange('spaceName', e.target.value);
                         handleInputChange('confinedSpaceNameOrId', e.target.value);
                       }}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-4 py-3 min-h-[48px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="Enter space name or ID"
                     />
                   </div>
@@ -390,7 +390,7 @@ const ManagerEditWorkOrderForm = ({
                       type="text"
                       value={editingOrder.spaceLocation || ''}
                       onChange={(e) => handleInputChange('spaceLocation', e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-4 py-3 min-h-[48px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="Enter precise location of the space"
                     />
                   </div>
@@ -406,7 +406,7 @@ const ManagerEditWorkOrderForm = ({
                         handleInputChange('spaceDescription', e.target.value);
                         handleInputChange('confinedSpaceDescription', e.target.value);
                       }}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-4 py-3 min-h-[48px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="Enter description of the space"
                     />
                   </div>
@@ -419,7 +419,7 @@ const ManagerEditWorkOrderForm = ({
                       type="text"
                       value={editingOrder.numberOfEntryPoints || ''}
                       onChange={(e) => handleInputChange('numberOfEntryPoints', e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-4 py-3 min-h-[48px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="How many entry points? (e.g., '2 entries')"
                     />
                   </div>
@@ -428,8 +428,8 @@ const ManagerEditWorkOrderForm = ({
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Is this a Confined Space?
                     </label>
-                    <div className="flex space-x-4 mt-1">
-                      <label className="inline-flex items-center">
+                    <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-2 sm:space-y-0 mt-1">
+                      <label className="inline-flex items-center min-h-[48px] px-3 py-2 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
                         <input
                           type="radio"
                           name="isConfinedSpace"
@@ -442,7 +442,7 @@ const ManagerEditWorkOrderForm = ({
                         />
                         <span className="ml-2 text-gray-700">Yes</span>
                       </label>
-                      <label className="inline-flex items-center">
+                      <label className="inline-flex items-center min-h-[48px] px-3 py-2 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
                         <input
                           type="radio"
                           name="isConfinedSpace"
@@ -1047,11 +1047,11 @@ const ManagerEditWorkOrderForm = ({
 
         {/* Footer with Actions */}
         <div className="border-t border-gray-200 bg-gray-50 p-4">
-          <div className="flex justify-between items-center">
+          <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center space-y-4 sm:space-y-0">
             <button
               type="button"
               onClick={closeEditModal}
-              className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors"
+              className="px-4 py-3 min-h-[48px] text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors"
             >
               Cancel
             </button>
@@ -1061,7 +1061,7 @@ const ManagerEditWorkOrderForm = ({
                 onClick={() => setActiveSection(sections.findIndex(s => s.id === activeSection) > 0 
                   ? sections[sections.findIndex(s => s.id === activeSection) - 1].id 
                   : activeSection)}
-                className={`px-4 py-2 text-blue-700 border border-blue-300 rounded-lg hover:bg-blue-50 transition-colors
+                className={`px-4 py-3 min-h-[48px] text-blue-700 border border-blue-300 rounded-lg hover:bg-blue-50 transition-colors
                   ${activeSection === sections[0].id ? 'opacity-50 cursor-not-allowed' : ''}`}
                 disabled={activeSection === sections[0].id}
               >
@@ -1074,7 +1074,7 @@ const ManagerEditWorkOrderForm = ({
                   onClick={() => setActiveSection(sections.findIndex(s => s.id === activeSection) < sections.length - 1 
                     ? sections[sections.findIndex(s => s.id === activeSection) + 1].id 
                     : activeSection)}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  className="px-4 py-3 min-h-[48px] bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                 >
                   Next
                 </button>
@@ -1082,7 +1082,7 @@ const ManagerEditWorkOrderForm = ({
                 <button
                   type="button"
                   onClick={handleSubmit}
-                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2"
+                  className="px-6 py-3 min-h-[48px] bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? (

@@ -138,14 +138,14 @@ const WorkOrderTable = ({
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => onView(form)}
-                    className="flex-1 flex items-center justify-center py-3 px-3 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors text-sm font-medium"
+                    className="flex-1 flex items-center justify-center py-3 px-3 min-h-[48px] bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors text-sm font-medium touch-manipulation"
                   >
                     <Eye className="h-4 w-4 mr-2" />
                     View
                   </button>
                   <button
                     onClick={() => onEdit(form)}
-                    className="flex-1 flex items-center justify-center py-3 px-3 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition-colors text-sm font-medium"
+                    className="flex-1 flex items-center justify-center py-3 px-3 min-h-[48px] bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition-colors text-sm font-medium touch-manipulation"
                   >
                     <Edit className="h-4 w-4 mr-2" />
                     Edit
@@ -153,7 +153,7 @@ const WorkOrderTable = ({
                   <PDFDownloadButton 
                     workOrder={form} 
                     size="small"
-                    className="flex items-center justify-center py-3 px-3 bg-gray-50 text-gray-600 rounded-lg hover:bg-gray-100 transition-colors"
+                    className="flex items-center justify-center py-3 px-3 min-h-[48px] bg-gray-50 text-gray-600 rounded-lg hover:bg-gray-100 transition-colors touch-manipulation"
                   />
                 </div>
               </div>

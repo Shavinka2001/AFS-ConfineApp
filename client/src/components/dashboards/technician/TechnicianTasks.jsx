@@ -355,22 +355,22 @@ const TechnicianTasks = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white p-8">
-        <div className="w-full flex-1">
-          <div className="bg-white/95 backdrop-blur-2xl rounded-3xl shadow-2xl border border-[#232249]/20 p-16 hover:shadow-3xl transition-all duration-500">
-            <div className="flex flex-col items-center justify-center space-y-8">
+      <div className="min-h-screen bg-white p-4 md:p-8">
+        <div className="w-full max-w-7xl mx-auto">
+          <div className="bg-white/95 backdrop-blur-2xl rounded-2xl md:rounded-3xl shadow-2xl border border-[#232249]/20 p-8 md:p-16 hover:shadow-3xl transition-all duration-500">
+            <div className="flex flex-col items-center justify-center space-y-6 md:space-y-8">
               <div className="relative">
-                <div className="w-24 h-24 bg-gradient-to-br from-[#232249]/10 to-[#232249]/20 rounded-3xl flex items-center justify-center shadow-xl">
-                  <RefreshCw className="h-12 w-12 text-[#232249] animate-spin" />
+                <div className="w-16 h-16 md:w-24 md:h-24 bg-gradient-to-br from-[#232249]/10 to-[#232249]/20 rounded-2xl md:rounded-3xl flex items-center justify-center shadow-xl">
+                  <RefreshCw className="h-6 w-6 md:h-12 md:w-12 text-[#232249] animate-spin" />
                 </div>
-                <div className="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-br from-[#232249] to-[#232249]/80 rounded-xl flex items-center justify-center shadow-lg">
-                  <div className="w-3 h-3 bg-white rounded-full animate-pulse"></div>
+                <div className="absolute -top-2 -right-2 w-6 h-6 md:w-8 md:h-8 bg-gradient-to-br from-[#232249] to-[#232249]/80 rounded-xl md:rounded-2xl flex items-center justify-center shadow-lg">
+                  <div className="w-2 h-2 md:w-3 md:h-3 bg-white rounded-full animate-pulse"></div>
                 </div>
               </div>
-              <div className="text-center space-y-3">
-                <h2 className="text-3xl font-bold bg-gradient-to-r from-[#232249] to-[#232249]/80 bg-clip-text text-transparent">Loading Your Tasks</h2>
-                <p className="text-[#232249]/60 font-medium text-lg">Please wait while we fetch your assignment details...</p>
-                <div className="flex items-center justify-center space-x-2 mt-6">
+              <div className="text-center space-y-2 md:space-y-3">
+                <h2 className="text-xl md:text-3xl font-bold bg-gradient-to-r from-[#232249] to-[#232249]/80 bg-clip-text text-transparent">Loading Your Tasks</h2>
+                <p className="text-[#232249]/60 font-medium text-base md:text-lg">Please wait while we fetch your assignment details...</p>
+                <div className="flex items-center justify-center space-x-2 mt-4 md:mt-6">
                   <div className="w-2 h-2 bg-[#232249]/40 rounded-full animate-bounce"></div>
                   <div className="w-2 h-2 bg-[#232249]/60 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
                   <div className="w-2 h-2 bg-[#232249]/80 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
@@ -385,27 +385,27 @@ const TechnicianTasks = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-white p-8">
-        <div className="w-full flex-1">
-          <div className="bg-white/95 backdrop-blur-2xl rounded-3xl shadow-2xl border border-[#232249]/20 p-16 hover:shadow-3xl transition-all duration-500">
-            <div className="flex flex-col items-center justify-center space-y-8">
+      <div className="min-h-screen bg-white p-4 md:p-8">
+        <div className="w-full max-w-7xl mx-auto">
+          <div className="bg-white/95 backdrop-blur-2xl rounded-2xl md:rounded-3xl shadow-2xl border border-[#232249]/20 p-8 md:p-16 hover:shadow-3xl transition-all duration-500">
+            <div className="flex flex-col items-center justify-center space-y-6 md:space-y-8">
               <div className="relative">
-                <div className="w-24 h-24 bg-gradient-to-br from-[#232249]/10 to-[#232249]/20 rounded-3xl flex items-center justify-center shadow-xl">
-                  <AlertCircle className="h-12 w-12 text-[#232249]" />
+                <div className="w-16 h-16 md:w-24 md:h-24 bg-gradient-to-br from-[#232249]/10 to-[#232249]/20 rounded-2xl md:rounded-3xl flex items-center justify-center shadow-xl">
+                  <AlertCircle className="h-6 w-6 md:h-12 md:w-12 text-[#232249]" />
                 </div>
-                <div className="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-br from-[#232249] to-[#232249]/80 rounded-xl flex items-center justify-center shadow-lg">
-                  <X className="h-4 w-4 text-white" />
+                <div className="absolute -top-2 -right-2 w-6 h-6 md:w-8 md:h-8 bg-gradient-to-br from-[#232249] to-[#232249]/80 rounded-xl md:rounded-2xl flex items-center justify-center shadow-lg">
+                  <X className="h-3 w-3 md:h-4 md:w-4 text-white" />
                 </div>
               </div>
-              <div className="text-center space-y-4 max-w-md">
-                <h2 className="text-3xl font-bold bg-gradient-to-r from-[#232249] to-[#232249]/80 bg-clip-text text-transparent">Error Loading Tasks</h2>
-                <p className="text-[#232249] font-medium text-lg leading-relaxed">{error}</p>
+              <div className="text-center space-y-3 md:space-y-4 max-w-md">
+                <h2 className="text-xl md:text-3xl font-bold bg-gradient-to-r from-[#232249] to-[#232249]/80 bg-clip-text text-transparent">Error Loading Tasks</h2>
+                <p className="text-[#232249] font-medium text-base md:text-lg leading-relaxed">{error}</p>
                 <div className="pt-4">
                   <button
                     onClick={loadData}
-                    className="inline-flex items-center space-x-3 px-8 py-4 bg-gradient-to-r from-[#232249] to-[#232249]/90 text-white rounded-2xl hover:from-[#232249]/90 hover:to-[#232249] transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-105 font-semibold text-lg"
+                    className="inline-flex items-center space-x-2 px-6 py-3 md:px-8 md:py-4 bg-gradient-to-r from-[#232249] to-[#232249]/90 text-white rounded-2xl hover:from-[#232249]/90 hover:to-[#232249] transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-105 font-semibold text-base md:text-lg"
                   >
-                    <RefreshCw className="h-6 w-6" />
+                    <RefreshCw className="h-4 w-4 md:h-6 md:w-6" />
                     <span>Try Again</span>
                   </button>
                 </div>
@@ -488,23 +488,23 @@ const TechnicianTasks = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white p-8">
-      <div className="w-full flex-1 space-y-8">
+    <div className="min-h-screen bg-white p-4 md:p-8">
+      <div className="w-full max-w-7xl mx-auto space-y-6 md:space-y-8">
         
         {/* Header */}
         <div className="bg-white/95 backdrop-blur-2xl rounded-2xl shadow-xl border border-[#232249]/20 hover:shadow-2xl transition-all duration-500 overflow-hidden">
-          <div className="bg-gradient-to-r from-[#232249]/5 via-[#232249]/10 to-[#232249]/5 p-6 border-b border-[#232249]/10">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-[#232249] to-[#232249]/80 rounded-xl flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300">
-                  <ClipboardList className="h-6 w-6 text-white" />
+          <div className="bg-gradient-to-r from-[#232249]/5 via-[#232249]/10 to-[#232249]/5 p-4 md:p-6 border-b border-[#232249]/10">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
+              <div className="flex items-center space-x-3 md:space-x-4">
+                <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-[#232249] to-[#232249]/80 rounded-xl flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300">
+                  <ClipboardList className="h-5 w-5 md:h-6 md:w-6 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-3xl font-bold bg-gradient-to-r from-[#232249] via-[#232249]/90 to-[#232249]/70 bg-clip-text text-transparent">My Tasks</h1>
+                  <h1 className="text-xl md:text-3xl font-bold bg-gradient-to-r from-[#232249] via-[#232249]/90 to-[#232249]/70 bg-clip-text text-transparent">My Tasks</h1>
                   <p className="text-[#232249]/60 text-sm font-medium">Manage your assigned location and tasks</p>
                 </div>
               </div>
-              <div className="flex items-center space-x-3">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-3">
                 <div className="hidden sm:flex items-center space-x-2 bg-white/80 px-3 py-2 rounded-lg border border-[#232249]/20 shadow-sm">
                   <div className={`w-2 h-2 rounded-full ${isPreviouslyAssigned ? 'bg-[#232249]' : 'bg-[#232249]'} animate-pulse`}></div>
                   <span className={`text-xs font-semibold ${isPreviouslyAssigned ? 'text-[#232249]' : 'text-[#232249]'}`}>
@@ -513,7 +513,7 @@ const TechnicianTasks = () => {
                 </div>
                 <button
                   onClick={loadData}
-                  className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-[#232249] to-[#232249]/90 text-white rounded-lg hover:from-[#232249]/90 hover:to-[#232249] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-semibold text-sm"
+                  className="flex items-center justify-center space-x-2 px-4 py-3 bg-gradient-to-r from-[#232249] to-[#232249]/90 text-white rounded-lg hover:from-[#232249]/90 hover:to-[#232249] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-semibold text-sm"
                 >
                   <RefreshCw className="h-4 w-4" />
                   <span>Refresh</span>
@@ -522,8 +522,8 @@ const TechnicianTasks = () => {
             </div>
           </div>
 
-          <div className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="p-4 md:p-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
               {/* Location Card */}
               <div className="bg-gradient-to-r from-[#232249]/5 to-[#232249]/10 px-4 py-3 rounded-xl border border-[#232249]/10 hover:border-[#232249]/20 transition-all duration-300">
                 <div className="flex items-center space-x-3">
@@ -571,22 +571,22 @@ const TechnicianTasks = () => {
 
         {/* Location Details Section */}
         <div className={`bg-white/95 backdrop-blur-2xl rounded-2xl shadow-xl border border-[#232249]/20 hover:shadow-2xl transition-all duration-500 overflow-hidden ${isPreviouslyAssigned ? 'ring-1 ring-orange-200/40' : ''}`}>
-          <div className="bg-gradient-to-r from-[#232249]/5 via-[#232249]/10 to-[#232249]/5 p-6 border-b border-[#232249]/10">
-            <div className="flex items-center justify-between">
+          <div className="bg-gradient-to-r from-[#232249]/5 via-[#232249]/10 to-[#232249]/5 p-4 md:p-6 border-b border-[#232249]/10">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-[#232249] to-[#232249]/80 rounded-xl flex items-center justify-center shadow-lg">
-                  <MapPin className="h-5 w-5 text-white" />
+                <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-[#232249] to-[#232249]/80 rounded-xl flex items-center justify-center shadow-lg">
+                  <MapPin className="h-4 w-4 md:h-5 md:w-5 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold bg-gradient-to-r from-[#232249] to-[#232249]/80 bg-clip-text text-transparent">
+                  <h2 className="text-lg md:text-2xl font-bold bg-gradient-to-r from-[#232249] to-[#232249]/80 bg-clip-text text-transparent">
                     {isPreviouslyAssigned ? 'Previously Assigned Location' : 'Location Details'}
                   </h2>
                   <p className="text-[#232249]/60 text-sm font-medium">Manage your assigned location</p>
                 </div>
               </div>
-              <div className="flex items-center space-x-2 bg-white/80 px-4 py-2 rounded-xl border border-[#232249]/20 shadow-sm">
+              <div className="flex items-center space-x-2 bg-white/80 px-3 py-2 md:px-4 md:py-2 rounded-xl border border-[#232249]/20 shadow-sm">
                 <div className={`w-2 h-2 rounded-full ${isPreviouslyAssigned ? 'bg-[#232249]' : 'bg-[#232249]'} animate-pulse`}></div>
-                <span className={`text-sm font-semibold ${isPreviouslyAssigned ? 'text-[#232249]' : 'text-[#232249]'}`}>
+                <span className={`text-xs md:text-sm font-semibold ${isPreviouslyAssigned ? 'text-[#232249]' : 'text-[#232249]'}`}>
                   {isPreviouslyAssigned ? 'Unassigned' : 'Active'}
                 </span>
               </div>
@@ -594,8 +594,8 @@ const TechnicianTasks = () => {
           </div>
 
           {isPreviouslyAssigned && (
-            <div className="mx-6 mt-4 mb-2 p-4 bg-gradient-to-r from-[#232249]/5 to-[#232249]/10 border border-[#232249]/20 rounded-xl backdrop-blur-sm">
-              <div className="flex items-center space-x-3">
+            <div className="mx-4 md:mx-6 mt-4 mb-2 p-3 md:p-4 bg-gradient-to-r from-[#232249]/5 to-[#232249]/10 border border-[#232249]/20 rounded-xl backdrop-blur-sm">
+              <div className="flex items-center space-x-2 md:space-x-3">
                 <AlertTriangle className="w-4 h-4 text-[#232249] flex-shrink-0" />
                 <p className="text-[#232249] font-medium text-sm">
                   Location was unassigned. View details and map for reference.
@@ -604,18 +604,18 @@ const TechnicianTasks = () => {
             </div>
           )}
 
-          <div className="p-6">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="p-4 md:p-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
               {/* Location Info - Compact */}
-              <div className="lg:col-span-1 space-y-4">
+              <div className="md:col-span-1 space-y-4">
                 <div className="space-y-2">
-                  <h3 className="text-xl font-bold text-[#232249] leading-tight">{displayLocationData?.location?.name || '—'}</h3>
+                  <h3 className="text-lg md:text-xl font-bold text-[#232249] leading-tight">{displayLocationData?.location?.name || '—'}</h3>
                   <p className="text-[#232249]/70 text-sm leading-relaxed">{displayLocationData?.location?.description || 'No description available'}</p>
                 </div>
                 
                 <div className="space-y-3">
-                  <div className="flex items-center space-x-3 bg-gradient-to-r from-[#232249]/5 to-[#232249]/10 px-4 py-3 rounded-xl border border-[#232249]/10">
-                    <Calendar className="h-4 w-4 text-[#232249]/70" />
+                  <div className="flex items-center space-x-3 bg-gradient-to-r from-[#232249]/5 to-[#232249]/10 px-3 py-2 md:px-4 md:py-3 rounded-xl border border-[#232249]/10">
+                    <Calendar className="h-3 w-3 md:h-4 md:w-4 text-[#232249]/70" />
                     <div className="min-w-0 flex-1">
                       <p className="text-xs text-[#232249]/60 font-medium uppercase tracking-wide">Assignment</p>
                       <p className="text-[#232249] font-semibold text-sm truncate">
@@ -627,8 +627,8 @@ const TechnicianTasks = () => {
                     </div>
                   </div>
                   {isPreviouslyAssigned && displayLocationData.unassignedDate && (
-                    <div className="flex items-center space-x-3 bg-gradient-to-r from-[#232249]/5 to-[#232249]/10 px-4 py-3 rounded-xl border border-[#232249]/10">
-                      <X className="h-4 w-4 text-[#232249]/70" />
+                    <div className="flex items-center space-x-3 bg-gradient-to-r from-[#232249]/5 to-[#232249]/10 px-3 py-2 md:px-4 md:py-3 rounded-xl border border-[#232249]/10">
+                      <X className="h-3 w-3 md:h-4 md:w-4 text-[#232249]/70" />
                       <div className="min-w-0 flex-1">
                         <p className="text-xs text-[#232249]/60 font-medium uppercase tracking-wide">Unassigned</p>
                         <p className="text-[#232249] font-semibold text-sm">
@@ -643,21 +643,21 @@ const TechnicianTasks = () => {
                 <div className="grid grid-cols-2 gap-3">
                   <button 
                     onClick={handleViewMap}
-                    className="group flex items-center justify-center space-x-2 px-4 py-3 bg-gradient-to-r from-[#232249] to-[#232249]/90 text-white rounded-xl hover:from-[#232249]/90 hover:to-[#232249] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-semibold text-sm"
+                    className="group flex items-center justify-center space-x-2 px-3 py-3 md:px-4 bg-gradient-to-r from-[#232249] to-[#232249]/90 text-white rounded-xl hover:from-[#232249]/90 hover:to-[#232249] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-semibold text-sm"
                   >
-                    <Map className="h-4 w-4 group-hover:rotate-12 transition-transform duration-300" />
+                    <Map className="h-3 w-3 md:h-4 md:w-4 group-hover:rotate-12 transition-transform duration-300" />
                     <span>Map</span>
                   </button>
                   <button 
                     onClick={handleAddInspection}
-                    className={`group flex items-center justify-center space-x-2 px-4 py-3 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-semibold text-sm ${
+                    className={`group flex items-center justify-center space-x-2 px-3 py-3 md:px-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-semibold text-sm ${
                       isPreviouslyAssigned 
                         ? 'bg-gray-100 text-gray-500 cursor-not-allowed' 
                         : 'bg-gradient-to-r from-[#232249] to-[#232249]/90 text-white hover:from-[#232249]/90 hover:to-[#232249]'
                     }`}
                     disabled={isPreviouslyAssigned}
                   >
-                    <Plus className="h-4 w-4 group-hover:rotate-90 transition-transform duration-300" />
+                    <Plus className="h-3 w-3 md:h-4 md:w-4 group-hover:rotate-90 transition-transform duration-300" />
                     <span>Inspect</span>
                   </button>
                 </div>
@@ -674,7 +674,7 @@ const TechnicianTasks = () => {
               </div>
 
               {/* Google Map View - Compact */}
-              <div className="lg:col-span-2 bg-white/90 backdrop-blur-xl rounded-xl border border-[#232249]/20 overflow-hidden shadow-lg">
+              <div className="md:col-span-2 bg-white/90 backdrop-blur-xl rounded-xl border border-[#232249]/20 overflow-hidden shadow-lg">
                 <div className="p-4 bg-gradient-to-br from-[#232249]/5 to-[#232249]/10 border-b border-[#232249]/10">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">

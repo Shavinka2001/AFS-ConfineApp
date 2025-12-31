@@ -269,7 +269,7 @@ const ManagerSettings = () => {
   );
 
   const ToggleSwitch = ({ label, description, checked, onChange }) => (
-    <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-200">
+    <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-200 min-h-[60px]">
       <div>
         <h4 className="font-semibold text-gray-900">{label}</h4>
         {description && <p className="text-sm text-gray-600 mt-1">{description}</p>}
@@ -277,13 +277,13 @@ const ManagerSettings = () => {
       <button
         type="button"
         onClick={() => onChange(!checked)}
-        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-          checked ? 'bg-[#232249]' : 'bg-gray-300'
+        className={`relative inline-flex h-7 w-12 md:h-6 md:w-11 items-center rounded-full transition-colors ${
+          checked ? 'bg-slate-800' : 'bg-gray-300'
         }`}
       >
         <span
-          className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-            checked ? 'translate-x-6' : 'translate-x-1'
+          className={`inline-block h-5 w-5 md:h-4 md:w-4 transform rounded-full bg-white transition-transform ${
+            checked ? 'translate-x-6 md:translate-x-6' : 'translate-x-1'
           }`}
         />
       </button>
@@ -292,18 +292,18 @@ const ManagerSettings = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      <div className="p-8 space-y-8">
+      <div className="w-full px-4 md:px-6 lg:px-8 py-4 md:py-8 space-y-4 md:space-y-8">
         {/* Header */}
-        <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
-          <div className="flex items-center space-x-4">
-            <div className="h-16 w-16 bg-gradient-to-br from-[#232249] to-[#232249]/80 rounded-2xl flex items-center justify-center">
-              <Settings className="h-8 w-8 text-white" />
+        <div className="bg-white rounded-xl md:rounded-2xl shadow-xl p-4 md:p-6 border border-gray-100">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
+            <div className="h-12 w-12 md:h-16 md:w-16 bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl md:rounded-2xl flex items-center justify-center flex-shrink-0">
+              <Settings className="h-6 w-6 md:h-8 md:w-8 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-[#232249] to-[#232249]/80 bg-clip-text text-transparent">
+              <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-slate-800 to-slate-900 bg-clip-text text-transparent">
                 Manager Settings
               </h1>
-              <p className="text-gray-600 mt-1 font-medium">
+              <p className="text-gray-600 mt-1 font-medium text-sm md:text-base">
                 Configure your account, team settings, and dashboard preferences
               </p>
             </div>

@@ -365,34 +365,34 @@ const ManagerDashboard = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="p-8 space-y-8">
+      <div className="w-full px-4 md:px-6 lg:px-8 py-4 md:py-8 space-y-4 md:space-y-8">
         {/* Header Section */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="bg-[#232249] rounded-2xl shadow-sm border border-gray-200 p-6 mb-2"
+          className="bg-slate-800 rounded-xl md:rounded-2xl shadow-sm border border-gray-200 p-4 md:p-6 mb-2"
         >
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-4 sm:space-y-0">
             <div className="flex-1">
-              <div className="flex items-center space-x-4 mb-3">
-                <div className="p-3 bg-white bg-opacity-20 rounded-xl border border-white border-opacity-20">
-                  <BarChart3 className="h-8 w-8" style={{ color: '#232249' }} />
+              <div className="flex items-center space-x-3 md:space-x-4 mb-3">
+                <div className="p-2 md:p-3 bg-white bg-opacity-20 rounded-lg md:rounded-xl border border-white border-opacity-20">
+                  <BarChart3 className="h-6 w-6 md:h-8 md:w-8" style={{ color: '#232249' }} />
                 </div>
                 <div>
-                  <h1 className="text-4xl font-bold text-white leading-tight">Manager Dashboard</h1>
-                  <div className="h-1 w-16 bg-white rounded-full mt-2"></div>
+                  <h1 className="text-2xl md:text-4xl font-bold text-white leading-tight">Manager Dashboard</h1>
+                  <div className="h-1 w-12 md:w-16 bg-white rounded-full mt-2"></div>
                 </div>
               </div>
-              <p className="text-lg text-white text-opacity-90 font-medium">
+              <p className="text-sm md:text-lg text-white text-opacity-90 font-medium">
                 Welcome back, <span className="text-white font-semibold">{user.firstName}</span>!
-                <span className="block text-base text-white text-opacity-70 mt-1">Here's your comprehensive team overview for today</span>
+                <span className="block text-xs md:text-base text-white text-opacity-70 mt-1">Here's your comprehensive team overview for today</span>
               </p>
             </div>
-            <div className="hidden md:flex items-center space-x-6 ml-8">
-              <div className="text-right">
-                <p className="text-sm text-white text-opacity-70 font-medium">Current Date</p>
-                <p className="text-lg font-semibold text-white">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 space-x-0 sm:space-x-4 md:space-x-6 ml-0 sm:ml-8">
+              <div className="text-left sm:text-right">
+                <p className="text-xs md:text-sm text-white text-opacity-70 font-medium">Current Date</p>
+                <p className="text-sm md:text-lg font-semibold text-white">
                   {new Date().toLocaleDateString('en-US', {
                     weekday: 'long',
                     year: 'numeric',
@@ -401,10 +401,10 @@ const ManagerDashboard = () => {
                   })}
                 </p>
               </div>
-              <div className="w-px h-12 bg-white bg-opacity-30"></div>
-              <div className="text-right">
-                <p className="text-sm text-white text-opacity-70 font-medium">Current Time</p>
-                <p className="text-lg font-semibold text-white">
+              <div className="hidden sm:block w-px h-12 bg-white bg-opacity-30"></div>
+              <div className="text-left sm:text-right">
+                <p className="text-xs md:text-sm text-white text-opacity-70 font-medium">Current Time</p>
+                <p className="text-sm md:text-lg font-semibold text-white">
                   {new Date().toLocaleTimeString('en-US', {
                     hour: '2-digit',
                     minute: '2-digit',
@@ -532,7 +532,7 @@ const ManagerDashboard = () => {
                 </div>
                 <h3 className="text-xl font-semibold text-[#232249]">Recent Work Orders</h3>
               </div>
-              <a href="/manager/work-orders" className="text-[#232249] hover:text-[#1a1a3a] font-medium text-sm flex items-center space-x-1">
+              <a href="/manager/work-orders" className="text-slate-800 hover:text-slate-900 font-medium text-sm flex items-center space-x-1 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors min-h-[44px]">
                 <span>View All</span>
                 <ArrowUpRight className="h-4 w-4" />
               </a>
@@ -592,7 +592,7 @@ const ManagerDashboard = () => {
               )}
             </div>
             <div className="mt-4 pt-4 border-t border-gray-200">
-              <a href="/manager/activity" className="text-[#232249] hover:text-[#1a1a3a] font-medium text-sm flex items-center space-x-1">
+              <a href="/manager/activity" className="text-slate-800 hover:text-slate-900 font-medium text-sm flex items-center space-x-1 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors min-h-[44px]">
                 <span>View All Activity</span>
                 <ArrowUpRight className="h-4 w-4" />
               </a>

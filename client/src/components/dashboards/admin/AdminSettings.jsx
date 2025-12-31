@@ -406,26 +406,26 @@ const AdminSettings = () => {
   const TabButton = ({ id, label, icon: Icon, color = '#232249' }) => (
     <button
       onClick={() => setActiveTab(id)}
-      className={`flex items-center space-x-3 px-6 py-4 rounded-xl font-semibold transition-all duration-300 w-full text-left ${
+      className={`flex items-center space-x-3 px-4 md:px-6 py-4 md:py-4 rounded-xl font-semibold transition-all duration-300 w-full text-left min-h-[48px] ${
         activeTab === id
           ? 'bg-[#232249] text-white shadow-xl'
           : 'bg-white text-gray-700 hover:bg-gray-50 hover:shadow-lg border border-gray-200'
       }`}
     >
-      <Icon className={`h-5 w-5 ${activeTab === id ? 'text-white' : 'text-[#232249]'}`} />
-      <span>{label}</span>
+      <Icon className={`h-5 w-5 flex-shrink-0 ${activeTab === id ? 'text-white' : 'text-[#232249]'}`} />
+      <span className="text-sm md:text-base">{label}</span>
     </button>
   );
 
   const InputField = ({ label, icon: Icon, ...props }) => (
     <div className="space-y-2">
       <label className="text-sm font-semibold text-gray-700 flex items-center space-x-2">
-        <Icon className="h-4 w-4 text-[#232249]" />
+        <Icon className="h-4 w-4 text-[#232249] flex-shrink-0" />
         <span>{label}</span>
       </label>
       <input
         {...props}
-        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white"
+        className="w-full px-4 py-4 md:py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white text-base min-h-[48px]"
       />
     </div>
   );
@@ -433,12 +433,12 @@ const AdminSettings = () => {
   const SelectField = ({ label, icon: Icon, options, ...props }) => (
     <div className="space-y-2">
       <label className="text-sm font-semibold text-gray-700 flex items-center space-x-2">
-        <Icon className="h-4 w-4 text-[#232249]" />
+        <Icon className="h-4 w-4 text-[#232249] flex-shrink-0" />
         <span>{label}</span>
       </label>
       <select
         {...props}
-        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white"
+        className="w-full px-4 py-4 md:py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white text-base min-h-[48px]"
       >
         {options.map((option) => (
           <option key={option.value} value={option.value}>
@@ -452,19 +452,19 @@ const AdminSettings = () => {
   const PasswordField = ({ label, icon: Icon, showPassword, setShowPassword, ...props }) => (
     <div className="space-y-2">
       <label className="text-sm font-semibold text-gray-700 flex items-center space-x-2">
-        <Icon className="h-4 w-4 text-[#232249]" />
+        <Icon className="h-4 w-4 text-[#232249] flex-shrink-0" />
         <span>{label}</span>
       </label>
       <div className="relative">
         <input
           {...props}
           type={showPassword ? 'text' : 'password'}
-          className="w-full px-4 py-3 pr-12 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white"
+          className="w-full px-4 py-4 md:py-3 pr-12 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white text-base min-h-[48px]"
         />
         <button
           type="button"
           onClick={() => setShowPassword(!showPassword)}
-          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-[#232249] transition-colors"
+          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-[#232249] transition-colors p-2 min-h-[44px] min-w-[44px] flex items-center justify-center"
         >
           {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
         </button>
@@ -473,15 +473,15 @@ const AdminSettings = () => {
   );
 
   const ToggleSwitch = ({ label, description, checked, onChange, danger = false }) => (
-    <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-200">
-      <div>
-        <h4 className="font-semibold text-gray-900">{label}</h4>
+    <div className="flex items-start justify-between p-4 bg-gray-50 rounded-xl border border-gray-200 gap-4">
+      <div className="flex-1 min-w-0">
+        <h4 className="font-semibold text-gray-900 text-sm md:text-base">{label}</h4>
         {description && <p className="text-sm text-gray-600 mt-1">{description}</p>}
       </div>
       <button
         type="button"
         onClick={() => onChange(!checked)}
-        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors flex-shrink-0 ${
           checked ? (danger ? 'bg-red-600' : 'bg-[#232249]') : 'bg-gray-300'
         }`}
       >
@@ -500,14 +500,14 @@ const AdminSettings = () => {
       status === 'warning' ? 'bg-yellow-50 border-yellow-200' : 
       'bg-red-50 border-red-200'
     }`}>
-      <div className="flex items-center space-x-3">
-        <Icon className={`h-6 w-6 ${
+      <div className="flex items-start space-x-3">
+        <Icon className={`h-6 w-6 flex-shrink-0 ${
           status === 'healthy' ? 'text-green-600' : 
           status === 'warning' ? 'text-yellow-600' : 
           'text-red-600'
         }`} />
-        <div>
-          <h4 className="font-semibold text-gray-900">{title}</h4>
+        <div className="min-w-0 flex-1">
+          <h4 className="font-semibold text-gray-900 text-sm md:text-base">{title}</h4>
           <p className="text-sm text-gray-600">{description}</p>
         </div>
       </div>
@@ -516,18 +516,18 @@ const AdminSettings = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="p-8 space-y-8">
+      <div className="w-full max-w-7xl mx-auto p-4 md:p-8 space-y-4 md:space-y-8">
         {/* Header */}
-        <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
-          <div className="flex items-center space-x-4">
-            <div className="h-16 w-16 bg-[#232249] rounded-2xl flex items-center justify-center">
-              <Shield className="h-8 w-8 text-white" />
+        <div className="bg-white rounded-xl md:rounded-2xl shadow-lg md:shadow-xl p-4 md:p-6 border border-gray-100">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-3 sm:space-y-0 sm:space-x-4">
+            <div className="h-12 w-12 md:h-16 md:w-16 bg-[#232249] rounded-xl md:rounded-2xl flex items-center justify-center flex-shrink-0">
+              <Shield className="h-6 w-6 md:h-8 md:w-8 text-white" />
             </div>
-            <div>
-              <h1 className="text-3xl font-bold text-[#232249]">
+            <div className="min-w-0 flex-1">
+              <h1 className="text-xl md:text-3xl font-bold text-[#232249]">
                 System Administration
               </h1>
-              <p className="text-gray-600 mt-1 font-medium">
+              <p className="text-gray-600 mt-1 font-medium text-sm md:text-base">
                 Configure system settings, security, and access control
               </p>
             </div>
@@ -536,20 +536,20 @@ const AdminSettings = () => {
 
         {/* Message Alert */}
         {message.text && (
-          <div className={`p-4 rounded-xl border ${
-            message.type === 'success' 
-              ? 'bg-green-50 border-green-200 text-green-800' 
+          <div className={`p-3 md:p-4 rounded-xl border ${
+            message.type === 'success'
+              ? 'bg-green-50 border-green-200 text-green-800'
               : 'bg-red-50 border-red-200 text-red-800'
-          } flex items-center space-x-2`}>
+          } flex items-start space-x-2`}>
             {message.type === 'success' ? (
-              <CheckCircle className="h-5 w-5" />
+              <CheckCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />
             ) : (
-              <AlertCircle className="h-5 w-5" />
+              <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />
             )}
-            <span className="font-medium">{message.text}</span>
+            <span className="font-medium text-sm md:text-base flex-1">{message.text}</span>
             <button
               onClick={() => setMessage({ type: '', text: '' })}
-              className="ml-auto text-sm underline hover:no-underline"
+              className="text-sm underline hover:no-underline flex-shrink-0 ml-2"
             >
               Dismiss
             </button>
@@ -558,53 +558,55 @@ const AdminSettings = () => {
 
         {/* Loading Overlay */}
         {dataLoading && (
-          <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+          <div className="bg-white rounded-xl md:rounded-2xl shadow-lg md:shadow-xl p-4 md:p-8 border border-gray-100">
             <div className="flex items-center justify-center space-x-3">
-              <RefreshCw className="h-6 w-6 text-red-600 animate-spin" />
-              <span className="text-lg font-medium text-gray-700">Loading admin settings...</span>
+              <RefreshCw className="h-5 w-5 md:h-6 md:w-6 text-red-600 animate-spin" />
+              <span className="text-base md:text-lg font-medium text-gray-700">Loading admin settings...</span>
             </div>
-            <div className="mt-4 grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <div className="mt-4 grid grid-cols-1 lg:grid-cols-4 gap-4 md:gap-8">
               <div className="lg:col-span-1 space-y-3">
                 {Array.from({ length: 6 }).map((_, index) => (
-                  <div key={index} className="h-12 bg-gray-200 rounded-xl animate-pulse"></div>
+                  <div key={index} className="h-10 md:h-12 bg-gray-200 rounded-xl animate-pulse"></div>
                 ))}
               </div>
               <div className="lg:col-span-3">
-                <div className="h-96 bg-gray-200 rounded-xl animate-pulse"></div>
+                <div className="h-64 md:h-96 bg-gray-200 rounded-xl animate-pulse"></div>
               </div>
             </div>
           </div>
         )}
 
         {!dataLoading && (
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <div className="flex flex-col lg:flex-row gap-4 md:gap-8">
           {/* Sidebar Navigation */}
-          <div className="lg:col-span-1 space-y-3">
-            <TabButton id="admin-profile" label="Admin Profile" icon={UserCog} />
-            <TabButton id="security" label="Security & Password" icon={Shield} />
-            <TabButton id="system-config" label="System Configuration" icon={Settings} />
-            <TabButton id="access-control" label="Access Control" icon={Key} />
-            <TabButton id="system-security" label="System Security" icon={Lock} />
-            <TabButton id="system-status" label="System Status" icon={Activity} />
+          <div className="w-full lg:w-80 lg:flex-shrink-0">
+            <div className="space-y-2 md:space-y-3">
+              <TabButton id="admin-profile" label="Admin Profile" icon={UserCog} />
+              <TabButton id="security" label="Security & Password" icon={Shield} />
+              <TabButton id="system-config" label="System Configuration" icon={Settings} />
+              <TabButton id="access-control" label="Access Control" icon={Key} />
+              <TabButton id="system-security" label="System Security" icon={Lock} />
+              <TabButton id="system-status" label="System Status" icon={Activity} />
+            </div>
           </div>
 
           {/* Content Area */}
-          <div className="lg:col-span-3">
+          <div className="flex-1 min-w-0">
             {/* Admin Profile Tab */}
             {activeTab === 'admin-profile' && (
-              <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-                <div className="flex items-center space-x-4 mb-8">
-                  <div className="h-16 w-16 bg-[#232249] rounded-2xl flex items-center justify-center">
-                    <User className="h-8 w-8 text-white" />
+              <div className="bg-white rounded-xl md:rounded-2xl shadow-lg md:shadow-xl p-4 md:p-8 border border-gray-100">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-3 sm:space-y-0 sm:space-x-4 mb-6 md:mb-8">
+                  <div className="h-12 w-12 md:h-16 md:w-16 bg-[#232249] rounded-xl md:rounded-2xl flex items-center justify-center flex-shrink-0">
+                    <User className="h-6 w-6 md:h-8 md:w-8 text-white" />
                   </div>
-                  <div>
-                    <h2 className="text-2xl font-bold text-[#232249]">Administrator Profile</h2>
-                    <p className="text-gray-600">Update your administrator account details</p>
+                  <div className="min-w-0 flex-1">
+                    <h2 className="text-xl md:text-2xl font-bold text-[#232249]">Administrator Profile</h2>
+                    <p className="text-gray-600 text-sm md:text-base">Update your administrator account details</p>
                   </div>
                 </div>
 
-                <form onSubmit={handleAdminProfileSubmit} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <form onSubmit={handleAdminProfileSubmit} className="space-y-4 md:space-y-6">
+                  <div className="grid grid-cols-1 gap-4 md:gap-6">
                     <InputField
                       label="First Name"
                       icon={User}
@@ -655,14 +657,14 @@ const AdminSettings = () => {
                     />
                   </div>
 
-                  <div className="flex justify-end pt-6">
+                  <div className="flex justify-end pt-4 md:pt-6">
                     <button
                       type="submit"
                       disabled={loading}
-                      className="flex items-center space-x-2 bg-[#232249] text-white px-8 py-3 rounded-xl font-semibold hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex items-center space-x-2 bg-[#232249] text-white px-6 md:px-8 py-4 md:py-3 rounded-xl font-semibold hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px]"
                     >
                       <Save className="h-5 w-5" />
-                      <span>{loading ? 'Updating...' : 'Update Profile'}</span>
+                      <span className="text-sm md:text-base">{loading ? 'Updating...' : 'Update Profile'}</span>
                     </button>
                   </div>
                 </form>
@@ -671,18 +673,18 @@ const AdminSettings = () => {
 
             {/* Security Tab */}
             {activeTab === 'security' && (
-              <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-                <div className="flex items-center space-x-4 mb-8">
-                  <div className="h-16 w-16 bg-[#232249] rounded-2xl flex items-center justify-center">
-                    <Shield className="h-8 w-8 text-white" />
+              <div className="bg-white rounded-xl md:rounded-2xl shadow-lg md:shadow-xl p-4 md:p-8 border border-gray-100">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-3 sm:space-y-0 sm:space-x-4 mb-6 md:mb-8">
+                  <div className="h-12 w-12 md:h-16 md:w-16 bg-[#232249] rounded-xl md:rounded-2xl flex items-center justify-center flex-shrink-0">
+                    <Shield className="h-6 w-6 md:h-8 md:w-8 text-white" />
                   </div>
-                  <div>
-                    <h2 className="text-2xl font-bold text-[#232249]">Security Settings</h2>
-                    <p className="text-gray-600">Update your password and security preferences</p>
+                  <div className="min-w-0 flex-1">
+                    <h2 className="text-xl md:text-2xl font-bold text-[#232249]">Security Settings</h2>
+                    <p className="text-gray-600 text-sm md:text-base">Update your password and security preferences</p>
                   </div>
                 </div>
 
-                <form onSubmit={handlePasswordSubmit} className="space-y-6 max-w-md">
+                <form onSubmit={handlePasswordSubmit} className="space-y-4 md:space-y-6 max-w-md">
                   <PasswordField
                     label="Current Password"
                     icon={Lock}
@@ -717,8 +719,8 @@ const AdminSettings = () => {
                     placeholder="Confirm your new password"
                   />
 
-                  <div className="bg-red-50 p-4 rounded-xl border border-red-200">
-                    <h4 className="font-semibold text-red-800 mb-2">Administrator Password Requirements:</h4>
+                  <div className="bg-red-50 p-3 md:p-4 rounded-xl border border-red-200">
+                    <h4 className="font-semibold text-red-800 mb-2 text-sm md:text-base">Administrator Password Requirements:</h4>
                     <ul className="text-sm text-red-700 space-y-1">
                       <li>• At least 8 characters long</li>
                       <li>• Mix of uppercase and lowercase letters</li>
@@ -728,14 +730,14 @@ const AdminSettings = () => {
                     </ul>
                   </div>
 
-                  <div className="flex justify-end pt-6">
+                  <div className="flex justify-end pt-4 md:pt-6">
                     <button
                       type="submit"
                       disabled={loading}
-                      className="flex items-center space-x-2 bg-[#232249] text-white px-8 py-3 rounded-xl font-semibold hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex items-center space-x-2 bg-[#232249] text-white px-6 md:px-8 py-4 md:py-3 rounded-xl font-semibold hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px]"
                     >
                       <Lock className="h-5 w-5" />
-                      <span>{loading ? 'Changing...' : 'Change Password'}</span>
+                      <span className="text-sm md:text-base">{loading ? 'Changing...' : 'Change Password'}</span>
                     </button>
                   </div>
                 </form>
@@ -744,19 +746,19 @@ const AdminSettings = () => {
 
             {/* System Configuration Tab */}
             {activeTab === 'system-config' && (
-              <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-                <div className="flex items-center space-x-4 mb-8">
-                  <div className="h-16 w-16 bg-[#232249] rounded-2xl flex items-center justify-center">
-                    <Settings className="h-8 w-8 text-white" />
+              <div className="bg-white rounded-xl md:rounded-2xl shadow-lg md:shadow-xl p-4 md:p-8 border border-gray-100">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-3 sm:space-y-0 sm:space-x-4 mb-6 md:mb-8">
+                  <div className="h-12 w-12 md:h-16 md:w-16 bg-[#232249] rounded-xl md:rounded-2xl flex items-center justify-center flex-shrink-0">
+                    <Settings className="h-6 w-6 md:h-8 md:w-8 text-white" />
                   </div>
-                  <div>
-                    <h2 className="text-2xl font-bold text-[#232249]">System Configuration</h2>
-                    <p className="text-gray-600">Configure global system settings and parameters</p>
+                  <div className="min-w-0 flex-1">
+                    <h2 className="text-xl md:text-2xl font-bold text-[#232249]">System Configuration</h2>
+                    <p className="text-gray-600 text-sm md:text-base">Configure global system settings and parameters</p>
                   </div>
                 </div>
 
-                <form onSubmit={handleSystemConfigSubmit} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <form onSubmit={handleSystemConfigSubmit} className="space-y-4 md:space-y-6">
+                  <div className="grid grid-cols-1 gap-4 md:gap-6">
                     <InputField
                       label="System Name"
                       icon={Globe}
@@ -801,7 +803,7 @@ const AdminSettings = () => {
 
                     <div className="space-y-2">
                       <label className="text-sm font-semibold text-gray-700 flex items-center space-x-2">
-                        <Upload className="h-4 w-4 text-[#232249]" />
+                        <Upload className="h-4 w-4 text-[#232249] flex-shrink-0" />
                         <span>Max File Size (MB)</span>
                       </label>
                       <input
@@ -810,13 +812,13 @@ const AdminSettings = () => {
                         max="100"
                         value={systemConfig.maxFileSize}
                         onChange={(e) => setSystemConfig({...systemConfig, maxFileSize: parseInt(e.target.value)})}
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white"
+                        className="w-full px-4 py-4 md:py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white text-base min-h-[48px]"
                       />
                     </div>
 
                     <div className="space-y-2">
                       <label className="text-sm font-semibold text-gray-700 flex items-center space-x-2">
-                        <Clock className="h-4 w-4 text-[#232249]" />
+                        <Clock className="h-4 w-4 text-[#232249] flex-shrink-0" />
                         <span>Session Timeout (minutes)</span>
                       </label>
                       <input
@@ -825,7 +827,7 @@ const AdminSettings = () => {
                         max="480"
                         value={systemConfig.sessionTimeout}
                         onChange={(e) => setSystemConfig({...systemConfig, sessionTimeout: parseInt(e.target.value)})}
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white"
+                        className="w-full px-4 py-4 md:py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white text-base min-h-[48px]"
                       />
                     </div>
 
@@ -856,7 +858,7 @@ const AdminSettings = () => {
                     />
                   </div>
 
-                  <div className="space-y-4">
+                  <div className="space-y-3 md:space-y-4">
                     <ToggleSwitch
                       label="Maintenance Mode"
                       description="Enable maintenance mode to prevent user access during updates"
@@ -873,14 +875,14 @@ const AdminSettings = () => {
                     />
                   </div>
 
-                  <div className="flex justify-end pt-6">
+                  <div className="flex justify-end pt-4 md:pt-6">
                     <button
                       type="submit"
                       disabled={loading}
-                      className="flex items-center space-x-2 bg-[#232249] text-white px-8 py-3 rounded-xl font-semibold hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex items-center space-x-2 bg-[#232249] text-white px-6 md:px-8 py-4 md:py-3 rounded-xl font-semibold hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px]"
                     >
                       <Save className="h-5 w-5" />
-                      <span>{loading ? 'Saving...' : 'Save Configuration'}</span>
+                      <span className="text-sm md:text-base">{loading ? 'Saving...' : 'Save Configuration'}</span>
                     </button>
                   </div>
                 </form>
@@ -889,25 +891,25 @@ const AdminSettings = () => {
 
             {/* Access Control Tab */}
             {activeTab === 'access-control' && (
-              <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-                <div className="flex items-center space-x-4 mb-8">
-                  <div className="h-16 w-16 bg-[#232249] rounded-2xl flex items-center justify-center">
-                    <Key className="h-8 w-8 text-white" />
+              <div className="bg-white rounded-xl md:rounded-2xl shadow-lg md:shadow-xl p-4 md:p-8 border border-gray-100">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-3 sm:space-y-0 sm:space-x-4 mb-6 md:mb-8">
+                  <div className="h-12 w-12 md:h-16 md:w-16 bg-[#232249] rounded-xl md:rounded-2xl flex items-center justify-center flex-shrink-0">
+                    <Key className="h-6 w-6 md:h-8 md:w-8 text-white" />
                   </div>
-                  <div>
-                    <h2 className="text-2xl font-bold text-[#232249]">Access Control</h2>
-                    <p className="text-gray-600">Configure user access, permissions, and security policies</p>
+                  <div className="min-w-0 flex-1">
+                    <h2 className="text-xl md:text-2xl font-bold text-[#232249]">Access Control</h2>
+                    <p className="text-gray-600 text-sm md:text-base">Configure user access, permissions, and security policies</p>
                   </div>
                 </div>
 
-                <form onSubmit={handleAccessControlSubmit} className="space-y-8">
+                <form onSubmit={handleAccessControlSubmit} className="space-y-6 md:space-y-8">
                   {/* Password Policy */}
-                  <div className="border border-gray-200 rounded-xl p-6">
+                  <div className="border border-gray-200 rounded-xl p-4 md:p-6">
                     <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center space-x-2">
-                      <Lock className="h-5 w-5 text-[#232249]" />
+                      <Lock className="h-5 w-5 text-[#232249] flex-shrink-0" />
                       <span>Password Policy</span>
                     </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 gap-4 md:gap-6">
                       <div className="space-y-2">
                         <label className="text-sm font-semibold text-gray-700">Minimum Length</label>
                         <input
@@ -922,7 +924,7 @@ const AdminSettings = () => {
                               minLength: parseInt(e.target.value)
                             }
                           })}
-                          className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white"
+                          className="w-full px-4 py-4 md:py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white text-base min-h-[48px]"
                         />
                       </div>
 
@@ -940,12 +942,12 @@ const AdminSettings = () => {
                               maxAge: parseInt(e.target.value)
                             }
                           })}
-                          className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white"
+                          className="w-full px-4 py-4 md:py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white text-base min-h-[48px]"
                         />
                       </div>
                     </div>
                     
-                    <div className="space-y-4 mt-6">
+                    <div className="space-y-3 md:space-y-4 mt-4 md:mt-6">
                       <ToggleSwitch
                         label="Require Uppercase Letters"
                         checked={accessControl.passwordPolicy.requireUppercase}
@@ -974,12 +976,12 @@ const AdminSettings = () => {
                   </div>
 
                   {/* Session Settings */}
-                  <div className="border border-gray-200 rounded-xl p-6">
+                  <div className="border border-gray-200 rounded-xl p-4 md:p-6">
                     <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center space-x-2">
-                      <Clock className="h-5 w-5 text-[#232249]" />
+                      <Clock className="h-5 w-5 text-[#232249] flex-shrink-0" />
                       <span>Session Settings</span>
                     </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div className="grid grid-cols-1 gap-4 md:gap-6 mb-4 md:mb-6">
                       <div className="space-y-2">
                         <label className="text-sm font-semibold text-gray-700">Max Concurrent Sessions</label>
                         <input
@@ -994,7 +996,7 @@ const AdminSettings = () => {
                               maxSessions: parseInt(e.target.value)
                             }
                           })}
-                          className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white"
+                          className="w-full px-4 py-4 md:py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white text-base min-h-[48px]"
                         />
                       </div>
 
@@ -1012,12 +1014,12 @@ const AdminSettings = () => {
                               idleTimeout: parseInt(e.target.value)
                             }
                           })}
-                          className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white"
+                          className="w-full px-4 py-4 md:py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white text-base min-h-[48px]"
                         />
                       </div>
                     </div>
                     
-                    <div className="space-y-4">
+                    <div className="space-y-3 md:space-y-4">
                       <ToggleSwitch
                         label="Allow Remember Me"
                         checked={accessControl.sessionSettings.rememberMe}
@@ -1037,14 +1039,14 @@ const AdminSettings = () => {
                     </div>
                   </div>
 
-                  <div className="flex justify-end pt-6">
+                  <div className="flex justify-end pt-4 md:pt-6">
                     <button
                       type="submit"
                       disabled={loading}
-                      className="flex items-center space-x-2 bg-[#232249] text-white px-8 py-3 rounded-xl font-semibold hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex items-center space-x-2 bg-[#232249] text-white px-6 md:px-8 py-4 md:py-3 rounded-xl font-semibold hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px]"
                     >
                       <Save className="h-5 w-5" />
-                      <span>{loading ? 'Saving...' : 'Save Access Control'}</span>
+                      <span className="text-sm md:text-base">{loading ? 'Saving...' : 'Save Access Control'}</span>
                     </button>
                   </div>
                 </form>
@@ -1053,25 +1055,25 @@ const AdminSettings = () => {
 
             {/* System Security Tab */}
             {activeTab === 'system-security' && (
-              <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-                <div className="flex items-center space-x-4 mb-8">
-                  <div className="h-16 w-16 bg-[#232249] rounded-2xl flex items-center justify-center">
-                    <Lock className="h-8 w-8 text-white" />
+              <div className="bg-white rounded-xl md:rounded-2xl shadow-lg md:shadow-xl p-4 md:p-8 border border-gray-100">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-3 sm:space-y-0 sm:space-x-4 mb-6 md:mb-8">
+                  <div className="h-12 w-12 md:h-16 md:w-16 bg-[#232249] rounded-xl md:rounded-2xl flex items-center justify-center flex-shrink-0">
+                    <Lock className="h-6 w-6 md:h-8 md:w-8 text-white" />
                   </div>
-                  <div>
-                    <h2 className="text-2xl font-bold text-[#232249]">System Security</h2>
-                    <p className="text-gray-600">Configure advanced security settings and monitoring</p>
+                  <div className="min-w-0 flex-1">
+                    <h2 className="text-xl md:text-2xl font-bold text-[#232249]">System Security</h2>
+                    <p className="text-gray-600 text-sm md:text-base">Configure advanced security settings and monitoring</p>
                   </div>
                 </div>
 
-                <form onSubmit={handleSecuritySettingsSubmit} className="space-y-8">
+                <form onSubmit={handleSecuritySettingsSubmit} className="space-y-6 md:space-y-8">
                   {/* Encryption Settings */}
-                  <div className="border border-gray-200 rounded-xl p-6">
+                  <div className="border border-gray-200 rounded-xl p-4 md:p-6">
                     <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center space-x-2">
-                      <Shield className="h-5 w-5 text-[#232249]" />
+                      <Shield className="h-5 w-5 text-[#232249] flex-shrink-0" />
                       <span>Encryption Settings</span>
                     </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div className="grid grid-cols-1 gap-4 md:gap-6 mb-4 md:mb-6">
                       <SelectField
                         label="Encryption Algorithm"
                         icon={Key}
@@ -1213,30 +1215,30 @@ const AdminSettings = () => {
 
             {/* System Status Tab */}
             {activeTab === 'system-status' && (
-              <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-                <div className="flex items-center space-x-4 mb-8">
-                  <div className="h-16 w-16 bg-[#232249] rounded-2xl flex items-center justify-center">
-                    <Activity className="h-8 w-8 text-white" />
+              <div className="bg-white rounded-xl md:rounded-2xl shadow-lg md:shadow-xl p-4 md:p-8 border border-gray-100">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-3 sm:space-y-0 sm:space-x-4 mb-6 md:mb-8">
+                  <div className="h-12 w-12 md:h-16 md:w-16 bg-[#232249] rounded-xl md:rounded-2xl flex items-center justify-center flex-shrink-0">
+                    <Activity className="h-6 w-6 md:h-8 md:w-8 text-white" />
                   </div>
-                  <div>
-                    <h2 className="text-2xl font-bold text-[#232249]">System Status</h2>
-                    <p className="text-gray-600">Monitor system health and performance</p>
+                  <div className="min-w-0 flex-1">
+                    <h2 className="text-xl md:text-2xl font-bold text-[#232249]">System Status</h2>
+                    <p className="text-gray-600 text-sm md:text-base">Monitor system health and performance</p>
                   </div>
                 </div>
 
-                <div className="space-y-6">
+                <div className="space-y-4 md:space-y-6">
                   {/* System Health Overview */}
                   {dataLoading ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                       {Array.from({ length: 6 }).map((_, index) => (
-                        <div key={index} className="p-4 bg-gray-200 rounded-xl animate-pulse">
-                          <div className="h-6 bg-gray-300 rounded mb-2"></div>
-                          <div className="h-4 bg-gray-300 rounded"></div>
+                        <div key={index} className="p-3 md:p-4 bg-gray-200 rounded-xl animate-pulse">
+                          <div className="h-5 md:h-6 bg-gray-300 rounded mb-2"></div>
+                          <div className="h-3 md:h-4 bg-gray-300 rounded"></div>
                         </div>
                       ))}
                     </div>
                   ) : systemStatus ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                       <SystemStatusCard
                         title="Database"
                         status={systemStatus.database?.status || 'healthy'}

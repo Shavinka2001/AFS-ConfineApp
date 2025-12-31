@@ -12,6 +12,7 @@ import {
   Download,
   Loader2
 } from 'lucide-react';
+import { getImageUrl } from '../../../../utils/imageUtils';
 
 const ViewModal = ({
   showDetailModal,
@@ -28,7 +29,7 @@ const ViewModal = ({
 
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-2 md:p-4 z-50">
-      <div className="bg-white rounded-2xl md:rounded-3xl shadow-2xl max-w-6xl max-h-[95vh] overflow-hidden w-full border border-gray-200 transform scale-100 transition-all duration-300">
+      <div className="bg-white rounded-2xl md:rounded-3xl shadow-2xl w-full max-w-6xl max-h-[95vh] overflow-hidden border border-gray-200 transform scale-100 transition-all duration-300">
         {/* Ultra Modern Header */}
         <div className="relative bg-gradient-to-br from-[#232249] via-[#2a2a5c] to-[#1a1b3a] p-4 md:p-8 overflow-hidden">
           <div className="absolute inset-0 opacity-10">
@@ -349,7 +350,7 @@ const ViewModal = ({
                   <div key={index} className="relative group">
                     <div className="aspect-square rounded-xl overflow-hidden bg-white shadow-lg border border-amber-100">
                       <img
-                        src={url}
+                        src={getImageUrl(url)}
                         alt={`Inspection image ${index + 1}`}
                         className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                         onError={(e) => {

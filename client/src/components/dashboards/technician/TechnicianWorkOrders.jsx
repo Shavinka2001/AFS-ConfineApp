@@ -391,10 +391,12 @@ const TechnicianWorkOrders = () => {
 
   if (loading) {
     return (
-      <div className="h-auto bg-white flex items-center justify-center p-8">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#232249] mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading inspection forms...</p>
+      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+        <div className="bg-white rounded-lg shadow-md p-8">
+          <div className="flex flex-col items-center gap-4">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#232249]"></div>
+            <p className="text-sm text-gray-600">Loading inspection forms...</p>
+          </div>
         </div>
       </div>
     );
@@ -402,11 +404,15 @@ const TechnicianWorkOrders = () => {
 
   if (error) {
     return (
-      <div className="h-auto bg-white flex items-center justify-center p-8">
-        <div className="text-center p-8">
-          <AlertTriangle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-          <h2 className="text-xl font-bold text-[#232249] mb-2">Error Loading Data</h2>
-          <p className="text-gray-600">{error}</p>
+      <div className="flex items-center justify-center min-h-screen bg-gray-50 p-4">
+        <div className="bg-white border-l-4 border-red-500 rounded-lg shadow-md p-8 max-w-md">
+          <div className="flex items-start gap-4">
+            <AlertTriangle className="h-6 w-6 text-red-600 flex-shrink-0" />
+            <div>
+              <h2 className="text-lg font-semibold text-gray-900 mb-2">Error Loading Data</h2>
+              <p className="text-sm text-gray-700">{error}</p>
+            </div>
+          </div>
         </div>
       </div>
     );

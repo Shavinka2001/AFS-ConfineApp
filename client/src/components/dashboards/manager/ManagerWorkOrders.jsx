@@ -397,20 +397,11 @@ const ManagerWorkOrders = () => {
   // Loading state
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
-        <div className="text-center">
-          <div className="relative mb-8">
-            <div className="animate-spin rounded-full h-20 w-20 border-4 border-gray-200 mx-auto"></div>
-            <div className="absolute inset-0 animate-spin rounded-full h-20 w-20 border-4 border-transparent border-t-[#232249] mx-auto" style={{ animationDuration: '1s' }}></div>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <Shield className="w-8 h-8 text-[#232249] animate-pulse" />
-            </div>
-          </div>
-          <div className="space-y-3">
-            <p className="text-[#232249] font-bold text-xl">Loading Work Orders</p>
-            <p className="text-gray-500 text-sm max-w-md mx-auto">
-              Fetching the latest work order data from the system...
-            </p>
+      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+        <div className="bg-white rounded-lg shadow-md p-8">
+          <div className="flex flex-col items-center gap-4">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#232249]"></div>
+            <p className="text-sm text-gray-600">Loading work orders...</p>
           </div>
         </div>
       </div>
@@ -420,14 +411,18 @@ const ManagerWorkOrders = () => {
   // Error state
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 p-4">
-        <div className="text-center max-w-md mx-auto">
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            className="w-24 h-24 mx-auto mb-6 rounded-full bg-red-100 flex items-center justify-center"
-          >
-            <AlertTriangle className="w-12 h-12 text-red-600" />
+      <div className="flex items-center justify-center min-h-screen bg-gray-50 p-4">
+        <div className="bg-white border-l-4 border-red-500 rounded-lg shadow-md p-8 max-w-md">
+          <div className="flex items-start gap-4">
+            <AlertTriangle className="h-6 w-6 text-red-600 flex-shrink-0" />
+            <div>
+              <h2 className="text-lg font-semibold text-gray-900 mb-2">Error Loading Data</h2>
+              <p className="text-sm text-gray-700">{error}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
           </motion.div>
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Failed to Load Work Orders</h2>
           <p className="text-gray-600 mb-8">{error}</p>

@@ -1773,12 +1773,12 @@ const TechnicianForm = () => {
             
           {/* Error Message */}
           {submitError && (
-            <div className="mb-4 md:mb-6 bg-red-50 border border-red-300 rounded-lg p-4">
+            <div className="mb-4 md:mb-6 bg-white border-l-4 border-red-500 rounded-lg shadow-md p-4">
               <div className="flex items-start gap-3">
-                <AlertTriangle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
-                <div>
-                  <h4 className="text-sm font-bold text-red-900 mb-1">Submission Error</h4>
-                  <p className="text-sm text-red-800">{submitError}</p>
+                <AlertTriangle className="h-5 w-5 text-red-600 flex-shrink-0" />
+                <div className="flex-1">
+                  <h4 className="text-sm font-semibold text-gray-900 mb-1">Submission Error</h4>
+                  <p className="text-sm text-gray-700">{submitError}</p>
                 </div>
               </div>
             </div>
@@ -1786,13 +1786,13 @@ const TechnicianForm = () => {
 
           {/* Success Message */}
           {submitSuccess && (
-            <div className="mb-4 md:mb-6 bg-emerald-50 border border-emerald-300 rounded-lg p-4">
+            <div className="mb-4 md:mb-6 bg-white border-l-4 border-green-500 rounded-lg shadow-md p-4">
               <div className="flex items-start gap-3">
-                <CheckCircle className="h-5 w-5 text-emerald-600 flex-shrink-0 mt-0.5" />
-                <div>
-                  <h4 className="text-sm font-bold text-emerald-900 mb-1">Assessment Submitted Successfully!</h4>
-                  <p className="text-sm text-emerald-800">Your assessment has been submitted for review.</p>
-                  <span className="inline-block mt-2 px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-semibold rounded">Status: Pending Review</span>
+                <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
+                <div className="flex-1">
+                  <h4 className="text-sm font-semibold text-gray-900 mb-1">Assessment Submitted Successfully!</h4>
+                  <p className="text-sm text-gray-700">Your assessment has been submitted for review.</p>
+                  <span className="inline-block mt-2 px-2.5 py-1 bg-green-100 text-green-700 text-xs font-medium rounded">Status: Pending Review</span>
                 </div>
               </div>
             </div>

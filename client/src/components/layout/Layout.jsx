@@ -188,7 +188,7 @@ const Layout = ({ children }) => {
           </div>
         ) : (
           /* Desktop: Flex item in layout */
-          <div className="flex-shrink-0">
+          <div className="flex-shrink-0 h-full">
             <Sidebar 
               isCollapsed={isCollapsed}
               setIsCollapsed={setIsCollapsed}

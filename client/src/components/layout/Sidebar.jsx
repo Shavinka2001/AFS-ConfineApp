@@ -405,11 +405,11 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, isMobileMenuOp
           }
         }}
         className={`bg-white shadow-2xl border-r border-gray-100 flex flex-col ${
-          isMobile 
+          isMobile
             ? `fixed inset-y-0 left-0 z-50 h-full w-[85vw] max-w-[320px] transition-transform duration-300 ease-in-out ${
                 isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
               }`
-            : 'relative'
+            : 'relative h-full'
         }`}
         style={isMobile ? {
           paddingTop: 'env(safe-area-inset-top)',
@@ -578,7 +578,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, isMobileMenuOp
       </div>
 
       {/* Enhanced Navigation Menu with Mobile Optimization */}
-      <nav className="flex-1 px-3 sm:px-3 lg:px-4 py-4 sm:py-5 lg:py-6 space-y-1.5 sm:space-y-2 overflow-y-auto swipeable-y">
+      <nav className="flex-1 px-3 sm:px-3 lg:px-4 py-4 sm:py-5 lg:py-6 space-y-1.5 sm:space-y-2 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent hover:scrollbar-thumb-gray-400 scrollbar-thumb-rounded-full">
         {menuItems.map((item, index) => {
           const isActive = location.pathname === item.path;
           const Icon = item.icon;

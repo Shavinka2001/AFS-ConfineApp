@@ -209,7 +209,7 @@ const Layout = ({ children }) => {
           onTouchMove={isMobile ? handleTouchMove : undefined}
           onTouchEnd={isMobile ? handleTouchEnd : undefined}
         >
-          <main className="min-h-full w-full">
+          <main className={`w-full ${isMobile ? 'pb-4' : 'pb-6'}`}>
             {/* Content with smooth fade in animation */}
             <motion.div
               key={children?.key || 'main-content'}

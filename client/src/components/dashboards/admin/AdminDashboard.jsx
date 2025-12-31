@@ -106,26 +106,34 @@ const AdminDashboard = () => {
   };
 
   const StatCard = ({ icon: Icon, title, value, change, color, bgColor }) => (
-    <div className="bg-white rounded-2xl shadow-lg p-4 md:p-6 border border-gray-100 hover:shadow-xl transition-shadow duration-200"
-    >
-      <div className="flex items-center justify-between">
-        <div className="flex-1">
-          <div className="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-4">
-            <div className={`p-3 md:p-4 rounded-xl ${bgColor} shadow-lg flex-shrink-0`}>
-              <Icon className={`h-5 w-5 md:h-7 md:w-7 ${color}`} />
+    <div className="bg-white rounded-2xl shadow-lg p-5 md:p-6 border border-gray-100 hover:shadow-xl transition-shadow duration-200">
+      {/* Clean flex-row layout: Icon on left, Content on right */}
+      <div className="flex items-start gap-4">
+        {/* Icon Container - Fixed size, no shrinking */}
+        <div className={`p-3.5 md:p-4 rounded-xl ${bgColor} shadow-md flex-shrink-0`}>
+          <Icon className={`h-6 w-6 md:h-7 md:w-7 ${color}`} />
+        </div>
+        
+        {/* Text Content - Takes remaining space */}
+        <div className="flex-1 min-w-0">
+          {/* Label - Small, uppercase, gray */}
+          <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">
+            {title}
+          </p>
+          
+          {/* Main Number - Large and bold */}
+          <p className="text-2xl md:text-3xl font-bold text-[#232249] leading-tight">
+            {value}
+          </p>
+          
+          {/* Change Indicator - Clean inline layout */}
+          {change && (
+            <div className="flex items-center gap-1.5 mt-2">
+              <TrendingUp className="h-3.5 w-3.5 text-green-500 flex-shrink-0" />
+              <span className="text-sm font-semibold text-green-600">{change}</span>
+              <span className="text-xs text-gray-500">from last month</span>
             </div>
-            <div className="min-w-0 flex-1">
-              <p className="text-xs md:text-sm font-semibold text-gray-500 uppercase tracking-wide">{title}</p>
-              <p className="text-2xl md:text-3xl font-bold text-[#232249] mt-1">{value}</p>
-              {change && (
-                <div className="mt-2 md:mt-4 flex items-center text-xs md:text-sm bg-gray-50 rounded-lg p-2">
-                  <TrendingUp className="h-3 w-3 md:h-4 md:w-4 text-green-500 mr-2" />
-                  <span className="text-green-600 font-semibold">{change}</span>
-                  <span className="text-gray-500 ml-1">from last month</span>
-                </div>
-              )}
-            </div>
-          </div>
+          )}
         </div>
       </div>
     </div>

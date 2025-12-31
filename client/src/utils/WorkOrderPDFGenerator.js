@@ -693,16 +693,6 @@ ${entry.notes ? `Notes:\n${entry.notes}` : ''}
     doc.setTextColor(255, 255, 255);
     doc.text('End of Assessment Report', pageWidth / 2, currentY + 13, { align: 'center' });
     doc.setTextColor(0, 0, 0);
-      
-      console.log(`✅ All signature blocks rendered`);
-    } else {
-      doc.setFontSize(10);
-      doc.setFont('helvetica', 'italic');
-      doc.setTextColor(120, 120, 120);
-      doc.text('No surveyors specified', margin, currentY);
-      doc.setTextColor(0, 0, 0);
-      currentY += 15;
-    }
 
     // FOOTER WITH PAGE NUMBERS
     const totalPages = doc.internal.getNumberOfPages();

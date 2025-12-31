@@ -91,18 +91,15 @@ const Layout = ({ children }) => {
       {isMobile && (
         <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 shadow-sm" style={{ pointerEvents: 'auto' }}>
           <div className="flex items-center justify-between px-4 py-3">
-            {/* Hamburger Menu Button */}
+            {/* Hamburger Menu Button - Simplified & Reliable */}
             <motion.button
               type="button"
               onClick={(e) => {
-                e.preventDefault();
                 e.stopPropagation();
-                e.nativeEvent.stopImmediatePropagation();
-                console.log('[Layout] Hamburger clicked, current state:', isMobileMenuOpen);
-                toggleMobileMenu();
+                console.log('[Layout] Hamburger clicked, opening menu');
+                setIsMobileMenuOpen(!isMobileMenuOpen);
               }}
-              disabled={isAnimating}
-              className="mobile-menu-btn p-4 bg-gradient-to-br from-gray-50 to-white rounded-xl shadow-md border border-gray-200/50 touch-manipulation overflow-hidden relative min-w-[56px] min-h-[56px] cursor-pointer active:scale-95"
+              className="mobile-menu-btn p-4 bg-gradient-to-br from-gray-50 to-white rounded-xl shadow-md border border-gray-200/50 touch-manipulation overflow-hidden relative z-50 min-w-[56px] min-h-[56px] cursor-pointer"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               initial={{ opacity: 0, x: -20 }}
@@ -111,17 +108,14 @@ const Layout = ({ children }) => {
               style={{ WebkitTapHighlightColor: 'transparent', pointerEvents: 'auto' }}
               aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
             >
-              <motion.div
-                animate={{ rotate: isMobileMenuOpen ? 180 : 0 }}
-                transition={{ duration: 0.3, ease: "easeOut" }}
-                className="flex items-center justify-center"
-              >
+              {/* Simple icon - no rotation animation to avoid complexity */}
+              <div className="flex items-center justify-center">
                 {isMobileMenuOpen ? (
                   <X className="h-7 w-7 text-gray-700" />
                 ) : (
                   <Menu className="h-7 w-7 text-gray-700" />
                 )}
-              </motion.div>
+              </div>
               
               {/* Pulse indicator for first time users */}
               {showMenuHint && !isMobileMenuOpen && (

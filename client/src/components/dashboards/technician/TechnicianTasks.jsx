@@ -357,24 +357,14 @@ const TechnicianTasks = () => {
     return (
       <div className="min-h-screen bg-white p-4 md:p-8">
         <div className="w-full flex-1 p-6">
-          <div className="bg-white/95 backdrop-blur-2xl rounded-2xl md:rounded-3xl shadow-2xl border border-[#232249]/20 p-8 md:p-16 hover:shadow-3xl transition-all duration-500">
-            <div className="flex flex-col items-center justify-center space-y-6 md:space-y-8">
-              <div className="relative">
-                <div className="w-16 h-16 md:w-24 md:h-24 bg-gradient-to-br from-[#232249]/10 to-[#232249]/20 rounded-2xl md:rounded-3xl flex items-center justify-center shadow-xl">
-                  <RefreshCw className="h-6 w-6 md:h-12 md:w-12 text-[#232249] animate-spin" />
-                </div>
-                <div className="absolute -top-2 -right-2 w-6 h-6 md:w-8 md:h-8 bg-gradient-to-br from-[#232249] to-[#232249]/80 rounded-xl md:rounded-2xl flex items-center justify-center shadow-lg">
-                  <div className="w-2 h-2 md:w-3 md:h-3 bg-white rounded-full animate-pulse"></div>
-                </div>
+          <div className="bg-white rounded-lg shadow-md border border-gray-200 p-12">
+            <div className="flex flex-col items-center justify-center space-y-4">
+              <div className="w-16 h-16 bg-[#232249]/10 rounded-lg flex items-center justify-center">
+                <RefreshCw className="h-8 w-8 text-[#232249] animate-spin" />
               </div>
-              <div className="text-center space-y-2 md:space-y-3">
-                <h2 className="text-xl md:text-3xl font-bold bg-gradient-to-r from-[#232249] to-[#232249]/80 bg-clip-text text-transparent">Loading Your Tasks</h2>
-                <p className="text-[#232249]/60 font-medium text-base md:text-lg">Please wait while we fetch your assignment details...</p>
-                <div className="flex items-center justify-center space-x-2 mt-4 md:mt-6">
-                  <div className="w-2 h-2 bg-[#232249]/40 rounded-full animate-bounce"></div>
-                  <div className="w-2 h-2 bg-[#232249]/60 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                  <div className="w-2 h-2 bg-[#232249]/80 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                </div>
+              <div className="text-center space-y-2">
+                <h2 className="text-xl font-semibold text-[#232249]">Loading Your Tasks</h2>
+                <p className="text-gray-600 text-sm">Please wait while we fetch your assignment details...</p>
               </div>
             </div>
           </div>
@@ -387,25 +377,20 @@ const TechnicianTasks = () => {
     return (
       <div className="min-h-screen bg-white p-4 md:p-8">
         <div className="w-full flex-1 p-6">
-          <div className="bg-white/95 backdrop-blur-2xl rounded-2xl md:rounded-3xl shadow-2xl border border-[#232249]/20 p-8 md:p-16 hover:shadow-3xl transition-all duration-500">
-            <div className="flex flex-col items-center justify-center space-y-6 md:space-y-8">
-              <div className="relative">
-                <div className="w-16 h-16 md:w-24 md:h-24 bg-gradient-to-br from-[#232249]/10 to-[#232249]/20 rounded-2xl md:rounded-3xl flex items-center justify-center shadow-xl">
-                  <AlertCircle className="h-6 w-6 md:h-12 md:w-12 text-[#232249]" />
-                </div>
-                <div className="absolute -top-2 -right-2 w-6 h-6 md:w-8 md:h-8 bg-gradient-to-br from-[#232249] to-[#232249]/80 rounded-xl md:rounded-2xl flex items-center justify-center shadow-lg">
-                  <X className="h-3 w-3 md:h-4 md:w-4 text-white" />
-                </div>
+          <div className="bg-white rounded-lg shadow-md border border-gray-200 p-12">
+            <div className="flex flex-col items-center justify-center space-y-4">
+              <div className="w-16 h-16 bg-red-50 rounded-lg flex items-center justify-center">
+                <AlertCircle className="h-8 w-8 text-red-600" />
               </div>
-              <div className="text-center space-y-3 md:space-y-4 max-w-md">
-                <h2 className="text-xl md:text-3xl font-bold bg-gradient-to-r from-[#232249] to-[#232249]/80 bg-clip-text text-transparent">Error Loading Tasks</h2>
-                <p className="text-[#232249] font-medium text-base md:text-lg leading-relaxed">{error}</p>
+              <div className="text-center space-y-2 max-w-md">
+                <h2 className="text-xl font-semibold text-gray-900">Error Loading Tasks</h2>
+                <p className="text-gray-600 text-sm">{error}</p>
                 <div className="pt-4">
                   <button
                     onClick={loadData}
-                    className="inline-flex items-center space-x-2 px-6 py-3 md:px-8 md:py-4 bg-gradient-to-r from-[#232249] to-[#232249]/90 text-white rounded-2xl hover:from-[#232249]/90 hover:to-[#232249] transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-105 font-semibold text-base md:text-lg"
+                    className="inline-flex items-center space-x-2 px-4 py-2 bg-[#232249] text-white rounded-lg hover:bg-[#232249]/90 transition-colors font-medium text-sm"
                   >
-                    <RefreshCw className="h-4 w-4 md:h-6 md:w-6" />
+                    <RefreshCw className="h-4 w-4" />
                     <span>Try Again</span>
                   </button>
                 </div>
@@ -594,10 +579,10 @@ const TechnicianTasks = () => {
           </div>
 
           {isPreviouslyAssigned && (
-            <div className="mx-4 md:mx-6 mt-4 mb-2 p-3 md:p-4 bg-gradient-to-r from-[#232249]/5 to-[#232249]/10 border border-[#232249]/20 rounded-xl backdrop-blur-sm">
-              <div className="flex items-center space-x-2 md:space-x-3">
-                <AlertTriangle className="w-4 h-4 text-[#232249] flex-shrink-0" />
-                <p className="text-[#232249] font-medium text-sm">
+            <div className="mx-4 md:mx-6 mt-4 mb-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+              <div className="flex items-center space-x-2">
+                <AlertTriangle className="w-4 h-4 text-blue-600 flex-shrink-0" />
+                <p className="text-blue-900 text-sm">
                   Location was unassigned. View details and map for reference.
                 </p>
               </div>

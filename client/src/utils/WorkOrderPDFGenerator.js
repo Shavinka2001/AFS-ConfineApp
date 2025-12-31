@@ -501,18 +501,23 @@ export const handleDownloadFilteredPDF = async (orders = [], sortBy) => {
       for (const imgPath of imagePaths) {
         try {
           const imageUrl = getImageUrl(imgPath);
-          if (!imageUrl || !imageUrl.trim()) continue;
+          if (!imageUrl || !imageUrl.trim()) {
+            console.warn('⚠️ Empty image URL, skipping');
+            continue;
+          }
           
-          console.log(`Loading image:`, imageUrl);
+          console.log(`📸 Loading image: ${imageUrl}`);
           
           let base64Data;
           try {
             base64Data = await loadImageAsBase64(imageUrl);
             if (!base64Data || !base64Data.startsWith('data:')) {
-              throw new Error('Invalid base64 data returned');
+              console.warn('⚠️ Invalid base64 data returned, skipping:', imageUrl);
+              continue;
             }
+            console.log(`✅ Base64 conversion successful (${Math.round(base64Data.length / 1024)}KB)`);
           } catch (loadError) {
-            console.warn('⚠️ CORS/Network error loading image, skipping:', imageUrl);
+            console.warn('⚠️ CORS/Network error loading image, skipping:', loadError.message);
             continue;
           }
           
@@ -520,12 +525,18 @@ export const handleDownloadFilteredPDF = async (orders = [], sortBy) => {
           try {
             await Promise.race([
               new Promise((resolve, reject) => {
-                img.onload = resolve;
-                img.onerror = reject;
+                img.onload = () => {
+                  console.log(`✅ Image dimensions: ${img.width}x${img.height}`);
+                  resolve();
+                };
+                img.onerror = (err) => {
+                  console.error('❌ Image load error:', err);
+                  reject(new Error('Failed to load image'));
+                };
                 img.src = base64Data;
               }),
               new Promise((_, reject) => 
-                setTimeout(() => reject(new Error('Image dimension calculation timeout')), 5000)
+                setTimeout(() => reject(new Error('Image dimension calculation timeout (5s)')), 5000)
               )
             ]);
           } catch (dimError) {
@@ -533,14 +544,20 @@ export const handleDownloadFilteredPDF = async (orders = [], sortBy) => {
             continue;
           }
           
+          // Ensure minimum dimensions
+          if (img.width === 0 || img.height === 0) {
+            console.warn('⚠️ Image has zero dimensions, skipping');
+            continue;
+          }
+          
           const ratio = Math.min(imageMaxWidth / img.width, imageMaxHeight / img.height);
           const width = img.width * ratio;
           const height = img.height * ratio;
           
-          loadedImages.push({ dataUrl: base64Data, width, height });
-          console.log('✅ Image loaded successfully');
+          loadedImages.push({ dataUrl: base64Data, width, height, originalUrl: imageUrl });
+          console.log(`✅ Image ${loadedImages.length} added to PDF queue: ${width.toFixed(0)}x${height.toFixed(0)}px`);
         } catch (error) {
-          console.error('❌ Unexpected error loading image:', error);
+          console.error('❌ Unexpected error loading image:', error.message);
         }
       }
 
@@ -629,12 +646,25 @@ ${entry.notes ? `Notes:\n${entry.notes}` : ''}
             let imgY = data.cell.y + 10;
             const centerX = data.cell.x + 10;
 
-            loadedImages.forEach((img) => {
-              if (imgY + img.height < pageHeight) {
-                doc.addImage(img.dataUrl, 'JPEG', centerX, imgY, img.width, img.height);
-                imgY += img.height + 10;
+            console.log(`📸 Rendering ${loadedImages.length} images in PDF at Y: ${imgY}`);
+            
+            loadedImages.forEach((img, idx) => {
+              // Check if there's enough space on current page
+              if (imgY + img.height < pageHeight - margin) {
+                try {
+                  console.log(`  ✏️ Drawing image ${idx + 1}: ${img.width.toFixed(0)}x${img.height.toFixed(0)}px at X:${centerX}, Y:${imgY}`);
+                  doc.addImage(img.dataUrl, 'JPEG', centerX, imgY, img.width, img.height);
+                  imgY += img.height + 10;
+                  console.log(`  ✅ Image ${idx + 1} drawn successfully`);
+                } catch (drawError) {
+                  console.error(`  ❌ Failed to draw image ${idx + 1}:`, drawError.message);
+                }
+              } else {
+                console.warn(`  ⚠️ Image ${idx + 1} skipped - not enough space on page`);
               }
             });
+            
+            console.log(`✅ Completed rendering ${loadedImages.length} images in PDF`);
           }
         }
       });
@@ -644,28 +674,13 @@ ${entry.notes ? `Notes:\n${entry.notes}` : ''}
       pageNumber++;
     }
 
-    // SIGNATURE SECTION
+    // Footer - Document Complete
     const tableEnd = doc.lastAutoTable?.finalY || currentY;
     console.log(`📍 Last table ended at Y position: ${tableEnd}`);
     
-    const allSurveyors = new Set();
-    fullOrders.forEach(order => {
-      const surveyors = Array.isArray(order.surveyors) ? order.surveyors : 
-                       order.surveyors ? [order.surveyors] : [];
-      surveyors.forEach(name => allSurveyors.add(name));
-    });
-    console.log(`📋 Found ${allSurveyors.size} unique surveyor(s)`);
+    currentY = tableEnd + 30;
     
-    const surveyorCount = allSurveyors.size > 0 ? allSurveyors.size : 1;
-    const headerHeight = 35;
-    const signatureBlockHeight = 45;
-    const totalSectionHeight = headerHeight + (surveyorCount * signatureBlockHeight) + 20;
-    
-    currentY = tableEnd + 50;
-    console.log(`📍 Setting signature section start at Y: ${currentY}`);
-    
-    if (currentY + totalSectionHeight > pageHeight - margin - 30) {
-      console.log(`⚠️ Not enough space - adding new page`);
+    if (currentY + 40 > pageHeight - margin - 30) {
       doc.addPage();
       currentY = margin + 40;
     }
@@ -673,50 +688,11 @@ ${entry.notes ? `Notes:\n${entry.notes}` : ''}
     doc.setFillColor(35, 34, 73);
     doc.rect(0, currentY, pageWidth, 20, 'F');
     
-    doc.setFontSize(12);
-    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
     doc.setTextColor(255, 255, 255);
-    doc.text('Surveyor Acknowledgement', margin, currentY + 13);
+    doc.text('End of Assessment Report', pageWidth / 2, currentY + 13, { align: 'center' });
     doc.setTextColor(0, 0, 0);
-    
-    currentY += 35;
-
-    if (allSurveyors.size > 0) {
-      const signatureLineLength = pageWidth - (margin * 2);
-      const currentDate = new Date().toLocaleDateString();
-      const blockHeight = 45;
-      
-      Array.from(allSurveyors).forEach((surveyorName, idx) => {
-        if (currentY + blockHeight > pageHeight - margin - 30) {
-          doc.addPage();
-          currentY = margin + 40;
-          
-          doc.setFillColor(35, 34, 73);
-          doc.rect(0, margin, pageWidth, 20, 'F');
-          doc.setFontSize(12);
-          doc.setFont('helvetica', 'bold');
-          doc.setTextColor(255, 255, 255);
-          doc.text('Surveyor Acknowledgement (Continued)', margin, margin + 13);
-          doc.setTextColor(0, 0, 0);
-          currentY = margin + 50;
-        }
-        
-        doc.setDrawColor(100, 100, 100);
-        doc.setLineWidth(0.5);
-        doc.line(margin, currentY, margin + signatureLineLength, currentY);
-        
-        currentY += 15;
-        
-        doc.setFontSize(10);
-        doc.setFont('helvetica', 'bold');
-        doc.setTextColor(0, 0, 0);
-        doc.text(`Name: ${surveyorName}`, margin, currentY);
-        
-        doc.setFont('helvetica', 'normal');
-        doc.text(`Date: ${currentDate}`, pageWidth - margin, currentY, { align: 'right' });
-        
-        currentY += 30;
-      });
       
       console.log(`✅ All signature blocks rendered`);
     } else {

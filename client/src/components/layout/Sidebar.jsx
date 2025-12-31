@@ -412,7 +412,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, isMobileMenuOp
             : 'relative h-full'
         }`}
         style={isMobile ? {
-          paddingTop: 'env(safe-area-inset-top)',
+          paddingTop: 'calc(env(safe-area-inset-top) + 73px)',
           paddingBottom: 'env(safe-area-inset-bottom)'
         } : {}}
       >

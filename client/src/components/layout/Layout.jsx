@@ -14,10 +14,10 @@ const Layout = ({ children }) => {
   const [showMenuHint, setShowMenuHint] = useState(true);
   const { user } = useAuth();
 
-  // Detect mobile screen size
+  // Detect mobile screen size - Lower breakpoint for better mobile detection
   useEffect(() => {
     const checkScreenSize = () => {
-      const mobile = window.innerWidth < 1024; // lg breakpoint
+      const mobile = window.innerWidth < 768; // md breakpoint - better for tablets like iPad Mini
       setIsMobile(mobile);
       if (mobile) {
         setIsCollapsed(false); // Always show full sidebar on mobile when open
@@ -99,18 +99,19 @@ const Layout = ({ children }) => {
     <div className="h-screen bg-gray-50 overflow-hidden">
       {/* Mobile Top Navbar with Hamburger Menu */}
       {isMobile && (
-        <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 shadow-sm">
+        <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 shadow-sm">
           <div className="flex items-center justify-between px-4 py-3">
             {/* Hamburger Menu Button */}
             <motion.button
               onClick={toggleMobileMenu}
               disabled={isAnimating}
-              className="mobile-menu-btn p-2.5 bg-gradient-to-br from-gray-50 to-white rounded-xl shadow-md border border-gray-200/50 touch-manipulation overflow-hidden relative"
+              className="mobile-menu-btn p-2.5 bg-gradient-to-br from-gray-50 to-white rounded-xl shadow-md border border-gray-200/50 touch-manipulation overflow-hidden relative z-10"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.3, ease: "easeOut" }}
+              style={{ WebkitTapHighlightColor: 'transparent' }}
             >
               <motion.div
                 animate={{ rotate: isMobileMenuOpen ? 180 : 0 }}
@@ -155,7 +156,7 @@ const Layout = ({ children }) => {
         <AnimatePresence>
           {isMobileMenuOpen && (
             <motion.div
-              className="fixed inset-0 z-30 lg:hidden"
+              className="fixed inset-0 md:hidden z-30 lg:hidden"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -173,12 +174,12 @@ const Layout = ({ children }) => {
       )}
 
       {/* Main Layout Container */}
-      <div className={`h-full ${isMobile ? 'pt-[60px]' : 'flex'}`}>
+      <div className={`h-full ${isMobile ? 'pt-[73px]' : 'flex'}`}>
         {/* Sidebar - Different positioning for Mobile vs Desktop */}
         {isMobile ? (
           /* Mobile: Fixed positioning, completely outside layout flow */
-          <div className="fixed inset-y-0 left-0 z-40 pt-[60px]">
-            <Sidebar 
+          <div className="fixed inset-0 z-50">
+            <Sidebar
               isCollapsed={false}
               setIsCollapsed={setIsCollapsed}
               isMobile={true}

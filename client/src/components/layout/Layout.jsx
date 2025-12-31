@@ -30,18 +30,6 @@ const Layout = ({ children }) => {
     return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
 
-  // Enhanced mobile menu management with touch gestures
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (isMobile && isMobileMenuOpen && !event.target.closest('.sidebar-container') && !event.target.closest('.mobile-menu-btn')) {
-        setIsMobileMenuOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [isMobile, isMobileMenuOpen]);
-
   // Touch gesture handlers for smooth mobile interactions
   const handleTouchStart = (e) => {
     setTouchEnd(null);
@@ -109,6 +97,7 @@ const Layout = ({ children }) => {
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
+                e.nativeEvent.stopImmediatePropagation();
                 console.log('[Layout] Hamburger clicked, current state:', isMobileMenuOpen);
                 toggleMobileMenu();
               }}
@@ -167,21 +156,22 @@ const Layout = ({ children }) => {
       <div className={`h-full ${isMobile ? 'pt-[73px]' : 'flex'}`}>
         {/* Sidebar - Different positioning for Mobile vs Desktop */}
         {isMobile ? (
-          /* Mobile: Fixed positioning, only render when open or animating */
-          (isMobileMenuOpen || isAnimating) && (
-            <div className="fixed inset-0 z-50">
-              <Sidebar
-                isCollapsed={false}
-                setIsCollapsed={setIsCollapsed}
-                isMobile={true}
-                isMobileMenuOpen={isMobileMenuOpen}
-                closeMobileMenu={() => {
-                  console.log('[Layout] Closing mobile menu');
-                  setIsMobileMenuOpen(false);
-                }}
-              />
-            </div>
-          )
+          /* Mobile: Fixed positioning, always rendered but hidden with translate-x */
+          <div 
+            className="fixed inset-0 z-50" 
+            style={{ pointerEvents: isMobileMenuOpen ? 'auto' : 'none' }}
+          >
+            <Sidebar
+              isCollapsed={false}
+              setIsCollapsed={setIsCollapsed}
+              isMobile={true}
+              isMobileMenuOpen={isMobileMenuOpen}
+              closeMobileMenu={() => {
+                console.log('[Layout] Closing mobile menu');
+                setIsMobileMenuOpen(false);
+              }}
+            />
+          </div>
         ) : (
           /* Desktop: Flex item in layout */
           <div className="flex-shrink-0 h-full">

@@ -375,7 +375,10 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, isMobileMenuOp
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
             onClick={(e) => {
+              e.preventDefault();
               e.stopPropagation();
+              e.nativeEvent.stopImmediatePropagation();
+              console.log('[Sidebar] Backdrop clicked - closing menu');
               closeMobileMenu && closeMobileMenu();
             }}
             className="fixed inset-0 bg-gradient-to-br from-black/80 via-black/70 to-black/80 backdrop-blur-md z-40 cursor-pointer"
@@ -423,9 +426,8 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, isMobileMenuOp
         }`}
         style={isMobile ? {
           paddingTop: 'calc(env(safe-area-inset-top) + 73px)',
-          paddingBottom: 'env(safe-area-inset-bottom)',
-          pointerEvents: 'auto'
-        } : { pointerEvents: 'auto' }}
+          paddingBottom: 'env(safe-area-inset-bottom)'
+        } : {}}
       >
       {/* Swipe Indicator - Mobile Only (when open) */}
       {isMobile && isMobileMenuOpen && (

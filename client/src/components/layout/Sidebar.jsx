@@ -63,6 +63,13 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, isMobileMenuOp
     }
   }, [location.pathname, isMobile, closeMobileMenu]);
 
+  // Debug: Log when isMobileMenuOpen changes
+  useEffect(() => {
+    if (isMobile) {
+      console.log('[Sidebar] Mobile menu state changed:', isMobileMenuOpen);
+    }
+  }, [isMobileMenuOpen, isMobile]);
+
   // Lock body scroll when mobile menu is open
   useEffect(() => {
     if (isMobile && isMobileMenuOpen) {
@@ -417,7 +424,8 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, isMobileMenuOp
         style={isMobile ? {
           paddingTop: 'calc(env(safe-area-inset-top) + 73px)',
           paddingBottom: 'env(safe-area-inset-bottom)',
-          pointerEvents: isMobileMenuOpen ? 'auto' : 'none'
+          pointerEvents: 'auto',
+          visibility: isMobileMenuOpen ? 'visible' : 'hidden'
         } : { pointerEvents: 'auto' }}
       >
       {/* Swipe Indicator - Mobile Only (when open) */}

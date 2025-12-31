@@ -71,7 +71,9 @@ const Layout = ({ children }) => {
   const toggleMobileMenu = () => {
     if (isAnimating) return;
     setIsAnimating(true);
-    setIsMobileMenuOpen(!isMobileMenuOpen);
+    const newState = !isMobileMenuOpen;
+    console.log('[Layout] Toggling mobile menu:', { from: isMobileMenuOpen, to: newState });
+    setIsMobileMenuOpen(newState);
     setTimeout(() => setIsAnimating(false), 300);
   };
 
@@ -104,7 +106,12 @@ const Layout = ({ children }) => {
             {/* Hamburger Menu Button */}
             <motion.button
               type="button"
-              onClick={toggleMobileMenu}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('[Layout] Hamburger clicked, current state:', isMobileMenuOpen);
+                toggleMobileMenu();
+              }}
               disabled={isAnimating}
               className="mobile-menu-btn p-4 bg-gradient-to-br from-gray-50 to-white rounded-xl shadow-md border border-gray-200/50 touch-manipulation overflow-hidden relative z-50 min-w-[56px] min-h-[56px] cursor-pointer active:scale-95"
               whileHover={{ scale: 1.05 }}
@@ -161,13 +168,16 @@ const Layout = ({ children }) => {
         {/* Sidebar - Different positioning for Mobile vs Desktop */}
         {isMobile ? (
           /* Mobile: Fixed positioning, completely outside layout flow */
-          <div className="fixed inset-0 z-50 pointer-events-none">
+          <div className="fixed inset-0 z-50">
             <Sidebar
               isCollapsed={false}
               setIsCollapsed={setIsCollapsed}
               isMobile={true}
               isMobileMenuOpen={isMobileMenuOpen}
-              closeMobileMenu={() => setIsMobileMenuOpen(false)}
+              closeMobileMenu={() => {
+                console.log('[Layout] Closing mobile menu');
+                setIsMobileMenuOpen(false);
+              }}
             />
           </div>
         ) : (

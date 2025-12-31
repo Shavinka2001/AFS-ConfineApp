@@ -414,7 +414,7 @@ const TechnicianWorkOrders = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl mx-auto">
+      <div className="w-full flex-1">
         {/* Enhanced Professional Header */}
         <div className="relative bg-gradient-to-r from-[#232249] via-[#2a2a5a] to-[#232249] rounded-xl shadow-2xl mb-8 overflow-hidden">
           {/* Background Pattern */}
@@ -444,10 +444,6 @@ const TechnicianWorkOrders = () => {
                   </div>
                 </div>
                 
-                <p className="text-blue-100 text-lg max-w-2xl leading-relaxed">
-                  Monitor and manage confined space inspection forms, track safety protocols, 
-                  and ensure regulatory compliance across all work order activities.
-                </p>
               </div>
 
               {/* Right Side - Time Display */}

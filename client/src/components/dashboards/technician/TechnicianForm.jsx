@@ -739,7 +739,7 @@ const TechnicianForm = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 p-3 md:p-6">
-      <div className="max-w-6xl mx-auto">
+      <div className="w-full flex-1">
         {/* Simple Professional Header */}
         <div className="bg-[#232249] rounded-lg shadow-md mb-4 md:mb-6">
           <div className="p-4 md:p-6">

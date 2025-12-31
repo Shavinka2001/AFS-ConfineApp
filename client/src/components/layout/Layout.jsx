@@ -105,7 +105,7 @@ const Layout = ({ children }) => {
             <motion.button
               onClick={toggleMobileMenu}
               disabled={isAnimating}
-              className="mobile-menu-btn p-2.5 bg-gradient-to-br from-gray-50 to-white rounded-xl shadow-md border border-gray-200/50 touch-manipulation overflow-hidden relative z-10"
+              className="mobile-menu-btn p-4 bg-gradient-to-br from-gray-50 to-white rounded-xl shadow-md border border-gray-200/50 touch-manipulation overflow-hidden relative z-10 min-w-[56px] min-h-[56px]"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               initial={{ opacity: 0, x: -20 }}
@@ -116,11 +116,12 @@ const Layout = ({ children }) => {
               <motion.div
                 animate={{ rotate: isMobileMenuOpen ? 180 : 0 }}
                 transition={{ duration: 0.3, ease: "easeOut" }}
+                className="flex items-center justify-center"
               >
                 {isMobileMenuOpen ? (
-                  <X className="h-6 w-6 text-gray-700" />
+                  <X className="h-7 w-7 text-gray-700" />
                 ) : (
-                  <Menu className="h-6 w-6 text-gray-700" />
+                  <Menu className="h-7 w-7 text-gray-700" />
                 )}
               </motion.div>
               

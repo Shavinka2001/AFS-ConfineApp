@@ -356,7 +356,7 @@ const TechnicianTasks = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-white p-8">
-        <div className="max-w-7xl mx-auto">
+        <div className="w-full flex-1">
           <div className="bg-white/95 backdrop-blur-2xl rounded-3xl shadow-2xl border border-[#232249]/20 p-16 hover:shadow-3xl transition-all duration-500">
             <div className="flex flex-col items-center justify-center space-y-8">
               <div className="relative">
@@ -386,7 +386,7 @@ const TechnicianTasks = () => {
   if (error) {
     return (
       <div className="min-h-screen bg-white p-8">
-        <div className="max-w-7xl mx-auto">
+        <div className="w-full flex-1">
           <div className="bg-white/95 backdrop-blur-2xl rounded-3xl shadow-2xl border border-[#232249]/20 p-16 hover:shadow-3xl transition-all duration-500">
             <div className="flex flex-col items-center justify-center space-y-8">
               <div className="relative">
@@ -420,7 +420,7 @@ const TechnicianTasks = () => {
   if (!hasAssignment && !previouslyAssignedLocation) {
     return (
       <div className="min-h-screen bg-white p-8">
-        <div className="max-w-7xl mx-auto">
+        <div className="w-full flex-1">
           <div className="bg-white/95 backdrop-blur-2xl rounded-3xl shadow-2xl border border-[#232249]/20 p-16 hover:shadow-3xl transition-all duration-500">
             <div className="flex flex-col items-center justify-center space-y-8">
               <div className="relative">
@@ -489,7 +489,7 @@ const TechnicianTasks = () => {
 
   return (
     <div className="min-h-screen bg-white p-8">
-      <div className="max-w-7xl mx-auto space-y-8">
+      <div className="w-full flex-1 space-y-8">
         
         {/* Header */}
         <div className="bg-white/95 backdrop-blur-2xl rounded-2xl shadow-xl border border-[#232249]/20 hover:shadow-2xl transition-all duration-500 overflow-hidden">

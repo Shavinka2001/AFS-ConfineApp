@@ -423,19 +423,6 @@ const ManagerWorkOrders = () => {
         </div>
       </div>
     );
-          </motion.div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Failed to Load Work Orders</h2>
-          <p className="text-gray-600 mb-8">{error}</p>
-          <button
-            onClick={fetchWorkOrders}
-            className="px-6 py-3 bg-[#232249] text-white rounded-lg hover:bg-[#1a1a3a] transition-colors flex items-center gap-2 mx-auto"
-          >
-            <RefreshCw className="w-5 h-5" />
-            Try Again
-          </button>
-        </div>
-      </div>
-    );
   }
 
   return (

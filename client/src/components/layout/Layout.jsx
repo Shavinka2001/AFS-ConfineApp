@@ -96,22 +96,24 @@ const Layout = ({ children }) => {
   }
 
   return (
-    <div className="h-screen bg-gray-50 overflow-hidden overflow-x-hidden">
+    <div className="h-screen bg-gray-50 overflow-hidden overflow-x-hidden relative">
       {/* Mobile Top Navbar with Hamburger Menu */}
       {isMobile && (
-        <div className="md:hidden fixed top-0 left-0 right-0 z-30 bg-white border-b border-gray-200 shadow-sm">
+        <div className="md:hidden fixed top-0 left-0 right-0 z-40 bg-white border-b border-gray-200 shadow-sm" style={{ pointerEvents: 'auto' }}>
           <div className="flex items-center justify-between px-4 py-3">
             {/* Hamburger Menu Button */}
             <motion.button
+              type="button"
               onClick={toggleMobileMenu}
               disabled={isAnimating}
-              className="mobile-menu-btn p-4 bg-gradient-to-br from-gray-50 to-white rounded-xl shadow-md border border-gray-200/50 touch-manipulation overflow-hidden relative z-10 min-w-[56px] min-h-[56px] cursor-pointer"
+              className="mobile-menu-btn p-4 bg-gradient-to-br from-gray-50 to-white rounded-xl shadow-md border border-gray-200/50 touch-manipulation overflow-hidden relative z-50 min-w-[56px] min-h-[56px] cursor-pointer active:scale-95"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.3, ease: "easeOut" }}
-              style={{ WebkitTapHighlightColor: 'transparent' }}
+              style={{ WebkitTapHighlightColor: 'transparent', pointerEvents: 'auto' }}
+              aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
             >
               <motion.div
                 animate={{ rotate: isMobileMenuOpen ? 180 : 0 }}
@@ -159,7 +161,7 @@ const Layout = ({ children }) => {
         {/* Sidebar - Different positioning for Mobile vs Desktop */}
         {isMobile ? (
           /* Mobile: Fixed positioning, completely outside layout flow */
-          <div className="fixed inset-0 z-50">
+          <div className="fixed inset-0 z-50 pointer-events-none">
             <Sidebar
               isCollapsed={false}
               setIsCollapsed={setIsCollapsed}
@@ -184,12 +186,13 @@ const Layout = ({ children }) => {
         {/* Main Content Area - Full Width on Mobile, Flex-1 on Desktop */}
         <motion.div
           initial={false}
-          className={`h-full overflow-y-auto overflow-x-hidden ${
-            isMobile ? 'w-full' : 'flex-1'
+          className={`h-full overflow-y-auto overflow-x-hidden relative ${
+            isMobile ? 'w-full z-0' : 'flex-1 z-0'
           }`}
           onTouchStart={isMobile ? handleTouchStart : undefined}
           onTouchMove={isMobile ? handleTouchMove : undefined}
           onTouchEnd={isMobile ? handleTouchEnd : undefined}
+          style={{ pointerEvents: 'auto' }}
         >
           <main className={`w-full ${isMobile ? 'pb-4' : 'pb-6'}`}>
             {/* Content with smooth fade in animation */}

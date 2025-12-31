@@ -65,16 +65,18 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, isMobileMenuOp
 
   // Lock body scroll when mobile menu is open
   useEffect(() => {
-    if (isMobile) {
+    if (isMobile && isMobileMenuOpen) {
       document.body.style.overflow = 'hidden';
       document.body.style.position = 'fixed';
       document.body.style.width = '100%';
       document.body.style.height = '100%';
+      document.body.style.top = '0';
     } else {
       document.body.style.overflow = '';
       document.body.style.position = '';
       document.body.style.width = '';
       document.body.style.height = '';
+      document.body.style.top = '';
     }
 
     return () => {
@@ -82,8 +84,9 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, isMobileMenuOp
       document.body.style.position = '';
       document.body.style.width = '';
       document.body.style.height = '';
+      document.body.style.top = '';
     };
-  }, [isMobile]);
+  }, [isMobile, isMobileMenuOpen]);
 
   // Handle escape key to close mobile menu
   useEffect(() => {
@@ -368,18 +371,18 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, isMobileMenuOp
               e.stopPropagation();
               closeMobileMenu && closeMobileMenu();
             }}
-            className="fixed inset-0 bg-gradient-to-br from-black/80 via-black/70 to-black/80 backdrop-blur-md z-40"
+            className="fixed inset-0 bg-gradient-to-br from-black/80 via-black/70 to-black/80 backdrop-blur-md z-40 cursor-pointer"
             style={{ 
               touchAction: 'auto',
               WebkitTapHighlightColor: 'transparent',
-              cursor: 'pointer',
               position: 'fixed',
               top: 0,
               left: 0,
               right: 0,
               bottom: 0,
               width: '100vw',
-              height: '100vh'
+              height: '100vh',
+              pointerEvents: 'auto'
             }}
           />
         )}
@@ -409,12 +412,13 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, isMobileMenuOp
             ? `fixed inset-y-0 left-0 z-50 h-full w-[85vw] max-w-[320px] transition-transform duration-300 ease-in-out ${
                 isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
               }`
-            : 'relative h-full'
+            : 'relative h-full z-10'
         }`}
         style={isMobile ? {
           paddingTop: 'calc(env(safe-area-inset-top) + 73px)',
-          paddingBottom: 'env(safe-area-inset-bottom)'
-        } : {}}
+          paddingBottom: 'env(safe-area-inset-bottom)',
+          pointerEvents: isMobileMenuOpen ? 'auto' : 'none'
+        } : { pointerEvents: 'auto' }}
       >
       {/* Swipe Indicator - Mobile Only (when open) */}
       {isMobile && isMobileMenuOpen && (
@@ -495,8 +499,9 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, isMobileMenuOp
                 }}
                 whileHover={{ scale: 1.08 }}
                 whileTap={{ scale: 0.92 }}
-                className="group relative p-4 rounded-2xl bg-red-500/20 hover:bg-red-500/30 active:bg-red-500/40 backdrop-blur-xl transition-all duration-200 touch-manipulation min-w-[52px] min-h-[52px] flex items-center justify-center ring-2 ring-red-400/40 hover:ring-red-400/60 shadow-2xl hover:shadow-red-500/50"
+                className="group relative p-4 rounded-2xl bg-red-500/20 hover:bg-red-500/30 active:bg-red-500/40 backdrop-blur-xl transition-all duration-200 touch-manipulation min-w-[52px] min-h-[52px] flex items-center justify-center ring-2 ring-red-400/40 hover:ring-red-400/60 shadow-2xl hover:shadow-red-500/50 cursor-pointer"
                 aria-label="Close navigation menu"
+                style={{ WebkitTapHighlightColor: 'transparent' }}
               >
                 {/* Pulsing Background */}
                 <motion.div 

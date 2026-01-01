@@ -35,6 +35,19 @@ const AdminEditWorkOrderForm = ({
   const [submitError, setSubmitError] = useState('');
   const [uploadingImages, setUploadingImages] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
+  const [isCapturing, setIsCapturing] = useState(false);
+  const videoRef = React.useRef(null);
+  const canvasRef = React.useRef(null);
+
+  // Cleanup camera when modal closes
+  React.useEffect(() => {
+    return () => {
+      if (videoRef.current && videoRef.current.srcObject) {
+        const tracks = videoRef.current.srcObject.getTracks();
+        tracks.forEach(track => track.stop());
+      }
+    };
+  }, [showEditModal]);
 
   if (!showEditModal || !editingOrder) return null;
 
@@ -131,6 +144,55 @@ const AdminEditWorkOrderForm = ({
       ...prev,
       imageUrls: updatedImages
     }));
+  };
+
+  // Camera functions
+  const startCamera = async () => {
+    try {
+      setIsCapturing(true);
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment' },
+        audio: false
+      });
+      
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        videoRef.current.play();
+      }
+    } catch (error) {
+      console.error('Error accessing camera:', error);
+      alert('Unable to access camera. Please check permissions.');
+      setIsCapturing(false);
+    }
+  };
+
+  const stopCamera = () => {
+    if (videoRef.current && videoRef.current.srcObject) {
+      const tracks = videoRef.current.srcObject.getTracks();
+      tracks.forEach(track => track.stop());
+      videoRef.current.srcObject = null;
+    }
+    setIsCapturing(false);
+  };
+
+  const captureImage = async () => {
+    if (videoRef.current && canvasRef.current) {
+      const canvas = canvasRef.current;
+      const video = videoRef.current;
+      
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0);
+      
+      // Convert canvas to blob and upload
+      canvas.toBlob(async (blob) => {
+        const file = new File([blob], `camera-${Date.now()}.jpg`, { type: 'image/jpeg' });
+        await handleImageUpload(file);
+        stopCamera();
+      }, 'image/jpeg', 0.95);
+    }
   };
 
   const handleSubmit = async () => {
@@ -1019,33 +1081,92 @@ const AdminEditWorkOrderForm = ({
                   </h4>
                   
                   <div className="space-y-4">
-                    {/* File Upload */}
-                    <div className="border-2 border-dashed border-blue-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors">
-                      <input
-                        type="file"
-                        accept="image/*"
-                        multiple
-                        onChange={handleFileSelect}
-                        className="hidden"
-                        id="image-upload"
-                        disabled={uploadingImages}
-                      />
-                      <label 
-                        htmlFor="image-upload"
-                        className={`cursor-pointer ${uploadingImages ? 'opacity-50 cursor-not-allowed' : ''}`}
-                      >
-                        <Upload className="w-10 h-10 text-blue-400 mx-auto mb-3" />
-                        <h5 className="text-lg font-medium text-blue-800 mb-2">
-                          {uploadingImages ? 'Uploading...' : 'Upload Images'}
-                        </h5>
-                        <p className="text-sm text-blue-600 mb-3">
-                          Click to select images from your device
-                        </p>
-                        <div className="bg-blue-600 text-white px-4 py-2 rounded-lg inline-block hover:bg-blue-700 transition-colors">
-                          {uploadingImages ? 'Please wait...' : 'Choose Files'}
+                    {/* Camera Capture */}
+                    {!isCapturing && (
+                      <div className="border-2 border-dashed border-green-300 rounded-lg p-6 text-center hover:border-green-400 transition-colors bg-white">
+                        <button
+                          type="button"
+                          onClick={startCamera}
+                          disabled={uploadingImages}
+                          className={`w-full ${uploadingImages ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        >
+                          <Camera className="w-10 h-10 text-green-500 mx-auto mb-3" />
+                          <h5 className="text-lg font-medium text-green-800 mb-2">
+                            Take Photo
+                          </h5>
+                          <p className="text-sm text-green-600 mb-3">
+                            Use your device camera to capture images
+                          </p>
+                          <div className="bg-green-600 text-white px-4 py-2 rounded-lg inline-block hover:bg-green-700 transition-colors">
+                            Open Camera
+                          </div>
+                        </button>
+                      </div>
+                    )}
+
+                    {/* Camera View */}
+                    {isCapturing && (
+                      <div className="border-2 border-green-400 rounded-lg p-4 bg-white">
+                        <div className="relative mb-4">
+                          <video
+                            ref={videoRef}
+                            autoPlay
+                            playsInline
+                            className="w-full rounded-lg bg-black"
+                          />
+                          <canvas ref={canvasRef} className="hidden" />
                         </div>
-                      </label>
-                    </div>
+                        <div className="flex gap-3">
+                          <button
+                            type="button"
+                            onClick={captureImage}
+                            disabled={uploadingImages}
+                            className="flex-1 bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors font-semibold flex items-center justify-center gap-2"
+                          >
+                            <Camera className="w-5 h-5" />
+                            Capture Photo
+                          </button>
+                          <button
+                            type="button"
+                            onClick={stopCamera}
+                            className="flex-1 bg-gray-500 text-white py-3 px-4 rounded-lg hover:bg-gray-600 transition-colors font-semibold flex items-center justify-center gap-2"
+                          >
+                            <XCircle className="w-5 h-5" />
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {/* File Upload */}
+                    {!isCapturing && (
+                      <div className="border-2 border-dashed border-blue-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          multiple
+                          onChange={handleFileSelect}
+                          className="hidden"
+                          id="image-upload"
+                          disabled={uploadingImages}
+                        />
+                        <label 
+                          htmlFor="image-upload"
+                          className={`cursor-pointer ${uploadingImages ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        >
+                          <Upload className="w-10 h-10 text-blue-400 mx-auto mb-3" />
+                          <h5 className="text-lg font-medium text-blue-800 mb-2">
+                            {uploadingImages ? 'Uploading...' : 'Upload Images'}
+                          </h5>
+                          <p className="text-sm text-blue-600 mb-3">
+                            Click to select images from your device
+                          </p>
+                          <div className="bg-blue-600 text-white px-4 py-2 rounded-lg inline-block hover:bg-blue-700 transition-colors">
+                            {uploadingImages ? 'Please wait...' : 'Choose Files'}
+                          </div>
+                        </label>
+                      </div>
+                    )}
                     
                     {/* Upload Progress */}
                     {uploadingImages && (

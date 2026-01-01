@@ -285,6 +285,7 @@ const consolidateGroup = (group) => {
     images: orderedMedia('images'),
     photos: orderedMedia('photos'),
     attachments: orderedMedia('attachments'),
+    imageUrls: orderedMedia('imageUrls'), // Admin upload field
 
     _consolidated: true,
     _originalEntryCount: group.length,
@@ -437,59 +438,37 @@ export const handleDownloadFilteredPDF = async (orders = [], sortBy) => {
         currentY = margin;
       }
 
-      // HEADER
-      doc.setFillColor(35, 34, 73);
-      doc.rect(0, 0, pageWidth, 70, 'F');
-      
-      doc.setTextColor(255, 255, 255);
-      doc.setFontSize(20);
+      // HEADER - Simple centered text
+      doc.setTextColor(0, 0, 0);
+      doc.setFontSize(16);
       doc.setFont('helvetica', 'bold');
-      doc.text('CONFINED SPACE ASSESSMENT', pageWidth / 2, 30, { align: 'center' });
-      
+      doc.text('CONFINED SPACE ASSESSMENT', pageWidth / 2, currentY, { align: 'center' });
+      currentY += 25;
+
+      // SUB-HEADER - Form info aligned to the left
       doc.setFontSize(10);
       doc.setFont('helvetica', 'normal');
-      doc.text(`Generated: ${new Date().toLocaleDateString()}`, pageWidth / 2, 50, { align: 'center' });
-
-      currentY = 90;
-      doc.setTextColor(0, 0, 0);
-
-      // Basic Information
-      doc.setFontSize(12);
-      doc.setFont('helvetica', 'bold');
-      doc.text(`Building: ${entry.building || 'N/A'}`, margin, currentY);
-      currentY += 18;
       
-      doc.setFont('helvetica', 'normal');
-      doc.text(`Location: ${entry.locationDescription || 'N/A'}`, margin, currentY);
+      const formNo = entry.uniqueId || entry.workOrderId || 'N/A';
+      doc.text(`Form No: ${formNo}`, margin, currentY);
       currentY += 15;
-      doc.text(`Space Description: ${entry.confinedSpaceDescription || 'N/A'}`, margin, currentY);
+      
+      const surveyDate = entry.dateOfSurvey || entry.surveyDate || entry.createdAt;
+      const dateText = surveyDate ? new Date(surveyDate).toLocaleDateString() : 'Not Specified';
+      doc.text(`Date: ${dateText}`, margin, currentY);
       currentY += 15;
-
-      // Display surveyor information
+      
       const surveyorNames = Array.isArray(entry.surveyors) && entry.surveyors.length > 0
         ? entry.surveyors.join(', ')
         : entry.surveyors || entry.technician || entry.surveyorName || entry.createdBy || 'N/A';
-      
       doc.text(`Surveyor(s): ${surveyorNames}`, margin, currentY);
+      currentY += 20;
+
+      // Line separator
+      doc.setDrawColor(0, 0, 0);
+      doc.setLineWidth(1);
+      doc.line(margin, currentY, pageWidth - margin, currentY);
       currentY += 15;
-
-      const surveyDate = entry.dateOfSurvey || entry.surveyDate || entry.createdAt;
-      if (surveyDate) {
-        doc.text(`Survey Date: ${new Date(surveyDate).toLocaleDateString()}`, margin, currentY);
-        currentY += 15;
-      }
-
-      if (entry._consolidated) {
-        doc.setFont('helvetica', 'bold');
-        doc.text(`Consolidated Report (${entry._originalEntryCount} Spaces)`, margin, currentY);
-        currentY += 15;
-        doc.setFont('helvetica', 'normal');
-        doc.text(`Work Order IDs: ${entry.uniqueId || 'N/A'}`, margin, currentY);
-        currentY += 20;
-      } else {
-        doc.text(`Work Order ID: ${entry.uniqueId || entry.workOrderId || 'N/A'}`, margin, currentY);
-        currentY += 20;
-      }
 
       // COLLECT AND LOAD ALL IMAGES
       const normalizeImageField = (field) => {
@@ -503,8 +482,9 @@ export const handleDownloadFilteredPDF = async (orders = [], sortBy) => {
       const imagesList = normalizeImageField(entry.images);
       const photosList = normalizeImageField(entry.photos);
       const attachmentsList = normalizeImageField(entry.attachments);
+      const imageUrlsList = normalizeImageField(entry.imageUrls); // Admin upload field
       
-      const allImagePaths = [...picturesList, ...imagesList, ...photosList, ...attachmentsList];
+      const allImagePaths = [...picturesList, ...imagesList, ...photosList, ...attachmentsList, ...imageUrlsList];
       const uniqueImagePaths = [...new Set(allImagePaths.map(p => String(p).trim()).filter(Boolean))];
       const imagePaths = uniqueImagePaths;
       
@@ -578,10 +558,14 @@ export const handleDownloadFilteredPDF = async (orders = [], sortBy) => {
       console.log(`Successfully loaded ${loadedImages.length}/${imagePaths.length} images`);
 
       // DETAILS TABLE
+      const permitStatus = entry.permitRequired ? 'PERMIT' : 'NON-PERMIT';
+      
       const detailsText = `
-Date of Survey: ${entry.dateOfSurvey ? new Date(entry.dateOfSurvey).toISOString().slice(0, 10) : 'Not Specified'}
-Surveyors: ${Array.isArray(entry.surveyors) ? entry.surveyors.join(", ") : entry.surveyors || 'Not Specified'}
-Space Name/ID: ${entry.confinedSpaceNameOrId || 'Not Specified'}
+LOCATION DETAILS:
+• Location: ${entry.locationDescription || 'Not Specified'}
+• Space Description: ${entry.confinedSpaceDescription || 'Not Specified'}
+• Space Name/ID: ${entry.confinedSpaceNameOrId || 'Not Specified'}
+• Entry Points: ${entry.numberOfEntryPoints || 'Not Specified'}
 
 CLASSIFICATION:
 • Confined Space: ${entry.confinedSpace ? 'Yes' : 'No'}
@@ -590,41 +574,35 @@ CLASSIFICATION:
 
 HAZARD ASSESSMENT:
 • Atmospheric Hazard: ${entry.atmosphericHazard ? 'Yes' : 'No'}
-  ${entry.atmosphericHazardDescription ? `  Description: ${entry.atmosphericHazardDescription}` : ''}
+  ${entry.atmosphericHazardDescription ? `Description: ${entry.atmosphericHazardDescription}` : ''}
 • Engulfment Hazard: ${entry.engulfmentHazard ? 'Yes' : 'No'}
-  ${entry.engulfmentHazardDescription ? `  Description: ${entry.engulfmentHazardDescription}` : ''}
+  ${entry.engulfmentHazardDescription ? `Description: ${entry.engulfmentHazardDescription}` : ''}
 • Configuration Hazard: ${entry.configurationHazard ? 'Yes' : 'No'}
-  ${entry.configurationHazardDescription ? `  Description: ${entry.configurationHazardDescription}` : ''}
+  ${entry.configurationHazardDescription ? `Description: ${entry.configurationHazardDescription}` : ''}
 • Other Hazards: ${entry.otherRecognizedHazards ? 'Yes' : 'No'}
-  ${entry.otherHazardsDescription ? `  Description: ${entry.otherHazardsDescription}` : ''}
+  ${entry.otherHazardsDescription ? `Description: ${entry.otherHazardsDescription}` : ''}
 
 SAFETY MEASURES:
 • PPE Required: ${entry.ppeRequired ? 'Yes' : 'No'}
 • PPE List: ${entry.ppeList || 'None Specified'}
 • Forced Air Ventilation: ${entry.forcedAirVentilationSufficient ? 'Sufficient' : 'Requires Assessment'}
-• Entry Points: ${entry.numberOfEntryPoints || 'Not Specified'}
+• Continuous Air Monitor: ${entry.dedicatedContinuousAirMonitor ? 'Yes' : 'No'}
+• Warning Sign Posted: ${entry.warningSignPosted ? 'Yes' : 'No'}
 
-${entry.notes ? `Notes:\n${entry.notes}` : ''}
+${entry.notes ? `NOTES:\n${entry.notes}` : ''}
       `.trim();
 
       const tableData = [
         [
           { 
-            content: entry._consolidated 
-              ? `Consolidated Assessment: ${entry.building || 'Multiple Locations'}` 
-              : `Assessment: ${entry.building || 'Location'}`, 
+            content: `${permitStatus} REQUIRED CONFINED SPACE`, 
             colSpan: 2, 
-            styles: { halign: 'center', fontStyle: 'bold', fillColor: [35, 34, 73], textColor: [255, 255, 255], fontSize: 12 } 
+            styles: { halign: 'center', fontStyle: 'bold', fillColor: [220, 220, 220], textColor: [0, 0, 0], fontSize: 12 } 
           }
         ],
         [
-          { content: 'Assessment Details', styles: { fontStyle: 'bold', fillColor: [245, 245, 245], fontSize: 11 } },
-          { 
-            content: loadedImages.length > 0 
-              ? `Photographic Documentation (${loadedImages.length}/${imagePaths.length} Images)` 
-              : 'Photographic Documentation',
-            styles: { fontStyle: 'bold', halign: 'center', fillColor: [245, 245, 245], fontSize: 11 } 
-          }
+          { content: `Building: ${entry.building || 'N/A'}`, styles: { fontStyle: 'bold', fontSize: 10, fillColor: [245, 245, 245] } },
+          { content: 'Photographic Documentation', styles: { fontStyle: 'bold', halign: 'center', fontSize: 10, fillColor: [245, 245, 245] } }
         ],
         [
           { content: detailsText, styles: { valign: 'top', fontSize: 9, cellPadding: 8, overflow: 'linebreak' } },
@@ -685,28 +663,31 @@ ${entry.notes ? `Notes:\n${entry.notes}` : ''}
 
       currentY = doc.lastAutoTable?.finalY || currentY + 250;
       
+      // ASSESSOR SIGNATURE SECTION
+      currentY += 30;
+      
+      if (currentY + 80 > pageHeight - margin - 30) {
+        doc.addPage();
+        currentY = margin;
+      }
+      
+      doc.setDrawColor(0, 0, 0);
+      doc.setLineWidth(0.5);
+      
+      // Signature line
+      const signatureLineY = currentY + 30;
+      doc.line(margin, signatureLineY, pageWidth / 2 - 20, signatureLineY);
+      
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'bold');
+      doc.text('ASSESSOR SIGNATURE:', margin, currentY);
+      
+      doc.setFont('helvetica', 'normal');
+      doc.text('Name: ' + surveyorNames, margin, signatureLineY + 15);
+      doc.text('Date: ' + dateText, margin, signatureLineY + 30);
+      
       pageNumber++;
     }
-
-    // Footer - Document Complete
-    const tableEnd = doc.lastAutoTable?.finalY || currentY;
-    console.log(`📍 Last table ended at Y position: ${tableEnd}`);
-    
-    currentY = tableEnd + 30;
-    
-    if (currentY + 40 > pageHeight - margin - 30) {
-      doc.addPage();
-      currentY = margin + 40;
-    }
-    
-    doc.setFillColor(35, 34, 73);
-    doc.rect(0, currentY, pageWidth, 20, 'F');
-    
-    doc.setFontSize(10);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(255, 255, 255);
-    doc.text('End of Assessment Report', pageWidth / 2, currentY + 13, { align: 'center' });
-    doc.setTextColor(0, 0, 0);
 
     // FOOTER WITH PAGE NUMBERS
     const totalPages = doc.internal.getNumberOfPages();

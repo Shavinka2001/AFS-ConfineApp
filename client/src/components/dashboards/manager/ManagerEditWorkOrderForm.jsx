@@ -1,29 +1,20 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
 import {
+  XCircle,
   FileText,
-  Building,
+  Save,
   AlertTriangle,
+  Building,
   Shield,
   Users,
   Camera,
-  X,
-  Save,
-  ChevronRight,
-  CheckCircle,
   Calendar,
-  Clock,
-  Map,
-  Info,
   User,
-  Tag,
-  MessageSquare,
-  ClipboardList,
   Upload,
-  Trash2,
-  Plus
+  Eye,
+  Trash2
 } from 'lucide-react';
-import { handleError, handleSuccess } from '../../../utils/errorHandler';
+import { getImageUrl } from '../../../utils/imageUtils';
 
 const ManagerEditWorkOrderForm = ({
   showEditModal,
@@ -38,6 +29,19 @@ const ManagerEditWorkOrderForm = ({
   const [submitError, setSubmitError] = useState('');
   const [uploadingImages, setUploadingImages] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
+  const [isCapturing, setIsCapturing] = useState(false);
+  const videoRef = React.useRef(null);
+  const canvasRef = React.useRef(null);
+
+  // Cleanup camera when modal closes
+  React.useEffect(() => {
+    return () => {
+      if (videoRef.current && videoRef.current.srcObject) {
+        const tracks = videoRef.current.srcObject.getTracks();
+        tracks.forEach(track => track.stop());
+      }
+    };
+  }, [showEditModal]);
 
   if (!showEditModal || !editingOrder) return null;
 
@@ -51,17 +55,17 @@ const ManagerEditWorkOrderForm = ({
   ];
 
   const handleInputChange = (field, value) => {
-    setEditingOrder({
-      ...editingOrder,
+    setEditingOrder(prev => ({
+      ...prev,
       [field]: value
-    });
+    }));
   };
 
   const handleRadioChange = (field, value) => {
-    setEditingOrder({
-      ...editingOrder,
-      [field]: value === 'yes'
-    });
+    setEditingOrder(prev => ({
+      ...prev,
+      [field]: value
+    }));
   };
 
   // Image upload functionality
@@ -114,11 +118,10 @@ const ManagerEditWorkOrderForm = ({
       const result = JSON.parse(responseText);
       
       // Add the new image URL to the editing order
-      const currentImages = editingOrder.imageUrls || editingOrder.images || [];
+      const currentImages = editingOrder.imageUrls || [];
       setEditingOrder(prev => ({
         ...prev,
-        imageUrls: [...currentImages, result.imageUrl],
-        images: [...currentImages, result.imageUrl]  // Support both field names
+        imageUrls: [...currentImages, result.imageUrl]
       }));
       
     } catch (error) {
@@ -130,126 +133,188 @@ const ManagerEditWorkOrderForm = ({
   };
 
   const removeImage = (index) => {
-    const currentImages = editingOrder.imageUrls || editingOrder.images || [];
-    const updatedImages = currentImages.filter((_, i) => i !== index);
+    const updatedImages = editingOrder.imageUrls.filter((_, i) => i !== index);
     setEditingOrder(prev => ({
       ...prev,
-      imageUrls: updatedImages,
-      images: updatedImages  // Support both field names
+      imageUrls: updatedImages
     }));
   };
 
-  const handleSubmit = async () => {
+  // Camera functions
+  const startCamera = async () => {
     try {
-      setIsSubmitting(true);
-      setSubmitError('');
-
-      // Validate required fields
-      if (!editingOrder.location) {
-        setSubmitError('Location is required');
-        setActiveSection('basic');
-        setIsSubmitting(false);
-        return;
-      }
-
-      if (!editingOrder.buildingName) {
-        setSubmitError('Building name is required');
-        setActiveSection('space');
-        setIsSubmitting(false);
-        return;
-      }
-
-      // Submit form
-      await handleUpdateForm(editingOrder);
+      setIsCapturing(true);
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment' },
+        audio: false
+      });
       
-      // Show success message and close modal
-      handleSuccess('Work order updated successfully');
-      closeEditModal();
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        videoRef.current.play();
+      }
     } catch (error) {
-      setSubmitError('Failed to update work order');
-      handleError(error, 'Failed to update work order');
+      console.error('Error accessing camera:', error);
+      alert('Unable to access camera. Please check permissions.');
+      setIsCapturing(false);
+    }
+  };
+
+  const stopCamera = () => {
+    if (videoRef.current && videoRef.current.srcObject) {
+      const tracks = videoRef.current.srcObject.getTracks();
+      tracks.forEach(track => track.stop());
+      videoRef.current.srcObject = null;
+    }
+    setIsCapturing(false);
+  };
+
+  const captureImage = async () => {
+    if (videoRef.current && canvasRef.current) {
+      const canvas = canvasRef.current;
+      const video = videoRef.current;
+      
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0);
+      
+      // Convert canvas to blob and upload
+      canvas.toBlob(async (blob) => {
+        const file = new File([blob], `camera-${Date.now()}.jpg`, { type: 'image/jpeg' });
+        await handleImageUpload(file);
+        stopCamera();
+      }, 'image/jpeg', 0.95);
+    }
+  };
+
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+    setSubmitError('');
+    
+    try {
+      // Validate required fields
+      const requiredFields = ['technician', 'spaceName', 'building', 'locationDescription'];
+      const missingFields = requiredFields.filter(field => !editingOrder[field]?.trim());
+      
+      if (missingFields.length > 0) {
+        throw new Error(`Please fill in required fields: ${missingFields.join(', ')}`);
+      }
+
+      // Validate boolean fields are not null for required hazard assessments
+      const requiredBooleanFields = [
+        'isConfinedSpace', 'permitRequired', 'atmosphericHazard', 
+        'engulfmentHazard', 'configurationHazard', 'otherRecognizedHazards',
+        'ppeRequired', 'forcedAirVentilationSufficient', 'dedicatedAirMonitor',
+        'warningSignPosted', 'otherPeopleWorkingNearSpace', 'canOthersSeeIntoSpace',
+        'contractorsEnterSpace'
+      ];
+      
+      const nullBooleanFields = requiredBooleanFields.filter(field => 
+        editingOrder[field] === null || editingOrder[field] === undefined
+      );
+      
+      if (nullBooleanFields.length > 0) {
+        throw new Error(`Please provide answers for all assessment questions`);
+      }
+
+      // Validate number of entry points if provided
+      if (editingOrder.numberOfEntryPoints) {
+        const entryPoints = parseInt(editingOrder.numberOfEntryPoints);
+        if (isNaN(entryPoints) || entryPoints < 0 || entryPoints > 20) {
+          throw new Error('Number of entry points must be between 0 and 20');
+        }
+      }
+
+      await handleUpdateForm();
+      setSubmitError('');
+    } catch (error) {
+      console.error('Error updating work order:', error);
+      setSubmitError(error.message || 'Failed to update work order. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto"
-    >
-      <motion.div 
-        initial={{ scale: 0.95, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.95, opacity: 0 }}
-        className="bg-white rounded-xl shadow-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden flex flex-col"
-      >
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 z-50">
+      <div className="bg-white rounded-2xl md:rounded-3xl shadow-2xl w-full max-w-7xl max-h-[95vh] overflow-hidden border border-gray-200 flex flex-col">
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-4 md:px-6 py-4 md:py-6 text-white flex justify-between items-center">
-          <div className="flex items-center space-x-3">
-            <div className="p-2 bg-white/20 backdrop-blur-sm rounded-lg">
-              <FileText className="h-5 w-5 md:h-6 md:w-6" />
+        <div className="relative bg-gradient-to-br from-[#232249] via-[#2a2a5c] to-[#1a1b3a] p-4 md:p-6 lg:p-8">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between text-white">
+            <div className="flex items-center gap-3 md:gap-6">
+              <div className="p-2 md:p-4 bg-white/15 rounded-2xl backdrop-blur-sm border border-white/20 shadow-lg">
+                <FileText className="h-6 w-6 md:h-8 md:w-8 lg:h-10 lg:w-10 text-white" />
+              </div>
+              <div>
+                <h2 className="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold mb-1 md:mb-2">Edit Work Order</h2>
+                <p className="text-white/80 text-sm md:text-base lg:text-lg">
+                  {editingOrder.workOrderId || `WO-${new Date(editingOrder.surveyDate || editingOrder.createdAt).getFullYear()}-${String(editingOrder.id || editingOrder._id).slice(-4)}`}
+                </p>
+                <div className="flex flex-wrap items-center gap-2 md:gap-4 mt-2 text-xs md:text-sm text-white/70">
+                  <span className="flex items-center gap-1">
+                    <Calendar className="w-3 h-3 md:w-4 md:h-4" />
+                    {formatDate(editingOrder.surveyDate || editingOrder.createdAt)}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <User className="w-3 h-3 md:w-4 md:h-4" />
+                    {editingOrder.technician}
+                  </span>
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                    editingOrder.status === 'completed' ? 'bg-green-500/20 text-green-100' :
+                    editingOrder.status === 'in-progress' ? 'bg-blue-500/20 text-blue-100' :
+                    editingOrder.status === 'pending' ? 'bg-yellow-500/20 text-yellow-100' :
+                    'bg-gray-500/20 text-gray-100'
+                  }`}>
+                    {editingOrder.status}
+                  </span>
+                </div>
+              </div>
             </div>
-            <div>
-              <h3 className="text-lg md:text-xl font-bold">Edit Work Order #{editingOrder.workOrderId || editingOrder.uniqueId}</h3>
-              <p className="text-blue-100 text-xs md:text-sm">Last modified: {formatDate(editingOrder.updatedAt || editingOrder.createdAt)}</p>
+            <div className="flex items-center gap-2 md:gap-4 self-end md:self-auto">
+              <button
+                onClick={closeEditModal}
+                className="p-3 min-h-[44px] hover:bg-white/20 rounded-2xl transition-all duration-300 group border border-white/20 active:scale-95"
+              >
+                <XCircle className="h-6 w-6 md:h-7 md:w-7 lg:h-8 lg:w-8 group-hover:scale-110 transition-transform text-white" />
+              </button>
             </div>
           </div>
-          <button 
-            className="p-3 min-h-[48px] hover:bg-white/20 rounded-full transition-colors"
-            onClick={closeEditModal}
-          >
-            <X className="h-5 w-5 md:h-6 md:w-6" />
-          </button>
         </div>
 
-        {/* Content */}
-        <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
-          {/* Sidebar */}
-          <div className="w-full md:w-64 bg-gray-50 border-r border-gray-200 p-4">
-            <div className="space-y-1">
-              {sections.map((section) => {
-                const Icon = section.icon;
-                return (
-                  <button
-                    key={section.id}
-                    onClick={() => setActiveSection(section.id)}
-                    className={`w-full flex items-center px-4 py-3 rounded-lg text-left transition-colors ${
-                      activeSection === section.id
-                        ? 'bg-blue-600 text-white'
-                        : 'text-gray-700 hover:bg-gray-200'
-                    }`}
-                  >
-                    <Icon className="h-5 w-5 mr-3" />
-                    <span className="font-medium">{section.title}</span>
-                    {activeSection === section.id && (
-                      <ChevronRight className="h-4 w-4 ml-auto" />
-                    )}
-                  </button>
-                );
-              })}
-            </div>
+        {/* Navigation Tabs */}
+        <div className="bg-white border-b border-gray-200 flex-shrink-0">
+          <div className="flex overflow-x-auto scrollbar-hide">
+            {sections.map((section) => {
+              const Icon = section.icon;
+              const isActive = activeSection === section.id;
+              
+              return (
+                <button
+                  key={section.id}
+                  onClick={() => setActiveSection(section.id)}
+                  className={`flex-1 min-w-[140px] py-3 md:py-4 px-3 md:px-6 flex items-center justify-center gap-2 border-b-2 transition-all duration-300 min-h-[56px] ${
+                    isActive 
+                      ? 'border-[#232249] bg-[#232249]/5 text-[#232249] font-semibold' 
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                  }`}
+                >
+                  <Icon className={`h-4 w-4 md:h-5 md:w-5 ${isActive ? 'text-[#232249]' : 'text-gray-400'}`} />
+                  <span className="text-xs md:text-sm whitespace-nowrap">{section.title}</span>
+                </button>
+              );
+            })}
           </div>
+        </div>
 
-          {/* Form Sections */}
-          <div className="flex-1 overflow-y-auto p-6">
-            {submitError && (
-              <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg flex items-center">
-                <AlertTriangle className="h-5 w-5 mr-2 text-red-500" />
-                {submitError}
-              </div>
-            )}
-
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto p-4 md:p-8">
+          <div className="max-w-6xl mx-auto">
             {/* Basic Information */}
             {activeSection === 'basic' && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="space-y-6"
-              >
-                <h3 className="text-lg font-bold text-gray-900 border-b border-gray-200 pb-2">
+              <div className="space-y-4 md:space-y-6">
+                <h3 className="text-lg md:text-xl font-bold text-gray-900 border-b border-gray-200 pb-2">
                   Basic Information
                 </h3>
 
@@ -338,17 +403,13 @@ const ManagerEditWorkOrderForm = ({
                     />
                   </div>
                 </div>
-              </motion.div>
+              </div>
             )}
 
             {/* Space Information */}
             {activeSection === 'space' && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="space-y-6"
-              >
-                <h3 className="text-lg font-bold text-gray-900 border-b border-gray-200 pb-2">
+              <div className="space-y-4 md:space-y-6">
+                <h3 className="text-lg md:text-xl font-bold text-gray-900 border-b border-gray-200 pb-2">
                   Space Information
                 </h3>
 
@@ -429,7 +490,7 @@ const ManagerEditWorkOrderForm = ({
                       Is this a Confined Space?
                     </label>
                     <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-2 sm:space-y-0 mt-1">
-                      <label className="inline-flex items-center min-h-[48px] px-3 py-2 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
+                      <label className="inline-flex items-center min-h-[44px] px-3 py-2 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
                         <input
                           type="radio"
                           name="isConfinedSpace"
@@ -442,7 +503,7 @@ const ManagerEditWorkOrderForm = ({
                         />
                         <span className="ml-2 text-gray-700">Yes</span>
                       </label>
-                      <label className="inline-flex items-center min-h-[48px] px-3 py-2 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
+                      <label className="inline-flex items-center min-h-[44px] px-3 py-2 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
                         <input
                           type="radio"
                           name="isConfinedSpace"
@@ -458,21 +519,17 @@ const ManagerEditWorkOrderForm = ({
                     </div>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             )}
 
             {/* Hazard Assessment */}
             {activeSection === 'hazards' && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="space-y-6"
-              >
-                <h3 className="text-lg font-bold text-gray-900 border-b border-gray-200 pb-2">
+              <div className="space-y-4 md:space-y-6">
+                <h3 className="text-lg md:text-xl font-bold text-gray-900 border-b border-gray-200 pb-2">
                   Hazard Assessment
                 </h3>
 
-                <div className="space-y-6">
+                <div className="space-y-4 md:space-y-6">
                   {/* Permit Required */}
                   <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
                     <div className="flex items-center justify-between">
@@ -480,7 +537,7 @@ const ManagerEditWorkOrderForm = ({
                         Permit Required Confined Space?
                       </label>
                       <div className="flex space-x-4">
-                        <label className="inline-flex items-center">
+                        <label className="inline-flex items-center min-h-[44px] px-3 py-2 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
                           <input
                             type="radio"
                             name="permitRequired"
@@ -490,7 +547,7 @@ const ManagerEditWorkOrderForm = ({
                           />
                           <span className="ml-2 text-gray-700">Yes</span>
                         </label>
-                        <label className="inline-flex items-center">
+                        <label className="inline-flex items-center min-h-[44px] px-3 py-2 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
                           <input
                             type="radio"
                             name="permitRequired"
@@ -513,7 +570,7 @@ const ManagerEditWorkOrderForm = ({
                           Atmospheric Hazard
                         </label>
                         <div className="flex space-x-4">
-                          <label className="inline-flex items-center">
+                          <label className="inline-flex items-center min-h-[44px] px-3 py-2 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
                             <input
                               type="radio"
                               name="atmosphericHazard"
@@ -523,7 +580,7 @@ const ManagerEditWorkOrderForm = ({
                             />
                             <span className="ml-2 text-gray-700">Yes</span>
                           </label>
-                          <label className="inline-flex items-center">
+                          <label className="inline-flex items-center min-h-[44px] px-3 py-2 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
                             <input
                               type="radio"
                               name="atmosphericHazard"
@@ -553,7 +610,7 @@ const ManagerEditWorkOrderForm = ({
                           Engulfment Hazard
                         </label>
                         <div className="flex space-x-4">
-                          <label className="inline-flex items-center">
+                          <label className="inline-flex items-center min-h-[44px] px-3 py-2 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
                             <input
                               type="radio"
                               name="engulfmentHazard"
@@ -563,7 +620,7 @@ const ManagerEditWorkOrderForm = ({
                             />
                             <span className="ml-2 text-gray-700">Yes</span>
                           </label>
-                          <label className="inline-flex items-center">
+                          <label className="inline-flex items-center min-h-[44px] px-3 py-2 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
                             <input
                               type="radio"
                               name="engulfmentHazard"
@@ -593,7 +650,7 @@ const ManagerEditWorkOrderForm = ({
                           Configuration Hazard
                         </label>
                         <div className="flex space-x-4">
-                          <label className="inline-flex items-center">
+                          <label className="inline-flex items-center min-h-[44px] px-3 py-2 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
                             <input
                               type="radio"
                               name="configurationHazard"
@@ -603,7 +660,7 @@ const ManagerEditWorkOrderForm = ({
                             />
                             <span className="ml-2 text-gray-700">Yes</span>
                           </label>
-                          <label className="inline-flex items-center">
+                          <label className="inline-flex items-center min-h-[44px] px-3 py-2 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
                             <input
                               type="radio"
                               name="configurationHazard"
@@ -633,7 +690,7 @@ const ManagerEditWorkOrderForm = ({
                           Other Recognized Hazards
                         </label>
                         <div className="flex space-x-4">
-                          <label className="inline-flex items-center">
+                          <label className="inline-flex items-center min-h-[44px] px-3 py-2 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
                             <input
                               type="radio"
                               name="otherRecognizedHazards"
@@ -643,7 +700,7 @@ const ManagerEditWorkOrderForm = ({
                             />
                             <span className="ml-2 text-gray-700">Yes</span>
                           </label>
-                          <label className="inline-flex items-center">
+                          <label className="inline-flex items-center min-h-[44px] px-3 py-2 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
                             <input
                               type="radio"
                               name="otherRecognizedHazards"
@@ -667,17 +724,13 @@ const ManagerEditWorkOrderForm = ({
                     </div>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             )}
 
             {/* Safety Requirements */}
             {activeSection === 'safety' && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="space-y-6"
-              >
-                <h3 className="text-lg font-bold text-gray-900 border-b border-gray-200 pb-2">
+              <div className="space-y-4 md:space-y-6">
+                <h3 className="text-lg md:text-xl font-bold text-gray-900 border-b border-gray-200 pb-2">
                   Safety Requirements
                 </h3>
 
@@ -689,7 +742,7 @@ const ManagerEditWorkOrderForm = ({
                         Personal Protective Equipment Required
                       </label>
                       <div className="flex space-x-4">
-                        <label className="inline-flex items-center">
+                        <label className="inline-flex items-center min-h-[44px] px-3 py-2 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
                           <input
                             type="radio"
                             name="ppeRequired"
@@ -699,7 +752,7 @@ const ManagerEditWorkOrderForm = ({
                           />
                           <span className="ml-2 text-gray-700">Yes</span>
                         </label>
-                        <label className="inline-flex items-center">
+                        <label className="inline-flex items-center min-h-[44px] px-3 py-2 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
                           <input
                             type="radio"
                             name="ppeRequired"
@@ -729,7 +782,7 @@ const ManagerEditWorkOrderForm = ({
                         Is forced air ventilation sufficient for entry?
                       </label>
                       <div className="flex space-x-4">
-                        <label className="inline-flex items-center">
+                        <label className="inline-flex items-center min-h-[44px] px-3 py-2 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
                           <input
                             type="radio"
                             name="forcedAirVentilation"
@@ -739,7 +792,7 @@ const ManagerEditWorkOrderForm = ({
                           />
                           <span className="ml-2 text-gray-700">Yes</span>
                         </label>
-                        <label className="inline-flex items-center">
+                        <label className="inline-flex items-center min-h-[44px] px-3 py-2 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
                           <input
                             type="radio"
                             name="forcedAirVentilation"
@@ -760,7 +813,7 @@ const ManagerEditWorkOrderForm = ({
                         Dedicated continuous air monitor required?
                       </label>
                       <div className="flex space-x-4">
-                        <label className="inline-flex items-center">
+                        <label className="inline-flex items-center min-h-[44px] px-3 py-2 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
                           <input
                             type="radio"
                             name="dedicatedAirMonitor"
@@ -773,7 +826,7 @@ const ManagerEditWorkOrderForm = ({
                           />
                           <span className="ml-2 text-gray-700">Yes</span>
                         </label>
-                        <label className="inline-flex items-center">
+                        <label className="inline-flex items-center min-h-[44px] px-3 py-2 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
                           <input
                             type="radio"
                             name="dedicatedAirMonitor"
@@ -797,7 +850,7 @@ const ManagerEditWorkOrderForm = ({
                         Warning sign posted?
                       </label>
                       <div className="flex space-x-4">
-                        <label className="inline-flex items-center">
+                        <label className="inline-flex items-center min-h-[44px] px-3 py-2 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
                           <input
                             type="radio"
                             name="warningSignPosted"
@@ -807,7 +860,7 @@ const ManagerEditWorkOrderForm = ({
                           />
                           <span className="ml-2 text-gray-700">Yes</span>
                         </label>
-                        <label className="inline-flex items-center">
+                        <label className="inline-flex items-center min-h-[44px] px-3 py-2 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
                           <input
                             type="radio"
                             name="warningSignPosted"
@@ -834,17 +887,13 @@ const ManagerEditWorkOrderForm = ({
                     />
                   </div>
                 </div>
-              </motion.div>
+              </div>
             )}
 
             {/* Personnel & Access */}
             {activeSection === 'personnel' && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="space-y-6"
-              >
-                <h3 className="text-lg font-bold text-gray-900 border-b border-gray-200 pb-2">
+              <div className="space-y-4 md:space-y-6">
+                <h3 className="text-lg md:text-xl font-bold text-gray-900 border-b border-gray-200 pb-2">
                   Personnel & Access
                 </h3>
 
@@ -856,7 +905,7 @@ const ManagerEditWorkOrderForm = ({
                         Are other people working near space?
                       </label>
                       <div className="flex space-x-4">
-                        <label className="inline-flex items-center">
+                        <label className="inline-flex items-center min-h-[44px] px-3 py-2 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
                           <input
                             type="radio"
                             name="otherPeopleWorkingNearSpace"
@@ -866,7 +915,7 @@ const ManagerEditWorkOrderForm = ({
                           />
                           <span className="ml-2 text-gray-700">Yes</span>
                         </label>
-                        <label className="inline-flex items-center">
+                        <label className="inline-flex items-center min-h-[44px] px-3 py-2 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
                           <input
                             type="radio"
                             name="otherPeopleWorkingNearSpace"
@@ -887,7 +936,7 @@ const ManagerEditWorkOrderForm = ({
                         Can others see into the space?
                       </label>
                       <div className="flex space-x-4">
-                        <label className="inline-flex items-center">
+                        <label className="inline-flex items-center min-h-[44px] px-3 py-2 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
                           <input
                             type="radio"
                             name="canOthersSeeIntoSpace"
@@ -897,7 +946,7 @@ const ManagerEditWorkOrderForm = ({
                           />
                           <span className="ml-2 text-gray-700">Yes</span>
                         </label>
-                        <label className="inline-flex items-center">
+                        <label className="inline-flex items-center min-h-[44px] px-3 py-2 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
                           <input
                             type="radio"
                             name="canOthersSeeIntoSpace"
@@ -918,7 +967,7 @@ const ManagerEditWorkOrderForm = ({
                         Do contractors enter the space?
                       </label>
                       <div className="flex space-x-4">
-                        <label className="inline-flex items-center">
+                        <label className="inline-flex items-center min-h-[44px] px-3 py-2 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
                           <input
                             type="radio"
                             name="contractorsEnterSpace"
@@ -928,7 +977,7 @@ const ManagerEditWorkOrderForm = ({
                           />
                           <span className="ml-2 text-gray-700">Yes</span>
                         </label>
-                        <label className="inline-flex items-center">
+                        <label className="inline-flex items-center min-h-[44px] px-3 py-2 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
                           <input
                             type="radio"
                             name="contractorsEnterSpace"
@@ -942,167 +991,249 @@ const ManagerEditWorkOrderForm = ({
                     </div>
                   </div>
 
-                  <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       Notes
                     </label>
                     <textarea
                       value={editingOrder.notes || ''}
                       onChange={(e) => handleInputChange('notes', e.target.value)}
                       rows={3}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-transparent transition-colors"
                       placeholder="Enter any additional notes about personnel and access"
                     />
                   </div>
                 </div>
-              </motion.div>
+              </div>
             )}
 
             {/* Images & Documentation */}
             {activeSection === 'images' && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="space-y-6"
-              >
-                <h3 className="text-lg font-bold text-gray-900 border-b border-gray-200 pb-2">
+              <div className="space-y-4 md:space-y-6">
+                <h3 className="text-lg md:text-xl font-bold text-[#232249] mb-4 flex items-center">
+                  <Camera className="w-5 h-5 md:w-6 md:h-6 mr-2" />
                   Images & Documentation
                 </h3>
+                
+                <div className="space-y-4 md:space-y-6">
+                  {/* Current Images */}
+                  {(editingOrder.imageUrls?.length > 0) && (
+                    <div>
+                      <label className="block text-sm font-bold text-gray-800 mb-4">
+                        Current Images ({editingOrder.imageUrls.length})
+                      </label>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+                        {editingOrder.imageUrls.map((imageUrl, index) => (
+                          <div key={`image-${index}`} className="relative group">
+                            <div className="aspect-square rounded-xl overflow-hidden bg-gray-100 shadow-lg border border-gray-200">
+                              <img
+                                src={getImageUrl(imageUrl)}
+                                alt={`Image ${index + 1}`}
+                                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                                onError={(e) => {
+                                  console.log(`Failed to load image ${index + 1}:`, imageUrl);
+                                  e.target.style.display = 'none';
+                                  e.target.nextSibling.style.display = 'flex';
+                                }}
+                              />
+                              <div className="w-full h-full bg-gray-200 hidden items-center justify-center text-gray-500 text-sm">
+                                Image not available
+                              </div>
+                            </div>
+                            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 rounded-xl transition-all flex items-center justify-center opacity-0 group-hover:opacity-100">
+                              <div className="flex space-x-2">
+                                <button
+                                  onClick={() => window.open(imageUrl, '_blank')}
+                                  className="bg-white rounded-full p-2 shadow-lg hover:shadow-xl transition-all min-h-[44px] min-w-[44px] flex items-center justify-center"
+                                  title="View Image"
+                                >
+                                  <Eye className="h-4 w-4 text-gray-700" />
+                                </button>
+                                <button
+                                  onClick={() => removeImage(index)}
+                                  className="bg-red-500 rounded-full p-2 shadow-lg hover:shadow-xl transition-all min-h-[44px] min-w-[44px] flex items-center justify-center"
+                                  title="Remove Image"
+                                >
+                                  <Trash2 className="h-4 w-4 text-white" />
+                                </button>
+                              </div>
+                            </div>
+                            <div className="absolute bottom-2 left-2 bg-black bg-opacity-60 text-white text-xs px-2 py-1 rounded-lg">
+                              {index + 1}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
-                <div className="space-y-4">
-                  {/* Image Gallery */}
-                  <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                    <h4 className="font-medium text-gray-800 mb-2">Space Images</h4>
+                  {/* Show message if no images */}
+                  {(!editingOrder.imageUrls || editingOrder.imageUrls.length === 0) && (
+                    <div className="text-center py-6 md:py-8 bg-gray-50 rounded-xl border border-gray-200">
+                      <Camera className="h-10 w-10 md:h-12 md:w-12 text-gray-400 mx-auto mb-2" />
+                      <p className="text-gray-500 text-sm md:text-base">No images uploaded yet</p>
+                    </div>
+                  )}
+
+                  {/* Image Upload Section */}
+                  <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 md:p-6">
+                    <h4 className="font-semibold text-blue-800 mb-4 flex items-center text-base md:text-lg">
+                      <Upload className="w-4 h-4 md:w-5 md:h-5 mr-2" />
+                      Upload New Images
+                    </h4>
                     
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-3">
-                      {(editingOrder.images || editingOrder.imageUrls || []).map((image, index) => (
-                        <div key={index} className="relative border border-gray-200 rounded-lg overflow-hidden bg-white">
-                          <img
-                            src={typeof image === 'string' ? image : image.url}
-                            alt={`Space image ${index + 1}`}
-                            className="object-cover w-full h-32"
-                          />
-                          <button 
+                    <div className="space-y-4">
+                      {/* Camera Capture */}
+                      {!isCapturing && (
+                        <div className="border-2 border-dashed border-green-300 rounded-lg p-4 md:p-6 text-center hover:border-green-400 transition-colors bg-white">
+                          <button
                             type="button"
-                            onClick={() => removeImage(index)}
-                            className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full hover:bg-red-600 transition-colors"
+                            onClick={startCamera}
+                            disabled={uploadingImages}
+                            className={`w-full ${uploadingImages ? 'opacity-50 cursor-not-allowed' : ''} min-h-[44px] flex flex-col items-center justify-center`}
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <Camera className="w-8 h-8 md:w-10 md:h-10 text-green-500 mb-3" />
+                            <h5 className="text-base md:text-lg font-medium text-green-800 mb-2">
+                              Take Photo
+                            </h5>
+                            <p className="text-sm text-green-600 mb-3">
+                              Use your device camera to capture images
+                            </p>
+                            <div className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors active:scale-95">
+                              Open Camera
+                            </div>
                           </button>
                         </div>
-                      ))}
+                      )}
 
-                      {/* Upload Button */}
-                      <div className="border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center p-4 h-32 hover:border-blue-400 hover:bg-blue-50 transition-colors cursor-pointer">
-                        <input
-                          type="file"
-                          accept="image/*"
-                          multiple
-                          onChange={handleFileSelect}
-                          className="hidden"
-                          id="manager-image-upload"
-                          disabled={uploadingImages}
-                        />
-                        <label 
-                          htmlFor="manager-image-upload"
-                          className={`text-center cursor-pointer ${uploadingImages ? 'opacity-50 cursor-not-allowed' : ''}`}
-                        >
-                          {uploadingImages ? (
-                            <div className="text-center">
-                              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-1"></div>
-                              <span className="text-sm text-blue-600">Uploading...</span>
+                      {/* Camera View */}
+                      {isCapturing && (
+                        <div className="border-2 border-green-400 rounded-lg p-4 bg-white">
+                          <div className="relative mb-4">
+                            <video
+                              ref={videoRef}
+                              autoPlay
+                              playsInline
+                              className="w-full rounded-lg bg-black"
+                            />
+                            <canvas ref={canvasRef} className="hidden" />
+                          </div>
+                          <div className="flex flex-col sm:flex-row gap-3">
+                            <button
+                              type="button"
+                              onClick={captureImage}
+                              disabled={uploadingImages}
+                              className="flex-1 bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors font-semibold flex items-center justify-center gap-2 min-h-[44px] active:scale-95"
+                            >
+                              <Camera className="w-5 h-5" />
+                              Capture Photo
+                            </button>
+                            <button
+                              type="button"
+                              onClick={stopCamera}
+                              className="flex-1 bg-gray-500 text-white py-3 px-4 rounded-lg hover:bg-gray-600 transition-colors font-semibold flex items-center justify-center gap-2 min-h-[44px] active:scale-95"
+                            >
+                              <XCircle className="w-5 h-5" />
+                              Cancel
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                      
+                      {/* File Upload */}
+                      {!isCapturing && (
+                        <div className="border-2 border-dashed border-blue-300 rounded-lg p-4 md:p-6 text-center hover:border-blue-400 transition-colors">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            multiple
+                            onChange={handleFileSelect}
+                            className="hidden"
+                            id="image-upload"
+                            disabled={uploadingImages}
+                          />
+                          <label 
+                            htmlFor="image-upload"
+                            className={`cursor-pointer ${uploadingImages ? 'opacity-50 cursor-not-allowed' : ''} min-h-[44px] flex flex-col items-center justify-center`}
+                          >
+                            <Upload className="w-8 h-8 md:w-10 md:h-10 text-blue-400 mb-3" />
+                            <h5 className="text-base md:text-lg font-medium text-blue-800 mb-2">
+                              {uploadingImages ? 'Uploading...' : 'Upload Images'}
+                            </h5>
+                            <p className="text-sm text-blue-600 mb-3">
+                              Click to select images from your device
+                            </p>
+                            <div className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors active:scale-95">
+                              {uploadingImages ? 'Please wait...' : 'Choose Files'}
                             </div>
-                          ) : (
-                            <div className="text-center">
-                              <Plus className="h-8 w-8 text-gray-400 mx-auto mb-1" />
-                              <span className="text-sm text-gray-500">Add Image</span>
-                            </div>
-                          )}
-                        </label>
-                      </div>
+                          </label>
+                        </div>
+                      )}
+                      
+                      {/* Upload Progress */}
+                      {uploadingImages && (
+                        <div className="bg-white rounded-lg p-4 border border-blue-200">
+                          <div className="flex items-center space-x-3">
+                            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+                            <span className="text-blue-800 font-medium">Uploading images...</span>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
 
-                  {/* Upload Instructions */}
-                  <div className="bg-blue-50 p-4 rounded-lg border border-blue-200 text-blue-800">
-                    <div className="flex">
-                      <Info className="h-5 w-5 mr-2 flex-shrink-0" />
-                      <div className="text-sm">
-                        <p className="font-medium mb-1">Image Upload Guidelines:</p>
-                        <ul className="list-disc list-inside space-y-1">
-                          <li>Click "Add Image" to upload new photos</li>
-                          <li>Supported formats: JPG, PNG, GIF, WebP</li>
-                          <li>Maximum file size: 10MB per image</li>
-                          <li>You can upload multiple images at once</li>
-                          <li>Click the trash icon to remove images</li>
-                        </ul>
-                      </div>
-                    </div>
+                  {/* Note about image management */}
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 md:p-4">
+                    <h5 className="font-medium text-blue-800 mb-2 text-sm md:text-base">Image Management:</h5>
+                    <ul className="text-sm text-blue-700 space-y-1">
+                      <li>• Click the eye icon to view images in full size</li>
+                      <li>• Click the trash icon to remove images from the work order</li>
+                      <li>• You can upload multiple images at once</li>
+                      <li>• Supported formats: JPG, PNG, GIF, WebP</li>
+                      <li>• Maximum file size: 10MB per image</li>
+                    </ul>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             )}
           </div>
         </div>
 
-        {/* Footer with Actions */}
-        <div className="border-t border-gray-200 bg-gray-50 p-4">
-          <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center space-y-4 sm:space-y-0">
-            <button
-              type="button"
-              onClick={closeEditModal}
-              className="px-4 py-3 min-h-[48px] text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors"
-            >
-              Cancel
-            </button>
-            <div className="flex space-x-3">
+        {/* Modal Footer - Fixed Position */}
+        <div className="sticky bottom-0 bg-white border-t border-gray-200 px-4 md:px-8 py-3 md:py-4 shadow-lg">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 md:gap-0">
+            <div className="text-xs md:text-sm text-gray-600">
+              <span>Last Modified: {formatDate(editingOrder.lastModified || editingOrder.updatedAt || editingOrder.createdAt)}</span>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-2 md:gap-3 w-full sm:w-auto">
               <button
-                type="button"
-                onClick={() => setActiveSection(sections.findIndex(s => s.id === activeSection) > 0 
-                  ? sections[sections.findIndex(s => s.id === activeSection) - 1].id 
-                  : activeSection)}
-                className={`px-4 py-3 min-h-[48px] text-blue-700 border border-blue-300 rounded-lg hover:bg-blue-50 transition-colors
-                  ${activeSection === sections[0].id ? 'opacity-50 cursor-not-allowed' : ''}`}
-                disabled={activeSection === sections[0].id}
+                onClick={closeEditModal}
+                className="px-4 md:px-6 py-2 md:py-3 bg-gray-200 text-gray-700 rounded-xl hover:bg-gray-300 transition-all duration-300 font-medium border border-gray-300 min-h-[44px] active:scale-95"
               >
-                Previous
+                Cancel
               </button>
-              
-              {activeSection !== sections[sections.length - 1].id ? (
-                <button
-                  type="button"
-                  onClick={() => setActiveSection(sections.findIndex(s => s.id === activeSection) < sections.length - 1 
-                    ? sections[sections.findIndex(s => s.id === activeSection) + 1].id 
-                    : activeSection)}
-                  className="px-4 py-3 min-h-[48px] bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  Next
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  onClick={handleSubmit}
-                  className="px-6 py-3 min-h-[48px] bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? (
-                    <>
-                      <span className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white"></span>
-                      <span>Saving...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Save className="h-4 w-4" />
-                      <span>Save Changes</span>
-                    </>
-                  )}
-                </button>
-              )}
+              <button
+                onClick={handleSubmit}
+                disabled={isSubmitting}
+                className="flex items-center gap-2 px-6 md:px-8 py-2 md:py-3 bg-gradient-to-r from-[#232249] to-[#2a2a5c] text-white rounded-xl hover:shadow-lg transition-all duration-300 disabled:opacity-50 font-medium min-w-[140px] justify-center border-2 border-[#232249] min-h-[44px] active:scale-95"
+              >
+                {isSubmitting ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4" />
+                    Save Changes
+                  </>
+                )}
+              </button>
             </div>
           </div>
         </div>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 };
 

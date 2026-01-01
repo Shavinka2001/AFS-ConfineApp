@@ -127,24 +127,24 @@ const CSVImportModal = ({ isOpen, onClose, onImport, isLoading = false }) => {
       
       // Helper function to parse boolean values (Yes/No)
       const parseBoolean = (value) => {
-        if (value === null || value === undefined || value === '') return '';
+        if (value === null || value === undefined || value === '') return false;
         if (typeof value === 'boolean') return value;
         
         // Trim whitespace and convert to lowercase for case-insensitive comparison
         const normalized = String(value).trim().toLowerCase();
         
-        // Check for truthy values
+        // Check for truthy values - return boolean true
         if (['yes', 'y', 'true', '1', 'x'].includes(normalized)) {
-          return 'Yes';
+          return true;
         }
         
-        // Check for falsy values
+        // Check for falsy values - return boolean false
         if (['no', 'n', 'false', '0', ''].includes(normalized)) {
-          return 'No';
+          return false;
         }
         
-        // Return original if unrecognized
-        return value;
+        // Default to false for unrecognized values
+        return false;
       };
       
       // Helper function to parse numeric values

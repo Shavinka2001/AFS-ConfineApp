@@ -365,22 +365,23 @@ const ManagerDashboard = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="w-full px-4 md:px-6 lg:px-8 py-4 md:py-8 space-y-4 md:space-y-8">
+      <div className="w-full p-4 space-y-4 md:space-y-8">
         {/* Header Section */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="bg-slate-800 rounded-xl md:rounded-2xl shadow-sm border border-gray-200 p-4 md:p-6 mb-2"
+          className="max-w-7xl mx-auto"
         >
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-4 sm:space-y-0">
+          <div className="bg-slate-800 rounded-xl md:rounded-2xl shadow-sm border border-gray-200 p-4 md:p-6 mb-2">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div className="flex-1">
               <div className="flex items-center space-x-3 md:space-x-4 mb-3">
                 <div className="p-2 md:p-3 bg-white bg-opacity-20 rounded-lg md:rounded-xl border border-white border-opacity-20">
-                  <BarChart3 className="h-6 w-6 md:h-8 md:w-8" style={{ color: '#232249' }} />
+                  <BarChart3 className="h-5 w-5 md:h-8 md:w-8" style={{ color: '#232249' }} />
                 </div>
                 <div>
-                  <h1 className="text-2xl md:text-4xl font-bold text-white leading-tight">Manager Dashboard</h1>
+                  <h1 className="text-xl md:text-4xl font-bold text-white leading-tight">Manager Dashboard</h1>
                   <div className="h-1 w-12 md:w-16 bg-white rounded-full mt-2"></div>
                 </div>
               </div>
@@ -389,7 +390,7 @@ const ManagerDashboard = () => {
                 <span className="block text-xs md:text-base text-white text-opacity-70 mt-1">Here's your comprehensive team overview for today</span>
               </p>
             </div>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 space-x-0 sm:space-x-4 md:space-x-6 ml-0 sm:ml-8">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-end">
               <div className="text-left sm:text-right">
                 <p className="text-xs md:text-sm text-white text-opacity-70 font-medium">Current Date</p>
                 <p className="text-sm md:text-lg font-semibold text-white">
@@ -414,6 +415,7 @@ const ManagerDashboard = () => {
               </div>
             </div>
           </div>
+          </div>
         </motion.div>
 
         {/* Quick Actions - Modern Grid */}
@@ -421,72 +423,74 @@ const ManagerDashboard = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6"
+          className="max-w-7xl mx-auto"
         >
-          <div className="flex items-center space-x-3 mb-6">
-            <div className="p-3 bg-[#232249] rounded-xl">
-              <Activity className="h-6 w-6 text-white" />
+          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-4 md:p-6">
+          <div className="flex items-center space-x-3 mb-4 md:mb-6">
+            <div className="p-2 bg-[#232249] rounded-xl">
+              <Activity className="h-5 w-5 md:h-6 md:w-6 text-white" />
             </div>
-            <h3 className="text-xl font-semibold text-[#232249]">Quick Actions</h3>
+            <h3 className="text-lg md:text-xl font-semibold text-[#232249]">Quick Actions</h3>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
             <a
               href="/locations"
-              className="group flex items-center space-x-4 p-6 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200 hover:shadow-lg hover:border-[#232249] transition-all duration-300"
+              className="group flex items-center space-x-3 md:space-x-4 p-4 md:p-6 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200 hover:shadow-lg hover:border-[#232249] transition-all duration-300 min-h-[44px] active:scale-95"
             >
-              <div className="p-4 bg-[#232249] rounded-xl">
-                <MapPin className="h-7 w-7 text-white" />
+              <div className="p-3 md:p-4 bg-[#232249] rounded-xl flex-shrink-0">
+                <MapPin className="h-5 w-5 md:h-7 md:w-7 text-white" />
               </div>
-              <div>
-                <h4 className="font-semibold text-[#232249] group-hover:text-[#232249] transition-colors">Locations</h4>
-                <p className="text-sm text-gray-600">Manage locations</p>
+              <div className="min-w-0 flex-1">
+                <h4 className="font-semibold text-[#232249] group-hover:text-[#232249] transition-colors text-sm md:text-base">Locations</h4>
+                <p className="text-xs md:text-sm text-gray-600">Manage locations</p>
               </div>
             </a>
             
             <a
               href="/manager/users"
-              className="group flex items-center space-x-4 p-6 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200 hover:shadow-lg hover:border-[#232249] transition-all duration-300"
+              className="group flex items-center space-x-3 md:space-x-4 p-4 md:p-6 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200 hover:shadow-lg hover:border-[#232249] transition-all duration-300 min-h-[44px] active:scale-95"
             >
-              <div className="p-4 bg-[#232249] rounded-xl">
-                <Users className="h-7 w-7 text-white" />
+              <div className="p-3 md:p-4 bg-[#232249] rounded-xl flex-shrink-0">
+                <Users className="h-5 w-5 md:h-7 md:w-7 text-white" />
               </div>
-              <div>
-                <h4 className="font-semibold text-[#232249] group-hover:text-[#232249] transition-colors">Users</h4>
-                <p className="text-sm text-gray-600">Manage team</p>
+              <div className="min-w-0 flex-1">
+                <h4 className="font-semibold text-[#232249] group-hover:text-[#232249] transition-colors text-sm md:text-base">Users</h4>
+                <p className="text-xs md:text-sm text-gray-600">Manage team</p>
               </div>
             </a>
 
             <a
               href="/manager/work-orders"
-              className="group flex items-center space-x-4 p-6 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200 hover:shadow-lg hover:border-[#232249] transition-all duration-300"
+              className="group flex items-center space-x-3 md:space-x-4 p-4 md:p-6 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200 hover:shadow-lg hover:border-[#232249] transition-all duration-300 min-h-[44px] active:scale-95"
             >
-              <div className="p-4 bg-[#232249] rounded-xl">
-                <FileText className="h-7 w-7 text-white" />
+              <div className="p-3 md:p-4 bg-[#232249] rounded-xl flex-shrink-0">
+                <FileText className="h-5 w-5 md:h-7 md:w-7 text-white" />
               </div>
-              <div>
-                <h4 className="font-semibold text-[#232249] group-hover:text-[#232249] transition-colors">Work Orders</h4>
-                <p className="text-sm text-gray-600">Track progress</p>
+              <div className="min-w-0 flex-1">
+                <h4 className="font-semibold text-[#232249] group-hover:text-[#232249] transition-colors text-sm md:text-base">Work Orders</h4>
+                <p className="text-xs md:text-sm text-gray-600">Track progress</p>
               </div>
             </a>
             
             <a
               href="/manager/reports"
-              className="group flex items-center space-x-4 p-6 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200 hover:shadow-lg hover:border-[#232249] transition-all duration-300"
+              className="group flex items-center space-x-3 md:space-x-4 p-4 md:p-6 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200 hover:shadow-lg hover:border-[#232249] transition-all duration-300 min-h-[44px] active:scale-95"
             >
-              <div className="p-4 bg-[#232249] rounded-xl">
-                <BarChart3 className="h-7 w-7 text-white" />
+              <div className="p-3 md:p-4 bg-[#232249] rounded-xl flex-shrink-0">
+                <BarChart3 className="h-5 w-5 md:h-7 md:w-7 text-white" />
               </div>
-              <div>
-                <h4 className="font-semibold text-[#232249] group-hover:text-[#232249] transition-colors">Reports</h4>
-                <p className="text-sm text-gray-600">View analytics</p>
+              <div className="min-w-0 flex-1">
+                <h4 className="font-semibold text-[#232249] group-hover:text-[#232249] transition-colors text-sm md:text-base">Reports</h4>
+                <p className="text-xs md:text-sm text-gray-600">View analytics</p>
               </div>
             </a>
+          </div>
           </div>
         </motion.div>
 
         {/* Essential Stats Grid - 3 Key Metrics */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 max-w-7xl mx-auto">
           <StatCard
             icon={Users}
             title="Team Members"
@@ -517,7 +521,7 @@ const ManagerDashboard = () => {
         </div>
 
         {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 max-w-7xl mx-auto">
           {/* Recent Work Orders */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -525,19 +529,19 @@ const ManagerDashboard = () => {
             transition={{ duration: 0.6, delay: 0.3 }}
             className="lg:col-span-2 bg-white rounded-2xl shadow-lg border border-gray-100 p-6"
           >
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-between mb-4 md:mb-6">
               <div className="flex items-center space-x-3">
                 <div className="p-2 bg-[#232249] rounded-xl">
                   <ClipboardList className="h-5 w-5 text-white" />
                 </div>
-                <h3 className="text-xl font-semibold text-[#232249]">Recent Work Orders</h3>
+                <h3 className="text-lg md:text-xl font-semibold text-[#232249]">Recent Work Orders</h3>
               </div>
-              <a href="/manager/work-orders" className="text-slate-800 hover:text-slate-900 font-medium text-sm flex items-center space-x-1 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors min-h-[44px]">
+              <a href="/manager/work-orders" className="text-slate-800 hover:text-slate-900 font-medium text-sm flex items-center space-x-1 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors min-h-[44px] active:scale-95">
                 <span>View All</span>
                 <ArrowUpRight className="h-4 w-4" />
               </a>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
               {loading ? (
                 // Loading skeleton
                 Array.from({ length: 4 }).map((_, index) => (
@@ -601,7 +605,7 @@ const ManagerDashboard = () => {
         </div>
 
         {/* Performance Overview */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 max-w-7xl mx-auto">
           {/* Team Performance */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -609,11 +613,11 @@ const ManagerDashboard = () => {
             transition={{ duration: 0.6, delay: 0.5 }}
             className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6"
           >
-            <div className="flex items-center space-x-3 mb-6">
+            <div className="flex items-center space-x-3 mb-4 md:mb-6">
               <div className="p-2 bg-[#232249] rounded-xl">
                 <Target className="h-5 w-5 text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-[#232249]">Team Performance</h3>
+              <h3 className="text-lg md:text-xl font-semibold text-[#232249]">Team Performance</h3>
             </div>
             <div className="space-y-6">
               <div>
@@ -699,11 +703,11 @@ const ManagerDashboard = () => {
             transition={{ duration: 0.6, delay: 0.6 }}
             className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6"
           >
-            <div className="flex items-center space-x-3 mb-6">
+            <div className="flex items-center space-x-3 mb-4 md:mb-6">
               <div className="p-2 bg-[#232249] rounded-xl">
                 <Calendar className="h-5 w-5 text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-[#232249]">Upcoming Deadlines</h3>
+              <h3 className="text-lg md:text-xl font-semibold text-[#232249]">Upcoming Deadlines</h3>
             </div>
             <div className="space-y-4">
               {loading ? (
@@ -777,6 +781,7 @@ const ManagerDashboard = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.7 }}
+          className="max-w-7xl mx-auto"
         >
           <PendingUserApprovals />
         </motion.div>

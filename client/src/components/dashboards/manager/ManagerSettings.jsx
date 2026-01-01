@@ -202,14 +202,14 @@ const ManagerSettings = () => {
   const TabButton = ({ id, label, icon: Icon, color = '#232249' }) => (
     <button
       onClick={() => setActiveTab(id)}
-      className={`flex items-center space-x-3 px-6 py-4 rounded-xl font-semibold transition-all duration-300 w-full text-left ${
+      className={`flex items-center space-x-3 px-4 md:px-6 py-4 min-h-[44px] rounded-xl font-semibold transition-all duration-300 w-full text-left active:scale-95 ${
         activeTab === id
           ? 'bg-[#232249] text-white shadow-xl'
           : 'bg-white text-gray-700 hover:bg-gray-50 hover:shadow-lg border border-gray-200'
       }`}
     >
       <Icon className={`h-5 w-5 ${activeTab === id ? 'text-white' : 'text-[#232249]'}`} />
-      <span>{label}</span>
+      <span className="text-sm md:text-base">{label}</span>
     </button>
   );
 
@@ -292,7 +292,7 @@ const ManagerSettings = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      <div className="w-full px-4 md:px-6 lg:px-8 py-4 md:py-8 space-y-4 md:space-y-8">
+      <div className="w-full max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-4 md:py-8 space-y-4 md:space-y-8">
         {/* Header */}
         <div className="bg-white rounded-xl md:rounded-2xl shadow-xl p-4 md:p-6 border border-gray-100">
           <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
@@ -300,7 +300,7 @@ const ManagerSettings = () => {
               <Settings className="h-6 w-6 md:h-8 md:w-8 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-slate-800 to-slate-900 bg-clip-text text-transparent">
+              <h1 className="text-xl md:text-3xl font-bold bg-gradient-to-r from-slate-800 to-slate-900 bg-clip-text text-transparent">
                 Manager Settings
               </h1>
               <p className="text-gray-600 mt-1 font-medium text-sm md:text-base">
@@ -345,7 +345,7 @@ const ManagerSettings = () => {
                     <User className="h-8 w-8 text-white" />
                   </div>
                   <div>
-                    <h2 className="text-2xl font-bold text-[#232249]">Profile Information</h2>
+                    <h2 className="text-xl md:text-2xl font-bold text-[#232249]">Profile Information</h2>
                     <p className="text-gray-600">Update your personal details and contact information</p>
                   </div>
                 </div>
@@ -468,7 +468,7 @@ const ManagerSettings = () => {
                       className="flex items-center space-x-2 bg-gradient-to-r from-[#232249] to-[#232249]/90 text-white px-8 py-3 rounded-xl font-semibold hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <Save className="h-5 w-5" />
-                      <span>{loading ? 'Updating...' : 'Update Profile'}</span>
+                      <span className="text-sm md:text-base">{loading ? 'Updating...' : 'Update Profile'}</span>
                     </button>
                   </div>
                 </form>
@@ -483,7 +483,7 @@ const ManagerSettings = () => {
                     <Shield className="h-8 w-8 text-white" />
                   </div>
                   <div>
-                    <h2 className="text-2xl font-bold text-[#232249]">Security Settings</h2>
+                    <h2 className="text-xl md:text-2xl font-bold text-[#232249]">Security Settings</h2>
                     <p className="text-gray-600">Update your password and security preferences</p>
                   </div>
                 </div>
@@ -540,7 +540,7 @@ const ManagerSettings = () => {
                       className="flex items-center space-x-2 bg-gradient-to-r from-red-500 to-red-600 text-white px-8 py-3 rounded-xl font-semibold hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <Lock className="h-5 w-5" />
-                      <span>{loading ? 'Changing...' : 'Change Password'}</span>
+                      <span className="text-sm md:text-base">{loading ? 'Changing...' : 'Change Password'}</span>
                     </button>
                   </div>
                 </form>
@@ -555,7 +555,7 @@ const ManagerSettings = () => {
                     <Users className="h-8 w-8 text-white" />
                   </div>
                   <div>
-                    <h2 className="text-2xl font-bold text-[#232249]">Team Settings</h2>
+                    <h2 className="text-xl md:text-2xl font-bold text-[#232249]">Team Settings</h2>
                     <p className="text-gray-600">Configure team workflow and permissions</p>
                   </div>
                 </div>
@@ -648,7 +648,7 @@ const ManagerSettings = () => {
                       className="flex items-center space-x-2 bg-gradient-to-r from-purple-500 to-purple-600 text-white px-8 py-3 rounded-xl font-semibold hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <Save className="h-5 w-5" />
-                      <span>{loading ? 'Saving...' : 'Save Team Settings'}</span>
+                      <span className="text-sm md:text-base">{loading ? 'Saving...' : 'Save Team Settings'}</span>
                     </button>
                   </div>
                 </form>
@@ -663,7 +663,7 @@ const ManagerSettings = () => {
                     <Monitor className="h-8 w-8 text-white" />
                   </div>
                   <div>
-                    <h2 className="text-2xl font-bold text-[#232249]">Dashboard Preferences</h2>
+                    <h2 className="text-xl md:text-2xl font-bold text-[#232249]">Dashboard Preferences</h2>
                     <p className="text-gray-600">Customize your dashboard layout and appearance</p>
                   </div>
                 </div>
@@ -776,7 +776,7 @@ const ManagerSettings = () => {
                       className="flex items-center space-x-2 bg-gradient-to-r from-green-500 to-green-600 text-white px-8 py-3 rounded-xl font-semibold hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <Save className="h-5 w-5" />
-                      <span>{loading ? 'Saving...' : 'Save Preferences'}</span>
+                      <span className="text-sm md:text-base">{loading ? 'Saving...' : 'Save Preferences'}</span>
                     </button>
                   </div>
                 </form>

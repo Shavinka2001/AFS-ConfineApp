@@ -135,7 +135,7 @@ const UserModal = ({ isOpen, onClose, onSubmit, title, mode, user }) => {
                 <h4 className="text-lg font-semibold text-[#232249]">Personal Information</h4>
               </div>
               
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="block text-sm font-semibold text-gray-700">First Name</label>
                   <motion.input
@@ -144,7 +144,7 @@ const UserModal = ({ isOpen, onClose, onSubmit, title, mode, user }) => {
                     required
                     value={formData.firstName}
                     onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                    className="w-full px-4 py-3 bg-gray-50/50 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-[#232249]/10 focus:border-[#232249] transition-all duration-300 placeholder-gray-400"
+                    className="w-full h-12 px-4 py-3 bg-gray-50/50 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-[#232249]/10 focus:border-[#232249] transition-all duration-300 placeholder-gray-400"
                     placeholder="Enter first name"
                   />
                 </div>
@@ -156,7 +156,7 @@ const UserModal = ({ isOpen, onClose, onSubmit, title, mode, user }) => {
                     required
                     value={formData.lastName}
                     onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                    className="w-full px-4 py-3 bg-gray-50/50 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-[#232249]/10 focus:border-[#232249] transition-all duration-300 placeholder-gray-400"
+                    className="w-full h-12 px-4 py-3 bg-gray-50/50 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-[#232249]/10 focus:border-[#232249] transition-all duration-300 placeholder-gray-400"
                     placeholder="Enter last name"
                   />
                 </div>
@@ -170,7 +170,7 @@ const UserModal = ({ isOpen, onClose, onSubmit, title, mode, user }) => {
                   required
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-4 py-3 bg-gray-50/50 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-[#232249]/10 focus:border-[#232249] transition-all duration-300 placeholder-gray-400"
+                  className="w-full h-12 px-4 py-3 bg-gray-50/50 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-[#232249]/10 focus:border-[#232249] transition-all duration-300 placeholder-gray-400"
                   placeholder="user@company.com"
                 />
               </div>
@@ -195,7 +195,7 @@ const UserModal = ({ isOpen, onClose, onSubmit, title, mode, user }) => {
                       required={mode === 'add'}
                       value={formData.password}
                       onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                      className="w-full px-4 py-3 pr-12 bg-gray-50/50 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-[#232249]/10 focus:border-[#232249] transition-all duration-300 placeholder-gray-400"
+                      className="w-full h-12 px-4 py-3 pr-12 bg-gray-50/50 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-[#232249]/10 focus:border-[#232249] transition-all duration-300 placeholder-gray-400"
                       placeholder={mode === 'add' ? 'Enter secure password' : 'Leave blank to keep current'}
                     />
                     <button
@@ -219,7 +219,7 @@ const UserModal = ({ isOpen, onClose, onSubmit, title, mode, user }) => {
 
               <div className="space-y-3">
                 <label className="block text-sm font-semibold text-gray-700">User Role</label>
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                   {['technician', 'manager', 'user'].map((role) => {
                     const roleInfo = getRoleInfo(role);
                     const RoleIcon = roleInfo.icon;
@@ -288,7 +288,7 @@ const UserModal = ({ isOpen, onClose, onSubmit, title, mode, user }) => {
                 whileTap={{ scale: 0.98 }}
                 type="button"
                 onClick={onClose}
-                className="flex-1 px-6 py-4 border-2 border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all duration-300 font-semibold"
+                className="flex-1 px-6 py-4 min-h-[48px] border-2 border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all duration-300 font-semibold active:scale-95"
               >
                 Cancel
               </motion.button>
@@ -297,7 +297,7 @@ const UserModal = ({ isOpen, onClose, onSubmit, title, mode, user }) => {
                 whileTap={{ scale: 0.98 }}
                 type="submit"
                 form="user-form"
-                className="flex-1 bg-gradient-to-r from-[#232249] to-[#232249]/90 text-white px-6 py-4 rounded-xl hover:shadow-2xl hover:shadow-[#232249]/25 transition-all duration-300 font-semibold flex items-center justify-center space-x-2"
+                className="flex-1 bg-gradient-to-r from-[#232249] to-[#232249]/90 text-white px-6 py-4 min-h-[48px] rounded-xl hover:shadow-2xl hover:shadow-[#232249]/25 transition-all duration-300 font-semibold flex items-center justify-center space-x-2 active:scale-95"
               >
                 <Save className="h-5 w-5" />
                 <span>{mode === 'add' ? 'Create User' : 'Save Changes'}</span>
@@ -431,7 +431,7 @@ const UserDetailsModal = ({ isOpen, onClose, user }) => {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={onClose}
-              className="w-full bg-gradient-to-r from-[#232249] to-[#232249]/90 text-white px-6 py-4 rounded-xl hover:shadow-xl transition-all duration-300 font-semibold"
+              className="w-full bg-gradient-to-r from-[#232249] to-[#232249]/90 text-white px-6 py-4 min-h-[48px] rounded-xl hover:shadow-xl transition-all duration-300 font-semibold active:scale-95"
             >
               Close
             </motion.button>
@@ -487,7 +487,7 @@ const DeleteConfirmModal = ({ isOpen, onClose, onConfirm, user }) => {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={onClose}
-              className="flex-1 px-6 py-3 border-2 border-gray-200 text-gray-700 rounded-xl hover:bg-gray-100 transition-all duration-300 font-semibold"
+              className="flex-1 px-6 py-3 min-h-[48px] border-2 border-gray-200 text-gray-700 rounded-xl hover:bg-gray-100 transition-all duration-300 font-semibold active:scale-95"
             >
               Cancel
             </motion.button>
@@ -495,7 +495,7 @@ const DeleteConfirmModal = ({ isOpen, onClose, onConfirm, user }) => {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={onConfirm}
-              className="flex-1 bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-3 rounded-xl hover:shadow-xl transition-all duration-300 font-semibold"
+              className="flex-1 bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-3 min-h-[48px] rounded-xl hover:shadow-xl transition-all duration-300 font-semibold active:scale-95"
             >
               Delete
             </motion.button>
@@ -821,151 +821,266 @@ const ManagerUserManagement = () => {
     >
       <div className="absolute -right-60 -top-60 w-96 h-96 bg-blue-50 rounded-full blur-3xl opacity-30"></div>
       <div className="absolute -left-60 -bottom-60 w-96 h-96 bg-indigo-50 rounded-full blur-3xl opacity-30"></div>
-      
-      <div className="relative z-10 overflow-x-auto">
-        <table className="w-full">
-          <thead>
-            <tr className="bg-gradient-to-r from-slate-100/80 to-slate-50/80 backdrop-blur-sm">
-              <th className="px-8 py-5 text-left">
-                <input
-                  type="checkbox"
-                  checked={selectedUsers.length === users.length && users.length > 0}
-                  onChange={(e) => handleSelectAll(e.target.checked)}
-                  className="rounded-md border-slate-300 text-blue-600 focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-white transition-all duration-200 cursor-pointer w-5 h-5"
-                />
-              </th>
-              <th className="px-8 py-5 text-left">
-                <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">User</span>
-              </th>
-              <th className="px-8 py-5 text-left">
-                <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">Role</span>
-              </th>
-              <th className="px-8 py-5 text-left">
-                <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">Status</span>
-              </th>
-              <th className="px-8 py-5 text-left">
-                <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">Contact</span>
-              </th>
-              <th className="px-8 py-5 text-left">
-                <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">Created</span>
-              </th>
-              <th className="px-8 py-5 text-left">
-                <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">Actions</span>
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100/60">
-            {users.map((user, index) => (
-              <motion.tr
-                key={user._id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
-                className="hover:bg-slate-50/80 transition-all duration-300 group bg-white/60"
-              >
-                <td className="px-8 py-6 whitespace-nowrap">
+
+      <div className="relative z-10 p-4 md:p-6">
+        {/* Mobile Card View */}
+        <div className="block md:hidden space-y-4">
+          {users.map((user, index) => (
+            <motion.div
+              key={user._id}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.05 }}
+              className="bg-white rounded-2xl shadow-lg border border-gray-100 p-4 hover:shadow-xl transition-all duration-300"
+            >
+              {/* Card Header */}
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center space-x-3">
                   <input
                     type="checkbox"
                     checked={selectedUsers.includes(user._id)}
                     onChange={(e) => handleSelectUser(user._id, e.target.checked)}
                     className="rounded-md border-slate-300 text-blue-600 focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-white transition-all duration-200 cursor-pointer w-5 h-5"
                   />
-                </td>
-                <td className="px-8 py-6 whitespace-nowrap">
-                  <div className="flex items-center">
-                    <div className="relative">
-                      <div className="h-14 w-14 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg transform transition-transform duration-300 group-hover:rotate-3 group-hover:scale-110">
-                        <span className="text-white font-bold text-lg">
-                          {user.firstName?.charAt(0)}{user.lastName?.charAt(0)}
-                        </span>
-                      </div>
-                      <div className="absolute -bottom-1 -right-1 h-4 w-4 bg-green-500 rounded-full border-2 border-white shadow-sm"></div>
+                  <div className="relative">
+                    <div className="h-12 w-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+                      <span className="text-white font-bold text-sm">
+                        {user.firstName?.charAt(0)}{user.lastName?.charAt(0)}
+                      </span>
                     </div>
-                    <div className="ml-5">
-                      <div className="text-base font-semibold text-slate-800 group-hover:text-blue-700 transition-colors duration-300">
-                        {user.firstName} {user.lastName}
-                      </div>
-                      <div className="text-sm text-slate-500 group-hover:text-slate-700 transition-colors duration-300">{user.email}</div>
-                    </div>
+                    <div className="absolute -bottom-1 -right-1 h-3 w-3 bg-green-500 rounded-full border-2 border-white shadow-sm"></div>
                   </div>
-                </td>
-                <td className="px-8 py-6 whitespace-nowrap">
-                  <span className={`inline-flex items-center px-3.5 py-1.5 rounded-full text-xs font-semibold border ${getRoleBadgeColor(user.role)}`}>
-                    {user.role?.charAt(0).toUpperCase() + user.role?.slice(1)}
-                  </span>
-                </td>
-                <td className="px-8 py-6 whitespace-nowrap">
-                  <span className={`inline-flex items-center px-3.5 py-1.5 rounded-full text-xs font-semibold border ${getStatusBadgeColor(user.status)}`}>
-                    {user.status === 'active' && <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>}
-                    {user.status === 'inactive' && <div className="w-2 h-2 bg-red-500 rounded-full mr-2"></div>}
-                    {user.status === 'pending' && <div className="w-2 h-2 bg-yellow-500 rounded-full mr-2 animate-pulse"></div>}
-                    {user.status?.charAt(0).toUpperCase() + user.status?.slice(1)}
-                  </span>
-                </td>
-                <td className="px-8 py-6 whitespace-nowrap">
-                  <div className="space-y-2">
-                    {user.phone && (
-                      <div className="flex items-center text-sm text-slate-600 group-hover:text-slate-800 transition-colors duration-300">
-                        <Phone className="h-4 w-4 text-slate-400 mr-3 group-hover:text-blue-500 transition-colors duration-300" />
-                        <span className="font-medium">{user.phone}</span>
-                      </div>
-                    )}
-                    <div className="flex items-center text-sm text-slate-600 group-hover:text-slate-800 transition-colors duration-300">
-                      <Mail className="h-4 w-4 text-slate-400 mr-3 group-hover:text-blue-500 transition-colors duration-300" />
-                      <span className="font-medium">{user.email}</span>
+                  <div>
+                    <div className="font-semibold text-gray-900 text-base">
+                      {user.firstName} {user.lastName}
                     </div>
+                    <div className="text-sm text-gray-500">{user.email}</div>
                   </div>
-                </td>
-                <td className="px-8 py-6 whitespace-nowrap">
-                  <div className="flex items-center text-sm text-slate-600 group-hover:text-slate-800 transition-colors duration-300">
-                    <Calendar className="h-4 w-4 text-slate-400 mr-3 group-hover:text-blue-500 transition-colors duration-300" />
-                    <span className="font-medium">{new Date(user.createdAt).toLocaleDateString('en-US', { 
+                </div>
+                <div className="flex space-x-2">
+                  <button
+                    onClick={() => openViewModal(user)}
+                    className="p-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg transition-all duration-300 active:scale-95"
+                    title="View"
+                  >
+                    <Eye className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={() => openEditModal(user)}
+                    className="p-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-lg transition-all duration-300 active:scale-95"
+                    title="Edit"
+                  >
+                    <Edit className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={() => handleToggleStatus(user)}
+                    className={`p-2 rounded-lg transition-all duration-300 active:scale-95 ${
+                      user.status === 'active'
+                        ? 'bg-amber-50 text-amber-600 hover:bg-amber-100'
+                        : 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100'
+                    }`}
+                    title={user.status === 'active' ? 'Deactivate' : 'Activate'}
+                  >
+                    {user.status === 'active' ? <UserX className="h-4 w-4" /> : <UserCheck className="h-4 w-4" />}
+                  </button>
+                  <button
+                    onClick={() => handleDeleteUser(user)}
+                    className="p-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg transition-all duration-300 active:scale-95"
+                    title="Delete"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Card Content */}
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span className="text-gray-500">Role:</span>
+                  <div className="mt-1">
+                    <span className={`inline-flex px-2 py-1 rounded-full text-xs font-semibold border ${getRoleBadgeColor(user.role)}`}>
+                      {user.role?.charAt(0).toUpperCase() + user.role?.slice(1)}
+                    </span>
+                  </div>
+                </div>
+                <div>
+                  <span className="text-gray-500">Status:</span>
+                  <div className="mt-1">
+                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold border ${getStatusBadgeColor(user.status)}`}>
+                      {user.status === 'active' && <div className="w-2 h-2 bg-green-500 rounded-full mr-1 animate-pulse"></div>}
+                      {user.status === 'inactive' && <div className="w-2 h-2 bg-red-500 rounded-full mr-1"></div>}
+                      {user.status === 'pending' && <div className="w-2 h-2 bg-yellow-500 rounded-full mr-1 animate-pulse"></div>}
+                      {user.status?.charAt(0).toUpperCase() + user.status?.slice(1)}
+                    </span>
+                  </div>
+                </div>
+                <div>
+                  <span className="text-gray-500">Phone:</span>
+                  <div className="mt-1 font-medium text-gray-900">
+                    {user.phone || 'Not provided'}
+                  </div>
+                </div>
+                <div>
+                  <span className="text-gray-500">Created:</span>
+                  <div className="mt-1 font-medium text-gray-900">
+                    {new Date(user.createdAt).toLocaleDateString('en-US', {
                       year: 'numeric',
-                      month: 'short', 
+                      month: 'short',
                       day: 'numeric'
-                    })}</span>
+                    })}
                   </div>
-                </td>
-                <td className="px-8 py-6 whitespace-nowrap">
-                  <div className="flex items-center space-x-2">
-                    <button
-                      onClick={() => openViewModal(user)}
-                      className="p-2.5 bg-white text-blue-600 hover:text-white hover:bg-blue-600 rounded-lg transition-all duration-300 shadow-sm hover:shadow-md border border-blue-100 hover:border-blue-600 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0"
-                      title="View"
-                    >
-                      <Eye className="h-4 w-4" />
-                    </button>
-                    <button
-                      onClick={() => openEditModal(user)}
-                      className="p-2.5 bg-white text-indigo-600 hover:text-white hover:bg-indigo-600 rounded-lg transition-all duration-300 shadow-sm hover:shadow-md border border-indigo-100 hover:border-indigo-600 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0"
-                      title="Edit"
-                    >
-                      <Edit className="h-4 w-4" />
-                    </button>
-                    <button
-                      onClick={() => handleToggleStatus(user)}
-                      className={`p-2.5 bg-white rounded-lg transition-all duration-300 shadow-sm hover:shadow-md border opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 ${
-                        user.status === 'active'
-                          ? 'text-amber-600 hover:text-white hover:bg-amber-600 border-amber-100 hover:border-amber-600'
-                          : 'text-emerald-600 hover:text-white hover:bg-emerald-600 border-emerald-100 hover:border-emerald-600'
-                      }`}
-                      title={user.status === 'active' ? 'Deactivate' : 'Activate'}
-                    >
-                      {user.status === 'active' ? <UserX className="h-4 w-4" /> : <UserCheck className="h-4 w-4" />}
-                    </button>
-                    <button
-                      onClick={() => handleDeleteUser(user)}
-                      className="p-2.5 bg-white text-red-600 hover:text-white hover:bg-red-600 rounded-lg transition-all duration-300 shadow-sm hover:shadow-md border border-red-100 hover:border-red-600 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0"
-                      title="Delete"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  </div>
-                </td>
-              </motion.tr>
-            ))}
-          </tbody>
-        </table>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Desktop Table View */}
+        <div className="hidden md:block overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="bg-gradient-to-r from-slate-100/80 to-slate-50/80 backdrop-blur-sm">
+                <th className="px-8 py-5 text-left">
+                  <input
+                    type="checkbox"
+                    checked={selectedUsers.length === users.length && users.length > 0}
+                    onChange={(e) => handleSelectAll(e.target.checked)}
+                    className="rounded-md border-slate-300 text-blue-600 focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-white transition-all duration-200 cursor-pointer w-5 h-5"
+                  />
+                </th>
+                <th className="px-8 py-5 text-left">
+                  <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">User</span>
+                </th>
+                <th className="px-8 py-5 text-left">
+                  <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">Role</span>
+                </th>
+                <th className="px-8 py-5 text-left">
+                  <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">Status</span>
+                </th>
+                <th className="px-8 py-5 text-left">
+                  <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">Contact</span>
+                </th>
+                <th className="px-8 py-5 text-left">
+                  <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">Created</span>
+                </th>
+                <th className="px-8 py-5 text-left">
+                  <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">Actions</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100/60">
+              {users.map((user, index) => (
+                <motion.tr
+                  key={user._id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  className="hover:bg-slate-50/80 transition-all duration-300 group bg-white/60"
+                >
+                  <td className="px-8 py-6 whitespace-nowrap">
+                    <input
+                      type="checkbox"
+                      checked={selectedUsers.includes(user._id)}
+                      onChange={(e) => handleSelectUser(user._id, e.target.checked)}
+                      className="rounded-md border-slate-300 text-blue-600 focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-white transition-all duration-200 cursor-pointer w-5 h-5"
+                    />
+                  </td>
+                  <td className="px-8 py-6 whitespace-nowrap">
+                    <div className="flex items-center">
+                      <div className="relative">
+                        <div className="h-14 w-14 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg transform transition-transform duration-300 group-hover:rotate-3 group-hover:scale-110">
+                          <span className="text-white font-bold text-lg">
+                            {user.firstName?.charAt(0)}{user.lastName?.charAt(0)}
+                          </span>
+                        </div>
+                        <div className="absolute -bottom-1 -right-1 h-4 w-4 bg-green-500 rounded-full border-2 border-white shadow-sm"></div>
+                      </div>
+                      <div className="ml-5">
+                        <div className="text-base font-semibold text-slate-800 group-hover:text-blue-700 transition-colors duration-300">
+                          {user.firstName} {user.lastName}
+                        </div>
+                        <div className="text-sm text-slate-500 group-hover:text-slate-700 transition-colors duration-300">{user.email}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-8 py-6 whitespace-nowrap">
+                    <span className={`inline-flex items-center px-3.5 py-1.5 rounded-full text-xs font-semibold border ${getRoleBadgeColor(user.role)}`}>
+                      {user.role?.charAt(0).toUpperCase() + user.role?.slice(1)}
+                    </span>
+                  </td>
+                  <td className="px-8 py-6 whitespace-nowrap">
+                    <span className={`inline-flex items-center px-3.5 py-1.5 rounded-full text-xs font-semibold border ${getStatusBadgeColor(user.status)}`}>
+                      {user.status === 'active' && <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>}
+                      {user.status === 'inactive' && <div className="w-2 h-2 bg-red-500 rounded-full mr-2"></div>}
+                      {user.status === 'pending' && <div className="w-2 h-2 bg-yellow-500 rounded-full mr-2 animate-pulse"></div>}
+                      {user.status?.charAt(0).toUpperCase() + user.status?.slice(1)}
+                    </span>
+                  </td>
+                  <td className="px-8 py-6 whitespace-nowrap">
+                    <div className="space-y-2">
+                      {user.phone && (
+                        <div className="flex items-center text-sm text-slate-600 group-hover:text-slate-800 transition-colors duration-300">
+                          <Phone className="h-4 w-4 text-slate-400 mr-3 group-hover:text-blue-500 transition-colors duration-300" />
+                          <span className="font-medium">{user.phone}</span>
+                        </div>
+                      )}
+                      <div className="flex items-center text-sm text-slate-600 group-hover:text-slate-800 transition-colors duration-300">
+                        <Mail className="h-4 w-4 text-slate-400 mr-3 group-hover:text-blue-500 transition-colors duration-300" />
+                        <span className="font-medium">{user.email}</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-8 py-6 whitespace-nowrap">
+                    <div className="flex items-center text-sm text-slate-600 group-hover:text-slate-800 transition-colors duration-300">
+                      <Calendar className="h-4 w-4 text-slate-400 mr-3 group-hover:text-blue-500 transition-colors duration-300" />
+                      <span className="font-medium">{new Date(user.createdAt).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                      })}</span>
+                    </div>
+                  </td>
+                  <td className="px-8 py-6 whitespace-nowrap">
+                    <div className="flex items-center space-x-2">
+                      <button
+                        onClick={() => openViewModal(user)}
+                        className="p-2.5 bg-white text-blue-600 hover:text-white hover:bg-blue-600 rounded-lg transition-all duration-300 shadow-sm hover:shadow-md border border-blue-100 hover:border-blue-600 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 active:scale-95"
+                        title="View"
+                      >
+                        <Eye className="h-4 w-4" />
+                      </button>
+                      <button
+                        onClick={() => openEditModal(user)}
+                        className="p-2.5 bg-white text-indigo-600 hover:text-white hover:bg-indigo-600 rounded-lg transition-all duration-300 shadow-sm hover:shadow-md border border-indigo-100 hover:border-indigo-600 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 active:scale-95"
+                        title="Edit"
+                      >
+                        <Edit className="h-4 w-4" />
+                      </button>
+                      <button
+                        onClick={() => handleToggleStatus(user)}
+                        className={`p-2.5 bg-white rounded-lg transition-all duration-300 shadow-sm hover:shadow-md border opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 active:scale-95 ${
+                          user.status === 'active'
+                            ? 'text-amber-600 hover:text-white hover:bg-amber-600 border-amber-100 hover:border-amber-600'
+                            : 'text-emerald-600 hover:text-white hover:bg-emerald-600 border-emerald-100 hover:border-emerald-600'
+                        }`}
+                        title={user.status === 'active' ? 'Deactivate' : 'Activate'}
+                      >
+                        {user.status === 'active' ? <UserX className="h-4 w-4" /> : <UserCheck className="h-4 w-4" />}
+                      </button>
+                      <button
+                        onClick={() => handleDeleteUser(user)}
+                        className="p-2.5 bg-white text-red-600 hover:text-white hover:bg-red-600 rounded-lg transition-all duration-300 shadow-sm hover:shadow-md border border-red-100 hover:border-red-600 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 active:scale-95"
+                        title="Delete"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </td>
+                </motion.tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Pagination */}
@@ -1055,7 +1170,7 @@ const ManagerUserManagement = () => {
             <div className="p-8 border-b border-slate-200/60">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-2xl font-bold text-slate-900">
+                  <h3 className="text-xl md:text-2xl font-bold text-slate-900">
                     {showCreateModal ? 'Create New User' : 'Edit User'}
                   </h3>
                   <p className="text-slate-600 mt-1">
@@ -1068,7 +1183,7 @@ const ManagerUserManagement = () => {
                     setShowEditModal(false);
                     resetForm();
                   }}
-                  className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-all duration-200"
+                  className="p-2 min-h-[44px] min-w-[44px] text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-all duration-200 active:scale-95"
                 >
                   <X className="h-6 w-6" />
                 </button>
@@ -1092,7 +1207,7 @@ const ManagerUserManagement = () => {
                     name="firstName"
                     value={formData.firstName}
                     onChange={handleInputChange}
-                    className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/50 backdrop-blur-sm transition-all duration-200 ${
+                    className={`w-full h-12 px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/50 backdrop-blur-sm transition-all duration-200 ${
                       formErrors.firstName ? 'border-red-300 bg-red-50' : 'border-slate-200'
                     }`}
                     placeholder="Enter first name"
@@ -1111,7 +1226,7 @@ const ManagerUserManagement = () => {
                     name="lastName"
                     value={formData.lastName}
                     onChange={handleInputChange}
-                    className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/50 backdrop-blur-sm transition-all duration-200 ${
+                    className={`w-full h-12 px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/50 backdrop-blur-sm transition-all duration-200 ${
                       formErrors.lastName ? 'border-red-300 bg-red-50' : 'border-slate-200'
                     }`}
                     placeholder="Enter last name"
@@ -1131,7 +1246,7 @@ const ManagerUserManagement = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/50 backdrop-blur-sm transition-all duration-200 ${
+                  className={`w-full h-12 px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/50 backdrop-blur-sm transition-all duration-200 ${
                     formErrors.email ? 'border-red-300 bg-red-50' : 'border-slate-200'
                   }`}
                   placeholder="Enter email address"
@@ -1152,7 +1267,7 @@ const ManagerUserManagement = () => {
                       name="password"
                       value={formData.password}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/50 backdrop-blur-sm transition-all duration-200 ${
+                      className={`w-full h-12 px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/50 backdrop-blur-sm transition-all duration-200 ${
                         formErrors.password ? 'border-red-300 bg-red-50' : 'border-slate-200'
                       }`}
                       placeholder="Enter password"
@@ -1171,7 +1286,7 @@ const ManagerUserManagement = () => {
                       name="confirmPassword"
                       value={formData.confirmPassword}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/50 backdrop-blur-sm transition-all duration-200 ${
+                      className={`w-full h-12 px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/50 backdrop-blur-sm transition-all duration-200 ${
                         formErrors.confirmPassword ? 'border-red-300 bg-red-50' : 'border-slate-200'
                       }`}
                       placeholder="Confirm password"
@@ -1192,7 +1307,7 @@ const ManagerUserManagement = () => {
                     name="role"
                     value={formData.role}
                     onChange={handleInputChange}
-                    className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/50 backdrop-blur-sm transition-all duration-200 ${
+                    className={`w-full h-12 px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/50 backdrop-blur-sm transition-all duration-200 ${
                       formErrors.role ? 'border-red-300 bg-red-50' : 'border-slate-200'
                     }`}
                   >
@@ -1215,7 +1330,7 @@ const ManagerUserManagement = () => {
                     name="status"
                     value={formData.status}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/50 backdrop-blur-sm transition-all duration-200"
+                    className="w-full h-12 px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/50 backdrop-blur-sm transition-all duration-200"
                   >
                     <option value="active">Active</option>
                     <option value="inactive">Inactive</option>
@@ -1234,7 +1349,7 @@ const ManagerUserManagement = () => {
                     name="phone"
                     value={formData.phone}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/50 backdrop-blur-sm transition-all duration-200"
+                    className="w-full h-12 px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/50 backdrop-blur-sm transition-all duration-200"
                     placeholder="Enter phone number"
                   />
                 </div>
@@ -1248,7 +1363,7 @@ const ManagerUserManagement = () => {
                     name="department"
                     value={formData.department}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/50 backdrop-blur-sm transition-all duration-200"
+                    className="w-full h-12 px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/50 backdrop-blur-sm transition-all duration-200"
                     placeholder="Enter department"
                   />
                 </div>
@@ -1263,7 +1378,7 @@ const ManagerUserManagement = () => {
                   name="position"
                   value={formData.position}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/50 backdrop-blur-sm transition-all duration-200"
+                  className="w-full h-12 px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/50 backdrop-blur-sm transition-all duration-200"
                   placeholder="Enter position"
                 />
               </div>
@@ -1276,13 +1391,13 @@ const ManagerUserManagement = () => {
                     setShowEditModal(false);
                     resetForm();
                   }}
-                  className="px-6 py-3 text-slate-700 border border-slate-200 rounded-xl hover:bg-slate-50 transition-all duration-200 font-medium"
+                  className="px-6 py-3 min-h-[48px] text-slate-700 border border-slate-200 rounded-xl hover:bg-slate-50 transition-all duration-200 font-medium active:scale-95"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 font-medium"
+                  className="px-6 py-3 min-h-[48px] bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 font-medium active:scale-95"
                 >
                   {showCreateModal ? 'Create User' : 'Update User'}
                 </button>
@@ -1496,14 +1611,14 @@ const ManagerUserManagement = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      <div className="w-full px-4 md:px-6 lg:px-8 py-4 md:py-8 space-y-4 md:space-y-8">
+      <div className="w-full max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-4 md:py-8 space-y-4 md:space-y-8">
         <Toaster />
       
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-white rounded-xl md:rounded-2xl shadow-xl p-4 md:p-6 border border-gray-100 space-y-4 sm:space-y-0">
         <div className="flex items-center space-x-4 md:space-x-6">
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-[#232249] to-[#232249]/80 bg-clip-text text-transparent">
+            <h1 className="text-xl md:text-3xl font-bold bg-gradient-to-r from-[#232249] to-[#232249]/80 bg-clip-text text-transparent">
               User Management
             </h1>
             <p className="text-gray-600 mt-1 font-medium text-sm md:text-base">
@@ -1516,7 +1631,7 @@ const ManagerUserManagement = () => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setShowAddModal(true)}
-            className="bg-gradient-to-r from-[#232249] to-[#232249]/90 text-white px-4 md:px-6 py-3 min-h-[48px] rounded-xl font-semibold hover:shadow-xl transition-all duration-300 flex items-center space-x-2"
+            className="bg-gradient-to-r from-[#232249] to-[#232249]/90 text-white px-4 md:px-6 py-3 min-h-[48px] rounded-xl font-semibold hover:shadow-xl transition-all duration-300 flex items-center space-x-2 active:scale-95"
           >
             <Plus className="h-4 w-4 md:h-5 md:w-5" />
             <span className="text-sm md:text-base">Add User</span>

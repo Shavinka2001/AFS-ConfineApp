@@ -109,13 +109,15 @@ const PendingUserApprovals = () => {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-xl md:rounded-2xl shadow-lg md:shadow-xl p-4 md:p-6 border border-gray-100">
-        <div className="animate-pulse">
-          <div className="h-5 md:h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
-          <div className="space-y-3">
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className="h-12 md:h-16 bg-gray-100 rounded-xl"></div>
-            ))}
+      <div className="w-full max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
+        <div className="bg-white rounded-xl md:rounded-2xl shadow-lg md:shadow-xl p-4 md:p-6 border border-gray-100">
+          <div className="animate-pulse">
+            <div className="h-5 md:h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
+            <div className="space-y-3">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="h-12 md:h-16 bg-gray-100 rounded-xl"></div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -123,35 +125,36 @@ const PendingUserApprovals = () => {
   }
 
   return (
-    <div className="bg-white rounded-xl md:rounded-2xl shadow-lg md:shadow-xl border border-gray-100 overflow-hidden">
+    <div className="w-full max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
+      <div className="bg-white rounded-xl md:rounded-2xl shadow-lg md:shadow-xl border border-gray-100 overflow-hidden">
       {/* Compact Header */}
-      <div className="bg-gradient-to-r from-slate-800 to-slate-900 px-4 md:px-6 py-3 md:py-4">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-2 sm:space-y-0">
-          <div className="flex items-center space-x-3">
-            <div className="p-2 bg-white/10 rounded-lg">
-              <Clock className="h-4 w-4 md:h-5 md:w-5 text-white" />
+      <div className="bg-gradient-to-r from-slate-800 to-slate-900 px-4 md:px-6 py-4 md:py-5">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
+          <div className="flex items-center gap-3 md:gap-4">
+            <div className="p-2 md:p-2.5 bg-white/10 rounded-lg">
+              <Clock className="h-5 w-5 md:h-5 md:w-5 text-white" />
             </div>
             <div>
-              <h3 className="text-base md:text-lg font-semibold text-white">Pending Approvals</h3>
+              <h3 className="text-base md:text-lg lg:text-xl font-semibold text-white">Pending Approvals</h3>
               <p className="text-white/70 text-xs md:text-sm">
                 {pendingUsers.length} {pendingUsers.length === 1 ? 'user' : 'users'} awaiting review
               </p>
             </div>
           </div>
-          <div className="px-3 py-1 bg-white/10 rounded-lg">
+          <div className="px-3 py-1.5 bg-white/10 rounded-lg">
             <span className="text-white text-xs md:text-sm font-medium">Today</span>
           </div>
         </div>
       </div>
 
       {/* Content */}
-      <div className="p-4 md:p-6">
+      <div className="p-4 md:p-6 lg:p-8">
         {pendingUsers.length === 0 ? (
-          <div className="text-center py-8 md:py-12">
-            <div className="w-16 h-16 md:w-20 md:h-20 bg-emerald-100 rounded-xl md:rounded-2xl mx-auto mb-4 flex items-center justify-center">
-              <UserCheck className="h-8 w-8 md:h-10 md:w-10 text-emerald-600" />
+          <div className="text-center py-8 md:py-12 lg:py-16">
+            <div className="w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 bg-emerald-100 rounded-xl md:rounded-2xl mx-auto mb-4 md:mb-5 flex items-center justify-center">
+              <UserCheck className="h-8 w-8 md:h-10 md:w-10 lg:h-12 lg:w-12 text-emerald-600" />
             </div>
-            <h4 className="text-lg md:text-xl font-semibold text-gray-900 mb-2">All Set!</h4>
+            <h4 className="text-lg md:text-xl lg:text-2xl font-semibold text-gray-900 mb-2">All Set!</h4>
             <p className="text-gray-600 text-sm md:text-base">No pending approvals at the moment.</p>
           </div>
         ) : (
@@ -227,19 +230,19 @@ const PendingUserApprovals = () => {
                     </div>
 
                     {/* Actions */}
-                    <div className="col-span-1 flex items-center justify-end space-x-2">
+                    <div className="col-span-1 flex items-center justify-end gap-2">
                       <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => handleApprove(user._id)}
                         disabled={actionLoading === user._id}
-                        className="p-2 bg-emerald-100 text-emerald-700 hover:bg-emerald-200 rounded-lg transition-all duration-200 disabled:opacity-50"
+                        className="p-2.5 bg-emerald-100 text-emerald-700 hover:bg-emerald-200 rounded-lg transition-all duration-200 disabled:opacity-50 active:scale-95 min-h-[44px] min-w-[44px] flex items-center justify-center"
                         title="Approve"
                       >
                         {actionLoading === user._id ? (
                           <div className="w-4 h-4 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
                         ) : (
-                          <CheckCircle className="h-4 w-4" />
+                          <CheckCircle className="h-5 w-5" />
                         )}
                       </motion.button>
                       
@@ -251,19 +254,19 @@ const PendingUserApprovals = () => {
                           setShowRejectModal(true);
                         }}
                         disabled={actionLoading === user._id}
-                        className="p-2 bg-red-100 text-red-700 hover:bg-red-200 rounded-lg transition-all duration-200 disabled:opacity-50"
+                        className="p-2.5 bg-red-100 text-red-700 hover:bg-red-200 rounded-lg transition-all duration-200 disabled:opacity-50 active:scale-95 min-h-[44px] min-w-[44px] flex items-center justify-center"
                         title="Reject"
                       >
-                        <XCircle className="h-4 w-4" />
+                        <XCircle className="h-5 w-5" />
                       </motion.button>
 
                       <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        className="p-2 bg-gray-100 text-gray-600 hover:bg-gray-200 rounded-lg transition-all duration-200"
+                        className="p-2.5 bg-gray-100 text-gray-600 hover:bg-gray-200 rounded-lg transition-all duration-200 active:scale-95 min-h-[44px] min-w-[44px] flex items-center justify-center"
                         title="View Details"
                       >
-                        <Eye className="h-4 w-4" />
+                        <Eye className="h-5 w-5" />
                       </motion.button>
                     </div>
                   </motion.div>
@@ -272,14 +275,14 @@ const PendingUserApprovals = () => {
             </div>
 
             {/* Mobile Card View - Hidden on Desktop */}
-            <div className="md:hidden space-y-3">
+            <div className="md:hidden space-y-3 md:space-y-4">
               {pendingUsers.map((user, index) => (
                 <motion.div
                   key={user._id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.05, duration: 0.3 }}
-                  className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-200"
+                  className="bg-white border border-gray-200 rounded-xl p-3 md:p-4 shadow-sm hover:shadow-md transition-all duration-200"
                 >
                   {/* User Header */}
                   <div className="flex items-start justify-between mb-3">
@@ -317,20 +320,20 @@ const PendingUserApprovals = () => {
                   </div>
 
                   {/* Actions */}
-                  <div className="flex items-center justify-end space-x-2">
+                  <div className="flex items-center justify-center gap-2 pt-3 border-t border-gray-100">
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={() => handleApprove(user._id)}
                       disabled={actionLoading === user._id}
-                      className="flex items-center space-x-2 px-4 py-2 bg-emerald-100 text-emerald-700 hover:bg-emerald-200 rounded-lg transition-all duration-200 disabled:opacity-50 min-h-[44px]"
+                      className="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 bg-emerald-100 text-emerald-700 hover:bg-emerald-200 rounded-lg transition-all duration-200 disabled:opacity-50 active:scale-95 min-h-[48px] text-sm font-medium"
                     >
                       {actionLoading === user._id ? (
                         <div className="w-4 h-4 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
                       ) : (
-                        <CheckCircle className="h-4 w-4" />
+                        <CheckCircle className="h-5 w-5" />
                       )}
-                      <span className="text-sm font-medium">Approve</span>
+                      <span>Approve</span>
                     </motion.button>
                     
                     <motion.button
@@ -341,10 +344,10 @@ const PendingUserApprovals = () => {
                         setShowRejectModal(true);
                       }}
                       disabled={actionLoading === user._id}
-                      className="flex items-center space-x-2 px-4 py-2 bg-red-100 text-red-700 hover:bg-red-200 rounded-lg transition-all duration-200 disabled:opacity-50 min-h-[44px]"
+                      className="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 bg-red-100 text-red-700 hover:bg-red-200 rounded-lg transition-all duration-200 disabled:opacity-50 active:scale-95 min-h-[48px] text-sm font-medium"
                     >
-                      <XCircle className="h-4 w-4" />
-                      <span className="text-sm font-medium">Reject</span>
+                      <XCircle className="h-5 w-5" />
+                      <span>Reject</span>
                     </motion.button>
                   </div>
                 </motion.div>
@@ -368,17 +371,17 @@ const PendingUserApprovals = () => {
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              className="bg-white rounded-xl md:rounded-2xl shadow-xl w-full max-w-md border border-gray-200 mx-4"
+              className="bg-white rounded-xl md:rounded-2xl shadow-2xl w-full max-w-sm md:max-w-md lg:max-w-lg border border-gray-200"
             >
               {/* Compact Header */}
-              <div className="bg-gradient-to-r from-red-500 to-red-600 px-4 md:px-6 py-3 md:py-4 rounded-t-xl md:rounded-t-2xl">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="p-2 bg-white/20 rounded-lg">
-                      <UserX className="h-4 w-4 md:h-5 md:w-5 text-white" />
+              <div className="bg-gradient-to-r from-red-500 to-red-600 px-4 md:px-6 py-4 md:py-5 rounded-t-xl md:rounded-t-2xl">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
+                    <div className="p-2 bg-white/20 rounded-lg flex-shrink-0">
+                      <UserX className="h-5 w-5 md:h-5 md:w-5 text-white" />
                     </div>
-                    <div>
-                      <h3 className="text-base md:text-lg font-semibold text-white">Reject Application</h3>
+                    <div className="min-w-0 flex-1">
+                      <h3 className="text-base md:text-lg font-semibold text-white truncate">Reject Application</h3>
                       <p className="text-white/80 text-xs md:text-sm">Provide a reason for rejection</p>
                     </div>
                   </div>
@@ -390,18 +393,18 @@ const PendingUserApprovals = () => {
                       setSelectedUser(null);
                       setRejectionReason('');
                     }}
-                    className="p-2 hover:bg-white/20 rounded-lg transition-colors duration-200 min-h-[44px] min-w-[44px] flex items-center justify-center"
+                    className="p-2 hover:bg-white/20 rounded-lg transition-colors duration-200 min-h-[44px] min-w-[44px] flex items-center justify-center flex-shrink-0"
                   >
-                    <X className="h-4 w-4 text-white" />
+                    <X className="h-5 w-5 text-white" />
                   </motion.button>
                 </div>
               </div>
 
               {/* Compact Content */}
-              <div className="p-4 md:p-6 space-y-4">
+              <div className="p-4 md:p-6 space-y-4 md:space-y-5">
                 {/* User Info */}
                 <div className="bg-red-50 border border-red-200 rounded-xl p-3 md:p-4">
-                  <div className="flex items-center space-x-3">
+                  <div className="flex items-center gap-3">
                     <div className="h-10 w-10 bg-gradient-to-br from-slate-600 to-slate-800 rounded-lg flex items-center justify-center flex-shrink-0">
                       <span className="text-white font-semibold text-sm">
                         {selectedUser.firstName.charAt(0)}{selectedUser.lastName.charAt(0)}
@@ -418,7 +421,7 @@ const PendingUserApprovals = () => {
 
                 {/* Rejection Reason */}
                 <div className="space-y-2">
-                  <label className="block text-sm font-semibold text-gray-700">
+                  <label className="block text-sm md:text-base font-semibold text-gray-700">
                     Reason for Rejection
                   </label>
                   <textarea
@@ -426,9 +429,9 @@ const PendingUserApprovals = () => {
                     onChange={(e) => setRejectionReason(e.target.value)}
                     placeholder="Please provide a clear reason for rejecting this application..."
                     rows={3}
-                    className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200 placeholder-gray-400 resize-none text-sm md:text-base min-h-[80px]"
+                    className="w-full h-24 md:h-auto px-3 md:px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200 placeholder-gray-400 resize-none text-sm md:text-base"
                   />
-                  <p className="text-xs text-gray-500">This reason will be recorded in the system.</p>
+                  <p className="text-xs md:text-sm text-gray-500">This reason will be recorded in the system.</p>
                 </div>
 
                 {/* Warning */}
@@ -446,7 +449,7 @@ const PendingUserApprovals = () => {
               </div>
 
               {/* Compact Actions */}
-              <div className="bg-gray-50 px-4 md:px-6 py-3 md:py-4 rounded-b-xl md:rounded-b-2xl flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
+              <div className="bg-gray-50 px-4 md:px-6 py-4 md:py-5 rounded-b-xl md:rounded-b-2xl flex flex-col sm:flex-row gap-3">
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
@@ -455,7 +458,7 @@ const PendingUserApprovals = () => {
                     setSelectedUser(null);
                     setRejectionReason('');
                   }}
-                  className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-white transition-colors duration-200 font-medium min-h-[48px] flex items-center justify-center"
+                  className="flex-1 px-4 py-3 md:py-3.5 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-white transition-colors duration-200 font-medium min-h-[48px] flex items-center justify-center active:scale-95 text-sm md:text-base"
                 >
                   Cancel
                 </motion.button>
@@ -464,12 +467,12 @@ const PendingUserApprovals = () => {
                   whileTap={{ scale: 0.98 }}
                   onClick={handleReject}
                   disabled={!rejectionReason.trim() || actionLoading}
-                  className="flex-1 bg-red-600 text-white px-4 py-3 rounded-lg hover:bg-red-700 transition-colors duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 min-h-[48px]"
+                  className="flex-1 bg-red-600 text-white px-4 py-3 md:py-3.5 rounded-lg hover:bg-red-700 transition-colors duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 min-h-[48px] active:scale-95 text-sm md:text-base"
                 >
                   {actionLoading ? (
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                   ) : (
-                    <UserX className="h-4 w-4" />
+                    <UserX className="h-5 w-5" />
                   )}
                   <span>Reject</span>
                 </motion.button>
@@ -478,6 +481,7 @@ const PendingUserApprovals = () => {
           </motion.div>
         )}
       </AnimatePresence>
+      </div>
     </div>
   );
 };

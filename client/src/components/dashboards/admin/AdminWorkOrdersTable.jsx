@@ -296,19 +296,19 @@ const AdminWorkOrdersTable = ({
 
   if (!workOrders || workOrders.length === 0) {
     return (
-      <div className="space-y-4 sm:space-y-6">
+      <div className="w-full max-w-7xl mx-auto space-y-4 md:space-y-6 px-4 md:px-6 lg:px-8">
         {/* Mobile-Responsive Header */}
-        <div className="bg-gradient-to-r from-[#232249] to-[#2d2d5f] rounded-2xl sm:rounded-3xl shadow-xl p-4 sm:p-6">
+        <div className="bg-gradient-to-r from-[#232249] to-[#2d2d5f] rounded-xl md:rounded-2xl shadow-lg md:shadow-xl p-4 md:p-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-0">
-            <div className="flex items-center gap-3 sm:gap-4">
-              <div className="bg-white/15 backdrop-blur-sm rounded-xl p-2 sm:p-3 border border-white/20 shrink-0">
-                <FileText className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 text-white" />
+            <div className="flex items-center gap-3 md:gap-4">
+              <div className="bg-white/15 backdrop-blur-sm rounded-xl p-2 md:p-3 border border-white/20 shrink-0">
+                <FileText className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 text-white" />
               </div>
               <div className="min-w-0">
-                <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-white mb-1 truncate">
+                <h2 className="text-lg md:text-xl lg:text-2xl font-bold text-white mb-1 truncate">
                   Work Orders Management
                 </h2>
-                <p className="text-white/70 text-xs sm:text-sm">
+                <p className="text-white/70 text-xs md:text-sm">
                   Manage confined space assessments
                 </p>
               </div>
@@ -317,12 +317,12 @@ const AdminWorkOrdersTable = ({
         </div>
 
         {/* Mobile-Responsive Empty State */}
-        <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl border border-gray-100 p-6 sm:p-8 lg:p-12 text-center">
-          <div className="bg-gradient-to-br from-[#232249]/5 to-[#232249]/10 rounded-full p-6 sm:p-8 w-20 h-20 sm:w-24 sm:h-24 lg:w-32 lg:h-32 mx-auto mb-6 sm:mb-8 flex items-center justify-center">
-            <FileText className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16 text-[#232249]" />
+        <div className="bg-white rounded-xl md:rounded-2xl shadow-lg md:shadow-xl border border-gray-100 p-6 md:p-8 lg:p-12 text-center">
+          <div className="bg-gradient-to-br from-[#232249]/5 to-[#232249]/10 rounded-full p-6 md:p-8 w-20 h-20 md:w-24 md:h-24 lg:w-32 lg:h-32 mx-auto mb-6 md:mb-8 flex items-center justify-center">
+            <FileText className="w-10 h-10 md:w-12 md:h-12 lg:w-16 lg:h-16 text-[#232249]" />
           </div>
-          <h3 className="text-xl sm:text-2xl font-bold text-[#232249] mb-3 sm:mb-4">No Work Orders Found</h3>
-          <p className="text-gray-500 max-w-lg mx-auto leading-relaxed text-sm sm:text-base">
+          <h3 className="text-xl md:text-2xl font-bold text-[#232249] mb-3 md:mb-4">No Work Orders Found</h3>
+          <p className="text-gray-500 max-w-lg mx-auto leading-relaxed text-sm md:text-base">
             No confined space assessments have been submitted yet. Work orders will appear here once technicians submit their assessments.
           </p>
         </div>
@@ -331,79 +331,79 @@ const AdminWorkOrdersTable = ({
   }
 
   return (
-    <div className="space-y-4 md:space-y-6">
+    <div className="w-full max-w-7xl mx-auto space-y-4 md:space-y-6 px-4 md:px-6 lg:px-8">
         {/* Mobile-Responsive Header */}
-        <div className="bg-gradient-to-r from-[#232249] to-[#2d2d5f] rounded-2xl shadow-xl p-4 md:p-6">
+        <div className="bg-gradient-to-r from-[#232249] to-[#2d2d5f] rounded-xl md:rounded-2xl shadow-lg md:shadow-xl p-4 md:p-6">
           <div className="flex flex-col gap-4 sm:gap-0 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-3 sm:gap-4">
-              <div className="bg-white/15 backdrop-blur-sm rounded-xl p-2 sm:p-3 border border-white/20 shrink-0">
-                <FileText className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+            <div className="flex items-center gap-3 md:gap-4">
+              <div className="bg-white/15 backdrop-blur-sm rounded-xl p-2 md:p-3 border border-white/20 shrink-0">
+                <FileText className="w-5 h-5 md:w-6 md:h-6 text-white" />
               </div>
               <div className="min-w-0">
-                <h2 className="text-lg sm:text-xl font-bold text-white mb-1 truncate">
+                <h2 className="text-lg md:text-xl lg:text-2xl font-bold text-white mb-1 truncate">
                   Work Orders Management
                 </h2>
-                <p className="text-white/70 text-xs sm:text-sm">
+                <p className="text-white/70 text-xs md:text-sm">
                   Manage confined space assessments
                 </p>
               </div>
             </div>
 
             {/* Mobile-Responsive Action Buttons */}
-            <div className="flex items-center gap-2 sm:gap-3 overflow-x-auto">
+            <div className="flex items-center gap-2 md:gap-3">
               <button
                 onClick={handleDeleteAllOrders}
-                className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 bg-red-600/80 text-white rounded-xl hover:bg-red-700 transition-all duration-200 border border-red-500/20 hover:border-red-400 touch-manipulation whitespace-nowrap text-sm"
+                className="flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2.5 md:py-3 bg-red-600/80 text-white rounded-xl hover:bg-red-700 transition-all duration-200 border border-red-500/20 hover:border-red-400 active:scale-95 whitespace-nowrap text-sm md:text-base font-medium min-h-[44px]"
                 title="Delete All Work Orders"
                 disabled={workOrders.length === 0}
               >
-                <Trash2 className="w-4 h-4 shrink-0" />
-                <span className="font-medium">Delete All</span>
+                <Trash2 className="w-4 h-4 md:w-5 md:h-5 shrink-0" />
+                <span>Delete All</span>
               </button>
             </div>
           </div>
         </div>
 
       {/* Mobile Card View */}
-      <div className="block md:hidden space-y-4">
+      <div className="block md:hidden space-y-3 md:space-y-4">
         {workOrders.length === 0 ? (
-          <div className="bg-white rounded-2xl shadow-xl p-8 text-center border border-gray-100">
-            <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">No Work Orders Found</h3>
-            <p className="text-gray-600">There are no work orders to display at this time.</p>
+          <div className="bg-white rounded-xl shadow-lg p-6 md:p-8 text-center border border-gray-100">
+            <FileText className="h-10 w-10 md:h-12 md:w-12 text-gray-400 mx-auto mb-3 md:mb-4" />
+            <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-2">No Work Orders Found</h3>
+            <p className="text-sm md:text-base text-gray-600">There are no work orders to display at this time.</p>
           </div>
         ) : (
           workOrders.map((order) => (
-            <div key={order.id || order._id} className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+            <div key={order.id || order._id} className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
               {/* Card Header */}
-              <div className="p-4 border-b border-gray-100">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
+              <div className="p-3 md:p-4 border-b border-gray-100">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2 md:gap-3 flex-1 min-w-0">
                     <button
                       onClick={() => toggleExpand(order.id || order._id)}
-                      className="p-2 hover:bg-[#232249]/10 rounded-lg transition-all duration-200 touch-manipulation"
+                      className="p-2 hover:bg-[#232249]/10 rounded-lg transition-all duration-200 active:scale-95 min-h-[44px] min-w-[44px] flex items-center justify-center flex-shrink-0"
                     >
                       {expandedRows.has(order.id || order._id) ? (
-                        <ChevronUp className="h-4 w-4 text-[#232249]" />
+                        <ChevronUp className="h-5 w-5 md:h-4 md:w-4 text-[#232249]" />
                       ) : (
-                        <ChevronDown className="h-4 w-4 text-[#232249]" />
+                        <ChevronDown className="h-5 w-5 md:h-4 md:w-4 text-[#232249]" />
                       )}
                     </button>
-                    <div>
-                      <h3 className="font-bold text-[#232249] text-sm">
+                    <div className="min-w-0 flex-1">
+                      <h3 className="font-bold text-[#232249] text-sm md:text-base truncate">
                         {order.workOrderId || order.uniqueId || `WO-${new Date(order.createdAt).getFullYear()}-${String(order.id || order._id).slice(-4)}`}
                       </h3>
-                      <p className="text-xs text-gray-600">{order.spaceName || 'Unnamed Space'}</p>
+                      <p className="text-xs md:text-sm text-gray-600 truncate">{order.spaceName || 'Unnamed Space'}</p>
                     </div>
                   </div>
-                  <span className={`inline-flex items-center px-2 py-1 rounded-lg text-xs font-bold border-2 ${getPriorityColor(order.priority)}`}>
+                  <span className={`inline-flex items-center px-2 py-1 rounded-lg text-xs font-bold border-2 ${getPriorityColor(order.priority)} flex-shrink-0`}>
                     {order.priority || 'medium'}
                   </span>
                 </div>
               </div>
 
               {/* Card Content */}
-              <div className="p-4 space-y-3">
+              <div className="p-3 md:p-4 space-y-3">
                 <div className="grid grid-cols-2 gap-3">
                   <div className="flex items-center gap-2">
                     <Calendar className="h-4 w-4 text-[#232249]/60" />
@@ -436,10 +436,10 @@ const AdminWorkOrdersTable = ({
                 </div>
 
                 {/* Actions */}
-                <div className="flex items-center justify-center gap-2 pt-2 border-t border-gray-100">
+                <div className="flex items-center justify-center gap-2 pt-3 border-t border-gray-100">
                   <button
                     onClick={() => onView && onView(order)}
-                    className="flex items-center justify-center gap-2 px-3 py-2 text-gray-600 hover:text-[#232249] hover:bg-[#232249]/10 rounded-lg transition-all duration-200 touch-manipulation text-sm"
+                    className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-gray-600 hover:text-[#232249] hover:bg-[#232249]/10 rounded-lg transition-all duration-200 active:scale-95 text-sm font-medium min-h-[44px]"
                   >
                     <Eye className="h-4 w-4" />
                     <span>View</span>
@@ -447,7 +447,7 @@ const AdminWorkOrdersTable = ({
 
                   <button
                     onClick={() => handleEditOrder(order)}
-                    className="flex items-center justify-center gap-2 px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 touch-manipulation text-sm"
+                    className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 active:scale-95 text-sm font-medium min-h-[44px]"
                   >
                     <Edit className="h-4 w-4" />
                     <span>Edit</span>
@@ -457,12 +457,12 @@ const AdminWorkOrdersTable = ({
                     workOrder={order}
                     type="single"
                     size="small"
-                    className="!px-3 !py-2"
+                    className="!px-3 !py-2.5 !min-h-[44px]"
                   />
 
                   <button
                     onClick={() => handleDeleteOrder(order.id || order._id)}
-                    className="flex items-center justify-center gap-2 px-3 py-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200 touch-manipulation text-sm"
+                    className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200 active:scale-95 text-sm font-medium min-h-[44px]"
                     title="Delete Order"
                   >
                     <Trash2 className="h-4 w-4" />
@@ -485,7 +485,7 @@ const AdminWorkOrdersTable = ({
       </div>
 
       {/* Desktop Table View */}
-      <div className="hidden md:block bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+      <div className="hidden md:block bg-white rounded-xl md:rounded-2xl shadow-lg md:shadow-xl border border-gray-100 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[800px]">
             <thead>
@@ -717,23 +717,23 @@ const AdminWorkOrdersTable = ({
       {/* Delete Confirmation Modal */}
       {deleteConfirmId && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6">
-            <div className="flex items-center gap-4 mb-4">
-              <div className="bg-red-100 rounded-full p-3">
-                <Trash2 className="w-6 h-6 text-red-600" />
+          <div className="bg-white rounded-xl md:rounded-2xl shadow-2xl max-w-sm md:max-w-md w-full p-5 md:p-6">
+            <div className="flex items-center gap-3 md:gap-4 mb-4">
+              <div className="bg-red-100 rounded-full p-2.5 md:p-3 flex-shrink-0">
+                <Trash2 className="w-5 h-5 md:w-6 md:h-6 text-red-600" />
               </div>
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900">Delete Work Order</h3>
-                <p className="text-sm text-gray-500">This action cannot be undone</p>
+              <div className="min-w-0 flex-1">
+                <h3 className="text-base md:text-lg font-semibold text-gray-900 truncate">Delete Work Order</h3>
+                <p className="text-xs md:text-sm text-gray-500">This action cannot be undone</p>
               </div>
             </div>
-            <p className="text-gray-600 mb-6">
+            <p className="text-sm md:text-base text-gray-600 mb-5 md:mb-6">
               Are you sure you want to delete this work order? All associated data will be permanently removed.
             </p>
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3">
               <button
                 onClick={() => setDeleteConfirmId(null)}
-                className="flex-1 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                className="flex-1 px-4 py-3 text-sm md:text-base font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors active:scale-95 min-h-[48px]"
               >
                 Cancel
               </button>
@@ -742,7 +742,7 @@ const AdminWorkOrdersTable = ({
                   onDeleteOrder && onDeleteOrder(deleteConfirmId);
                   setDeleteConfirmId(null);
                 }}
-                className="flex-1 px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors"
+                className="flex-1 px-4 py-3 text-sm md:text-base font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors active:scale-95 min-h-[48px]"
               >
                 Delete
               </button>
@@ -754,7 +754,7 @@ const AdminWorkOrdersTable = ({
       {/* Delete All Confirmation Modal */}
       {deleteAllConfirm && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6">
+          <div className="bg-white rounded-xl md:rounded-2xl shadow-2xl max-w-sm md:max-w-lg w-full p-5 md:p-6">
             <div className="flex items-center gap-4 mb-6">
               <div className="bg-red-100 rounded-full p-4">
                 <AlertTriangle className="w-8 h-8 text-red-600" />
@@ -780,8 +780,8 @@ const AdminWorkOrdersTable = ({
               </div>
             </div>
 
-            <div className="mb-6">
-              <label className="block text-sm font-bold text-gray-900 mb-2">
+            <div className="mb-5 md:mb-6">
+              <label className="block text-sm md:text-base font-bold text-gray-900 mb-2">
                 Type "DELETE ALL WORK ORDERS" to confirm:
               </label>
               <input
@@ -789,28 +789,28 @@ const AdminWorkOrdersTable = ({
                 value={deleteAllPhrase}
                 onChange={(e) => setDeleteAllPhrase(e.target.value)}
                 placeholder="Type the confirmation phrase exactly..."
-                className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
+                className="w-full h-12 md:h-auto px-4 py-3 md:py-3.5 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors text-sm md:text-base"
                 autoFocus
               />
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs md:text-sm text-gray-500 mt-1">
                 Case sensitive. Must match exactly.
               </p>
             </div>
 
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3">
               <button
                 onClick={() => {
                   setDeleteAllConfirm(false);
                   setDeleteAllPhrase('');
                 }}
-                className="flex-1 px-4 py-3 text-sm font-medium text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors"
+                className="flex-1 px-4 py-3 md:py-3.5 text-sm md:text-base font-medium text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors active:scale-95 min-h-[48px]"
               >
                 Cancel
               </button>
               <button
                 onClick={confirmDeleteAll}
                 disabled={deleteAllPhrase.trim().toUpperCase() !== 'DELETE ALL WORK ORDERS'}
-                className="flex-1 px-4 py-3 text-sm font-medium text-white bg-red-600 rounded-xl hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                className="flex-1 px-4 py-3 md:py-3.5 text-sm md:text-base font-medium text-white bg-red-600 rounded-xl hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors active:scale-95 min-h-[48px]"
               >
                 DELETE ALL ({workOrders.length})
               </button>

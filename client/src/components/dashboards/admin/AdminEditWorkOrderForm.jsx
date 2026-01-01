@@ -245,26 +245,26 @@ const AdminEditWorkOrderForm = ({
 
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-3xl shadow-2xl max-w-6xl max-h-[90vh] overflow-hidden w-full border border-gray-200 flex flex-col">
+      <div className="bg-white rounded-2xl md:rounded-3xl shadow-2xl w-full max-w-7xl max-h-[95vh] overflow-hidden border border-gray-200 flex flex-col">
         {/* Header */}
-        <div className="relative bg-gradient-to-br from-[#232249] via-[#2a2a5c] to-[#1a1b3a] p-8">
-          <div className="flex items-center justify-between text-white">
-            <div className="flex items-center space-x-6">
-              <div className="p-4 bg-white/15 rounded-2xl backdrop-blur-sm border border-white/20 shadow-lg">
-                <FileText className="h-10 w-10 text-white" />
+        <div className="relative bg-gradient-to-br from-[#232249] via-[#2a2a5c] to-[#1a1b3a] p-4 md:p-6 lg:p-8">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between text-white">
+            <div className="flex items-center gap-3 md:gap-6">
+              <div className="p-2 md:p-4 bg-white/15 rounded-2xl backdrop-blur-sm border border-white/20 shadow-lg">
+                <FileText className="h-6 w-6 md:h-8 md:w-8 lg:h-10 lg:w-10 text-white" />
               </div>
               <div>
-                <h2 className="text-4xl font-bold mb-2">Edit Work Order</h2>
-                <p className="text-white/80 text-lg">
+                <h2 className="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold mb-1 md:mb-2">Edit Work Order</h2>
+                <p className="text-white/80 text-sm md:text-base lg:text-lg">
                   {editingOrder.workOrderId || `WO-${new Date(editingOrder.surveyDate || editingOrder.createdAt).getFullYear()}-${String(editingOrder.id || editingOrder._id).slice(-4)}`}
                 </p>
-                <div className="flex items-center gap-4 mt-2 text-sm text-white/70">
+                <div className="flex flex-wrap items-center gap-2 md:gap-4 mt-2 text-xs md:text-sm text-white/70">
                   <span className="flex items-center gap-1">
-                    <Calendar className="w-4 h-4" />
+                    <Calendar className="w-3 h-3 md:w-4 md:h-4" />
                     {formatDate(editingOrder.surveyDate || editingOrder.createdAt)}
                   </span>
                   <span className="flex items-center gap-1">
-                    <User className="w-4 h-4" />
+                    <User className="w-3 h-3 md:w-4 md:h-4" />
                     {editingOrder.technician}
                   </span>
                   <span className={`px-2 py-1 rounded-full text-xs font-medium ${
@@ -278,12 +278,12 @@ const AdminEditWorkOrderForm = ({
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 md:gap-4 self-end md:self-auto">
               <button
                 onClick={closeEditModal}
-                className="p-4 hover:bg-white/20 rounded-2xl transition-all duration-300 group border border-white/20"
+                className="p-3 min-h-[44px] hover:bg-white/20 rounded-2xl transition-all duration-300 group border border-white/20 active:scale-95"
               >
-                <XCircle className="h-8 w-8 group-hover:scale-110 transition-transform text-white" />
+                <XCircle className="h-6 w-6 md:h-7 md:w-7 lg:h-8 lg:w-8 group-hover:scale-110 transition-transform text-white" />
               </button>
             </div>
           </div>
@@ -300,14 +300,14 @@ const AdminEditWorkOrderForm = ({
                 <button
                   key={section.id}
                   onClick={() => setActiveSection(section.id)}
-                  className={`flex-1 min-w-0 flex items-center justify-center p-3 border-b-2 transition-colors duration-200 whitespace-nowrap ${
+                  className={`flex-1 min-w-0 flex items-center justify-center p-3 min-h-[48px] border-b-2 transition-colors duration-200 whitespace-nowrap active:scale-95 ${
                     isActive 
                       ? 'border-[#232249] bg-blue-50 text-[#232249]' 
                       : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50'
                   }`}
                 >
-                  <Icon className="w-4 h-4 mr-2 flex-shrink-0" />
-                  <span className="font-medium text-xs sm:text-sm">{section.title}</span>
+                  <Icon className="w-4 h-4 md:w-5 md:h-5 mr-2 flex-shrink-0" />
+                  <span className="font-medium text-xs md:text-sm">{section.title}</span>
                 </button>
               );
             })}
@@ -316,25 +316,25 @@ const AdminEditWorkOrderForm = ({
 
         {/* Error Message */}
         {submitError && (
-          <div className="mx-6 mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+          <div className="mx-4 md:mx-6 mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
             <div className="flex items-center">
-              <AlertTriangle className="h-5 w-5 text-red-500 mr-2" />
+              <AlertTriangle className="h-5 w-5 text-red-500 mr-2 flex-shrink-0" />
               <span className="text-sm text-red-700">{submitError}</span>
             </div>
           </div>
         )}
 
         {/* Modal Content */}
-        <div className="flex-1 p-6 space-y-6 overflow-y-auto">
+        <div className="flex-1 p-4 md:p-6 space-y-4 md:space-y-6 overflow-y-auto">
           {/* Basic Information Section */}
           {activeSection === 'basic' && (
-            <div className="space-y-6">
-              <h3 className="text-xl font-bold text-[#232249] mb-4 flex items-center">
-                <FileText className="w-6 h-6 mr-2" />
+            <div className="space-y-4 md:space-y-6">
+              <h3 className="text-lg md:text-xl font-bold text-[#232249] mb-4 flex items-center">
+                <FileText className="w-5 h-5 md:w-6 md:h-6 mr-2" />
                 Basic Information
               </h3>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     <Calendar className="inline w-4 h-4 mr-1" />
@@ -344,7 +344,7 @@ const AdminEditWorkOrderForm = ({
                     type="date"
                     value={editingOrder.surveyDate ? new Date(editingOrder.surveyDate).toISOString().split('T')[0] : ''}
                     onChange={(e) => handleInputChange('surveyDate', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-transparent"
+                    className="w-full h-12 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-transparent transition-colors"
                     required
                   />
                 </div>
@@ -358,7 +358,7 @@ const AdminEditWorkOrderForm = ({
                     type="text"
                     value={editingOrder.technician || ''}
                     onChange={(e) => handleInputChange('technician', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-transparent"
+                    className="w-full h-12 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-transparent transition-colors"
                     placeholder="Enter technician name"
                     required
                   />
@@ -372,7 +372,7 @@ const AdminEditWorkOrderForm = ({
                   <select
                     value={editingOrder.priority || 'medium'}
                     onChange={(e) => handleInputChange('priority', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-transparent"
+                    className="w-full h-12 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-transparent transition-colors"
                   >
                     <option value="low">Low</option>
                     <option value="medium">Medium</option>
@@ -388,7 +388,7 @@ const AdminEditWorkOrderForm = ({
                   <select
                     value={editingOrder.status || 'pending'}
                     onChange={(e) => handleInputChange('status', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-transparent"
+                    className="w-full h-12 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-transparent transition-colors"
                   >
                     <option value="draft">Draft</option>
                     <option value="pending">Pending</option>
@@ -409,7 +409,7 @@ const AdminEditWorkOrderForm = ({
                       type="text"
                       value={editingOrder.createdBy}
                       readOnly
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-600"
+                      className="w-full h-12 px-3 border border-gray-300 rounded-md bg-gray-50 text-gray-600"
                     />
                   </div>
                 )}
@@ -423,7 +423,7 @@ const AdminEditWorkOrderForm = ({
                       type="text"
                       value={editingOrder.workOrderId}
                       readOnly
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-600 font-mono"
+                      className="w-full h-12 px-3 border border-gray-300 rounded-md bg-gray-50 text-gray-600 font-mono"
                     />
                   </div>
                 )}
@@ -433,14 +433,14 @@ const AdminEditWorkOrderForm = ({
 
           {/* Space Information Section */}
           {activeSection === 'space' && (
-            <div className="space-y-6">
-              <h3 className="text-xl font-bold text-[#232249] mb-4 flex items-center">
-                <Building className="w-6 h-6 mr-2" />
+            <div className="space-y-4 md:space-y-6">
+              <h3 className="text-lg md:text-xl font-bold text-[#232249] mb-4 flex items-center">
+                <Building className="w-5 h-5 md:w-6 md:h-6 mr-2" />
                 Space Information
               </h3>
               
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4 md:space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       <MapPin className="inline w-4 h-4 mr-1" />
@@ -450,7 +450,7 @@ const AdminEditWorkOrderForm = ({
                       type="text"
                       value={editingOrder.spaceName || ''}
                       onChange={(e) => handleInputChange('spaceName', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-transparent"
+                      className="w-full h-12 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-transparent transition-colors"
                       placeholder="Enter space identifier"
                       required
                     />
@@ -465,7 +465,7 @@ const AdminEditWorkOrderForm = ({
                       type="text"
                       value={editingOrder.building || ''}
                       onChange={(e) => handleInputChange('building', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-transparent"
+                      className="w-full h-12 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-transparent transition-colors"
                       placeholder="Enter building name"
                       required
                     />
@@ -479,7 +479,7 @@ const AdminEditWorkOrderForm = ({
                   <textarea
                     value={editingOrder.locationDescription || ''}
                     onChange={(e) => handleInputChange('locationDescription', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-transparent"
+                    className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-transparent transition-colors"
                     rows="3"
                     placeholder="Describe the location of the confined space"
                     required
@@ -493,7 +493,7 @@ const AdminEditWorkOrderForm = ({
                   <textarea
                     value={editingOrder.confinedSpaceDescription || ''}
                     onChange={(e) => handleInputChange('confinedSpaceDescription', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-transparent"
+                    className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-transparent transition-colors"
                     rows="3"
                     placeholder="Additional details about the confined space"
                   />
@@ -507,7 +507,7 @@ const AdminEditWorkOrderForm = ({
                     type="number"
                     value={editingOrder.numberOfEntryPoints || ''}
                     onChange={(e) => handleInputChange('numberOfEntryPoints', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-transparent"
+                    className="w-full h-12 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-transparent transition-colors"
                     placeholder="Enter number of entry points (0-20)"
                     min="0"
                     max="20"
@@ -516,16 +516,16 @@ const AdminEditWorkOrderForm = ({
                 </div>
 
                 {/* Space Classification */}
-                <div className="border-t pt-6">
-                  <h4 className="text-lg font-semibold text-[#232249] mb-4">Space Classification</h4>
+                <div className="border-t pt-4 md:pt-6">
+                  <h4 className="text-base md:text-lg font-semibold text-[#232249] mb-4">Space Classification</h4>
                   
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-3">
                         Is this a confined space? *
                       </label>
-                      <div className="flex gap-4">
-                        <label className="flex items-center">
+                      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                        <label className="flex items-center min-h-[44px] cursor-pointer">
                           <input
                             type="radio"
                             name="isConfinedSpace"
@@ -535,7 +535,7 @@ const AdminEditWorkOrderForm = ({
                           />
                           <span className="ml-2 text-sm text-gray-700">Yes</span>
                         </label>
-                        <label className="flex items-center">
+                        <label className="flex items-center min-h-[44px] cursor-pointer">
                           <input
                             type="radio"
                             name="isConfinedSpace"
@@ -552,8 +552,8 @@ const AdminEditWorkOrderForm = ({
                       <label className="block text-sm font-medium text-gray-700 mb-3">
                         Is an entry permit required? *
                       </label>
-                      <div className="flex gap-4">
-                        <label className="flex items-center">
+                      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                        <label className="flex items-center min-h-[44px] cursor-pointer">
                           <input
                             type="radio"
                             name="permitRequired"
@@ -563,7 +563,7 @@ const AdminEditWorkOrderForm = ({
                           />
                           <span className="ml-2 text-sm text-gray-700">Yes</span>
                         </label>
-                        <label className="flex items-center">
+                        <label className="flex items-center min-h-[44px] cursor-pointer">
                           <input
                             type="radio"
                             name="permitRequired"
@@ -583,7 +583,7 @@ const AdminEditWorkOrderForm = ({
                       <textarea
                         value={editingOrder.entryRequirements || ''}
                         onChange={(e) => handleInputChange('entryRequirements', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-transparent"
+                        className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-transparent transition-colors"
                         rows="3"
                         placeholder="Describe specific entry requirements or procedures"
                       />
@@ -596,21 +596,21 @@ const AdminEditWorkOrderForm = ({
 
           {/* Hazard Assessment Section */}
           {activeSection === 'hazards' && (
-            <div className="space-y-6">
-              <h3 className="text-xl font-bold text-[#232249] mb-4 flex items-center">
-                <AlertTriangle className="w-6 h-6 mr-2" />
+            <div className="space-y-4 md:space-y-6">
+              <h3 className="text-lg md:text-xl font-bold text-[#232249] mb-4 flex items-center">
+                <AlertTriangle className="w-5 h-5 md:w-6 md:h-6 mr-2" />
                 Hazard Assessment
               </h3>
               
-              <div className="space-y-6">
+              <div className="space-y-4 md:space-y-6">
                 {/* Atmospheric Hazard */}
-                <div className="border-b pb-6">
+                <div className="border-b pb-4 md:pb-6">
                   <label className="block text-sm font-medium text-gray-700 mb-3">
                     <Wind className="inline w-4 h-4 mr-1" />
                     Atmospheric Hazard Present? *
                   </label>
-                  <div className="flex gap-4 mb-3">
-                    <label className="flex items-center">
+                  <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-3">
+                    <label className="flex items-center min-h-[44px] cursor-pointer">
                       <input
                         type="radio"
                         name="atmosphericHazard"
@@ -620,7 +620,7 @@ const AdminEditWorkOrderForm = ({
                       />
                       <span className="ml-2 text-sm text-gray-700">Yes</span>
                     </label>
-                    <label className="flex items-center">
+                    <label className="flex items-center min-h-[44px] cursor-pointer">
                       <input
                         type="radio"
                         name="atmosphericHazard"
@@ -634,20 +634,20 @@ const AdminEditWorkOrderForm = ({
                   <textarea
                     value={editingOrder.atmosphericHazardDescription || ''}
                     onChange={(e) => handleInputChange('atmosphericHazardDescription', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-transparent"
+                    className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-transparent transition-colors"
                     rows="2"
                     placeholder="Describe atmospheric hazards if present"
                   />
                 </div>
 
                 {/* Engulfment Hazard */}
-                <div className="border-b pb-6">
+                <div className="border-b pb-4 md:pb-6">
                   <label className="block text-sm font-medium text-gray-700 mb-3">
                     <Droplets className="inline w-4 h-4 mr-1" />
                     Engulfment Hazard Present? *
                   </label>
-                  <div className="flex gap-4 mb-3">
-                    <label className="flex items-center">
+                  <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-3">
+                    <label className="flex items-center min-h-[44px] cursor-pointer">
                       <input
                         type="radio"
                         name="engulfmentHazard"
@@ -657,7 +657,7 @@ const AdminEditWorkOrderForm = ({
                       />
                       <span className="ml-2 text-sm text-gray-700">Yes</span>
                     </label>
-                    <label className="flex items-center">
+                    <label className="flex items-center min-h-[44px] cursor-pointer">
                       <input
                         type="radio"
                         name="engulfmentHazard"
@@ -671,20 +671,20 @@ const AdminEditWorkOrderForm = ({
                   <textarea
                     value={editingOrder.engulfmentHazardDescription || ''}
                     onChange={(e) => handleInputChange('engulfmentHazardDescription', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-transparent"
+                    className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-transparent transition-colors"
                     rows="2"
                     placeholder="Describe engulfment hazards if present"
                   />
                 </div>
 
                 {/* Configuration Hazard */}
-                <div className="border-b pb-6">
+                <div className="border-b pb-4 md:pb-6">
                   <label className="block text-sm font-medium text-gray-700 mb-3">
                     <Activity className="inline w-4 h-4 mr-1" />
                     Configuration Hazard Present? *
                   </label>
-                  <div className="flex gap-4 mb-3">
-                    <label className="flex items-center">
+                  <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-3">
+                    <label className="flex items-center min-h-[44px] cursor-pointer">
                       <input
                         type="radio"
                         name="configurationHazard"
@@ -694,7 +694,7 @@ const AdminEditWorkOrderForm = ({
                       />
                       <span className="ml-2 text-sm text-gray-700">Yes</span>
                     </label>
-                    <label className="flex items-center">
+                    <label className="flex items-center min-h-[44px] cursor-pointer">
                       <input
                         type="radio"
                         name="configurationHazard"
@@ -708,7 +708,7 @@ const AdminEditWorkOrderForm = ({
                   <textarea
                     value={editingOrder.configurationHazardDescription || ''}
                     onChange={(e) => handleInputChange('configurationHazardDescription', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-transparent"
+                    className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-transparent transition-colors"
                     rows="2"
                     placeholder="Describe configuration hazards if present"
                   />
@@ -720,8 +720,8 @@ const AdminEditWorkOrderForm = ({
                     <AlertTriangle className="inline w-4 h-4 mr-1" />
                     Other Recognized Hazards Present? *
                   </label>
-                  <div className="flex gap-4 mb-3">
-                    <label className="flex items-center">
+                  <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-3">
+                    <label className="flex items-center min-h-[44px] cursor-pointer">
                       <input
                         type="radio"
                         name="otherRecognizedHazards"
@@ -731,7 +731,7 @@ const AdminEditWorkOrderForm = ({
                       />
                       <span className="ml-2 text-sm text-gray-700">Yes</span>
                     </label>
-                    <label className="flex items-center">
+                    <label className="flex items-center min-h-[44px] cursor-pointer">
                       <input
                         type="radio"
                         name="otherRecognizedHazards"
@@ -745,7 +745,7 @@ const AdminEditWorkOrderForm = ({
                   <textarea
                     value={editingOrder.otherHazardsDescription || ''}
                     onChange={(e) => handleInputChange('otherHazardsDescription', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-transparent"
+                    className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-transparent transition-colors"
                     rows="2"
                     placeholder="Describe other hazards if present"
                   />
@@ -756,20 +756,20 @@ const AdminEditWorkOrderForm = ({
 
           {/* Safety Requirements Section */}
           {activeSection === 'safety' && (
-            <div className="space-y-6">
-              <h3 className="text-xl font-bold text-[#232249] mb-4 flex items-center">
-                <Shield className="w-6 h-6 mr-2" />
+            <div className="space-y-4 md:space-y-6">
+              <h3 className="text-lg md:text-xl font-bold text-[#232249] mb-4 flex items-center">
+                <Shield className="w-5 h-5 md:w-6 md:h-6 mr-2" />
                 Safety Requirements
               </h3>
               
-              <div className="space-y-6">
+              <div className="space-y-4 md:space-y-6">
                 {/* PPE Required */}
-                <div className="border-b pb-6">
+                <div className="border-b pb-4 md:pb-6">
                   <label className="block text-sm font-medium text-gray-700 mb-3">
                     Personal Protective Equipment (PPE) Required? *
                   </label>
-                  <div className="flex gap-4 mb-3">
-                    <label className="flex items-center">
+                  <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-3">
+                    <label className="flex items-center min-h-[44px] cursor-pointer">
                       <input
                         type="radio"
                         name="ppeRequired"
@@ -779,7 +779,7 @@ const AdminEditWorkOrderForm = ({
                       />
                       <span className="ml-2 text-sm text-gray-700">Yes</span>
                     </label>
-                    <label className="flex items-center">
+                    <label className="flex items-center min-h-[44px] cursor-pointer">
                       <input
                         type="radio"
                         name="ppeRequired"
@@ -793,20 +793,20 @@ const AdminEditWorkOrderForm = ({
                   <textarea
                     value={editingOrder.ppeList || ''}
                     onChange={(e) => handleInputChange('ppeList', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-transparent"
+                    className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-transparent transition-colors"
                     rows="2"
                     placeholder="List required PPE if applicable"
                   />
                 </div>
 
                 {/* Forced Air Ventilation */}
-                <div className="border-b pb-6">
+                <div className="border-b pb-4 md:pb-6">
                   <label className="block text-sm font-medium text-gray-700 mb-3">
                     <Wind className="inline w-4 h-4 mr-1" />
                     Is forced air ventilation sufficient for safe entry? *
                   </label>
-                  <div className="flex gap-4">
-                    <label className="flex items-center">
+                  <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                    <label className="flex items-center min-h-[44px] cursor-pointer">
                       <input
                         type="radio"
                         name="forcedAirVentilationSufficient"
@@ -816,7 +816,7 @@ const AdminEditWorkOrderForm = ({
                       />
                       <span className="ml-2 text-sm text-gray-700">Yes</span>
                     </label>
-                    <label className="flex items-center">
+                    <label className="flex items-center min-h-[44px] cursor-pointer">
                       <input
                         type="radio"
                         name="forcedAirVentilationSufficient"
@@ -830,13 +830,13 @@ const AdminEditWorkOrderForm = ({
                 </div>
 
                 {/* Dedicated Air Monitor */}
-                <div className="border-b pb-6">
+                <div className="border-b pb-4 md:pb-6">
                   <label className="block text-sm font-medium text-gray-700 mb-3">
                     <Thermometer className="inline w-4 h-4 mr-1" />
                     Is a dedicated air monitor required? *
                   </label>
-                  <div className="flex gap-4">
-                    <label className="flex items-center">
+                  <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                    <label className="flex items-center min-h-[44px] cursor-pointer">
                       <input
                         type="radio"
                         name="dedicatedAirMonitor"
@@ -846,7 +846,7 @@ const AdminEditWorkOrderForm = ({
                       />
                       <span className="ml-2 text-sm text-gray-700">Yes</span>
                     </label>
-                    <label className="flex items-center">
+                    <label className="flex items-center min-h-[44px] cursor-pointer">
                       <input
                         type="radio"
                         name="dedicatedAirMonitor"
@@ -864,8 +864,8 @@ const AdminEditWorkOrderForm = ({
                   <label className="block text-sm font-medium text-gray-700 mb-3">
                     Is a warning sign posted? *
                   </label>
-                  <div className="flex gap-4">
-                    <label className="flex items-center">
+                  <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                    <label className="flex items-center min-h-[44px] cursor-pointer">
                       <input
                         type="radio"
                         name="warningSignPosted"
@@ -875,7 +875,7 @@ const AdminEditWorkOrderForm = ({
                       />
                       <span className="ml-2 text-sm text-gray-700">Yes</span>
                     </label>
-                    <label className="flex items-center">
+                    <label className="flex items-center min-h-[44px] cursor-pointer">
                       <input
                         type="radio"
                         name="warningSignPosted"
@@ -893,21 +893,21 @@ const AdminEditWorkOrderForm = ({
 
           {/* Personnel & Access Section */}
           {activeSection === 'personnel' && (
-            <div className="space-y-6">
-              <h3 className="text-xl font-bold text-[#232249] mb-4 flex items-center">
-                <Users className="w-6 h-6 mr-2" />
+            <div className="space-y-4 md:space-y-6">
+              <h3 className="text-lg md:text-xl font-bold text-[#232249] mb-4 flex items-center">
+                <Users className="w-5 h-5 md:w-6 md:h-6 mr-2" />
                 Personnel & Access
               </h3>
               
-              <div className="space-y-6">
+              <div className="space-y-4 md:space-y-6">
                 {/* Other People Working */}
-                <div className="border-b pb-6">
+                <div className="border-b pb-4 md:pb-6">
                   <label className="block text-sm font-medium text-gray-700 mb-3">
                     <Users className="inline w-4 h-4 mr-1" />
                     Are other people working near the space? *
                   </label>
-                  <div className="flex gap-4">
-                    <label className="flex items-center">
+                  <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                    <label className="flex items-center min-h-[44px] cursor-pointer">
                       <input
                         type="radio"
                         name="otherPeopleWorkingNearSpace"
@@ -917,7 +917,7 @@ const AdminEditWorkOrderForm = ({
                       />
                       <span className="ml-2 text-sm text-gray-700">Yes</span>
                     </label>
-                    <label className="flex items-center">
+                    <label className="flex items-center min-h-[44px] cursor-pointer">
                       <input
                         type="radio"
                         name="otherPeopleWorkingNearSpace"
@@ -931,12 +931,12 @@ const AdminEditWorkOrderForm = ({
                 </div>
 
                 {/* Visibility */}
-                <div className="border-b pb-6">
+                <div className="border-b pb-4 md:pb-6">
                   <label className="block text-sm font-medium text-gray-700 mb-3">
                     Can others see into the space? *
                   </label>
-                  <div className="flex gap-4">
-                    <label className="flex items-center">
+                  <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                    <label className="flex items-center min-h-[44px] cursor-pointer">
                       <input
                         type="radio"
                         name="canOthersSeeIntoSpace"
@@ -946,7 +946,7 @@ const AdminEditWorkOrderForm = ({
                       />
                       <span className="ml-2 text-sm text-gray-700">Yes</span>
                     </label>
-                    <label className="flex items-center">
+                    <label className="flex items-center min-h-[44px] cursor-pointer">
                       <input
                         type="radio"
                         name="canOthersSeeIntoSpace"
@@ -960,12 +960,12 @@ const AdminEditWorkOrderForm = ({
                 </div>
 
                 {/* Contractors */}
-                <div className="border-b pb-6">
+                <div className="border-b pb-4 md:pb-6">
                   <label className="block text-sm font-medium text-gray-700 mb-3">
                     Do contractors enter the space? *
                   </label>
-                  <div className="flex gap-4">
-                    <label className="flex items-center">
+                  <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                    <label className="flex items-center min-h-[44px] cursor-pointer">
                       <input
                         type="radio"
                         name="contractorsEnterSpace"
@@ -975,7 +975,7 @@ const AdminEditWorkOrderForm = ({
                       />
                       <span className="ml-2 text-sm text-gray-700">Yes</span>
                     </label>
-                    <label className="flex items-center">
+                    <label className="flex items-center min-h-[44px] cursor-pointer">
                       <input
                         type="radio"
                         name="contractorsEnterSpace"
@@ -996,7 +996,7 @@ const AdminEditWorkOrderForm = ({
                   <textarea
                     value={editingOrder.notes || ''}
                     onChange={(e) => handleInputChange('notes', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-transparent"
+                    className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#232249] focus:border-transparent transition-colors"
                     rows="4"
                     placeholder="Any additional observations, concerns, or notes about the confined space assessment"
                   />
@@ -1007,20 +1007,20 @@ const AdminEditWorkOrderForm = ({
 
           {/* Images & Documentation Section */}
           {activeSection === 'images' && (
-            <div className="space-y-6">
-              <h3 className="text-xl font-bold text-[#232249] mb-4 flex items-center">
-                <Camera className="w-6 h-6 mr-2" />
+            <div className="space-y-4 md:space-y-6">
+              <h3 className="text-lg md:text-xl font-bold text-[#232249] mb-4 flex items-center">
+                <Camera className="w-5 h-5 md:w-6 md:h-6 mr-2" />
                 Images & Documentation
               </h3>
               
-              <div className="space-y-6">
+              <div className="space-y-4 md:space-y-6">
                 {/* Current Images */}
                 {(editingOrder.imageUrls?.length > 0) && (
                   <div>
                     <label className="block text-sm font-bold text-gray-800 mb-4">
                       Current Images ({editingOrder.imageUrls.length})
                     </label>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
                       {editingOrder.imageUrls.map((imageUrl, index) => (
                         <div key={`image-${index}`} className="relative group">
                           <div className="aspect-square rounded-xl overflow-hidden bg-gray-100 shadow-lg border border-gray-200">
@@ -1042,14 +1042,14 @@ const AdminEditWorkOrderForm = ({
                             <div className="flex space-x-2">
                               <button
                                 onClick={() => window.open(imageUrl, '_blank')}
-                                className="bg-white rounded-full p-2 shadow-lg hover:shadow-xl transition-all"
+                                className="bg-white rounded-full p-2 shadow-lg hover:shadow-xl transition-all min-h-[44px] min-w-[44px] flex items-center justify-center"
                                 title="View Image"
                               >
                                 <Eye className="h-4 w-4 text-gray-700" />
                               </button>
                               <button
                                 onClick={() => removeImage(index)}
-                                className="bg-red-500 rounded-full p-2 shadow-lg hover:shadow-xl transition-all"
+                                className="bg-red-500 rounded-full p-2 shadow-lg hover:shadow-xl transition-all min-h-[44px] min-w-[44px] flex items-center justify-center"
                                 title="Remove Image"
                               >
                                 <Trash2 className="h-4 w-4 text-white" />
@@ -1067,37 +1067,37 @@ const AdminEditWorkOrderForm = ({
 
                 {/* Show message if no images */}
                 {(!editingOrder.imageUrls || editingOrder.imageUrls.length === 0) && (
-                  <div className="text-center py-8 bg-gray-50 rounded-xl border border-gray-200">
-                    <Camera className="h-12 w-12 text-gray-400 mx-auto mb-2" />
-                    <p className="text-gray-500">No images uploaded yet</p>
+                  <div className="text-center py-6 md:py-8 bg-gray-50 rounded-xl border border-gray-200">
+                    <Camera className="h-10 w-10 md:h-12 md:w-12 text-gray-400 mx-auto mb-2" />
+                    <p className="text-gray-500 text-sm md:text-base">No images uploaded yet</p>
                   </div>
                 )}
 
                 {/* Image Upload Section */}
-                <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
-                  <h4 className="font-semibold text-blue-800 mb-4 flex items-center">
-                    <Upload className="w-5 h-5 mr-2" />
+                <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 md:p-6">
+                  <h4 className="font-semibold text-blue-800 mb-4 flex items-center text-base md:text-lg">
+                    <Upload className="w-4 h-4 md:w-5 md:h-5 mr-2" />
                     Upload New Images
                   </h4>
                   
                   <div className="space-y-4">
                     {/* Camera Capture */}
                     {!isCapturing && (
-                      <div className="border-2 border-dashed border-green-300 rounded-lg p-6 text-center hover:border-green-400 transition-colors bg-white">
+                      <div className="border-2 border-dashed border-green-300 rounded-lg p-4 md:p-6 text-center hover:border-green-400 transition-colors bg-white">
                         <button
                           type="button"
                           onClick={startCamera}
                           disabled={uploadingImages}
-                          className={`w-full ${uploadingImages ? 'opacity-50 cursor-not-allowed' : ''}`}
+                          className={`w-full ${uploadingImages ? 'opacity-50 cursor-not-allowed' : ''} min-h-[44px] flex flex-col items-center justify-center`}
                         >
-                          <Camera className="w-10 h-10 text-green-500 mx-auto mb-3" />
-                          <h5 className="text-lg font-medium text-green-800 mb-2">
+                          <Camera className="w-8 h-8 md:w-10 md:h-10 text-green-500 mb-3" />
+                          <h5 className="text-base md:text-lg font-medium text-green-800 mb-2">
                             Take Photo
                           </h5>
                           <p className="text-sm text-green-600 mb-3">
                             Use your device camera to capture images
                           </p>
-                          <div className="bg-green-600 text-white px-4 py-2 rounded-lg inline-block hover:bg-green-700 transition-colors">
+                          <div className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors active:scale-95">
                             Open Camera
                           </div>
                         </button>
@@ -1116,12 +1116,12 @@ const AdminEditWorkOrderForm = ({
                           />
                           <canvas ref={canvasRef} className="hidden" />
                         </div>
-                        <div className="flex gap-3">
+                        <div className="flex flex-col sm:flex-row gap-3">
                           <button
                             type="button"
                             onClick={captureImage}
                             disabled={uploadingImages}
-                            className="flex-1 bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors font-semibold flex items-center justify-center gap-2"
+                            className="flex-1 bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors font-semibold flex items-center justify-center gap-2 min-h-[44px] active:scale-95"
                           >
                             <Camera className="w-5 h-5" />
                             Capture Photo
@@ -1129,7 +1129,7 @@ const AdminEditWorkOrderForm = ({
                           <button
                             type="button"
                             onClick={stopCamera}
-                            className="flex-1 bg-gray-500 text-white py-3 px-4 rounded-lg hover:bg-gray-600 transition-colors font-semibold flex items-center justify-center gap-2"
+                            className="flex-1 bg-gray-500 text-white py-3 px-4 rounded-lg hover:bg-gray-600 transition-colors font-semibold flex items-center justify-center gap-2 min-h-[44px] active:scale-95"
                           >
                             <XCircle className="w-5 h-5" />
                             Cancel
@@ -1140,7 +1140,7 @@ const AdminEditWorkOrderForm = ({
                     
                     {/* File Upload */}
                     {!isCapturing && (
-                      <div className="border-2 border-dashed border-blue-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors">
+                      <div className="border-2 border-dashed border-blue-300 rounded-lg p-4 md:p-6 text-center hover:border-blue-400 transition-colors">
                         <input
                           type="file"
                           accept="image/*"
@@ -1152,16 +1152,16 @@ const AdminEditWorkOrderForm = ({
                         />
                         <label 
                           htmlFor="image-upload"
-                          className={`cursor-pointer ${uploadingImages ? 'opacity-50 cursor-not-allowed' : ''}`}
+                          className={`cursor-pointer ${uploadingImages ? 'opacity-50 cursor-not-allowed' : ''} min-h-[44px] flex flex-col items-center justify-center`}
                         >
-                          <Upload className="w-10 h-10 text-blue-400 mx-auto mb-3" />
-                          <h5 className="text-lg font-medium text-blue-800 mb-2">
+                          <Upload className="w-8 h-8 md:w-10 md:h-10 text-blue-400 mb-3" />
+                          <h5 className="text-base md:text-lg font-medium text-blue-800 mb-2">
                             {uploadingImages ? 'Uploading...' : 'Upload Images'}
                           </h5>
                           <p className="text-sm text-blue-600 mb-3">
                             Click to select images from your device
                           </p>
-                          <div className="bg-blue-600 text-white px-4 py-2 rounded-lg inline-block hover:bg-blue-700 transition-colors">
+                          <div className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors active:scale-95">
                             {uploadingImages ? 'Please wait...' : 'Choose Files'}
                           </div>
                         </label>
@@ -1181,8 +1181,8 @@ const AdminEditWorkOrderForm = ({
                 </div>
 
                 {/* Note about image management */}
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <h5 className="font-medium text-blue-800 mb-2">Image Management:</h5>
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 md:p-4">
+                  <h5 className="font-medium text-blue-800 mb-2 text-sm md:text-base">Image Management:</h5>
                   <ul className="text-sm text-blue-700 space-y-1">
                     <li>• Click the eye icon to view images in full size</li>
                     <li>• Click the trash icon to remove images from the work order</li>
@@ -1197,22 +1197,22 @@ const AdminEditWorkOrderForm = ({
         </div>
 
         {/* Modal Footer - Fixed Position */}
-        <div className="sticky bottom-0 bg-white border-t border-gray-200 px-8 py-4 shadow-lg">
-          <div className="flex justify-between items-center">
-            <div className="text-sm text-gray-600">
+        <div className="sticky bottom-0 bg-white border-t border-gray-200 px-4 md:px-8 py-3 md:py-4 shadow-lg">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 md:gap-0">
+            <div className="text-xs md:text-sm text-gray-600">
               <span>Last Modified: {formatDate(editingOrder.lastModified || editingOrder.updatedAt || editingOrder.createdAt)}</span>
             </div>
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-2 md:gap-3 w-full sm:w-auto">
               <button
                 onClick={closeEditModal}
-                className="px-6 py-3 bg-gray-200 text-gray-700 rounded-xl hover:bg-gray-300 transition-all duration-300 font-medium border border-gray-300"
+                className="px-4 md:px-6 py-2 md:py-3 bg-gray-200 text-gray-700 rounded-xl hover:bg-gray-300 transition-all duration-300 font-medium border border-gray-300 min-h-[44px] active:scale-95"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSubmit}
                 disabled={isSubmitting}
-                className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-[#232249] to-[#2a2a5c] text-white rounded-xl hover:shadow-lg transition-all duration-300 disabled:opacity-50 font-medium min-w-[140px] justify-center border-2 border-[#232249]"
+                className="flex items-center gap-2 px-6 md:px-8 py-2 md:py-3 bg-gradient-to-r from-[#232249] to-[#2a2a5c] text-white rounded-xl hover:shadow-lg transition-all duration-300 disabled:opacity-50 font-medium min-w-[140px] justify-center border-2 border-[#232249] min-h-[44px] active:scale-95"
               >
                 {isSubmitting ? (
                   <>

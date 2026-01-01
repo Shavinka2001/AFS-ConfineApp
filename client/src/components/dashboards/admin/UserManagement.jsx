@@ -261,7 +261,7 @@ const UserManagement = () => {
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 md:p-8">
         <div className="max-w-md mx-auto">
           <div className="bg-white rounded-xl md:rounded-2xl shadow-lg md:shadow-xl p-4 md:p-8 border border-gray-100 text-center">
-            <div className="mx-auto h-16 h-16 md:h-20 md:w-20 bg-gradient-to-br from-red-50 to-pink-100 rounded-xl md:rounded-2xl mb-4 md:mb-6 flex items-center justify-center shadow-lg">
+            <div className="mx-auto h-16 w-16 md:h-20 md:w-20 bg-gradient-to-br from-red-50 to-pink-100 rounded-xl md:rounded-2xl mb-4 md:mb-6 flex items-center justify-center shadow-lg">
               <Shield className="h-8 w-8 md:h-10 md:w-10 text-red-600" />
             </div>
             <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-4">Access Denied</h1>
@@ -288,7 +288,8 @@ const UserManagement = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 md:p-8 space-y-4 md:space-y-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 md:p-6 lg:p-8">
+      <div className="w-full max-w-7xl mx-auto space-y-4 md:space-y-6 lg:space-y-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-white rounded-xl md:rounded-2xl shadow-lg md:shadow-xl p-4 md:p-6 border border-gray-100 space-y-4 sm:space-y-0">
         <div className="flex items-center space-x-4 md:space-x-6">
@@ -709,6 +710,7 @@ const UserManagement = () => {
         onConfirm={handleDeleteUser}
         user={selectedUser}
       />
+      </div>
     </div>
   );
 };
@@ -783,33 +785,33 @@ const UserModal = ({ isOpen, onClose, onSubmit, title, mode, user }) => {
           initial={{ scale: 0.9, opacity: 0, y: 20 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.9, opacity: 0, y: 20 }}
-          className="bg-white rounded-3xl shadow-2xl w-full max-w-lg border border-gray-100 overflow-hidden max-h-[90vh] flex flex-col"
+          className="bg-white rounded-2xl md:rounded-3xl shadow-2xl w-full max-w-sm md:max-w-lg lg:max-w-2xl border border-gray-100 overflow-hidden max-h-[90vh] flex flex-col"
         >
           {/* Header with Gradient */}
-          <div className="relative bg-gradient-to-r from-[#232249] via-[#232249]/95 to-[#232249]/90 p-8">
+          <div className="relative bg-gradient-to-r from-[#232249] via-[#232249]/95 to-[#232249]/90 p-5 md:p-8">
             <div className="absolute inset-0 bg-white/5 backdrop-blur-sm"></div>
             <div className="relative flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <div className="h-12 w-12 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-                  <IconComponent className="h-6 w-6 text-white" />
+              <div className="flex items-center space-x-3 md:space-x-4 flex-1 min-w-0">
+                <div className="h-10 w-10 md:h-12 md:w-12 bg-white/20 backdrop-blur-sm rounded-xl md:rounded-2xl flex items-center justify-center flex-shrink-0">
+                  <IconComponent className="h-5 w-5 md:h-6 md:w-6 text-white" />
                 </div>
-                <div>
-                  <h3 className="text-2xl font-bold text-white">{title}</h3>
-                  <p className="text-white/80 text-sm">{mode === 'add' ? 'Create a new user account' : 'Modify user information'}</p>
+                <div className="min-w-0 flex-1">
+                  <h3 className="text-lg md:text-2xl font-bold text-white truncate">{title}</h3>
+                  <p className="text-white/80 text-xs md:text-sm hidden sm:block">{mode === 'add' ? 'Create a new user account' : 'Modify user information'}</p>
                 </div>
               </div>
               <motion.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={onClose}
-                className="p-2 hover:bg-white/20 rounded-xl transition-all duration-200"
+                className="p-2 md:p-3 hover:bg-white/20 rounded-xl transition-all duration-200 min-h-[44px] min-w-[44px] flex items-center justify-center flex-shrink-0"
               >
-                <X className="h-6 w-6 text-white" />
+                <X className="h-5 w-5 md:h-6 md:w-6 text-white" />
               </motion.button>
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} id="user-form" className="p-8 space-y-6 flex-1 overflow-y-auto">
+          <form onSubmit={handleSubmit} id="user-form" className="p-5 md:p-8 space-y-5 md:space-y-6 flex-1 overflow-y-auto">
             {/* Personal Information Section */}
             <div className="space-y-4">
               <div className="flex items-center space-x-2 mb-4">
@@ -817,7 +819,7 @@ const UserModal = ({ isOpen, onClose, onSubmit, title, mode, user }) => {
                 <h4 className="text-lg font-semibold text-[#232249]">Personal Information</h4>
               </div>
               
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="block text-sm font-semibold text-gray-700">First Name</label>
                   <motion.input
@@ -877,13 +879,13 @@ const UserModal = ({ isOpen, onClose, onSubmit, title, mode, user }) => {
                       required={mode === 'add'}
                       value={formData.password}
                       onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                      className="w-full px-4 py-3 pr-12 bg-gray-50/50 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-[#232249]/10 focus:border-[#232249] transition-all duration-300 placeholder-gray-400"
+                      className="w-full h-12 md:h-auto px-4 py-3 md:py-3.5 pr-12 bg-gray-50/50 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-[#232249]/10 focus:border-[#232249] transition-all duration-300 placeholder-gray-400 text-base"
                       placeholder={mode === 'add' ? 'Enter secure password' : 'Leave blank to keep current'}
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 text-gray-400 hover:text-[#232249] transition-colors"
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 p-2 text-gray-400 hover:text-[#232249] transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
                     >
                       {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                     </button>
@@ -901,7 +903,7 @@ const UserModal = ({ isOpen, onClose, onSubmit, title, mode, user }) => {
 
               <div className="space-y-3">
                 <label className="block text-sm font-semibold text-gray-700">User Role</label>
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   {['technician', 'manager', 'admin'].map((role) => {
                     const roleInfo = getRoleInfo(role);
                     const RoleIcon = roleInfo.icon;
@@ -914,7 +916,7 @@ const UserModal = ({ isOpen, onClose, onSubmit, title, mode, user }) => {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => setFormData({ ...formData, role })}
-                        className={`p-4 rounded-xl border-2 transition-all duration-300 ${
+                        className={`p-4 md:p-5 rounded-xl border-2 transition-all duration-300 min-h-[80px] flex flex-col items-center justify-center ${
                           isSelected 
                             ? `${roleInfo.color} border-current shadow-lg` 
                             : 'bg-gray-50 border-gray-200 hover:border-gray-300'
@@ -967,14 +969,14 @@ const UserModal = ({ isOpen, onClose, onSubmit, title, mode, user }) => {
           </form>
 
           {/* Action Buttons - Fixed at bottom */}
-          <div className="bg-white border-t border-gray-100 p-6 flex-shrink-0">
-            <div className="flex space-x-4">
+          <div className="bg-white border-t border-gray-100 p-4 md:p-6 flex-shrink-0">
+            <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 type="button"
                 onClick={onClose}
-                className="flex-1 px-6 py-4 border-2 border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all duration-300 font-semibold"
+                className="flex-1 px-6 py-3.5 md:py-4 border-2 border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all duration-300 font-semibold min-h-[48px] text-sm md:text-base active:scale-95"
               >
                 Cancel
               </motion.button>
@@ -983,7 +985,7 @@ const UserModal = ({ isOpen, onClose, onSubmit, title, mode, user }) => {
                 whileTap={{ scale: 0.98 }}
                 type="submit"
                 form="user-form"
-                className="flex-1 bg-gradient-to-r from-[#232249] to-[#232249]/90 text-white px-6 py-4 rounded-xl hover:shadow-2xl hover:shadow-[#232249]/25 transition-all duration-300 font-semibold flex items-center justify-center space-x-2"
+                className="flex-1 bg-gradient-to-r from-[#232249] to-[#232249]/90 text-white px-6 py-3.5 md:py-4 rounded-xl hover:shadow-2xl hover:shadow-[#232249]/25 transition-all duration-300 font-semibold flex items-center justify-center space-x-2 min-h-[48px] text-sm md:text-base active:scale-95"
               >
                 <Save className="h-5 w-5" />
                 <span>{mode === 'add' ? 'Create User' : 'Save Changes'}</span>
@@ -1012,34 +1014,34 @@ const UserDetailsModal = ({ isOpen, onClose, user }) => {
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
-          className="bg-white rounded-2xl shadow-2xl w-full max-w-lg"
+          className="bg-white rounded-2xl md:rounded-3xl shadow-2xl w-full max-w-sm md:max-w-lg"
         >
-          <div className="p-6 border-b border-gray-100">
+          <div className="p-5 md:p-6 border-b border-gray-100">
             <div className="flex items-center justify-between">
-              <h3 className="text-xl font-bold text-[#232249]">User Details</h3>
+              <h3 className="text-lg md:text-xl font-bold text-[#232249]">User Details</h3>
               <button
                 onClick={onClose}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
               >
                 <X className="h-5 w-5 text-gray-500" />
               </button>
             </div>
           </div>
 
-          <div className="p-6 space-y-6">
+          <div className="p-5 md:p-6 space-y-5 md:space-y-6 max-h-[70vh] overflow-y-auto">
             {/* User Avatar and Basic Info */}
             <div className="text-center">
-              <div className="h-20 w-20 bg-gradient-to-br from-[#232249] to-[#232249]/80 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-white font-bold text-2xl">
+              <div className="h-16 w-16 md:h-20 md:w-20 bg-gradient-to-br from-[#232249] to-[#232249]/80 rounded-full flex items-center justify-center mx-auto mb-3 md:mb-4">
+                <span className="text-white font-bold text-xl md:text-2xl">
                   {user.firstName.charAt(0)}{user.lastName.charAt(0)}
                 </span>
               </div>
-              <h4 className="text-xl font-bold text-[#232249]">{user.firstName} {user.lastName}</h4>
-              <p className="text-gray-600">{user.email}</p>
+              <h4 className="text-lg md:text-xl font-bold text-[#232249]">{user.firstName} {user.lastName}</h4>
+              <p className="text-sm md:text-base text-gray-600 truncate px-4">{user.email}</p>
             </div>
 
             {/* Details Grid */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
               <div className="bg-gray-50 rounded-xl p-4">
                 <div className="flex items-center space-x-2 mb-2">
                   <Shield className="h-4 w-4 text-[#232249]" />
@@ -1153,38 +1155,38 @@ const DeleteConfirmModal = ({ isOpen, onClose, onConfirm, user }) => {
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
-          className="bg-white rounded-2xl shadow-2xl w-full max-w-md"
+          className="bg-white rounded-2xl md:rounded-3xl shadow-2xl w-full max-w-sm md:max-w-md lg:max-w-lg"
         >
-          <div className="p-6">
-            <div className="flex items-center space-x-4 mb-4">
-              <div className="p-3 bg-red-100 rounded-full">
-                <AlertTriangle className="h-6 w-6 text-red-600" />
+          <div className="p-5 md:p-6">
+            <div className="flex items-center space-x-3 md:space-x-4 mb-4">
+              <div className="p-2 md:p-3 bg-red-100 rounded-full flex-shrink-0">
+                <AlertTriangle className="h-5 w-5 md:h-6 md:w-6 text-red-600" />
               </div>
-              <div>
-                <h3 className="text-lg font-bold text-gray-900">Delete User</h3>
-                <p className="text-sm text-gray-600">This action cannot be undone</p>
+              <div className="min-w-0 flex-1">
+                <h3 className="text-base md:text-lg font-bold text-gray-900 truncate">Delete User</h3>
+                <p className="text-xs md:text-sm text-gray-600">This action cannot be undone</p>
               </div>
             </div>
 
-            <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
-              <p className="text-sm text-red-800">
+            <div className="bg-red-50 border border-red-200 rounded-xl p-3 md:p-4 mb-5 md:mb-6">
+              <p className="text-xs md:text-sm text-red-800">
                 Are you sure you want to delete <strong>{user.firstName} {user.lastName}</strong>? 
                 This will permanently remove their account and all associated data.
               </p>
             </div>
 
-            <div className="flex space-x-3">
+            <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
               <button
                 onClick={onClose}
-                className="flex-1 px-4 py-3 border border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 transition-all duration-300 font-semibold"
+                className="flex-1 px-4 py-3 md:py-3.5 border-2 border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 transition-all duration-300 font-semibold min-h-[48px] text-sm md:text-base active:scale-95"
               >
                 Cancel
               </button>
               <button
                 onClick={onConfirm}
-                className="flex-1 bg-gradient-to-r from-red-600 to-red-700 text-white px-4 py-3 rounded-xl hover:shadow-xl transition-all duration-300 font-semibold flex items-center justify-center space-x-2"
+                className="flex-1 bg-gradient-to-r from-red-600 to-red-700 text-white px-4 py-3 md:py-3.5 rounded-xl hover:shadow-xl transition-all duration-300 font-semibold flex items-center justify-center space-x-2 min-h-[48px] text-sm md:text-base active:scale-95"
               >
-                <Trash2 className="h-4 w-4" />
+                <Trash2 className="h-4 w-4 md:h-5 md:w-5" />
                 <span>Delete User</span>
               </button>
             </div>

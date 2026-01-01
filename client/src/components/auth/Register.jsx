@@ -80,41 +80,41 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center p-4 sm:p-6 lg:p-8">
-      <div className="w-full max-w-sm sm:max-w-md lg:max-w-2xl">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white flex items-center justify-center p-4 md:p-6 lg:p-8">
+      <div className="w-full max-w-md md:max-w-2xl lg:max-w-4xl xl:max-w-5xl">
         {/* Logo and Header */}
-        <div className="text-center mb-4 sm:mb-6">
-          <div className="relative mb-3 sm:mb-4 inline-block">
-            <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto bg-gradient-to-br from-[#232249] to-[#232249]/80 rounded-2xl shadow-xl flex items-center justify-center">
-              <img src="/logo.jpg" alt="Confine App" className="w-14 h-14 sm:w-16 sm:h-16 object-contain rounded-xl" />
+        <div className="text-center mb-6 md:mb-8">
+          <div className="relative mb-4 md:mb-6 inline-block">
+            <div className="w-20 h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 mx-auto bg-gradient-to-br from-[#232249] to-[#232249]/80 rounded-2xl shadow-2xl flex items-center justify-center transform transition-transform hover:scale-105">
+              <img src="/logo.jpg" alt="Confine App" className="w-14 h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 object-contain rounded-xl" />
             </div>
-            <div className="absolute -bottom-1 -right-1 w-5 h-5 sm:w-6 sm:h-6 bg-white rounded-full shadow-md flex items-center justify-center">
-              <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+            <div className="absolute -bottom-1 -right-1 md:-bottom-2 md:-right-2 w-6 h-6 md:w-7 md:h-7 bg-white rounded-full shadow-lg flex items-center justify-center">
+              <div className="w-2 h-2 md:w-2.5 md:h-2.5 bg-emerald-500 rounded-full animate-pulse"></div>
             </div>
           </div>
         </div>
 
         {/* Sign Up Header */}
-        <div className="text-center mb-4 sm:mb-6">
-          <h2 className="text-xl sm:text-2xl font-bold mb-1 sm:mb-2 tracking-wide text-[#232249]">Create Account</h2>
-          <p className="text-gray-600 text-sm sm:text-base">Join our secure platform today</p>
+        <div className="text-center mb-6 md:mb-8">
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-2 tracking-wide text-[#232249]">Create Account</h2>
+          <p className="text-gray-600 text-base md:text-lg">Join our secure platform today</p>
         </div>
 
         {/* Success Alert */}
         {successMessage && (
-          <div className="mb-3 sm:mb-4 p-3 sm:p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
-            <div className="flex items-start gap-3">
-              <div className="w-5 h-5 sm:w-6 sm:h-6 mt-0.5 rounded-full bg-emerald-500 flex items-center justify-center flex-shrink-0">
-                <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+          <div className="mb-4 md:mb-6 p-4 md:p-5 bg-emerald-50 border-2 border-emerald-200 rounded-xl shadow-sm">
+            <div className="flex items-start gap-3 md:gap-4">
+              <div className="w-6 h-6 md:w-7 md:h-7 mt-0.5 rounded-full bg-emerald-500 flex items-center justify-center flex-shrink-0 shadow-md">
+                <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-emerald-700 text-xs sm:text-sm font-medium mb-1">{successMessage}</p>
+                <p className="text-emerald-700 text-sm md:text-base font-semibold mb-1.5">{successMessage}</p>
                 {successMessage.includes('pending approval') ? (
-                  <p className="text-emerald-600 text-xs">You will be redirected to the login page in a few seconds...</p>
+                  <p className="text-emerald-600 text-xs md:text-sm">You will be redirected to the login page in a few seconds...</p>
                 ) : (
-                  <p className="text-emerald-600 text-xs">Redirecting to login page...</p>
+                  <p className="text-emerald-600 text-xs md:text-sm">Redirecting to login page...</p>
                 )}
               </div>
             </div>
@@ -123,35 +123,36 @@ const Register = () => {
 
         {/* Error Alert */}
         {error && (
-          <div className="mb-3 sm:mb-4 p-3 sm:p-4 bg-red-50 border border-red-200 rounded-lg">
-            <div className="flex items-start gap-3">
-              <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 mt-0.5 text-red-500 flex-shrink-0" />
-              <p className="text-red-700 text-xs sm:text-sm font-medium flex-1 min-w-0">{error}</p>
+          <div className="mb-4 md:mb-6 p-4 md:p-5 bg-red-50 border-2 border-red-200 rounded-xl shadow-sm">
+            <div className="flex items-start gap-3 md:gap-4">
+              <AlertCircle className="w-5 h-5 md:w-6 md:h-6 mt-0.5 text-red-500 flex-shrink-0" />
+              <p className="text-red-700 text-sm md:text-base font-semibold flex-1 min-w-0 break-words">{error}</p>
             </div>
           </div>
         )}
 
         {/* Register Form */}
-        <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-4 sm:p-6">
+        <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 p-6 md:p-8 lg:p-10">
           <form 
             onSubmit={handleSubmit(onSubmit)} 
             onChange={handleInputChange}
-            className="space-y-3 sm:space-y-4"
+            className="space-y-5 md:space-y-6"
           >
-            <div className="flex flex-col md:grid md:grid-cols-2 gap-3 sm:gap-4">
+            {/* Name Fields */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
               <div>
-                <label htmlFor="firstName" className="block text-sm font-semibold mb-1.5 sm:mb-2 text-[#232249]">
+                <label htmlFor="firstName" className="block text-sm md:text-base font-semibold mb-2 text-[#232249]">
                   First Name
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <User className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <User className="h-5 w-5 md:h-6 md:w-6 text-gray-400" />
                   </div>
                   <input
                     {...register('firstName')}
                     type="text"
-                    className={`w-full pl-10 sm:pl-11 pr-3 py-3 sm:py-3.5 border-2 rounded-lg text-gray-900 placeholder-gray-500 text-sm sm:text-base
-                      transition-all duration-200 focus:outline-none focus:ring-3 touch-manipulation ${
+                    className={`w-full h-12 md:h-14 pl-12 md:pl-14 pr-4 border-2 rounded-xl text-gray-900 placeholder-gray-400 text-base md:text-lg
+                      transition-all duration-200 focus:outline-none focus:ring-4 touch-manipulation ${
                       errors.firstName 
                         ? 'border-red-300 focus:border-red-500 focus:ring-red-100' 
                         : 'border-gray-200 hover:border-gray-300 focus:border-[#232249] focus:ring-[#232249]/10'
@@ -160,19 +161,19 @@ const Register = () => {
                   />
                 </div>
                 {errors.firstName && (
-                  <p className="mt-1 text-xs sm:text-sm text-red-600 font-medium">{errors.firstName.message}</p>
+                  <p className="mt-2 text-sm md:text-base text-red-600 font-medium">{errors.firstName.message}</p>
                 )}
               </div>
 
               <div>
-                <label htmlFor="lastName" className="block text-sm font-semibold mb-1.5 sm:mb-2 text-[#232249]">
+                <label htmlFor="lastName" className="block text-sm md:text-base font-semibold mb-2 text-[#232249]">
                   Last Name
                 </label>
                 <input
                   {...register('lastName')}
                   type="text"
-                  className={`w-full px-3 py-3 sm:py-3.5 border-2 rounded-lg text-gray-900 placeholder-gray-500 text-sm sm:text-base
-                    transition-all duration-200 focus:outline-none focus:ring-3 touch-manipulation ${
+                  className={`w-full h-12 md:h-14 px-4 border-2 rounded-xl text-gray-900 placeholder-gray-400 text-base md:text-lg
+                    transition-all duration-200 focus:outline-none focus:ring-4 touch-manipulation ${
                     errors.lastName 
                       ? 'border-red-300 focus:border-red-500 focus:ring-red-100' 
                       : 'border-gray-200 hover:border-gray-300 focus:border-[#232249] focus:ring-[#232249]/10'
@@ -180,25 +181,26 @@ const Register = () => {
                   placeholder="Last name"
                 />
                 {errors.lastName && (
-                  <p className="mt-1 text-xs sm:text-sm text-red-600 font-medium">{errors.lastName.message}</p>
+                  <p className="mt-2 text-sm md:text-base text-red-600 font-medium">{errors.lastName.message}</p>
                 )}
               </div>
             </div>
 
-            <div className="flex flex-col md:grid md:grid-cols-2 gap-3 sm:gap-4">
+            {/* Username and Email Fields */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
               <div>
-                <label htmlFor="username" className="block text-sm font-semibold mb-1.5 sm:mb-2 text-[#232249]">
+                <label htmlFor="username" className="block text-sm md:text-base font-semibold mb-2 text-[#232249]">
                   Username
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <UserPlus className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <UserPlus className="h-5 w-5 md:h-6 md:w-6 text-gray-400" />
                   </div>
                   <input
                     {...register('username')}
                     type="text"
-                    className={`w-full pl-10 sm:pl-11 pr-3 py-3 sm:py-3.5 border-2 rounded-lg text-gray-900 placeholder-gray-500 text-sm sm:text-base
-                      transition-all duration-200 focus:outline-none focus:ring-3 touch-manipulation ${
+                    className={`w-full h-12 md:h-14 pl-12 md:pl-14 pr-4 border-2 rounded-xl text-gray-900 placeholder-gray-400 text-base md:text-lg
+                      transition-all duration-200 focus:outline-none focus:ring-4 touch-manipulation ${
                       errors.username 
                         ? 'border-red-300 focus:border-red-500 focus:ring-red-100' 
                         : 'border-gray-200 hover:border-gray-300 focus:border-[#232249] focus:ring-[#232249]/10'
@@ -207,23 +209,23 @@ const Register = () => {
                   />
                 </div>
                 {errors.username && (
-                  <p className="mt-1 text-xs sm:text-sm text-red-600 font-medium">{errors.username.message}</p>
+                  <p className="mt-2 text-sm md:text-base text-red-600 font-medium">{errors.username.message}</p>
                 )}
               </div>
 
               <div>
-                <label htmlFor="email" className="block text-sm font-semibold mb-1.5 sm:mb-2 text-[#232249]">
+                <label htmlFor="email" className="block text-sm md:text-base font-semibold mb-2 text-[#232249]">
                   Email Address
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Mail className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <Mail className="h-5 w-5 md:h-6 md:w-6 text-gray-400" />
                   </div>
                   <input
                     {...register('email')}
                     type="email"
-                    className={`w-full pl-10 sm:pl-11 pr-3 py-3 sm:py-3.5 border-2 rounded-lg text-gray-900 placeholder-gray-500 text-sm sm:text-base
-                      transition-all duration-200 focus:outline-none focus:ring-3 touch-manipulation ${
+                    className={`w-full h-12 md:h-14 pl-12 md:pl-14 pr-4 border-2 rounded-xl text-gray-900 placeholder-gray-400 text-base md:text-lg
+                      transition-all duration-200 focus:outline-none focus:ring-4 touch-manipulation ${
                       errors.email 
                         ? 'border-red-300 focus:border-red-500 focus:ring-red-100' 
                         : 'border-gray-200 hover:border-gray-300 focus:border-[#232249] focus:ring-[#232249]/10'
@@ -232,38 +234,40 @@ const Register = () => {
                   />
                 </div>
                 {errors.email && (
-                  <p className="mt-1 text-xs sm:text-sm text-red-600 font-medium">{errors.email.message}</p>
+                  <p className="mt-2 text-sm md:text-base text-red-600 font-medium">{errors.email.message}</p>
                 )}
               </div>
             </div>
 
+            {/* Department Field */}
             <div>
-              <label htmlFor="department" className="block text-sm font-semibold mb-1.5 sm:mb-2 text-[#232249]">
+              <label htmlFor="department" className="block text-sm md:text-base font-semibold mb-2 text-[#232249]">
                 Department <span className="text-gray-400 font-normal">(Optional)</span>
               </label>
               <input
                 {...register('department')}
                 type="text"
-                className="w-full px-3 py-3 sm:py-3.5 border-2 border-gray-200 rounded-lg text-gray-900 placeholder-gray-500 text-sm sm:text-base
-                  transition-all duration-200 focus:outline-none focus:ring-3 hover:border-gray-300 focus:border-[#232249] focus:ring-[#232249]/10 touch-manipulation"
+                className="w-full h-12 md:h-14 px-4 border-2 border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 text-base md:text-lg
+                  transition-all duration-200 focus:outline-none focus:ring-4 hover:border-gray-300 focus:border-[#232249] focus:ring-[#232249]/10 touch-manipulation"
                 placeholder="Enter your department"
               />
             </div>
 
-            <div className="flex flex-col md:grid md:grid-cols-2 gap-3 sm:gap-4">
+            {/* Password Fields */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
               <div>
-                <label htmlFor="password" className="block text-sm font-semibold mb-1.5 sm:mb-2 text-[#232249]">
+                <label htmlFor="password" className="block text-sm md:text-base font-semibold mb-2 text-[#232249]">
                   Password
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Lock className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <Lock className="h-5 w-5 md:h-6 md:w-6 text-gray-400" />
                   </div>
                   <input
                     {...register('password')}
                     type={showPassword ? 'text' : 'password'}
-                    className={`w-full pl-10 sm:pl-11 pr-10 sm:pr-12 py-3 sm:py-3.5 border-2 rounded-lg text-gray-900 placeholder-gray-500 text-sm sm:text-base
-                      transition-all duration-200 focus:outline-none focus:ring-3 touch-manipulation ${
+                    className={`w-full h-12 md:h-14 pl-12 md:pl-14 pr-14 md:pr-16 border-2 rounded-xl text-gray-900 placeholder-gray-400 text-base md:text-lg
+                      transition-all duration-200 focus:outline-none focus:ring-4 touch-manipulation ${
                       errors.password 
                         ? 'border-red-300 focus:border-red-500 focus:ring-red-100' 
                         : 'border-gray-200 hover:border-gray-300 focus:border-[#232249] focus:ring-[#232249]/10'
@@ -272,34 +276,34 @@ const Register = () => {
                   />
                   <button
                     type="button"
-                    className="absolute inset-y-0 right-0 pr-3 sm:pr-4 flex items-center hover:bg-gray-50 rounded-r-lg transition-colors duration-200 touch-manipulation min-w-[44px] min-h-[44px]"
+                    className="absolute inset-y-0 right-0 pr-4 flex items-center justify-center hover:bg-gray-50 rounded-r-xl transition-colors duration-200 touch-manipulation w-14 md:w-16"
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? (
-                      <EyeOff className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 hover:text-[#232249]" />
+                      <EyeOff className="h-5 w-5 md:h-6 md:w-6 text-gray-400 hover:text-[#232249]" />
                     ) : (
-                      <Eye className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 hover:text-[#232249]" />
+                      <Eye className="h-5 w-5 md:h-6 md:w-6 text-gray-400 hover:text-[#232249]" />
                     )}
                   </button>
                 </div>
                 {errors.password && (
-                  <p className="mt-1 text-xs sm:text-sm text-red-600 font-medium">{errors.password.message}</p>
+                  <p className="mt-2 text-sm md:text-base text-red-600 font-medium">{errors.password.message}</p>
                 )}
               </div>
 
               <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-semibold mb-1.5 sm:mb-2 text-[#232249]">
+                <label htmlFor="confirmPassword" className="block text-sm md:text-base font-semibold mb-2 text-[#232249]">
                   Confirm Password
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Lock className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <Lock className="h-5 w-5 md:h-6 md:w-6 text-gray-400" />
                   </div>
                   <input
                     {...register('confirmPassword')}
                     type={showConfirmPassword ? 'text' : 'password'}
-                    className={`w-full pl-10 sm:pl-11 pr-10 sm:pr-12 py-3 sm:py-3.5 border-2 rounded-lg text-gray-900 placeholder-gray-500 text-sm sm:text-base
-                      transition-all duration-200 focus:outline-none focus:ring-3 touch-manipulation ${
+                    className={`w-full h-12 md:h-14 pl-12 md:pl-14 pr-14 md:pr-16 border-2 rounded-xl text-gray-900 placeholder-gray-400 text-base md:text-lg
+                      transition-all duration-200 focus:outline-none focus:ring-4 touch-manipulation ${
                       errors.confirmPassword 
                         ? 'border-red-300 focus:border-red-500 focus:ring-red-100' 
                         : 'border-gray-200 hover:border-gray-300 focus:border-[#232249] focus:ring-[#232249]/10'
@@ -308,53 +312,55 @@ const Register = () => {
                   />
                   <button
                     type="button"
-                    className="absolute inset-y-0 right-0 pr-3 sm:pr-4 flex items-center hover:bg-gray-50 rounded-r-lg transition-colors duration-200 touch-manipulation min-w-[44px] min-h-[44px]"
+                    className="absolute inset-y-0 right-0 pr-4 flex items-center justify-center hover:bg-gray-50 rounded-r-xl transition-colors duration-200 touch-manipulation w-14 md:w-16"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   >
                     {showConfirmPassword ? (
-                      <EyeOff className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 hover:text-[#232249]" />
+                      <EyeOff className="h-5 w-5 md:h-6 md:w-6 text-gray-400 hover:text-[#232249]" />
                     ) : (
-                      <Eye className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 hover:text-[#232249]" />
+                      <Eye className="h-5 w-5 md:h-6 md:w-6 text-gray-400 hover:text-[#232249]" />
                     )}
                   </button>
                 </div>
                 {errors.confirmPassword && (
-                  <p className="mt-1 text-xs sm:text-sm text-red-600 font-medium">{errors.confirmPassword.message}</p>
+                  <p className="mt-2 text-sm md:text-base text-red-600 font-medium">{errors.confirmPassword.message}</p>
                 )}
               </div>
             </div>
 
+            {/* Submit Button */}
+            {/* Submit Button */}
             <button
               type="submit"
               disabled={isLoading}
-              className={`w-full py-3 sm:py-3.5 px-6 rounded-lg font-bold text-white text-sm sm:text-base transition-all duration-200 touch-manipulation min-h-[48px] ${
+              className={`w-full h-14 md:h-16 px-6 rounded-xl font-bold text-white text-base md:text-lg transition-all duration-200 touch-manipulation shadow-lg ${
                 isLoading
                   ? 'bg-gray-400 cursor-not-allowed'
-                  : 'bg-[#232249] hover:bg-[#232249]/90 hover:shadow-md transform hover:-translate-y-0.5 active:scale-95'
+                  : 'bg-[#232249] hover:bg-[#232249]/90 hover:shadow-xl transform hover:-translate-y-1 active:scale-95'
               }`}
             >
               {isLoading ? (
-                <div className="flex items-center justify-center">
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                  Creating Account...
+                <div className="flex items-center justify-center gap-3">
+                  <div className="w-5 h-5 md:w-6 md:h-6 border-3 border-white border-t-transparent rounded-full animate-spin"></div>
+                  <span>Creating Account...</span>
                 </div>
               ) : (
-                <div className="flex items-center justify-center">
-                  <UserPlus className="w-4 h-4 mr-2" />
-                  Create Account
+                <div className="flex items-center justify-center gap-3">
+                  <UserPlus className="w-5 h-5 md:w-6 md:h-6" />
+                  <span>Create Account</span>
                 </div>
               )}
             </button>
           </form>
 
           {/* Divider */}
-          <div className="my-4 sm:my-6">
+          <div className="my-6 md:my-8">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-200"></div>
+                <div className="w-full border-t-2 border-gray-200"></div>
               </div>
-              <div className="relative flex justify-center text-xs sm:text-sm">
-                <span className="px-3 bg-white text-gray-500 font-medium">Already have an account?</span>
+              <div className="relative flex justify-center text-sm md:text-base">
+                <span className="px-4 md:px-6 bg-white text-gray-500 font-semibold">Already have an account?</span>
               </div>
             </div>
           </div>
@@ -362,18 +368,18 @@ const Register = () => {
           {/* Login Link */}
           <Link
             to="/login"
-            className="w-full flex items-center justify-center py-3 sm:py-3.5 px-6 border-2 border-[#232249] rounded-lg font-bold text-sm sm:text-base text-[#232249] hover:bg-[#232249] hover:text-white transition-all duration-200 transform hover:-translate-y-0.5 active:scale-95 touch-manipulation min-h-[48px]"
+            className="w-full h-14 md:h-16 flex items-center justify-center gap-3 px-6 border-3 border-[#232249] rounded-xl font-bold text-base md:text-lg text-[#232249] hover:bg-[#232249] hover:text-white transition-all duration-200 transform hover:-translate-y-1 active:scale-95 touch-manipulation shadow-lg hover:shadow-xl"
           >
-            <User className="w-4 h-4 mr-2" />
-            Sign In Instead
+            <User className="w-5 h-5 md:w-6 md:h-6" />
+            <span>Sign In Instead</span>
           </Link>
         </div>
 
         {/* Footer */}
-        <div className="mt-4 sm:mt-6 text-center">
-          <div className="flex items-center justify-center gap-2 text-xs sm:text-sm text-gray-500">
-            <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-emerald-500 rounded-full animate-pulse flex-shrink-0"></div>
-            <span>Secured with enterprise-grade encryption</span>
+        <div className="mt-6 md:mt-8 text-center">
+          <div className="flex items-center justify-center gap-2 md:gap-3 text-sm md:text-base text-gray-500">
+            <div className="w-2 h-2 md:w-2.5 md:h-2.5 bg-emerald-500 rounded-full animate-pulse flex-shrink-0"></div>
+            <span className="font-medium">Secured with enterprise-grade encryption</span>
           </div>
         </div>
       </div>

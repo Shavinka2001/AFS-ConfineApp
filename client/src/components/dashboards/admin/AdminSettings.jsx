@@ -406,7 +406,7 @@ const AdminSettings = () => {
   const TabButton = ({ id, label, icon: Icon, color = '#232249' }) => (
     <button
       onClick={() => setActiveTab(id)}
-      className={`flex items-center space-x-3 px-4 md:px-6 py-4 md:py-4 rounded-xl font-semibold transition-all duration-300 w-full text-left min-h-[48px] ${
+      className={`flex items-center space-x-3 px-4 md:px-6 py-4 md:py-4 rounded-xl font-semibold transition-all duration-300 w-full text-left min-h-[48px] active:scale-95 ${
         activeTab === id
           ? 'bg-[#232249] text-white shadow-xl'
           : 'bg-white text-gray-700 hover:bg-gray-50 hover:shadow-lg border border-gray-200'
@@ -425,7 +425,7 @@ const AdminSettings = () => {
       </label>
       <input
         {...props}
-        className="w-full px-4 py-4 md:py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white text-base min-h-[48px]"
+        className="w-full px-4 h-12 md:h-auto py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white text-base"
       />
     </div>
   );
@@ -438,7 +438,7 @@ const AdminSettings = () => {
       </label>
       <select
         {...props}
-        className="w-full px-4 py-4 md:py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white text-base min-h-[48px]"
+        className="w-full px-4 h-12 md:h-auto py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white text-base"
       >
         {options.map((option) => (
           <option key={option.value} value={option.value}>
@@ -459,12 +459,12 @@ const AdminSettings = () => {
         <input
           {...props}
           type={showPassword ? 'text' : 'password'}
-          className="w-full px-4 py-4 md:py-3 pr-12 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white text-base min-h-[48px]"
+          className="w-full px-4 h-12 md:h-auto py-3 pr-12 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white text-base"
         />
         <button
           type="button"
           onClick={() => setShowPassword(!showPassword)}
-          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-[#232249] transition-colors p-2 min-h-[44px] min-w-[44px] flex items-center justify-center"
+          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-[#232249] transition-colors p-2 min-h-[44px] min-w-[44px] flex items-center justify-center active:scale-95"
         >
           {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
         </button>
@@ -481,7 +481,7 @@ const AdminSettings = () => {
       <button
         type="button"
         onClick={() => onChange(!checked)}
-        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors flex-shrink-0 ${
+        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors flex-shrink-0 active:scale-95 ${
           checked ? (danger ? 'bg-red-600' : 'bg-[#232249]') : 'bg-gray-300'
         }`}
       >
@@ -516,7 +516,7 @@ const AdminSettings = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="w-full max-w-7xl mx-auto p-4 md:p-8 space-y-4 md:space-y-8">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-4 md:py-8 space-y-4 md:space-y-8">
         {/* Header */}
         <div className="bg-white rounded-xl md:rounded-2xl shadow-lg md:shadow-xl p-4 md:p-6 border border-gray-100">
           <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-3 sm:space-y-0 sm:space-x-4">
@@ -606,7 +606,7 @@ const AdminSettings = () => {
                 </div>
 
                 <form onSubmit={handleAdminProfileSubmit} className="space-y-4 md:space-y-6">
-                  <div className="grid grid-cols-1 gap-4 md:gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                     <InputField
                       label="First Name"
                       icon={User}
@@ -661,7 +661,7 @@ const AdminSettings = () => {
                     <button
                       type="submit"
                       disabled={loading}
-                      className="flex items-center space-x-2 bg-[#232249] text-white px-6 md:px-8 py-4 md:py-3 rounded-xl font-semibold hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px]"
+                      className="flex items-center space-x-2 bg-[#232249] text-white px-6 md:px-8 py-4 md:py-3 rounded-xl font-semibold hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px] active:scale-95"
                     >
                       <Save className="h-5 w-5" />
                       <span className="text-sm md:text-base">{loading ? 'Updating...' : 'Update Profile'}</span>
@@ -734,7 +734,7 @@ const AdminSettings = () => {
                     <button
                       type="submit"
                       disabled={loading}
-                      className="flex items-center space-x-2 bg-[#232249] text-white px-6 md:px-8 py-4 md:py-3 rounded-xl font-semibold hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px]"
+                      className="flex items-center space-x-2 bg-[#232249] text-white px-6 md:px-8 py-4 md:py-3 rounded-xl font-semibold hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px] active:scale-95"
                     >
                       <Lock className="h-5 w-5" />
                       <span className="text-sm md:text-base">{loading ? 'Changing...' : 'Change Password'}</span>
@@ -758,7 +758,7 @@ const AdminSettings = () => {
                 </div>
 
                 <form onSubmit={handleSystemConfigSubmit} className="space-y-4 md:space-y-6">
-                  <div className="grid grid-cols-1 gap-4 md:gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                     <InputField
                       label="System Name"
                       icon={Globe}
@@ -812,7 +812,7 @@ const AdminSettings = () => {
                         max="100"
                         value={systemConfig.maxFileSize}
                         onChange={(e) => setSystemConfig({...systemConfig, maxFileSize: parseInt(e.target.value)})}
-                        className="w-full px-4 py-4 md:py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white text-base min-h-[48px]"
+                        className="w-full px-4 h-12 md:h-auto py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white text-base"
                       />
                     </div>
 
@@ -827,7 +827,7 @@ const AdminSettings = () => {
                         max="480"
                         value={systemConfig.sessionTimeout}
                         onChange={(e) => setSystemConfig({...systemConfig, sessionTimeout: parseInt(e.target.value)})}
-                        className="w-full px-4 py-4 md:py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white text-base min-h-[48px]"
+                        className="w-full px-4 h-12 md:h-auto py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white text-base"
                       />
                     </div>
 
@@ -879,7 +879,7 @@ const AdminSettings = () => {
                     <button
                       type="submit"
                       disabled={loading}
-                      className="flex items-center space-x-2 bg-[#232249] text-white px-6 md:px-8 py-4 md:py-3 rounded-xl font-semibold hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px]"
+                      className="flex items-center space-x-2 bg-[#232249] text-white px-6 md:px-8 py-4 md:py-3 rounded-xl font-semibold hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px] active:scale-95"
                     >
                       <Save className="h-5 w-5" />
                       <span className="text-sm md:text-base">{loading ? 'Saving...' : 'Save Configuration'}</span>
@@ -909,7 +909,7 @@ const AdminSettings = () => {
                       <Lock className="h-5 w-5 text-[#232249] flex-shrink-0" />
                       <span>Password Policy</span>
                     </h3>
-                    <div className="grid grid-cols-1 gap-4 md:gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                       <div className="space-y-2">
                         <label className="text-sm font-semibold text-gray-700">Minimum Length</label>
                         <input
@@ -924,7 +924,7 @@ const AdminSettings = () => {
                               minLength: parseInt(e.target.value)
                             }
                           })}
-                          className="w-full px-4 py-4 md:py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white text-base min-h-[48px]"
+                          className="w-full px-4 h-12 md:h-auto py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white text-base"
                         />
                       </div>
 
@@ -942,7 +942,7 @@ const AdminSettings = () => {
                               maxAge: parseInt(e.target.value)
                             }
                           })}
-                          className="w-full px-4 py-4 md:py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white text-base min-h-[48px]"
+                          className="w-full px-4 h-12 md:h-auto py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white text-base"
                         />
                       </div>
                     </div>
@@ -981,7 +981,7 @@ const AdminSettings = () => {
                       <Clock className="h-5 w-5 text-[#232249] flex-shrink-0" />
                       <span>Session Settings</span>
                     </h3>
-                    <div className="grid grid-cols-1 gap-4 md:gap-6 mb-4 md:mb-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-4 md:mb-6">
                       <div className="space-y-2">
                         <label className="text-sm font-semibold text-gray-700">Max Concurrent Sessions</label>
                         <input
@@ -996,7 +996,7 @@ const AdminSettings = () => {
                               maxSessions: parseInt(e.target.value)
                             }
                           })}
-                          className="w-full px-4 py-4 md:py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white text-base min-h-[48px]"
+                          className="w-full px-4 h-12 md:h-auto py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white text-base"
                         />
                       </div>
 
@@ -1014,7 +1014,7 @@ const AdminSettings = () => {
                               idleTimeout: parseInt(e.target.value)
                             }
                           })}
-                          className="w-full px-4 py-4 md:py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white text-base min-h-[48px]"
+                          className="w-full px-4 h-12 md:h-auto py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white text-base"
                         />
                       </div>
                     </div>
@@ -1043,7 +1043,7 @@ const AdminSettings = () => {
                     <button
                       type="submit"
                       disabled={loading}
-                      className="flex items-center space-x-2 bg-[#232249] text-white px-6 md:px-8 py-4 md:py-3 rounded-xl font-semibold hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px]"
+                      className="flex items-center space-x-2 bg-[#232249] text-white px-6 md:px-8 py-4 md:py-3 rounded-xl font-semibold hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px] active:scale-95"
                     >
                       <Save className="h-5 w-5" />
                       <span className="text-sm md:text-base">{loading ? 'Saving...' : 'Save Access Control'}</span>
@@ -1073,7 +1073,7 @@ const AdminSettings = () => {
                       <Shield className="h-5 w-5 text-[#232249] flex-shrink-0" />
                       <span>Encryption Settings</span>
                     </h3>
-                    <div className="grid grid-cols-1 gap-4 md:gap-6 mb-4 md:mb-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-4 md:mb-6">
                       <SelectField
                         label="Encryption Algorithm"
                         icon={Key}
@@ -1106,7 +1106,7 @@ const AdminSettings = () => {
                               keyRotationDays: parseInt(e.target.value)
                             }
                           })}
-                          className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white"
+                          className="w-full px-4 h-12 md:h-auto py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white"
                         />
                       </div>
                     </div>
@@ -1172,7 +1172,7 @@ const AdminSettings = () => {
                               retentionDays: parseInt(e.target.value)
                             }
                           })}
-                          className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white"
+                          className="w-full px-4 h-12 md:h-auto py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-all duration-200 bg-white"
                         />
                       </div>
                     </div>
@@ -1203,7 +1203,7 @@ const AdminSettings = () => {
                     <button
                       type="submit"
                       disabled={loading}
-                      className="flex items-center space-x-2 bg-[#232249] text-white px-8 py-3 rounded-xl font-semibold hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex items-center space-x-2 bg-[#232249] text-white px-8 py-3 rounded-xl font-semibold hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
                     >
                       <Save className="h-5 w-5" />
                       <span>{loading ? 'Saving...' : 'Save Security Settings'}</span>
@@ -1299,7 +1299,7 @@ const AdminSettings = () => {
                       <button 
                         onClick={() => handleSystemAction('restart-services')}
                         disabled={loading}
-                        className="flex items-center space-x-2 p-4 bg-blue-50 rounded-xl border border-blue-200 hover:bg-blue-100 transition-colors disabled:opacity-50"
+                        className="flex items-center space-x-2 p-4 bg-blue-50 rounded-xl border border-blue-200 hover:bg-blue-100 transition-colors disabled:opacity-50 active:scale-95 min-h-[48px]"
                       >
                         <RefreshCw className={`h-5 w-5 text-blue-600 ${loading ? 'animate-spin' : ''}`} />
                         <span className="font-medium text-blue-900">Restart Services</span>
@@ -1307,7 +1307,7 @@ const AdminSettings = () => {
                       <button 
                         onClick={() => handleSystemAction('create-backup')}
                         disabled={loading}
-                        className="flex items-center space-x-2 p-4 bg-green-50 rounded-xl border border-green-200 hover:bg-green-100 transition-colors disabled:opacity-50"
+                        className="flex items-center space-x-2 p-4 bg-green-50 rounded-xl border border-green-200 hover:bg-green-100 transition-colors disabled:opacity-50 active:scale-95 min-h-[48px]"
                       >
                         <Download className="h-5 w-5 text-green-600" />
                         <span className="font-medium text-green-900">Create Backup</span>
@@ -1315,7 +1315,7 @@ const AdminSettings = () => {
                       <button 
                         onClick={() => handleSystemAction('clear-cache')}
                         disabled={loading}
-                        className="flex items-center space-x-2 p-4 bg-yellow-50 rounded-xl border border-yellow-200 hover:bg-yellow-100 transition-colors disabled:opacity-50"
+                        className="flex items-center space-x-2 p-4 bg-yellow-50 rounded-xl border border-yellow-200 hover:bg-yellow-100 transition-colors disabled:opacity-50 active:scale-95 min-h-[48px]"
                       >
                         <AlertTriangle className="h-5 w-5 text-yellow-600" />
                         <span className="font-medium text-yellow-900">Clear Cache</span>
@@ -1323,7 +1323,7 @@ const AdminSettings = () => {
                       <button 
                         onClick={() => handleSystemAction('clear-logs')}
                         disabled={loading}
-                        className="flex items-center space-x-2 p-4 bg-red-50 rounded-xl border border-red-200 hover:bg-red-100 transition-colors disabled:opacity-50"
+                        className="flex items-center space-x-2 p-4 bg-red-50 rounded-xl border border-red-200 hover:bg-red-100 transition-colors disabled:opacity-50 active:scale-95 min-h-[48px]"
                       >
                         <Trash2 className="h-5 w-5 text-red-600" />
                         <span className="font-medium text-red-900">Clear Logs</span>

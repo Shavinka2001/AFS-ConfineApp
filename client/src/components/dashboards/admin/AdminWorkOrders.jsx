@@ -207,16 +207,16 @@ const debounce = (func, wait) => {
 // Clean Statistics Card Component
 const StatCard = ({ title, value, icon: Icon, color, bgColor, borderColor, onClick }) => (
   <div 
-    className={`group cursor-pointer transition-all duration-200 hover:scale-105 ${onClick ? 'cursor-pointer' : ''}`}
+    className={`group cursor-pointer transition-all duration-200 hover:scale-105 active:scale-95 ${onClick ? 'cursor-pointer' : ''}`}
     onClick={onClick}
   >
-    <div className={`bg-white rounded-xl shadow-sm border-2 ${borderColor} hover:shadow-md transition-all duration-200 p-4`}>
+    <div className={`bg-white rounded-xl shadow-sm border-2 ${borderColor} hover:shadow-md transition-all duration-200 p-4 md:p-6`}>
       <div className="flex items-center justify-between mb-3">
-        <div className={`p-2 rounded-lg ${bgColor}`}>
-          <Icon className={`h-5 w-5 ${color}`} />
+        <div className={`p-2 md:p-3 rounded-lg ${bgColor}`}>
+          <Icon className={`h-5 w-5 md:h-6 md:w-6 ${color}`} />
         </div>
         <div className="text-right">
-          <div className="text-2xl font-bold text-gray-900">{value}</div>
+          <div className="text-xl md:text-2xl font-bold text-gray-900">{value}</div>
         </div>
       </div>
       <div className="text-sm font-medium text-gray-600">{title}</div>
@@ -611,17 +611,17 @@ const AdminWorkOrders = () => {
           <div className="space-y-4">
             <h3 className="text-2xl font-bold text-[#232249]">Unable to Load Data</h3>
             <p className="text-gray-600 leading-relaxed">{error}</p>
-            <div className="pt-4 flex gap-3 justify-center">
+            <div className="pt-4 flex flex-col gap-3 sm:flex-row sm:justify-center">
               <button
                 onClick={() => fetchWorkOrders()}
-                className="bg-gradient-to-r from-[#232249] to-[#1a1a3a] text-white px-8 py-3 rounded-2xl hover:shadow-lg transition-all duration-300 font-semibold flex items-center gap-3"
+                className="bg-gradient-to-r from-[#232249] to-[#1a1a3a] text-white px-6 py-3 md:px-8 md:py-3 rounded-2xl hover:shadow-lg transition-all duration-300 font-semibold flex items-center justify-center gap-3 min-h-[44px] active:scale-95"
               >
                 <RefreshCw className="w-5 h-5" />
                 Try Again
               </button>
               <button
                 onClick={() => window.location.href = '/admin/dashboard'}
-                className="bg-gray-100 text-gray-700 px-8 py-3 rounded-2xl hover:bg-gray-200 transition-all duration-300 font-semibold"
+                className="bg-gray-100 text-gray-700 px-6 py-3 md:px-8 md:py-3 rounded-2xl hover:bg-gray-200 transition-all duration-300 font-semibold min-h-[44px] active:scale-95"
               >
                 Go to Dashboard
               </button>
@@ -633,22 +633,22 @@ const AdminWorkOrders = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 p-4 lg:p-8">
-      <div className="max-w-[1600px] mx-auto space-y-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 p-4 md:p-6 lg:p-8">
+      <div className="w-full max-w-7xl mx-auto space-y-6 md:space-y-8">
         <Toaster />
         
         {/* Compact Modern Header */}
         <div className="relative overflow-hidden">
           <div className="bg-gradient-to-r from-[#232249] to-[#2d2d5f] rounded-2xl shadow-lg border border-gray-200/20">
-            <div className="px-6 py-6">
-              <div className="flex items-center justify-between">
+            <div className="px-4 py-4 md:px-6 md:py-6">
+              <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 {/* Left Side - Title */}
-                <div className="flex items-center gap-4">
-                  <div className="bg-white/15 backdrop-blur-sm rounded-xl p-3 border border-white/20">
-                    <Database className="w-6 h-6 text-white" />
+                <div className="flex items-center gap-3 md:gap-4">
+                  <div className="bg-white/15 backdrop-blur-sm rounded-xl p-2 md:p-3 border border-white/20">
+                    <Database className="w-5 h-5 md:w-6 md:h-6 text-white" />
                   </div>
                   <div>
-                    <h1 className="text-2xl font-bold text-white">
+                    <h1 className="text-xl md:text-2xl font-bold text-white">
                       Work Orders Management
                     </h1>
                     <p className="text-white/70 text-sm">
@@ -658,10 +658,10 @@ const AdminWorkOrders = () => {
                 </div>
 
                 {/* Right Side - Live Time */}
-                <div className="flex items-center gap-3">
-                  <div className="bg-white/10 rounded-lg px-4 py-3 border border-white/20">
+                <div className="flex items-center gap-2 md:gap-3">
+                  <div className="bg-white/10 rounded-lg px-3 py-2 md:px-4 md:py-3 border border-white/20">
                     <div className="text-white/60 text-xs font-medium mb-1">Current Time</div>
-                    <div className="text-white text-lg font-bold font-mono">
+                    <div className="text-white text-base md:text-lg font-bold font-mono">
                       {currentTime.toLocaleTimeString('en-US', {
                         hour: '2-digit',
                         minute: '2-digit',
@@ -669,7 +669,7 @@ const AdminWorkOrders = () => {
                       })}
                     </div>
                   </div>
-                  <div className="bg-white/10 rounded-lg px-4 py-3 border border-white/20">
+                  <div className="bg-white/10 rounded-lg px-3 py-2 md:px-4 md:py-3 border border-white/20">
                     <div className="text-white/60 text-xs font-medium mb-1">Date</div>
                     <div className="text-white text-sm font-semibold">
                       {currentTime.toLocaleDateString('en-US', {
@@ -726,13 +726,13 @@ const AdminWorkOrders = () => {
         </div>
 
         {/* Modern Filters Interface */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-          <div className="flex items-center gap-3 mb-6">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 md:p-6">
+          <div className="flex items-center gap-3 mb-4 md:mb-6">
             <div className="bg-[#232249] rounded-xl p-2">
               <Search className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h3 className="text-xl font-semibold text-[#232249]">Search & Filter</h3>
+              <h3 className="text-lg md:text-xl font-semibold text-[#232249]">Search & Filter</h3>
               <p className="text-gray-500 text-sm">Find specific work orders</p>
             </div>
           </div>
@@ -750,7 +750,7 @@ const AdminWorkOrders = () => {
                   value={searchTerm}
                   onChange={(e) => handleSearch(e.target.value)}
                   placeholder="Search orders..."
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-colors bg-gray-50 hover:bg-white"
+                  className="w-full h-12 pl-10 pr-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-colors bg-gray-50 hover:bg-white"
                 />
               </div>
             </div>
@@ -788,7 +788,7 @@ const AdminWorkOrders = () => {
                 <select
                   value={filter.value}
                   onChange={(e) => filter.setter(e.target.value)}
-                  className="w-full px-3 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-colors bg-gray-50 hover:bg-white"
+                  className="w-full h-12 px-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#232249]/20 focus:border-[#232249] transition-colors bg-gray-50 hover:bg-white"
                 >
                   {filter.options.map(option => (
                     <option key={option.value} value={option.value}>{option.label}</option>
@@ -799,22 +799,22 @@ const AdminWorkOrders = () => {
           </div>
 
           {/* Active Filters & Actions */}
-          <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-100">
+          <div className="flex flex-col gap-4 mt-6 pt-4 border-t border-gray-100 md:flex-row md:items-center md:justify-between md:gap-3">
             <div className="flex items-center gap-2 text-sm text-gray-600">
               <span className="font-medium">Results:</span>
               <span className="font-semibold text-[#232249]">{filteredOrders.length}</span>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-2 md:gap-3">
               <button
                 onClick={() => setShowCSVImportModal(true)}
-                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-700 hover:bg-blue-50 rounded-lg transition-colors border border-blue-200"
+                className="flex items-center gap-2 px-4 py-3 min-h-[44px] text-sm font-medium text-blue-700 hover:bg-blue-50 rounded-lg transition-colors border border-blue-200 active:scale-95"
               >
                 <Upload className="w-4 h-4" />
                 Import CSV
               </button>
               <button
                 onClick={handleExportToExcel}
-                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors border border-emerald-200"
+                className="flex items-center gap-2 px-4 py-3 min-h-[44px] text-sm font-medium text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors border border-emerald-200 active:scale-95"
               >
                 <FileSpreadsheet className="w-4 h-4" />
                 Export Excel
@@ -825,11 +825,11 @@ const AdminWorkOrders = () => {
                 size="default"
                 label="Download PDF"
                 groupBy="building"
-                className="border border-blue-200"
+                className="border border-blue-200 active:scale-95"
               />
               <button
                 onClick={handleRefresh}
-                className="flex items-center gap-2 px-4 py-2 bg-[#232249] text-white rounded-lg hover:bg-[#1a1a3a] transition-colors text-sm font-medium"
+                className="flex items-center gap-2 px-4 py-3 min-h-[44px] bg-[#232249] text-white rounded-lg hover:bg-[#1a1a3a] transition-colors text-sm font-medium active:scale-95"
               >
                 <RefreshCw className="w-4 h-4" />
                 Refresh
@@ -861,36 +861,36 @@ const AdminWorkOrders = () => {
         {showDetailModal && selectedOrder && (
           <div className="fixed inset-0 bg-black/70 backdrop-blur-xl flex items-center justify-center z-50 p-4">
             {/* Modal Container with Advanced Animations */}
-            <div className="relative max-w-7xl w-full max-h-[95vh] overflow-hidden">
+            <div className="relative w-full max-w-7xl max-h-[95vh] overflow-hidden">
               {/* Animated Background */}
-              <div className="absolute inset-0 bg-gradient-to-br from-white via-gray-50 to-white rounded-[3rem] transform rotate-1 scale-105 opacity-50"></div>
-              <div className="absolute inset-0 bg-white rounded-[3rem] shadow-2xl"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-white via-gray-50 to-white rounded-2xl md:rounded-[3rem] transform rotate-1 scale-105 opacity-50"></div>
+              <div className="absolute inset-0 bg-white rounded-2xl md:rounded-[3rem] shadow-2xl"></div>
               
               {/* Modal Content */}
-              <div className="relative bg-white/95 backdrop-blur-xl rounded-[3rem] shadow-2xl border border-gray-200/50 overflow-hidden">
+              <div className="relative bg-white/95 backdrop-blur-xl rounded-2xl md:rounded-[3rem] shadow-2xl border border-gray-200/50 overflow-hidden">
                 {/* Ultra-Modern Header */}
-                <div className="relative bg-gradient-to-r from-[#232249] via-[#2d2d5f] to-[#232249] px-10 py-8">
+                <div className="relative bg-gradient-to-r from-[#232249] via-[#2d2d5f] to-[#232249] px-6 py-6 md:px-10 md:py-8">
                   {/* Floating Elements */}
                   <div className="absolute top-4 right-20 w-20 h-20 bg-white/10 rounded-full blur-2xl animate-pulse"></div>
                   <div className="absolute bottom-4 left-20 w-16 h-16 bg-white/5 rounded-full blur-xl animate-pulse delay-1000"></div>
                   
-                  <div className="relative flex items-center justify-between">
-                    <div className="flex items-center gap-6">
+                  <div className="relative flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                    <div className="flex items-center gap-4 md:gap-6">
                       <div className="relative group">
                         <div className="absolute inset-0 bg-white/20 rounded-2xl blur-lg group-hover:blur-xl transition-all duration-500"></div>
-                        <div className="relative bg-white/15 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
-                          <FileText className="h-8 w-8 text-white" />
+                        <div className="relative bg-white/15 backdrop-blur-sm rounded-2xl p-3 md:p-4 border border-white/20">
+                          <FileText className="h-6 w-6 md:h-8 md:w-8 text-white" />
                         </div>
                       </div>
                       <div>
-                        <h2 className="text-3xl font-black text-white mb-2">
+                        <h2 className="text-xl md:text-3xl font-black text-white mb-2">
                           Work Order Details
                         </h2>
-                        <div className="flex items-center gap-4">
-                          <span className="text-white/90 text-lg font-semibold">
+                        <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-4">
+                          <span className="text-white/90 text-base md:text-lg font-semibold">
                             {selectedOrder.workOrderId}
                           </span>
-                          <div className="flex items-center gap-2 px-3 py-1 bg-white/20 rounded-full border border-white/30">
+                          <div className="flex items-center gap-2 px-3 py-1 bg-white/20 rounded-full border border-white/30 w-fit">
                             <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
                             <span className="text-white/80 text-sm font-medium">Active</span>
                           </div>
@@ -899,28 +899,28 @@ const AdminWorkOrders = () => {
                     </div>
                     <button
                       onClick={closeDetailModal}
-                      className="relative group p-3 hover:bg-white/10 rounded-2xl transition-all duration-300 border border-white/20 hover:border-white/40"
+                      className="relative group p-3 min-h-[44px] hover:bg-white/10 rounded-2xl transition-all duration-300 border border-white/20 hover:border-white/40 active:scale-95 self-end md:self-auto"
                     >
-                      <XCircle className="h-7 w-7 text-white/70 group-hover:text-white transition-colors" />
+                      <XCircle className="h-6 w-6 md:h-7 md:w-7 text-white/70 group-hover:text-white transition-colors" />
                     </button>
                   </div>
                 </div>
 
                 {/* Enhanced Content Area */}
-                <div className="p-10 overflow-y-auto max-h-[calc(95vh-140px)]">
-                  <div className="grid grid-cols-1 xl:grid-cols-2 gap-10">
+                <div className="p-6 md:p-10 overflow-y-auto max-h-[calc(95vh-140px)] md:max-h-[calc(95vh-200px)]">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-10">
                     {/* Left Column - Basic Information */}
-                    <div className="space-y-8">
+                    <div className="space-y-6 md:space-y-8">
                       <div className="relative">
                         <div className="absolute -left-4 top-0 w-1 h-full bg-gradient-to-b from-[#232249] to-transparent rounded-full"></div>
-                        <h3 className="text-2xl font-bold text-[#232249] flex items-center gap-4 mb-6">
-                          <div className="p-3 bg-gradient-to-br from-[#232249] to-[#1a1a3a] rounded-2xl">
-                            <FileText className="h-6 w-6 text-white" />
+                        <h3 className="text-lg md:text-2xl font-bold text-[#232249] flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
+                          <div className="p-2 md:p-3 bg-gradient-to-br from-[#232249] to-[#1a1a3a] rounded-2xl">
+                            <FileText className="h-5 w-5 md:h-6 md:w-6 text-white" />
                           </div>
                           Basic Information
                         </h3>
-                        <div className="bg-gradient-to-br from-gray-50 to-gray-100/50 rounded-3xl p-8 space-y-6 border border-gray-200/50 shadow-lg">
-                          <div className="grid grid-cols-2 gap-6">
+                        <div className="bg-gradient-to-br from-gray-50 to-gray-100/50 rounded-2xl md:rounded-3xl p-6 md:p-8 space-y-4 md:space-y-6 border border-gray-200/50 shadow-lg">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                             {[
                               { label: 'Space Name', value: selectedOrder.spaceName },
                               { label: 'Building', value: selectedOrder.building },
@@ -928,35 +928,35 @@ const AdminWorkOrders = () => {
                               { label: 'Survey Date', value: formatDate(selectedOrder.surveyDate) }
                             ].map((item, index) => (
                               <div key={index} className="group">
-                                <span className="block text-sm font-bold text-[#232249] mb-3 uppercase tracking-wider">
+                                <span className="block text-sm font-bold text-[#232249] mb-2 md:mb-3 uppercase tracking-wider">
                                   {item.label}
                                 </span>
                                 <div className="bg-white rounded-xl px-4 py-3 border border-gray-200 group-hover:border-[#232249]/30 transition-all duration-300 shadow-sm">
-                                  <p className="text-gray-700 font-medium">{item.value}</p>
+                                  <p className="text-gray-700 font-medium text-sm md:text-base">{item.value}</p>
                                 </div>
                               </div>
                             ))}
                           </div>
                           
-                          <div className="grid grid-cols-2 gap-6 pt-4">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 pt-2 md:pt-4">
                             <div className="group">
-                              <span className="block text-sm font-bold text-[#232249] mb-3 uppercase tracking-wider">Priority</span>
-                              <span className={`inline-flex items-center px-4 py-2 rounded-xl text-sm font-bold border-2 ${getPriorityColor(selectedOrder.priority)}`}>
+                              <span className="block text-sm font-bold text-[#232249] mb-2 md:mb-3 uppercase tracking-wider">Priority</span>
+                              <span className={`inline-flex items-center px-3 py-2 md:px-4 md:py-2 rounded-xl text-sm font-bold border-2 ${getPriorityColor(selectedOrder.priority)}`}>
                                 {selectedOrder.priority}
                               </span>
                             </div>
                             <div className="group">
-                              <span className="block text-sm font-bold text-[#232249] mb-3 uppercase tracking-wider">Status</span>
-                              <span className={`inline-flex items-center px-4 py-2 rounded-xl text-sm font-bold border-2 ${getStatusColor(selectedOrder.status)}`}>
+                              <span className="block text-sm font-bold text-[#232249] mb-2 md:mb-3 uppercase tracking-wider">Status</span>
+                              <span className={`inline-flex items-center px-3 py-2 md:px-4 md:py-2 rounded-xl text-sm font-bold border-2 ${getStatusColor(selectedOrder.status)}`}>
                                 {selectedOrder.status}
                               </span>
                             </div>
                           </div>
                           
-                          <div className="pt-4">
-                            <span className="block text-sm font-bold text-[#232249] mb-3 uppercase tracking-wider">Location Description</span>
+                          <div className="pt-2 md:pt-4">
+                            <span className="block text-sm font-bold text-[#232249] mb-2 md:mb-3 uppercase tracking-wider">Location Description</span>
                             <div className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
-                              <p className="text-gray-700 leading-relaxed">{selectedOrder.locationDescription}</p>
+                              <p className="text-gray-700 leading-relaxed text-sm md:text-base">{selectedOrder.locationDescription}</p>
                             </div>
                           </div>
                         </div>
@@ -964,17 +964,17 @@ const AdminWorkOrders = () => {
                     </div>
 
                     {/* Right Column - Safety Assessment */}
-                    <div className="space-y-8">
+                    <div className="space-y-6 md:space-y-8">
                       <div className="relative">
                         <div className="absolute -left-4 top-0 w-1 h-full bg-gradient-to-b from-green-500 to-transparent rounded-full"></div>
-                        <h3 className="text-2xl font-bold text-[#232249] flex items-center gap-4 mb-6">
-                          <div className="p-3 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl">
-                            <Shield className="h-6 w-6 text-white" />
+                        <h3 className="text-lg md:text-2xl font-bold text-[#232249] flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
+                          <div className="p-2 md:p-3 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl">
+                            <Shield className="h-5 w-5 md:h-6 md:w-6 text-white" />
                           </div>
                           Safety Assessment
                         </h3>
-                        <div className="bg-gradient-to-br from-gray-50 to-gray-100/50 rounded-3xl p-8 space-y-6 border border-gray-200/50 shadow-lg">
-                          <div className="space-y-4">
+                        <div className="bg-gradient-to-br from-gray-50 to-gray-100/50 rounded-2xl md:rounded-3xl p-6 md:p-8 space-y-4 md:space-y-6 border border-gray-200/50 shadow-lg">
+                          <div className="space-y-3 md:space-y-4">
                             {[
                               { label: 'Confined Space', value: selectedOrder.isConfinedSpace },
                               { label: 'Permit Required', value: selectedOrder.permitRequired },
@@ -982,11 +982,11 @@ const AdminWorkOrders = () => {
                               { label: 'Air Monitor', value: selectedOrder.dedicatedAirMonitor },
                               { label: 'Warning Sign', value: selectedOrder.warningSignPosted }
                             ].map((item, index) => (
-                              <div key={index} className="flex justify-between items-center p-4 bg-white rounded-2xl border border-gray-200 hover:border-[#232249]/30 transition-all duration-300 shadow-sm group">
-                                <span className="font-bold text-[#232249] group-hover:text-[#1a1a3a] transition-colors">
+                              <div key={index} className="flex justify-between items-center p-3 md:p-4 bg-white rounded-2xl border border-gray-200 hover:border-[#232249]/30 transition-all duration-300 shadow-sm group">
+                                <span className="font-bold text-[#232249] group-hover:text-[#1a1a3a] transition-colors text-sm md:text-base">
                                   {item.label}:
                                 </span>
-                                <span className={`px-4 py-2 rounded-xl text-sm font-bold border-2 ${
+                                <span className={`px-3 py-1 md:px-4 md:py-2 rounded-xl text-sm font-bold border-2 ${
                                   item.value 
                                     ? (item.label === 'Confined Space' || item.label === 'Permit Required') 
                                       ? 'bg-red-50 text-red-700 border-red-200' 
@@ -1004,32 +1004,32 @@ const AdminWorkOrders = () => {
                   </div>
 
                   {/* Notes and Images Section */}
-                  <div className="mt-12 space-y-8">
+                  <div className="mt-8 md:mt-12 space-y-6 md:space-y-8">
                     {selectedOrder.notes && (
                       <div className="relative">
-                        <div className="absolute -left-4 top-0 w-1 h-20 bg-gradient-to-b from-purple-500 to-transparent rounded-full"></div>
-                        <h3 className="text-2xl font-bold text-[#232249] mb-6 flex items-center gap-4">
-                          <div className="p-3 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl">
-                            <FileText className="h-6 w-6 text-white" />
+                        <div className="absolute -left-4 top-0 w-1 h-16 md:h-20 bg-gradient-to-b from-purple-500 to-transparent rounded-full"></div>
+                        <h3 className="text-lg md:text-2xl font-bold text-[#232249] mb-4 md:mb-6 flex items-center gap-3 md:gap-4">
+                          <div className="p-2 md:p-3 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl">
+                            <FileText className="h-5 w-5 md:h-6 md:w-6 text-white" />
                           </div>
                           Additional Notes
                         </h3>
-                        <div className="bg-gradient-to-br from-purple-50 to-purple-100/50 rounded-3xl p-8 border border-purple-200/50 shadow-lg">
-                          <p className="text-gray-700 leading-relaxed text-lg">{selectedOrder.notes}</p>
+                        <div className="bg-gradient-to-br from-purple-50 to-purple-100/50 rounded-2xl md:rounded-3xl p-6 md:p-8 border border-purple-200/50 shadow-lg">
+                          <p className="text-gray-700 leading-relaxed text-sm md:text-lg">{selectedOrder.notes}</p>
                         </div>
                       </div>
                     )}
 
                     {selectedOrder.imageUrls && selectedOrder.imageUrls.length > 0 && (
                       <div className="relative">
-                        <div className="absolute -left-4 top-0 w-1 h-20 bg-gradient-to-b from-blue-500 to-transparent rounded-full"></div>
-                        <h3 className="text-2xl font-bold text-[#232249] mb-6 flex items-center gap-4">
-                          <div className="p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl">
-                            <ImageIcon className="h-6 w-6 text-white" />
+                        <div className="absolute -left-4 top-0 w-1 h-16 md:h-20 bg-gradient-to-b from-blue-500 to-transparent rounded-full"></div>
+                        <h3 className="text-lg md:text-2xl font-bold text-[#232249] mb-4 md:mb-6 flex items-center gap-3 md:gap-4">
+                          <div className="p-2 md:p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl">
+                            <ImageIcon className="h-5 w-5 md:h-6 md:w-6 text-white" />
                           </div>
                           Assessment Images ({selectedOrder.imageUrls.length})
                         </h3>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
                           {selectedOrder.imageUrls.map((url, index) => (
                             <div key={index} className="group relative">
                               <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
@@ -1037,7 +1037,7 @@ const AdminWorkOrders = () => {
                                 <img
                                   src={getImageUrl(url)}
                                   alt={`Assessment ${index + 1}`}
-                                  className="w-full h-32 object-cover rounded-xl"
+                                  className="w-full h-24 md:h-32 object-cover rounded-xl"
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                               </div>

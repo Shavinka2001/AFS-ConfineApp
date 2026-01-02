@@ -75,7 +75,7 @@ const ManagerDashboard = () => {
 
         // Fetch user stats for team members
         try {
-          const userStatsResponse = await fetch('http://localhost:3001/api/users/stats', {
+          const userStatsResponse = await fetch('/api/auth/users/stats', {
             headers: {
               'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json'

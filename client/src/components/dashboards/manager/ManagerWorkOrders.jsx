@@ -321,8 +321,62 @@ const ManagerWorkOrders = () => {
     }
   };
 
+  const handleDeleteAllOrders = async (confirmPhrase) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('Authentication required');
+      }
+
+      console.log('Deleting all orders with confirmation:', confirmPhrase);
+      
+      const response = await workOrderAPI.deleteAllWorkOrders(token, confirmPhrase);
+      
+      if (response.success) {
+        await fetchWorkOrders();
+        errorHandler.handleSuccess(
+          `Successfully deleted ${response.data?.deletedCount || 0} work orders`
+        );
+        return true;
+      } else {
+        throw new Error(response.message || 'Failed to delete all work orders');
+      }
+    } catch (error) {
+      console.error('Error deleting all work orders:', error);
+      errorHandler.handleError(error, 'Failed to delete all work orders');
+      throw error;
+    }
+  };
+
   const handleRefresh = () => {
     fetchWorkOrders();
+  };
+
+  const handleDeleteAllOrders = async (confirmPhrase) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('Authentication required');
+      }
+
+      console.log('Deleting all orders with confirmation:', confirmPhrase);
+      
+      const response = await workOrderAPI.deleteAllWorkOrders(token, confirmPhrase);
+      
+      if (response.success) {
+        await fetchWorkOrders();
+        errorHandler.handleSuccess(
+          `Successfully deleted ${response.data?.deletedCount || 0} work orders`
+        );
+        return true;
+      } else {
+        throw new Error(response.message || 'Failed to delete all work orders');
+      }
+    } catch (error) {
+      console.error('Error deleting all work orders:', error);
+      errorHandler.handleError(error, 'Failed to delete all work orders');
+      throw error;
+    }
   };
 
   const handleExportToExcel = async () => {
@@ -622,6 +676,7 @@ const ManagerWorkOrders = () => {
           onView={handleView}
           onUpdateOrder={handleUpdateOrder}
           onDeleteOrder={handleDeleteOrder}
+          onDeleteAllOrders={handleDeleteAllOrders}
           onSort={handleSort}
           sortConfig={sortConfig}
         />

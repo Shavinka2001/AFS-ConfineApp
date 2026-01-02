@@ -461,22 +461,22 @@ const ManagerWorkOrders = () => {
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 md:p-8"
+          className="bg-[#232249] rounded-2xl shadow-lg p-6 md:p-8"
         >
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 lg:gap-6">
             {/* Title & Breadcrumb */}
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-2">
-                <div className="flex items-center gap-2 text-sm text-gray-500">
+                <div className="flex items-center gap-2 text-sm text-white/70">
                   <span>Manager</span>
                   <span>/</span>
-                  <span className="text-[#232249] font-medium">Work Orders</span>
+                  <span className="text-white font-medium">Work Orders</span>
                 </div>
               </div>
-              <h1 className="text-2xl md:text-3xl font-bold text-[#232249] mb-2">
+              <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">
                 Work Orders Management
               </h1>
-              <div className="flex flex-wrap items-center gap-3 text-sm text-gray-600">
+              <div className="flex flex-wrap items-center gap-3 text-sm text-white/80">
                 <div className="flex items-center gap-2">
                   <Calendar className="h-4 w-4" />
                   <span>{currentTime.toLocaleDateString('en-US', { 
@@ -486,7 +486,7 @@ const ManagerWorkOrders = () => {
                     year: 'numeric'
                   })}</span>
                 </div>
-                <div className="hidden sm:block w-1 h-1 bg-gray-300 rounded-full"></div>
+                <div className="hidden sm:block w-1 h-1 bg-white/30 rounded-full"></div>
                 <div className="flex items-center gap-2 font-mono">
                   <Clock className="h-4 w-4" />
                   <span>{currentTime.toLocaleTimeString('en-US', { 
@@ -502,17 +502,10 @@ const ManagerWorkOrders = () => {
             <div className="flex items-center gap-3 w-full lg:w-auto">
               <button
                 onClick={handleRefresh}
-                className="flex items-center justify-center gap-2 px-4 py-2.5 min-h-[44px] bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 text-gray-700 font-medium text-sm flex-1 sm:flex-initial"
+                className="flex items-center justify-center gap-2 px-4 py-2.5 min-h-[44px] bg-white/10 border border-white/20 rounded-lg hover:bg-white/20 hover:border-white/40 transition-all duration-200 text-white font-medium text-sm flex-1 sm:flex-initial"
               >
                 <RefreshCw className="h-4 w-4" />
                 <span>Refresh</span>
-              </button>
-              <button
-                onClick={() => window.location.href = '/manager/work-orders/create'}
-                className="flex items-center justify-center gap-2 px-4 py-2.5 min-h-[44px] bg-[#232249] text-white rounded-lg hover:bg-[#1a1a38] transition-all duration-200 font-medium text-sm flex-1 sm:flex-initial"
-              >
-                <Plus className="h-4 w-4" />
-                <span>New Order</span>
               </button>
             </div>
           </div>

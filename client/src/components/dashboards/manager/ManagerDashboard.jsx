@@ -182,12 +182,7 @@ const ManagerDashboard = () => {
 
   // Stat Card Component (Mobile-First)
   const StatCard = ({ icon: Icon, title, value, subtitle, trend, color = '#232249' }) => (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -2, shadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)" }}
-      className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6 hover:shadow-md transition-all duration-300"
-    >
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6 hover:shadow-md transition-all duration-300">
       {loading ? (
         <SkeletonLoader />
       ) : (
@@ -215,7 +210,7 @@ const ManagerDashboard = () => {
           )}
         </>
       )}
-    </motion.div>
+    </div>
   );
 
   // Activity Item Component

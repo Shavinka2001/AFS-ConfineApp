@@ -310,14 +310,10 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, isMobileMenuOp
         ];
       case 'manager':
         return [
-          ...baseItems,
+          { icon: LayoutDashboard, label: 'Dashboard', path: '/manager/dashboard' },
           { icon: Users, label: 'User Management', path: '/manager/users' },
+          { icon: MapPin, label: 'Locations', path: '/locations' },
           { icon: Wrench, label: 'Work Orders', path: '/manager/work-orders' },
-          { icon: Users, label: 'Team Management', path: '/manager/team' },
-          { icon: BarChart3, label: 'Reports', path: '/manager/reports' },
-          { icon: ClipboardList, label: 'Projects', path: '/manager/projects' },
-          { icon: Calendar, label: 'Schedule', path: '/manager/schedule' },
-          { icon: FileText, label: 'Documents', path: '/manager/documents' },
           { icon: Settings, label: 'Settings', path: '/manager/settings' },
         ];
       case 'technician':

@@ -151,36 +151,6 @@ const PDFDownloadButton = ({
                     <div className="text-xs text-gray-500 mt-0.5">Groups similar entries</div>
                   </div>
                 </button>
-                
-                <div className="border-t border-gray-100" />
-                
-                <button
-                  onClick={() => handleDownload('detailed')}
-                  className="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center gap-3 transition-colors group"
-                >
-                  <div className="p-2 rounded-lg bg-green-50 group-hover:bg-green-100 transition-colors">
-                    <FileSpreadsheet className="h-4 w-4 text-green-600" />
-                  </div>
-                  <div className="flex-1">
-                    <div className="font-medium text-gray-900 text-sm">Detailed Report</div>
-                    <div className="text-xs text-gray-500 mt-0.5">Individual work orders</div>
-                  </div>
-                </button>
-                
-                <div className="border-t border-gray-100" />
-                
-                <button
-                  onClick={() => handleDownload('summary')}
-                  className="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center gap-3 transition-colors group"
-                >
-                  <div className="p-2 rounded-lg bg-purple-50 group-hover:bg-purple-100 transition-colors">
-                    <Table className="h-4 w-4 text-purple-600" />
-                  </div>
-                  <div className="flex-1">
-                    <div className="font-medium text-gray-900 text-sm">Summary Table</div>
-                    <div className="text-xs text-gray-500 mt-0.5">Grouped overview</div>
-                  </div>
-                </button>
               </div>
             </div>
           </>

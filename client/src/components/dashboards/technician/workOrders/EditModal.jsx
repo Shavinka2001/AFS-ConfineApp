@@ -20,6 +20,7 @@ import {
   Trash2
 } from 'lucide-react';
 import PDFDownloadButton from '../../../ui/PDFDownloadButton';
+import { getImageUrl } from '../../../utils/imageUtils';
 
 const EditModal = ({
   showEditModal,
@@ -33,6 +34,7 @@ const EditModal = ({
   const [activeSection, setActiveSection] = useState('basic');
   const [uploadingImages, setUploadingImages] = useState(false);
   const [uploadProgress, setUploadProgress] = useState({});
+  const [previewImages, setPreviewImages] = useState([]);
 
   if (!showEditModal || !editingForm) return null;
 
@@ -67,6 +69,15 @@ const EditModal = ({
     setUploadingImages(true);
     console.log('Starting upload of', files.length, 'files');
 
+    // Create previews for all selected files
+    const previews = files.map(file => ({
+      file,
+      url: URL.createObjectURL(file),
+      uploading: false,
+      uploaded: false
+    }));
+    setPreviewImages(previews);
+
     try {
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
@@ -76,14 +87,29 @@ const EditModal = ({
             [file.name]: { status: 'uploading', progress: 0 }
           }));
           
-          await handleImageUpload(file);
+          // Mark preview as uploading
+          setPreviewImages(prev => prev.map((p, idx) => 
+            idx === i ? { ...p, uploading: true } : p
+          ));
+          
+          await handleImageUpload(file, i);
           
           setUploadProgress(prev => ({
             ...prev,
             [file.name]: { status: 'completed', progress: 100 }
           }));
+          
+          // Mark preview as uploaded
+          setPreviewImages(prev => prev.map((p, idx) => 
+            idx === i ? { ...p, uploading: false, uploaded: true } : p
+          ));
         }
       }
+      
+      // Clear previews after 2 seconds
+      setTimeout(() => {
+        setPreviewImages([]);
+      }, 2000);
     } catch (error) {
       console.error('Error during file upload:', error);
     } finally {
@@ -94,7 +120,7 @@ const EditModal = ({
     }
   };
 
-  const handleImageUpload = async (file) => {
+  const handleImageUpload = async (file, previewIndex) => {
     try {
       const token = localStorage.getItem('token');
       
@@ -903,7 +929,7 @@ const EditModal = ({
                         <div key={`image-${index}`} className="relative group">
                           <div className="aspect-square rounded-xl overflow-hidden bg-gray-100 shadow-lg border border-gray-200">
                             <img
-                              src={imageUrl}
+                              src={getImageUrl(imageUrl)}
                               alt={`Image ${index + 1}`}
                               className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                               onError={(e) => {
@@ -919,7 +945,7 @@ const EditModal = ({
                           <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 rounded-xl transition-all flex items-center justify-center opacity-0 group-hover:opacity-100">
                             <div className="flex space-x-2">
                               <button
-                                onClick={() => window.open(imageUrl, '_blank')}
+                                onClick={() => window.open(getImageUrl(imageUrl), '_blank')}
                                 className="bg-white rounded-full p-2 shadow-lg hover:shadow-xl transition-all"
                                 title="View Image"
                               >
@@ -949,8 +975,51 @@ const EditModal = ({
                   </div>
                 )}
 
+                {/* Preview of selected images (uploading/pending) */}
+                {previewImages.length > 0 && (
+                  <div>
+                    <label className="block text-sm font-bold text-gray-800 mb-4">
+                      Uploading Images ({previewImages.length})
+                    </label>
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                      {previewImages.map((preview, index) => (
+                        <div key={`preview-${index}`} className="relative group">
+                          <div className="aspect-square rounded-xl overflow-hidden bg-gray-100 shadow-lg border-2 border-blue-300">
+                            <img
+                              src={preview.url}
+                              alt={`Preview ${index + 1}`}
+                              className="w-full h-full object-cover"
+                            />
+                            {preview.uploading && (
+                              <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                                <div className="text-white text-center">
+                                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-2"></div>
+                                  <p className="text-xs">Uploading...</p>
+                                </div>
+                              </div>
+                            )}
+                            {preview.uploaded && (
+                              <div className="absolute inset-0 bg-green-500 bg-opacity-75 flex items-center justify-center">
+                                <div className="text-white text-center">
+                                  <svg className="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                  </svg>
+                                  <p className="text-sm font-semibold">Uploaded!</p>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                          <div className="absolute bottom-2 left-2 bg-blue-600 text-white text-xs px-2 py-1 rounded-lg">
+                            New {index + 1}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 {/* Show message if no images */}
-                {(!editingForm.imageUrls || editingForm.imageUrls.length === 0) && (
+                {(!editingForm.imageUrls || editingForm.imageUrls.length === 0) && previewImages.length === 0 && (
                   <div className="text-center py-8 bg-gray-50 rounded-xl border border-gray-200">
                     <Camera className="h-12 w-12 text-gray-400 mx-auto mb-2" />
                     <p className="text-gray-500">No images uploaded yet</p>
@@ -1038,7 +1107,7 @@ const EditModal = ({
                         <div key={`image-${index}`} className="relative group">
                           <div className="aspect-square rounded-xl overflow-hidden bg-gray-100 shadow-lg border border-gray-200">
                             <img
-                              src={imageUrl}
+                              src={getImageUrl(imageUrl)}
                               alt={`Work order image ${index + 1}`}
                               className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                               onError={(e) => {

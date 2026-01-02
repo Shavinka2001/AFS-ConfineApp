@@ -225,7 +225,18 @@ const AdminEditWorkOrderForm = ({
       // Convert canvas to blob and upload
       canvas.toBlob(async (blob) => {
         const file = new File([blob], `camera-${Date.now()}.jpg`, { type: 'image/jpeg' });
-        await handleImageUpload(file);
+        
+        // Create preview for camera capture
+        const preview = {
+          file,
+          url: URL.createObjectURL(blob),
+          uploading: false,
+          uploaded: false
+        };
+        setPreviewImages(prev => [...prev, preview]);
+        const previewIndex = previewImages.length;
+        
+        await handleImageUpload(file, previewIndex);
         stopCamera();
       }, 'image/jpeg', 0.95);
     }

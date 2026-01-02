@@ -20,7 +20,7 @@ import {
   Trash2
 } from 'lucide-react';
 import PDFDownloadButton from '../../../ui/PDFDownloadButton';
-import { getImageUrl } from '../../../utils/imageUtils';
+import { getImageUrl } from '../../../../utils/imageUtils';
 
 const EditModal = ({
   showEditModal,

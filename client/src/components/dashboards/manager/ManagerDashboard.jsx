@@ -34,6 +34,7 @@ const ManagerDashboard = () => {
   const [recentActivities, setRecentActivities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [currentTime, setCurrentTime] = useState(new Date());
 
   // Fetch all dashboard data
   useEffect(() => {
@@ -60,8 +61,11 @@ const ManagerDashboard = () => {
 
         // Process work orders data
         let workOrdersData = [];
+        let totalWorkOrderCount = 0;
         if (workOrdersRes.status === 'fulfilled' && workOrdersRes.value?.success) {
           workOrdersData = workOrdersRes.value.data.orders || [];
+          // Use total count from API response, fallback to array length
+          totalWorkOrderCount = workOrdersRes.value.data.total || workOrdersData.length;
         }
 
         // Process user stats data
@@ -95,7 +99,7 @@ const ManagerDashboard = () => {
         // Update stats
         setStats({
           totalUsers: userStatsData?.activeUsers || 0,
-          activeWorkOrders: workOrdersData.length,
+          activeWorkOrders: totalWorkOrderCount,
           pendingInspections,
           totalLocations: uniqueLocations,
           completedToday,
@@ -126,6 +130,15 @@ const ManagerDashboard = () => {
     };
 
     fetchDashboardData();
+  }, []);
+
+  // Update time every second
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(timer);
   }, []);
 
   // Helper functions
@@ -260,13 +273,24 @@ const ManagerDashboard = () => {
                 Welcome back, <span className="font-semibold">{user?.firstName || 'Manager'}</span>
               </p>
             </div>
-            <div className="flex items-center space-x-2 text-white/90 text-sm">
-              <Calendar className="h-4 w-4" />
-              <span>{new Date().toLocaleDateString('en-US', { 
-                weekday: 'short', 
-                month: 'short', 
-                day: 'numeric' 
-              })}</span>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
+              <div className="flex items-center space-x-2 text-white/90 text-sm">
+                <Calendar className="h-4 w-4" />
+                <span>{currentTime.toLocaleDateString('en-US', { 
+                  weekday: 'short', 
+                  month: 'short', 
+                  day: 'numeric' 
+                })}</span>
+              </div>
+              <div className="hidden sm:block w-px h-5 bg-white/30"></div>
+              <div className="flex items-center space-x-2 text-white/90 text-sm font-mono">
+                <Clock className="h-4 w-4" />
+                <span>{currentTime.toLocaleTimeString('en-US', { 
+                  hour: '2-digit', 
+                  minute: '2-digit',
+                  second: '2-digit'
+                })}</span>
+              </div>
             </div>
           </div>
         </motion.div>

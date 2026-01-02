@@ -559,7 +559,6 @@ const ManagerWorkOrders = () => {
               onClick={() => setStatusFilter('pending')}
             />
           </div>
-        </motion.div>
 
         {/* Search and Filters Section */}
         <div className="bg-white rounded-2xl shadow-sm border-2 border-gray-200 p-6 mb-6">

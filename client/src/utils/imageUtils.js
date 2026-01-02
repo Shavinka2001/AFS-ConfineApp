@@ -3,13 +3,13 @@ export const getImageUrl = (url) => {
   if (!url) return '';
 
   // If it's already a proxy URL, return as is
-  if (url.includes('/api/orders/proxy-image')) {
+  if (url.includes('/api/workorder/orders/proxy-image')) {
     return url;
   }
 
   // If it's an Azure blob storage URL, use the proxy
   if (url.includes('afsconfined.blob.core.windows.net')) {
-    return `/api/orders/proxy-image?url=${encodeURIComponent(url)}`;
+    return `/api/workorder/orders/proxy-image?url=${encodeURIComponent(url)}`;
   }
 
   // Otherwise, return the URL as is

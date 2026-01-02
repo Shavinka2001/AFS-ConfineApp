@@ -1090,7 +1090,7 @@ const ManagerEditWorkOrderForm = ({
                             <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 rounded-xl transition-all flex items-center justify-center opacity-0 group-hover:opacity-100">
                               <div className="flex space-x-2">
                                 <button
-                                  onClick={() => window.open(imageUrl, '_blank')}
+                                  onClick={() => window.open(getImageUrl(imageUrl), '_blank')}
                                   className="bg-white rounded-full p-2 shadow-lg hover:shadow-xl transition-all min-h-[44px] min-w-[44px] flex items-center justify-center"
                                   title="View Image"
                                 >

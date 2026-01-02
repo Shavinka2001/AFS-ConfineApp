@@ -244,9 +244,6 @@ const ManagerDashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto p-4 md:p-8 space-y-6"
-  return (
-    <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto p-4 md:p-8 space-y-6">
         {/* Header Section - Responsive */}
         <motion.div

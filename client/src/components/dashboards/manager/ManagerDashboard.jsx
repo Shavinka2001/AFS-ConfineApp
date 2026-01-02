@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
 import workOrderAPI from '../../../services/workOrderAPI';
+import PendingUserApprovals from '../admin/PendingUserApprovals';
 
 const ManagerDashboard = () => {
   const { user } = useAuth();
@@ -564,6 +565,11 @@ const ManagerDashboard = () => {
               )}
             </div>
           </motion.div>
+        </div>
+
+        {/* Pending User Approvals Section */}
+        <div className="w-full">
+          <PendingUserApprovals />
         </div>
       </div>
     </div>

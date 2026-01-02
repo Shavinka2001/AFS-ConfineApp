@@ -456,31 +456,70 @@ const ManagerWorkOrders = () => {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
       <Toaster position="top-right" />
       
-      <div className="w-full px-4 md:px-6 lg:px-8 py-4 md:py-8">
-        {/* Header Section */}
-        <div className="mb-4 md:mb-8">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-4 sm:space-y-0">
-            <div>
-              <h1 className="text-2xl md:text-4xl font-black text-slate-800 mb-2">
+      <div className="w-full px-4 md:px-6 lg:px-8 py-4 md:py-8 space-y-6">
+        {/* Header Section - Clean & Professional */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 md:p-8"
+        >
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 lg:gap-6">
+            {/* Title & Breadcrumb */}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="flex items-center gap-2 text-sm text-gray-500">
+                  <span>Manager</span>
+                  <span>/</span>
+                  <span className="text-[#232249] font-medium">Work Orders</span>
+                </div>
+              </div>
+              <h1 className="text-2xl md:text-3xl font-bold text-[#232249] mb-2">
                 Work Orders Management
               </h1>
-              <p className="text-gray-600 text-sm md:text-lg">
-                Manager Dashboard - {currentTime.toLocaleTimeString()}
-              </p>
+              <div className="flex flex-wrap items-center gap-3 text-sm text-gray-600">
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4" />
+                  <span>{currentTime.toLocaleDateString('en-US', { 
+                    weekday: 'short',
+                    month: 'short', 
+                    day: 'numeric',
+                    year: 'numeric'
+                  })}</span>
+                </div>
+                <div className="hidden sm:block w-1 h-1 bg-gray-300 rounded-full"></div>
+                <div className="flex items-center gap-2 font-mono">
+                  <Clock className="h-4 w-4" />
+                  <span>{currentTime.toLocaleTimeString('en-US', { 
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                  })}</span>
+                </div>
+              </div>
             </div>
-            <div className="flex items-center space-x-2 md:space-x-3">
+
+            {/* Actions */}
+            <div className="flex items-center gap-3 w-full lg:w-auto">
               <button
                 onClick={handleRefresh}
-                className="flex items-center space-x-2 px-3 md:px-4 py-3 min-h-[48px] bg-white border-2 border-gray-200 rounded-lg md:rounded-xl hover:border-slate-800 transition-colors"
+                className="flex items-center justify-center gap-2 px-4 py-2.5 min-h-[44px] bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 text-gray-700 font-medium text-sm flex-1 sm:flex-initial"
               >
-                <RefreshCw className="h-4 w-4 md:h-5 md:w-5" />
-                <span className="text-sm md:text-base">Refresh</span>
+                <RefreshCw className="h-4 w-4" />
+                <span>Refresh</span>
+              </button>
+              <button
+                onClick={() => window.location.href = '/manager/work-orders/create'}
+                className="flex items-center justify-center gap-2 px-4 py-2.5 min-h-[44px] bg-[#232249] text-white rounded-lg hover:bg-[#1a1a38] transition-all duration-200 font-medium text-sm flex-1 sm:flex-initial"
+              >
+                <Plus className="h-4 w-4" />
+                <span>New Order</span>
               </button>
             </div>
           </div>
+        </motion.div>
 
-          {/* Statistics Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        {/* Statistics Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <StatCard
               title="Total Work Orders"
               value={stats.total}
@@ -520,7 +559,7 @@ const ManagerWorkOrders = () => {
               onClick={() => setStatusFilter('pending')}
             />
           </div>
-        </div>
+        </motion.div>
 
         {/* Search and Filters Section */}
         <div className="bg-white rounded-2xl shadow-sm border-2 border-gray-200 p-6 mb-6">

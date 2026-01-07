@@ -564,7 +564,7 @@ export const handleDownloadFilteredPDF = async (orders = [], sortBy) => {
 LOCATION DETAILS:
 • Location: ${entry.locationDescription || 'Not Specified'}
 • Space Description: ${entry.confinedSpaceDescription || 'Not Specified'}
-• Space Name/ID: ${entry.confinedSpaceNameOrId || 'Not Specified'}
+• Space Name/ID: ${entry.spaceName || 'Not Specified'}
 • Entry Points: ${entry.numberOfEntryPoints || 'Not Specified'}
 
 CLASSIFICATION:

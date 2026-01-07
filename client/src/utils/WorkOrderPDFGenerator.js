@@ -456,12 +456,6 @@ export const handleDownloadFilteredPDF = async (orders = [], sortBy) => {
       const surveyDate = entry.dateOfSurvey || entry.surveyDate || entry.createdAt;
       const dateText = surveyDate ? new Date(surveyDate).toLocaleDateString() : 'Not Specified';
       doc.text(`Date: ${dateText}`, margin, currentY);
-      currentY += 15;
-      
-      const surveyorNames = Array.isArray(entry.surveyors) && entry.surveyors.length > 0
-        ? entry.surveyors.join(', ')
-        : entry.surveyors || entry.technician || entry.surveyorName || entry.createdBy || 'N/A';
-      doc.text(`Surveyor(s): ${surveyorNames}`, margin, currentY);
       currentY += 20;
 
       // Line separator
@@ -662,29 +656,6 @@ ${entry.notes ? `NOTES:\n${entry.notes}` : ''}
       });
 
       currentY = doc.lastAutoTable?.finalY || currentY + 250;
-      
-      // ASSESSOR SIGNATURE SECTION
-      currentY += 30;
-      
-      if (currentY + 80 > pageHeight - margin - 30) {
-        doc.addPage();
-        currentY = margin;
-      }
-      
-      doc.setDrawColor(0, 0, 0);
-      doc.setLineWidth(0.5);
-      
-      // Signature line
-      const signatureLineY = currentY + 30;
-      doc.line(margin, signatureLineY, pageWidth / 2 - 20, signatureLineY);
-      
-      doc.setFontSize(10);
-      doc.setFont('helvetica', 'bold');
-      doc.text('ASSESSOR SIGNATURE:', margin, currentY);
-      
-      doc.setFont('helvetica', 'normal');
-      doc.text('Name: ' + surveyorNames, margin, signatureLineY + 15);
-      doc.text('Date: ' + dateText, margin, signatureLineY + 30);
       
       pageNumber++;
     }

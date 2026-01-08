@@ -90,7 +90,7 @@ const Layout = ({ children }) => {
       {/* Mobile Top Navbar with Hamburger Menu */}
       {isMobile && (
         <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 shadow-sm" style={{ pointerEvents: 'auto' }}>
-          <div className="flex items-center justify-between px-4 py-3">
+          <div className="flex items-center justify-between px-3 sm:px-4 py-2.5 sm:py-3">
             {/* Hamburger Menu Button - Simplified & Reliable */}
             <motion.button
               type="button"
@@ -99,7 +99,7 @@ const Layout = ({ children }) => {
                 console.log('[Layout] Hamburger clicked, forcing open menu');
                 setIsMobileMenuOpen(true);
               }}
-              className="mobile-menu-btn p-4 bg-gradient-to-br from-gray-50 to-white rounded-xl shadow-md border border-gray-200/50 touch-manipulation overflow-hidden z-50 min-w-[56px] min-h-[56px] cursor-pointer"
+              className="mobile-menu-btn p-3 sm:p-3.5 bg-gradient-to-br from-gray-50 to-white rounded-lg sm:rounded-xl shadow-md border border-gray-200/50 touch-manipulation overflow-hidden z-50 min-w-[48px] min-h-[48px] sm:min-w-[52px] sm:min-h-[52px] cursor-pointer flex items-center justify-center"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               initial={{ opacity: 0, x: -20 }}
@@ -111,9 +111,9 @@ const Layout = ({ children }) => {
               {/* Simple icon - no rotation animation to avoid complexity */}
               <div className="flex items-center justify-center">
                 {isMobileMenuOpen ? (
-                  <X className="h-7 w-7 text-gray-700" />
+                  <X className="h-6 w-6 sm:h-7 sm:w-7 text-gray-700" />
                 ) : (
-                  <Menu className="h-7 w-7 text-gray-700" />
+                  <Menu className="h-6 w-6 sm:h-7 sm:w-7 text-gray-700" />
                 )}
               </div>
               
@@ -125,7 +125,7 @@ const Layout = ({ children }) => {
 
             {/* App Title/Logo */}
             <motion.div 
-              className="flex items-center gap-2"
+              className="flex items-center gap-1.5 sm:gap-2 flex-1 justify-center"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.2 }}
@@ -133,13 +133,13 @@ const Layout = ({ children }) => {
               <img 
                 src="/logo.jpg" 
                 alt="Confine Logo" 
-                className="h-8 w-8 object-contain"
+                className="h-7 w-7 sm:h-8 sm:w-8 object-contain flex-shrink-0"
               />
-              <h1 className="text-lg font-bold text-gray-800">Confine</h1>
+              <h1 className="text-base sm:text-lg font-bold text-gray-800 truncate">Confine</h1>
             </motion.div>
 
             {/* Spacer for balance */}
-            <div className="w-10"></div>
+            <div className="w-12 sm:w-10 flex-shrink-0"></div>
           </div>
         </div>
       )}
@@ -147,7 +147,7 @@ const Layout = ({ children }) => {
       {/* Mobile Backdrop Overlay - REMOVED: Handled by Sidebar component */}
 
       {/* Main Layout Container */}
-      <div className={`h-full ${isMobile ? 'pt-[73px]' : 'flex'}`}>
+      <div className={`h-full ${isMobile ? 'pt-[60px] sm:pt-[68px]' : 'flex'}`}>
         {/* Sidebar - Different positioning for Mobile vs Desktop */}
         {isMobile ? (
           /* Mobile: Fixed positioning handled by Sidebar component */
@@ -185,14 +185,14 @@ const Layout = ({ children }) => {
           onTouchEnd={isMobile ? handleTouchEnd : undefined}
           style={{ pointerEvents: 'auto' }}
         >
-          <main className={`w-full ${isMobile ? 'pb-4' : 'pb-6'}`}>
+          <main className={`w-full ${isMobile ? 'pb-3 sm:pb-4' : 'pb-6'}`}>
             {/* Content with smooth fade in animation */}
             <motion.div
               key={children?.key || 'main-content'}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, ease: "easeOut" }}
-              className="w-full"
+              className="w-full px-2 sm:px-0"
             >
               {children}
             </motion.div>
@@ -201,15 +201,15 @@ const Layout = ({ children }) => {
           {/* Mobile Navigation Hint */}
           {isMobile && showMenuHint && !isMobileMenuOpen && (
             <motion.div
-              className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-20 pointer-events-none"
+              className="fixed bottom-4 sm:bottom-6 left-1/2 transform -translate-x-1/2 z-20 pointer-events-none px-2"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 20 }}
               transition={{ delay: 1, duration: 0.5 }}
             >
-              <div className="bg-white/90 backdrop-blur-sm rounded-full px-4 py-2 shadow-lg border border-gray-200/50 flex items-center gap-2">
-                <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-                <span className="text-xs text-gray-600 font-medium">
+              <div className="bg-white/90 backdrop-blur-sm rounded-full px-3 sm:px-4 py-1.5 sm:py-2 shadow-lg border border-gray-200/50 flex items-center gap-1.5 sm:gap-2">
+                <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-blue-500 rounded-full animate-pulse flex-shrink-0"></div>
+                <span className="text-xs sm:text-xs text-gray-600 font-medium whitespace-nowrap">
                   Tap menu to get started →
                 </span>
               </div>

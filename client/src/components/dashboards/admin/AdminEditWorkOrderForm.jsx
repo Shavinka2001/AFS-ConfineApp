@@ -291,18 +291,18 @@ const AdminEditWorkOrderForm = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-2xl md:rounded-3xl shadow-2xl w-full max-w-7xl max-h-[95vh] overflow-hidden border border-gray-200 flex flex-col">
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 z-50">
+      <div className="bg-white rounded-xl sm:rounded-2xl md:rounded-3xl shadow-2xl w-full max-w-7xl max-h-[95vh] sm:max-h-[90vh] overflow-hidden border border-gray-200 flex flex-col">
         {/* Header */}
-        <div className="relative bg-gradient-to-br from-[#232249] via-[#2a2a5c] to-[#1a1b3a] p-4 md:p-6 lg:p-8">
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between text-white">
-            <div className="flex items-center gap-3 md:gap-6">
-              <div className="p-2 md:p-4 bg-white/15 rounded-2xl backdrop-blur-sm border border-white/20 shadow-lg">
-                <FileText className="h-6 w-6 md:h-8 md:w-8 lg:h-10 lg:w-10 text-white" />
+        <div className="relative bg-gradient-to-br from-[#232249] via-[#2a2a5c] to-[#1a1b3a] p-3 sm:p-4 md:p-6 lg:p-8">
+          <div className="flex flex-col gap-3 sm:gap-4 md:flex-row md:items-center md:justify-between text-white">
+            <div className="flex items-center gap-2 sm:gap-3 md:gap-6">
+              <div className="p-2 sm:p-3 md:p-4 bg-white/15 rounded-xl sm:rounded-2xl backdrop-blur-sm border border-white/20 shadow-lg flex-shrink-0">
+                <FileText className="h-5 w-5 sm:h-6 sm:w-6 md:h-8 md:w-8 lg:h-10 lg:w-10 text-white" />
               </div>
-              <div>
-                <h2 className="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold mb-1 md:mb-2">Edit Work Order</h2>
-                <p className="text-white/80 text-sm md:text-base lg:text-lg">
+              <div className="min-w-0 flex-1">
+                <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold mb-1 md:mb-2 truncate">Edit Work Order</h2>
+                <p className="text-white/80 text-xs sm:text-sm md:text-base lg:text-lg truncate">
                   {editingOrder.workOrderId || `WO-${new Date(editingOrder.surveyDate || editingOrder.createdAt).getFullYear()}-${String(editingOrder.id || editingOrder._id).slice(-4)}`}
                 </p>
                 <div className="flex flex-wrap items-center gap-2 md:gap-4 mt-2 text-xs md:text-sm text-white/70">
@@ -328,9 +328,9 @@ const AdminEditWorkOrderForm = ({
             <div className="flex items-center gap-2 md:gap-4 self-end md:self-auto">
               <button
                 onClick={closeEditModal}
-                className="p-3 min-h-[44px] hover:bg-white/20 rounded-2xl transition-all duration-300 group border border-white/20 active:scale-95"
+                className="p-2 sm:p-3 min-h-[44px] min-w-[44px] hover:bg-white/20 rounded-xl sm:rounded-2xl transition-all duration-300 group border border-white/20 active:scale-95 flex items-center justify-center"
               >
-                <XCircle className="h-6 w-6 md:h-7 md:w-7 lg:h-8 lg:w-8 group-hover:scale-110 transition-transform text-white" />
+                <XCircle className="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7 lg:h-8 lg:w-8 group-hover:scale-110 transition-transform text-white" />
               </button>
             </div>
           </div>
@@ -347,14 +347,14 @@ const AdminEditWorkOrderForm = ({
                 <button
                   key={section.id}
                   onClick={() => setActiveSection(section.id)}
-                  className={`flex-1 min-w-0 flex items-center justify-center p-3 min-h-[48px] border-b-2 transition-colors duration-200 whitespace-nowrap active:scale-95 ${
+                  className={`flex-1 min-w-[140px] sm:min-w-[160px] flex items-center justify-center p-2 sm:p-3 min-h-[48px] border-b-2 transition-colors duration-200 whitespace-nowrap active:scale-95 ${
                     isActive 
                       ? 'border-[#232249] bg-blue-50 text-[#232249]' 
                       : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50'
                   }`}
                 >
-                  <Icon className="w-4 h-4 md:w-5 md:h-5 mr-2 flex-shrink-0" />
-                  <span className="font-medium text-xs md:text-sm">{section.title}</span>
+                  <Icon className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2 flex-shrink-0" />
+                  <span className="font-medium text-xs sm:text-sm">{section.title}</span>
                 </button>
               );
             })}
@@ -363,21 +363,21 @@ const AdminEditWorkOrderForm = ({
 
         {/* Error Message */}
         {submitError && (
-          <div className="mx-4 md:mx-6 mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-            <div className="flex items-center">
-              <AlertTriangle className="h-5 w-5 text-red-500 mr-2 flex-shrink-0" />
-              <span className="text-sm text-red-700">{submitError}</span>
+          <div className="mx-3 sm:mx-4 md:mx-6 mt-3 sm:mt-4 p-3 sm:p-4 bg-red-50 border border-red-200 rounded-lg">
+            <div className="flex items-start sm:items-center gap-2">
+              <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 text-red-500 flex-shrink-0 mt-0.5 sm:mt-0" />
+              <span className="text-xs sm:text-sm text-red-700">{submitError}</span>
             </div>
           </div>
         )}
 
         {/* Modal Content */}
-        <div className="flex-1 p-4 md:p-6 space-y-4 md:space-y-6 overflow-y-auto">
+        <div className="flex-1 p-3 sm:p-4 md:p-6 space-y-4 md:space-y-6 overflow-y-auto">
           {/* Basic Information Section */}
           {activeSection === 'basic' && (
             <div className="space-y-4 md:space-y-6">
-              <h3 className="text-lg md:text-xl font-bold text-[#232249] mb-4 flex items-center">
-                <FileText className="w-5 h-5 md:w-6 md:h-6 mr-2" />
+              <h3 className="text-base sm:text-lg md:text-xl font-bold text-[#232249] mb-3 sm:mb-4 flex items-center">
+                <FileText className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 mr-1.5 sm:mr-2 flex-shrink-0" />
                 Basic Information
               </h3>
               
@@ -481,8 +481,8 @@ const AdminEditWorkOrderForm = ({
           {/* Space Information Section */}
           {activeSection === 'space' && (
             <div className="space-y-4 md:space-y-6">
-              <h3 className="text-lg md:text-xl font-bold text-[#232249] mb-4 flex items-center">
-                <Building className="w-5 h-5 md:w-6 md:h-6 mr-2" />
+              <h3 className="text-base sm:text-lg md:text-xl font-bold text-[#232249] mb-3 sm:mb-4 flex items-center">
+                <Building className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 mr-1.5 sm:mr-2 flex-shrink-0" />
                 Space Information
               </h3>
               
@@ -644,8 +644,8 @@ const AdminEditWorkOrderForm = ({
           {/* Hazard Assessment Section */}
           {activeSection === 'hazards' && (
             <div className="space-y-4 md:space-y-6">
-              <h3 className="text-lg md:text-xl font-bold text-[#232249] mb-4 flex items-center">
-                <AlertTriangle className="w-5 h-5 md:w-6 md:h-6 mr-2" />
+              <h3 className="text-base sm:text-lg md:text-xl font-bold text-[#232249] mb-3 sm:mb-4 flex items-center">
+                <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 mr-1.5 sm:mr-2 flex-shrink-0" />
                 Hazard Assessment
               </h3>
               
@@ -804,8 +804,8 @@ const AdminEditWorkOrderForm = ({
           {/* Safety Requirements Section */}
           {activeSection === 'safety' && (
             <div className="space-y-4 md:space-y-6">
-              <h3 className="text-lg md:text-xl font-bold text-[#232249] mb-4 flex items-center">
-                <Shield className="w-5 h-5 md:w-6 md:h-6 mr-2" />
+              <h3 className="text-base sm:text-lg md:text-xl font-bold text-[#232249] mb-3 sm:mb-4 flex items-center">
+                <Shield className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 mr-1.5 sm:mr-2 flex-shrink-0" />
                 Safety Requirements
               </h3>
               
@@ -941,8 +941,8 @@ const AdminEditWorkOrderForm = ({
           {/* Personnel & Access Section */}
           {activeSection === 'personnel' && (
             <div className="space-y-4 md:space-y-6">
-              <h3 className="text-lg md:text-xl font-bold text-[#232249] mb-4 flex items-center">
-                <Users className="w-5 h-5 md:w-6 md:h-6 mr-2" />
+              <h3 className="text-base sm:text-lg md:text-xl font-bold text-[#232249] mb-3 sm:mb-4 flex items-center">
+                <Users className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 mr-1.5 sm:mr-2 flex-shrink-0" />
                 Personnel & Access
               </h3>
               
@@ -1055,8 +1055,8 @@ const AdminEditWorkOrderForm = ({
           {/* Images & Documentation Section */}
           {activeSection === 'images' && (
             <div className="space-y-4 md:space-y-6">
-              <h3 className="text-lg md:text-xl font-bold text-[#232249] mb-4 flex items-center">
-                <Camera className="w-5 h-5 md:w-6 md:h-6 mr-2" />
+              <h3 className="text-base sm:text-lg md:text-xl font-bold text-[#232249] mb-3 sm:mb-4 flex items-center">
+                <Camera className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 mr-1.5 sm:mr-2 flex-shrink-0" />
                 Images & Documentation
               </h3>
               
@@ -1287,32 +1287,32 @@ const AdminEditWorkOrderForm = ({
         </div>
 
         {/* Modal Footer - Fixed Position */}
-        <div className="sticky bottom-0 bg-white border-t border-gray-200 px-4 md:px-8 py-3 md:py-4 shadow-lg">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 md:gap-0">
-            <div className="text-xs md:text-sm text-gray-600">
-              <span>Last Modified: {formatDate(editingOrder.lastModified || editingOrder.updatedAt || editingOrder.createdAt)}</span>
+        <div className="sticky bottom-0 bg-white border-t border-gray-200 px-3 sm:px-4 md:px-8 py-2 sm:py-3 md:py-4 shadow-lg">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-3">
+            <div className="text-xs sm:text-sm text-gray-600 truncate max-w-full">
+              <span className="truncate">Last Modified: {formatDate(editingOrder.lastModified || editingOrder.updatedAt || editingOrder.createdAt)}</span>
             </div>
-            <div className="flex flex-col sm:flex-row gap-2 md:gap-3 w-full sm:w-auto">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
               <button
                 onClick={closeEditModal}
-                className="px-4 md:px-6 py-2 md:py-3 bg-gray-200 text-gray-700 rounded-xl hover:bg-gray-300 transition-all duration-300 font-medium border border-gray-300 min-h-[44px] active:scale-95"
+                className="px-4 sm:px-5 md:px-6 py-2 sm:py-2.5 md:py-3 bg-gray-200 text-gray-700 rounded-lg sm:rounded-xl hover:bg-gray-300 transition-all duration-300 font-medium border border-gray-300 min-h-[44px] active:scale-95 text-sm sm:text-base"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSubmit}
                 disabled={isSubmitting}
-                className="flex items-center gap-2 px-6 md:px-8 py-2 md:py-3 bg-gradient-to-r from-[#232249] to-[#2a2a5c] text-white rounded-xl hover:shadow-lg transition-all duration-300 disabled:opacity-50 font-medium min-w-[140px] justify-center border-2 border-[#232249] min-h-[44px] active:scale-95"
+                className="flex items-center justify-center gap-2 px-4 sm:px-6 md:px-8 py-2 sm:py-2.5 md:py-3 bg-gradient-to-r from-[#232249] to-[#2a2a5c] text-white rounded-lg sm:rounded-xl hover:shadow-lg transition-all duration-300 disabled:opacity-50 font-medium min-w-[140px] border-2 border-[#232249] min-h-[44px] active:scale-95 text-sm sm:text-base"
               >
                 {isSubmitting ? (
                   <>
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    Saving...
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin flex-shrink-0"></div>
+                    <span className="truncate">Saving...</span>
                   </>
                 ) : (
                   <>
-                    <Save className="h-4 w-4" />
-                    Save Changes
+                    <Save className="h-4 w-4 flex-shrink-0" />
+                    <span className="truncate">Save Changes</span>
                   </>
                 )}
               </button>
